@@ -1,0 +1,87 @@
+MVP — Core Engine
+Seeded RNG
+Deterministic from seed.
+Stable across replay.
+Explicit enough that tests can assert exact output.
+Table Data Structure
+Table IDs.
+Weighted rows if needed.
+Row values.
+Optional row metadata.
+Later: CSV/JSON import.
+Roll Schema / Generator Graph
+Defines top-level and subordinate rolls.
+Supports conditional table selection.
+Assigns canonical dot-index paths: 0, 0.1, 0.1.2.
+Result Tree
+Stores generated values.
+Stores roll path, label/key, source table, children, and rerollability.
+Represents both visible and subordinate rolls.
+Reroll Flow
+Reroll target by dot path.
+Reroll target node plus its dependent subtree.
+Append reroll action to ordered action log.
+Invalid path replay rule: probably no-op.
+State Encoding / Decoding
+Encode seed + ordered action log into compact URI-safe code.
+Decode code back into replayable state.
+Full reroll = new seed + empty action list.
+External View Model
+Convert result tree into display-ready data.
+Convert result tree into JSON export data.
+Hide or include engine metadata depending on export mode.
+JSON Export
+Export clean generated object.
+Possibly optional debug export with seed, actions, and roll paths.
+MVP — Tests
+Seed Determinism
+Same seed produces same result.
+Different seed produces different plausible result.
+Subordinate Roll Tests
+Parent roll selects correct child table.
+Example: Japanese + Male → JP_MALE_FIRST_NAMES.
+Example: Psychic → PsychicSpecialty.
+Replay Tests
+Same seed + same ordered actions produces same result.
+A, B, A can differ from A, A, B.
+Hierarchical Reroll Tests
+Rerolling a parent regenerates descendants.
+Rerolling a child preserves unrelated siblings.
+Stale/invalid path during replay is handled predictably.
+Encoding Tests
+State encodes and decodes losslessly.
+URI-safe representation.
+Full reroll clears action log.
+MVP — UI
+Initial Generate / Load From URI
+If URI has state code, decode and replay.
+If not, create new seed.
+Reroll All
+Generate new seed.
+Clear action log.
+Update URI.
+Reroll Buttons
+Each rerollable result has a button.
+Button targets its dot path.
+Parent reroll cascades through subordinates.
+Export Button
+Download/copy JSON.
+Probably include both “clean export” and later “debug export,” though only clean is required for MVP.
+Update URI Without Reload
+Use history.replaceState for ordinary rerolls.
+Consider pushState for new generation or explicit saved states.
+Actual Projects
+Table Design — All Projects
+DCC tables.
+Masks NPC tables.
+SWN Lite tables.
+Normalize table formats.
+Roll Design — All Projects
+DCC character generator schema.
+Masks NPC generator schema.
+SWN Lite character generator schema.
+Per-Project UI / Polish
+DCC character sheet layout.
+Masks tabular GM-facing output.
+SWN Lite player-facing sheet.
+Portrait support where relevant.
