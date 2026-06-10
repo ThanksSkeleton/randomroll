@@ -1,11 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { build } from "../sol_people";
-
-describe("add", () => {
-  it("adds two numbers", () => {
-    expect(2+3).toBe(5);
-  });
-});
+import { build, build_terrestrial } from "../sol_people";
 
 describe("roll sol character", () => {
   it("Static output", () => {
@@ -24,5 +18,14 @@ describe("roll sol character", () => {
     expect(output[2][0]).toBe("Satoshi");
     expect(output[0][1]).toBe("Earth");
     expect(output[0][2]).toBe("grounded");
+  });
+
+    it("Filtered output does not contain Neptune (but everything else is the same)", () => {
+      let output = build_terrestrial("TEST", 3, [])
+      expect(output[0][0]).toBe("Daichi");
+      expect(output[1][0]).toBe("Hiroshi");
+      expect(output[2][0]).toBe("Satoshi");
+      expect(output[0][1]).toBe("Mars");
+      expect(output[0][2]).toBe("grounded");
   });
 });
