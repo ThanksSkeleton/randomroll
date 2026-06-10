@@ -17,7 +17,7 @@ describe("roll sol character", () => {
     expect(output[0][2]).toBe("floating");
   });
 
-  it("Rerolled output", () => {
+  it("Rerolled output [same as original except those rerolled]", () => {
     let output = build("TEST", 3, [[0,1]])
     expect(output[0][0]).toBe("Daichi");
     expect(output[1][0]).toBe("Hiroshi");

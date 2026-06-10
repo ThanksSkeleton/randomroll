@@ -1,60 +1,119 @@
-import './style.css'
-import typescriptLogo from './assets/typescript.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import { setupCounter } from './counter.ts'
+import { build } from './sol_people';
 
-document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
-<section id="center">
-  <div class="hero">
-    <img src="${heroImg}" class="base" width="170" height="179">
-    <img src="${typescriptLogo}" class="framework" alt="TypeScript logo"/>
-    <img src="${viteLogo}" class="vite" alt="Vite logo" />
-  </div>
-  <div>
-    <h1>Get started</h1>
-    <p>Edit <code>src/main.ts</code> and save to test <code>HMR</code></p>
-  </div>
-  <button id="counter" type="button" class="counter"></button>
-</section>
+type Reroll = [number, number];
 
-<div class="ticks"></div>
+const NUM_ROWS = 10;
+const SEED_LENGTH = 5;
+const SEED_CHARS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 
-<section id="next-steps">
-  <div id="docs">
-    <svg class="icon" role="presentation" aria-hidden="true"><use href="/icons.svg#documentation-icon"></use></svg>
-    <h2>Documentation</h2>
-    <p>Your questions, answered</p>
-    <ul>
-      <li>
-        <a href="https://vite.dev/" target="_blank">
-          <img class="logo" src="${viteLogo}" alt="" />
-          Explore Vite
-        </a>
-      </li>
-      <li>
-        <a href="https://www.typescriptlang.org" target="_blank">
-          <img class="button-icon" src="${typescriptLogo}" alt="">
-          Learn more
-        </a>
-      </li>
-    </ul>
-  </div>
-  <div id="social">
-    <svg class="icon" role="presentation" aria-hidden="true"><use href="/icons.svg#social-icon"></use></svg>
-    <h2>Connect with us</h2>
-    <p>Join the Vite community</p>
-    <ul>
-      <li><a href="https://github.com/vitejs/vite" target="_blank"><svg class="button-icon" role="presentation" aria-hidden="true"><use href="/icons.svg#github-icon"></use></svg>GitHub</a></li>
-      <li><a href="https://chat.vite.dev/" target="_blank"><svg class="button-icon" role="presentation" aria-hidden="true"><use href="/icons.svg#discord-icon"></use></svg>Discord</a></li>
-      <li><a href="https://x.com/vite_js" target="_blank"><svg class="button-icon" role="presentation" aria-hidden="true"><use href="/icons.svg#x-icon"></use></svg>X.com</a></li>
-      <li><a href="https://bsky.app/profile/vite.dev" target="_blank"><svg class="button-icon" role="presentation" aria-hidden="true"><use href="/icons.svg#bluesky-icon"></use></svg>Bluesky</a></li>
-    </ul>
-  </div>
-</section>
+let seed = '';
+let rerolls: Reroll[] = [];
+let rows: string[][] = [];
 
-<div class="ticks"></div>
-<section id="spacer"></section>
-`
+const generateButton = document.querySelector<HTMLButtonElement>('#generate-button');
+const debugOutput = document.querySelector<HTMLPreElement>('#debug-output');
+const tableBody = document.querySelector<HTMLTableSectionElement>('#table-body');
 
-setupCounter(document.querySelector<HTMLButtonElement>('#counter')!)
+if (!generateButton || !debugOutput || !tableBody) {
+  throw new Error('Required DOM elements are missing.');
+}
+
+function createSeed(): string {
+  let output = '';
+
+  for (let i = 0; i < SEED_LENGTH; i++) {
+    const index = Math.floor(Math.random() * SEED_CHARS.length);
+    output += SEED_CHARS[index];
+  }
+
+  return output;
+}
+
+function updateUri(): void {
+  const params = new URLSearchParams();
+
+  if (seed !== '') {
+    params.set('seed', seed);
+  }
+
+  // Decorative for now. No parsing/restoration yet.
+  if (rerolls.length > 0) {
+    params.set('reroll', JSON.stringify(rerolls));
+  }
+
+  const query = params.toString();
+  const nextUrl = `${window.location.pathname}${query === '' ? '' : `?${query}`}`;
+
+  window.history.pushState(null, '', nextUrl);
+}
+
+function regenerateRows(): void {
+  rows = build(seed, NUM_ROWS, rerolls);
+}
+
+function renderDebug(): void {
+  debugOutput.textContent =
+    `seed: ${seed}\n` +
+    `rerolls: ${JSON.stringify(rerolls)}\n` +
+    `build(${JSON.stringify(seed)}, ${NUM_ROWS}, ${JSON.stringify(rerolls)})`;
+}
+
+function renderTable(): void {
+  tableBody.replaceChildren();
+
+  for (let rowIndex = 0; rowIndex < rows.length; rowIndex++) {
+    const row = rows[rowIndex];
+    const tr = document.createElement('tr');
+
+    tr.appendChild(createRerollableCell(row[0], rowIndex, 0));
+    tr.appendChild(createRerollableCell(row[1], rowIndex, 1));
+    tr.appendChild(createPlainCell(row[2]));
+
+    tableBody.appendChild(tr);
+  }
+}
+
+function createRerollableCell(
+  value: string,
+  rowIndex: number,
+  colIndex: number,
+): HTMLTableCellElement {
+  const td = document.createElement('td');
+  const valueSpan = document.createElement('span');
+  const button = document.createElement('button');
+
+  valueSpan.textContent = value;
+  button.textContent = 'REROLL';
+
+  button.addEventListener('click', () => {
+    rerolls.push([rowIndex, colIndex]);
+    updateUri();
+    regenerateRows();
+    render();
+  });
+
+  td.appendChild(valueSpan);
+  td.appendChild(document.createTextNode(' '));
+  td.appendChild(button);
+
+  return td;
+}
+
+function createPlainCell(value: string): HTMLTableCellElement {
+  const td = document.createElement('td');
+  td.textContent = value;
+  return td;
+}
+
+function render(): void {
+  renderDebug();
+  renderTable();
+}
+
+generateButton.addEventListener('click', () => {
+  seed = createSeed();
+  rerolls = [];
+  updateUri();
+  regenerateRows();
+  render();
+});

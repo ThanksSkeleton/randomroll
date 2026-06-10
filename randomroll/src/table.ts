@@ -28,7 +28,23 @@ export function random_single(rng: seedrandom.PRNG, table:SingletonTable) : stri
 
 export function random_multi(rng: seedrandom.PRNG, table:MultiColumnTable) : string[] 
 {
-    let len = table.table.rows.length;
+    return random_multi_filter(rng, table, []);
+}
+
+// filter: include/exclude (t/f), row index, string contains
+export function random_multi_filter(rng: seedrandom.PRNG, table:MultiColumnTable, filters: [boolean, number,string][]): string[]
+{
+    let filtered = table.table.rows.filter(r => filters.every(f => filter_match(r, f)));
+    let len = filtered.length;
     let index = Math.floor(rng() * len);
-    return table.table.rows[index];
+    return filtered[index];
+}
+
+function filter_match(data: string[], filter: [boolean, number, string]) : boolean
+{
+    if (filter[0]) {
+        return filter[2].includes(data[filter[1]])
+    } else {
+        return !filter[2].includes(data[filter[1]])
+    }
 }
