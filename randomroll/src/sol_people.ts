@@ -22,11 +22,10 @@ export function build_terrestrial(seed: string, num_rows: number, reroll: [numbe
     let terrestrial_filter : EntryFilter = {
         include_exclude: IncludeExclude.Include,
         column_index: 3,
-        filter: 'true'
+        filter: ['true']
     };
     return build_inner(seed, num_rows, reroll, [terrestrial_filter]);
 }
-
 
 function build_inner(seed: string, num_rows: number, reroll: [number, number][], filters: EntryFilter[] ): string[][] 
 {

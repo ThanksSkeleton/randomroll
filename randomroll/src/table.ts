@@ -29,7 +29,7 @@ export type IncludeExclude = typeof IncludeExclude[keyof typeof IncludeExclude];
 export type EntryFilter = {
     include_exclude: IncludeExclude,
     column_index: number;
-    filter: string;
+    filter: string[];
 }
 
 export function random_single(rng: seedrandom.PRNG, table:SingletonTable) : string 
@@ -59,8 +59,8 @@ export function random_multi_filter(rng: seedrandom.PRNG, table:MultiColumnTable
 function filter_match(data: string[], filter: EntryFilter) : boolean
 {
     if (filter.include_exclude == IncludeExclude.Include) {
-        return data[filter.column_index].includes(filter.filter)
+        return filter.filter.includes(data[filter.column_index])
     } else {
-        return !data[filter.column_index].includes(filter.filter)
+        return !filter.filter.includes(data[filter.column_index])
     }
 }
