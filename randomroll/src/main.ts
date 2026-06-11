@@ -1,4 +1,4 @@
-import { build } from './sol_people';
+import { build_sol_people } from './sol_people';
 
 type Reroll = [number, number];
 
@@ -48,7 +48,7 @@ function updateUri(): void {
 }
 
 function regenerateRows(): void {
-  rows = build(seed, NUM_ROWS, rerolls);
+  rows = build_sol_people(seed, NUM_ROWS, rerolls);
 }
 
 function renderDebug(): void {

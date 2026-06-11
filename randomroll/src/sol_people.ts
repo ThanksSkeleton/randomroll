@@ -1,4 +1,4 @@
-import { IncludeExclude, random_multi_filter, random_single, type EntryFilter, type MultiColumnTable, type SingletonTable } from "./table";
+import { random_multi, random_single, type MultiColumnTable, type SingletonTable } from "./table";
 import firstNames from "./table_data/JP_male_first_names.json";
 import planets from "./table_data/Sol_Planets.json"
 import seedrandom from "seedrandom";
@@ -7,33 +7,35 @@ let t1 : SingletonTable = firstNames;
 let t2 : MultiColumnTable = planets;
 
 // Output NAME, PLANET, GROUNDED/FLOATING
-let NAME_INDEX = 0;
+let OUTPUT_NAME_INDEX = 0;
 let PLANET_INDEX = 1;
 let GROUNDED_INDEX = 2;
 // reroll vector: [row, col]
 
-export function build(seed: string, num_rows: number, reroll: [number, number][]): string[][] 
+let NAME_INDEX = 0;
+let DISTANCE_INDEX = 1;
+let SURFACE_GRAVITY_INDEX =2; 
+let Terrestrial_INDEX =3; 
+
+
+export function build_sol_people(seed: string, num_rows: number, reroll: [number, number][]): string[][] 
 {
-    return build_inner(seed, num_rows, reroll, []);
+    return build_inner(seed, num_rows, reroll, t2.table.rows);
 }
 
 export function build_terrestrial(seed: string, num_rows: number, reroll: [number, number][])
 {
-    let terrestrial_filter : EntryFilter = {
-        include_exclude: IncludeExclude.Include,
-        column_index: 3,
-        filter: ['true']
-    };
-    return build_inner(seed, num_rows, reroll, [terrestrial_filter]);
+    let filtered = t2.table.rows.filter(x => x[Terrestrial_INDEX] == "true"); 
+    return build_inner(seed, num_rows, reroll, filtered);
 }
 
-function build_inner(seed: string, num_rows: number, reroll: [number, number][], filters: EntryFilter[] ): string[][] 
+function build_inner(seed: string, num_rows: number, reroll: [number, number][], data: string[][]): string[][] 
 {
     let output: string[][] = [];
 
     let rng : seedrandom.PRNG = seedrandom(seed);
     for (let i = 0; i < num_rows; i++) {
-        let planet = planet_part(rng, filters);
+        let planet = planet_part(rng, data);
         output[i] = [name_part(rng), planet[0], planet[1]]
     }
 
@@ -45,7 +47,7 @@ function build_inner(seed: string, num_rows: number, reroll: [number, number][],
         {
             output[row][0] = name_part(rng);
         } else {
-            let new_planet = planet_part(rng, filters);
+            let new_planet = planet_part(rng, data);
             output[row][1] = new_planet[0];
             output[row][2] = new_planet[1];
         }
@@ -56,12 +58,12 @@ function build_inner(seed: string, num_rows: number, reroll: [number, number][],
 
 function name_part(rng : seedrandom.PRNG): string 
 {
-    return random_single(rng, t1);
+    return random_single(rng, t1.table.entries);
 }
 
-function planet_part(rng: seedrandom.PRNG, filters: EntryFilter[]) : [string, string] 
+function planet_part(rng: seedrandom.PRNG, planet_data: string[][]) : [string, string] 
 {
-    let planet = random_multi_filter(rng, t2, filters);
+    let planet = random_multi(rng, planet_data);
     let grounded = (planet[3] === "true") ? "grounded" : "floating";
     return [planet[0], grounded];
 }

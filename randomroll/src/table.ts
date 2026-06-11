@@ -19,48 +19,18 @@ export type MultiColumnTable = {
   };
 };
 
-export const IncludeExclude = {
-    Include: "INCLUDE",
-    Exclude: "EXCLUDE"
-}
-
-export type IncludeExclude = typeof IncludeExclude[keyof typeof IncludeExclude]; 
-
-export type EntryFilter = {
-    include_exclude: IncludeExclude,
-    column_index: number;
-    filter: string[];
-}
-
-export function random_single(rng: seedrandom.PRNG, table:SingletonTable) : string 
+export function random_single(rng: seedrandom.PRNG, data:string[]) : string 
 {
-    let len = table.table.entries.length;
+    let len = data.length;
+    if (len == 0) { throw Error("No Data"); }
     let index = Math.floor(rng() * len);
-    return table.table.entries[index];
+    return data[index];
 }
 
-export function random_multi(rng: seedrandom.PRNG, table:MultiColumnTable) : string[] 
+export function random_multi(rng: seedrandom.PRNG, data:string[][]) : string[]
 {
-    return random_multi_filter(rng, table, []);
-}
-
-// filter: include/exclude (t/f), row index, string contains
-export function random_multi_filter(rng: seedrandom.PRNG, table:MultiColumnTable, filters: EntryFilter[]): string[]
-{
-    let filtered = table.table.rows.filter(r => filters.every(f => filter_match(r, f)));
-    let len = filtered.length;
-    if (len == 0) {
-        throw new Error("Everything Filtered")
-    }
+    let len = data.length;
+    if (len == 0) { throw Error("No Data"); }
     let index = Math.floor(rng() * len);
-    return filtered[index];
-}
-
-function filter_match(data: string[], filter: EntryFilter) : boolean
-{
-    if (filter.include_exclude == IncludeExclude.Include) {
-        return filter.filter.includes(data[filter.column_index])
-    } else {
-        return !filter.filter.includes(data[filter.column_index])
-    }
+    return data[index];
 }
