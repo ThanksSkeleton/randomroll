@@ -31,7 +31,7 @@ describe("roll sol character", () => {
   });
 
   it("IATW Powers test", () => {
-      let output = build_super("TEST", 10);
+      let output = build_super("TEST", 20);
       console.debug(output);
       // expect(output[0][0]).toBe("Daichi");
       // expect(output[1][0]).toBe("Hiroshi");
