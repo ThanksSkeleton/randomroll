@@ -1,4 +1,4 @@
-import { BuildExportFormat, random_multi, random_single, startRandomRollPage, type ExportFormat, type MultiColumnTable, type SingletonTable } from "../../framework";
+import { BuildExportFormat, random_multi, random_single, type ExportFormat, type MultiColumnTable, type SingletonTable } from "../../framework";
 import firstNames from "../../table_data/JP_male_first_names.json";
 import planets from "../../table_data/Sol_Planets.json"
 import seedrandom from "seedrandom";
