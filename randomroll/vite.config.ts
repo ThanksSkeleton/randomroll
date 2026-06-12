@@ -10,8 +10,10 @@ export default defineConfig({
       input: {
         main: resolve(__dirname, "index.html"),
         dcc: resolve(__dirname, "dcc/index.html"),
-        masksNpc: resolve(__dirname, "masks-npc/index.html"),
-        swnLite: resolve(__dirname, "swn-lite/index.html"),
+        masks: resolve(__dirname, "masks/index.html"),
+        swn: resolve(__dirname, "swn/index.html"),
+        sol: resolve(__dirname, "sol/index.html"),
+        supers: resolve(__dirname, "sol/index.html"),
       },
     },
   },

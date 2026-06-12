@@ -52,24 +52,28 @@ function regenerateRows(): void {
 }
 
 function renderDebug(): void {
-  debugOutput.textContent =
-    `seed: ${seed}\n` +
-    `rerolls: ${JSON.stringify(rerolls)}\n` +
-    `build(${JSON.stringify(seed)}, ${NUM_ROWS}, ${JSON.stringify(rerolls)})`;
+  if (debugOutput != null) {
+    debugOutput.textContent =
+        `seed: ${seed}\n` +
+        `rerolls: ${JSON.stringify(rerolls)}\n` +
+        `build(${JSON.stringify(seed)}, ${NUM_ROWS}, ${JSON.stringify(rerolls)})`;
+  }
 }
 
 function renderTable(): void {
-  tableBody.replaceChildren();
+  if (tableBody != null) {
+    tableBody.replaceChildren();
 
-  for (let rowIndex = 0; rowIndex < rows.length; rowIndex++) {
-    const row = rows[rowIndex];
-    const tr = document.createElement('tr');
+    for (let rowIndex = 0; rowIndex < rows.length; rowIndex++) {
+        const row = rows[rowIndex];
+        const tr = document.createElement('tr');
 
-    tr.appendChild(createRerollableCell(row[0], rowIndex, 0));
-    tr.appendChild(createRerollableCell(row[1], rowIndex, 1));
-    tr.appendChild(createPlainCell(row[2]));
+        tr.appendChild(createRerollableCell(row[0], rowIndex, 0));
+        tr.appendChild(createRerollableCell(row[1], rowIndex, 1));
+        tr.appendChild(createPlainCell(row[2]));
 
-    tableBody.appendChild(tr);
+        tableBody.appendChild(tr);
+    }
   }
 }
 

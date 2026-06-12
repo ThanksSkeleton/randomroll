@@ -1,5 +1,5 @@
 import seedrandom from "seedrandom";
-import { BuildExportFormat, random_multi, type ExportFormat, type MultiColumnTable } from "../../framework";
+import { BuildExportFormat, random_multi, startRandomRollPage, type ExportFormat, type MultiColumnTable } from "../../framework";
 import powers from "../../table_data/IATW_Powers.json";
 
 let powers_table : MultiColumnTable = powers;
@@ -43,15 +43,17 @@ const NAME = 0;
 const KIND = 1;
 const TAG = 2;
 
-const PRIMARY = "Primary";
-const SECONDARY = "Secondary";
-
 const Excluded_Powers = ["Elemental"];
 const Colorless = ["Gimmick", "Mutated", "Hypersensory"];
 const Color = ["Physics","Air","Alien","Chemistry","Animal","Water","Time","Darkness","Light","Earth","Sonic","Electrical","Energy","Ice","Fire","Radiation", "Tech", "Shapeshift" ];
 const Strong_Color = ["Psionic", "Occult"];
 
 const OutputName = "GRUNGE SUPERPOWERS";
+
+function default_build(seed: string): ExportFormat<[Power, Power, Power, Power, Power]> 
+{
+    return build_super_export(seed, 1);
+}
 
 export function build_super_export(seed: string, num_characters: number) : ExportFormat<[Power, Power, Power, Power, Power]> 
 {
@@ -63,7 +65,7 @@ export function build_super_export(seed: string, num_characters: number) : Expor
 export function build_super(seed: string, num_characters: number): [Power, Power, Power, Power, Power][] 
 {
     let rng : seedrandom.PRNG = seedrandom(seed);
-    let to_return = [];
+    let to_return:[Power, Power, Power, Power, Power][] = [];
     for (let i = 0; i < num_characters; i++) {
         let first_power = first(rng);
         let second_power = second(rng, first_power);
@@ -113,9 +115,9 @@ function three_secondary(rng: seedrandom.PRNG, first_power: Power, second_power:
 {
     let secondary_1_table = powers_table.table.rows.filter(r => r[KIND] == "Secondary" && (r[TAG] == first_power.Tag || r[TAG] == second_power.Tag))
     let secondary_1 = array_to_power(random_multi(rng, secondary_1_table));
-    let secondary_2_table = secondary_1_table.filter(r => r[NAME] != secondary_1[NAME]);
+    let secondary_2_table = secondary_1_table.filter(r => r[NAME] != secondary_1.Name);
     let secondary_2 = array_to_power(random_multi(rng, secondary_2_table))
-    let secondary_3_table = secondary_2_table.filter(r=> r[NAME] != secondary_2[NAME]);
+    let secondary_3_table = secondary_2_table.filter(r=> r[NAME] != secondary_2.Name);
     let secondary_3 = array_to_power(random_multi(rng, secondary_3_table));
     return [secondary_1, secondary_2, secondary_3]
 }
@@ -174,3 +176,7 @@ function three_secondary(rng: seedrandom.PRNG, first_power: Power, second_power:
 //     let grounded = (planet[3] === "true") ? "grounded" : "floating";
 //     return [planet[0], grounded];
 // }
+
+startRandomRollPage({
+  generate: default_build,
+});

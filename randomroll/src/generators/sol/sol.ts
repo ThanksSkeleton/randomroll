@@ -1,4 +1,4 @@
-import { BuildExportFormat, random_multi, random_single, type ExportFormat, type MultiColumnTable, type SingletonTable } from "../../framework";
+import { BuildExportFormat, random_multi, random_single, startRandomRollPage, type ExportFormat, type MultiColumnTable, type SingletonTable } from "../../framework";
 import firstNames from "../../table_data/JP_male_first_names.json";
 import planets from "../../table_data/Sol_Planets.json"
 import seedrandom from "seedrandom";
@@ -6,13 +6,7 @@ import seedrandom from "seedrandom";
 let t1 : SingletonTable = firstNames;
 let t2 : MultiColumnTable = planets;
 
-// Output NAME, PLANET, GROUNDED/FLOATING
-let OUTPUT_NAME_INDEX = 0;
-let PLANET_INDEX = 1;
-let GROUNDED_INDEX = 2;
-
-
-let OUTPUT_NAME: "SOL_PEOPLE";
+let OUTPUT_NAME = "SOL_PEOPLE";
 let NAME = "Name";
 let PLANET = "Planet";
 let GROUNDED = "Grounded"
@@ -21,9 +15,13 @@ let colummn_names = [NAME, PLANET, GROUNDED];
 // reroll vector: [row, col]
 
 let NAME_INDEX = 0;
-let DISTANCE_INDEX = 1;
-let SURFACE_GRAVITY_INDEX =2; 
+
 let Terrestrial_INDEX =3; 
+
+function default_build(seed: string) : ExportFormat<string[]> 
+{
+    return build_sol_export(seed, 10, [], false);
+}
 
 export function build_sol_export(seed: string, num_rows: number, reroll: [number, number][], terrestrial: boolean) : ExportFormat<string[]> 
 {
@@ -86,3 +84,7 @@ function planet_part(rng: seedrandom.PRNG, planet_data: string[][]) : [string, s
     let grounded = (planet[3] === "true") ? "grounded" : "floating";
     return [planet[0], grounded];
 }
+
+startRandomRollPage({
+  generate: default_build,
+});
