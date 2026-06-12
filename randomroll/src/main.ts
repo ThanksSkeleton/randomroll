@@ -1,4 +1,4 @@
-import { build_sol_export } from './generators/SOL/SOL';
+import { build_sol_export } from './generators/sol/sol';
 
 type Reroll = [number, number];
 
