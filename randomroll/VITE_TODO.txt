@@ -1,0 +1,6 @@
+TODO:
+- Stop committing /docs
+- Change Vite outDir back to dist
+- Add .github/workflows/deploy.yml
+- Configure GitHub Pages source to GitHub Actions
+- Let GitHub run npm ci + npm run build + publish automatically

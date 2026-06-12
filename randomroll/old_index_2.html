@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RandomRoll Prototype</title>
+  </head>
+  <body>
+    <button id="generate-button">GENERATE</button>
+
+    <pre id="debug-output">seed: 
+rerolls: []
+build(seed, 10, rerolls)</pre>
+
+    <table>
+      <thead>
+        <tr>
+          <th>NAME</th>
+          <th>PLANET</th>
+          <th>GROUNDED_VALUE</th>
+        </tr>
+      </thead>
+      <tbody id="table-body"></tbody>
+    </table>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

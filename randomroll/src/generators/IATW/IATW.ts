@@ -1,6 +1,6 @@
 import seedrandom from "seedrandom";
-import { BuildExportFormat, random_multi, type ExportFormat, type MultiColumnTable } from "./table";
-import powers from "./table_data/IATW_Powers.json";
+import { BuildExportFormat, random_multi, type ExportFormat, type MultiColumnTable } from "../../framework";
+import powers from "../../table_data/IATW_Powers.json";
 
 let powers_table : MultiColumnTable = powers;
 
