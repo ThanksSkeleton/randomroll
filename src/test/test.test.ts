@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { build_sol_export, } from "../generators/sol/sol";
-import { build_super_export } from "../generators/supers/supers";
+import { build_sol_export, } from "../generators/sol/sol_impl";
+import { build_super_export } from "../generators/supers/supers_impl";
 
 describe("roll sol character", () => {
   it("Static output", () => {

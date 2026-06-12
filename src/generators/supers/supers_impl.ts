@@ -1,5 +1,5 @@
 import seedrandom from "seedrandom";
-import { BuildExportFormat, random_multi, startRandomRollPage, type ExportFormat, type MultiColumnTable } from "../../framework";
+import { BuildExportFormat, random_multi, type ExportFormat, type MultiColumnTable } from "../../framework";
 import powers from "../../table_data/IATW_Powers.json";
 
 let powers_table : MultiColumnTable = powers;
@@ -50,7 +50,7 @@ const Strong_Color = ["Psionic", "Occult"];
 
 const OutputName = "GRUNGE SUPERPOWERS";
 
-function default_build(seed: string): ExportFormat<[Power, Power, Power, Power, Power]> 
+export function default_build(seed: string): ExportFormat<[Power, Power, Power, Power, Power]> 
 {
     return build_super_export(seed, 1);
 }
@@ -176,7 +176,3 @@ function three_secondary(rng: seedrandom.PRNG, first_power: Power, second_power:
 //     let grounded = (planet[3] === "true") ? "grounded" : "floating";
 //     return [planet[0], grounded];
 // }
-
-startRandomRollPage({
-  generate: default_build,
-});

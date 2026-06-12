@@ -18,7 +18,7 @@ let NAME_INDEX = 0;
 
 let Terrestrial_INDEX =3; 
 
-function default_build(seed: string) : ExportFormat<string[]> 
+export function default_build(seed: string) : ExportFormat<string[]> 
 {
     return build_sol_export(seed, 10, [], false);
 }
@@ -84,7 +84,3 @@ function planet_part(rng: seedrandom.PRNG, planet_data: string[][]) : [string, s
     let grounded = (planet[3] === "true") ? "grounded" : "floating";
     return [planet[0], grounded];
 }
-
-startRandomRollPage({
-  generate: default_build,
-});
