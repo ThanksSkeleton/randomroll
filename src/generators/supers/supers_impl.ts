@@ -45,7 +45,7 @@ const TAG = 2;
 
 const Excluded_Powers = ["Elemental"];
 const Colorless = ["Gimmick", "Mutated", "Hypersensory"];
-const Color = ["Physics","Air","Alien","Chemistry","Animal","Water","Time","Darkness","Light","Earth","Sonic","Electricity","Energy","Ice","Fire","Radiation", "Tech", "Shapeshift" ];
+const Color = ["Physics","Air","Alien","Chemistry","Animal","Water","Time","Darkness","Light","Earth","Sonic","Electricity","Energy","Ice","Fire","Radiation", "Tech", "Shapeshift"];
 const Strong_Color = ["Psionic", "Occult"];
 
 const OutputName = "GRUNGE SUPERPOWERS";
