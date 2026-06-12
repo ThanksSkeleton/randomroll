@@ -1,4 +1,4 @@
-import { random_multi, random_single, type MultiColumnTable, type SingletonTable } from "./table";
+import { BuildExportFormat, random_multi, random_single, type ExportFormat, type MultiColumnTable, type SingletonTable } from "./table";
 import firstNames from "./table_data/JP_male_first_names.json";
 import planets from "./table_data/Sol_Planets.json"
 import seedrandom from "seedrandom";
@@ -10,6 +10,14 @@ let t2 : MultiColumnTable = planets;
 let OUTPUT_NAME_INDEX = 0;
 let PLANET_INDEX = 1;
 let GROUNDED_INDEX = 2;
+
+
+let OUTPUT_NAME: "SOL_PEOPLE";
+let NAME = "Name";
+let PLANET = "Planet";
+let GROUNDED = "Grounded"
+let colummn_names = [NAME, PLANET, GROUNDED];
+
 // reroll vector: [row, col]
 
 let NAME_INDEX = 0;
@@ -17,13 +25,24 @@ let DISTANCE_INDEX = 1;
 let SURFACE_GRAVITY_INDEX =2; 
 let Terrestrial_INDEX =3; 
 
+export function build_sol_export(seed: string, num_rows: number, reroll: [number, number][], terrestrial: boolean) : ExportFormat<string[]> 
+{
+    let rolled_data = []
+    if (terrestrial) {
+        rolled_data = build_terrestrial(seed, num_rows, reroll);
+    } else {
+        rolled_data = build_sol_people(seed, num_rows, reroll);
+    }
 
-export function build_sol_people(seed: string, num_rows: number, reroll: [number, number][]): string[][] 
+    return BuildExportFormat(OUTPUT_NAME, seed, colummn_names, rolled_data, rolled_data);
+}
+
+function build_sol_people(seed: string, num_rows: number, reroll: [number, number][]): string[][] 
 {
     return build_inner(seed, num_rows, reroll, t2.table.rows);
 }
 
-export function build_terrestrial(seed: string, num_rows: number, reroll: [number, number][])
+function build_terrestrial(seed: string, num_rows: number, reroll: [number, number][])
 {
     let filtered = t2.table.rows.filter(x => x[Terrestrial_INDEX] == "true"); 
     return build_inner(seed, num_rows, reroll, filtered);

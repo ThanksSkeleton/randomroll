@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { build_sol_people, build_terrestrial } from "../sol_people";
-import { build_super } from "../IATW";
+import { build_sol_export, } from "../sol_people";
+import { build_super, build_super_export } from "../IATW";
 
 describe("roll sol character", () => {
   it("Static output", () => {
-    let output = build_sol_people("TEST", 3, [])
+    let output = build_sol_export("TEST", 3, [], false).flattened
     expect(output[0][0]).toBe("Daichi");
     expect(output[1][0]).toBe("Hiroshi");
     expect(output[2][0]).toBe("Satoshi");
@@ -13,7 +13,7 @@ describe("roll sol character", () => {
   });
 
   it("Rerolled output [same as original except those rerolled]", () => {
-    let output = build_sol_people("TEST", 3, [[0,1]])
+    let output = build_sol_export("TEST", 3, [[0,1]], false).flattened
     expect(output[0][0]).toBe("Daichi");
     expect(output[1][0]).toBe("Hiroshi");
     expect(output[2][0]).toBe("Satoshi");
@@ -22,7 +22,7 @@ describe("roll sol character", () => {
   });
 
   it("Filtered output does not contain Neptune (but everything else is the same)", () => {
-      let output = build_terrestrial("TEST", 3, [])
+      let output = build_sol_export("TEST", 3, [], true).flattened
       expect(output[0][0]).toBe("Daichi");
       expect(output[1][0]).toBe("Hiroshi");
       expect(output[2][0]).toBe("Satoshi");
@@ -31,7 +31,7 @@ describe("roll sol character", () => {
   });
 
   it("IATW Powers test", () => {
-      let output = build_super("TEST", 20);
+      let output = build_super_export("TEST", 20);
       console.debug(output);
       // expect(output[0][0]).toBe("Daichi");
       // expect(output[1][0]).toBe("Hiroshi");

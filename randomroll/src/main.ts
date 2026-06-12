@@ -1,4 +1,4 @@
-import { build_sol_people } from './sol_people';
+import { build_sol_export } from './sol_people';
 
 type Reroll = [number, number];
 
@@ -48,7 +48,7 @@ function updateUri(): void {
 }
 
 function regenerateRows(): void {
-  rows = build_sol_people(seed, NUM_ROWS, rerolls);
+  rows = build_sol_export(seed, NUM_ROWS, rerolls, false).flattened;
 }
 
 function renderDebug(): void {

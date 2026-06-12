@@ -1,5 +1,29 @@
 import seedrandom from "seedrandom";
 
+export type ExportFormat<TObject> =
+{
+    name: string;
+    seed: string;
+    generated_on: string;
+    guid: string;
+    column_names: string[]
+    flattened: string[][]
+    objects: TObject[]
+}
+
+export function BuildExportFormat<TObject>(name: string, seed: string, col_names: string[], flattened_input: string[][], data_object: TObject[]) : ExportFormat<TObject> 
+{
+    return {
+        name: name,
+        seed: seed,
+        generated_on: new Date().toString(),
+        guid: crypto.randomUUID(),
+        column_names: col_names,
+        flattened: flattened_input,
+        objects: data_object
+    }
+}
+
 export type SingletonTable = {
   version: string;
   name: string;
