@@ -87,7 +87,7 @@ function second(rng: seedrandom.PRNG, first_power: Power): Power
     if (Colorless.includes(first_power.Tag))
     {
         // Colorless or new Color but not Strong Color
-        color_restricted = powers_table.table.rows.filter(r => Color.includes(r[TAG]) || Colorless.includes(first_power.Tag));
+        color_restricted = powers_table.table.rows.filter(r => Colorless.includes(r[TAG]) || Color.includes(r[TAG]));
     } 
     else if (Color.includes(first_power.Tag)) 
     {
