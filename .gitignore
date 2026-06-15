@@ -22,3 +22,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# sqlite temp files
+*.sqlite-shm
+*.sqlite-wal

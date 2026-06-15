@@ -5,13 +5,13 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && json && vite build",
+    "build": "tsc && npm run json && vite build",
     "preview": "vite preview",
     "test": "vitest",
-    "json": "powers_json && planets_json && jp_male_json",
-    "powers_json": "tsx scripts/dump-sqlite-table.ts data/randomroll.sqlite powers src/table_data/powers.json",
-    "planets_json": "tsx scripts/dump-sqlite-table.ts data/randomroll.sqlite planets src/table_data/planets.json",
-    "jp_male_json": "tsx scripts/dump-sqlite-table.ts data/randomroll.sqlite planets src/table_data/jp_male.json"
+    "json": "npm run powers_json && npm run planets_json && npm run jp_male_json",
+    "powers_json": "tsx scripts/from_sql.ts data/randomroll.sqlite powers src/table_data/powers.json",
+    "planets_json": "tsx scripts/from_sql.ts data/randomroll.sqlite planets src/table_data/planets.json",
+    "jp_male_json": "tsx scripts/from_sql.ts data/randomroll.sqlite jp_male src/table_data/jp_male.json"
   },
   "devDependencies": {
     "@types/better-sqlite3": "^7.6.13",

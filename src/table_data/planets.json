@@ -1,0 +1,62 @@
+{
+  "version": "1.0.0",
+  "name": "planets",
+  "table": {
+    "columns": [
+      "Name",
+      "Distance from Sun",
+      "Surface Gravity",
+      "Terrestrial"
+    ],
+    "rows": [
+      [
+        "Mercury",
+        "58 million km",
+        "3.7 m/s²",
+        "true"
+      ],
+      [
+        "Venus",
+        "108 million km",
+        "8.9 m/s²",
+        "true"
+      ],
+      [
+        "Earth",
+        "150 million km",
+        "9.8 m/s²",
+        "true"
+      ],
+      [
+        "Mars",
+        "228 million km",
+        "3.7 m/s²",
+        "true"
+      ],
+      [
+        "Jupiter",
+        "778 million km",
+        "24.8 m/s²",
+        "false"
+      ],
+      [
+        "Saturn",
+        "1.4 billion km",
+        "10.4 m/s²",
+        "false"
+      ],
+      [
+        "Uranus",
+        "2.9 billion km",
+        "8.7 m/s²",
+        "false"
+      ],
+      [
+        "Neptune",
+        "4.5 billion km",
+        "11.2 m/s²",
+        "false"
+      ]
+    ]
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "version": "1.0.0",
+  "name": "jp_male",
+  "table": {
+    "columns": [
+      "entry"
+    ],
+    "rows": [
+      [
+        "Akira"
+      ],
+      [
+        "Daichi"
+      ],
+      [
+        "Haruto"
+      ],
+      [
+        "Hiroshi"
+      ],
+      [
+        "Ichiro"
+      ],
+      [
+        "Jiro"
+      ],
+      [
+        "Kaito"
+      ],
+      [
+        "Kenji"
+      ],
+      [
+        "Ren"
+      ],
+      [
+        "Satoshi"
+      ],
+      [
+        "Takeshi"
+      ],
+      [
+        "Yuki"
+      ]
+    ]
+  }
+}

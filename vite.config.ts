@@ -2,7 +2,7 @@ import { defineConfig } from "vite";
 import { resolve } from "path";
 
 export default defineConfig({
-  base: "/RandomRoll/",
+  base: "/randomroll/",
   build: {
     outDir: "docs",
     emptyOutDir: true,

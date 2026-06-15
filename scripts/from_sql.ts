@@ -77,16 +77,16 @@ function dumpSqliteTable(
 }
 
 function main(): void {
-  const [, , dbPath, tableName, outputPath, label] = process.argv;
+  const [, , dbPath, tableName, outputPath] = process.argv;
 
   if (!dbPath || !tableName || !outputPath) {
     console.error(
       [
         "Usage:",
-        "  tsx scripts/dump-sqlite-table.ts <sqlite-db-path> <table-name> <output-json-path>",
+        "  tsx scripts/from_sql.ts <sqlite-db-path> <table-name> <output-json-path>",
         "",
         "Example:",
-        "  tsx scripts/dump-sqlite-table.ts data/randomroll.sqlite powers src/data/generated/powers.json",
+        "  tsx scripts/from_sql.ts data/randomroll.sqlite powers src/data/generated/powers.json",
       ].join("\n")
     );
 
