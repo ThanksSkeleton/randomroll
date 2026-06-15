@@ -254,7 +254,6 @@ export type SingletonTable = {
 export type MultiColumnTable = {
   version: string;
   name: string;
-  label?: string;
   table: {
     columns: string[];
     rows: string[][];

@@ -5,17 +5,24 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "tsc && json && vite build",
     "preview": "vite preview",
-    "test": "vitest"
+    "test": "vitest",
+    "json": "powers_json && planets_json && jp_male_json",
+    "powers_json": "tsx scripts/dump-sqlite-table.ts data/randomroll.sqlite powers src/table_data/powers.json",
+    "planets_json": "tsx scripts/dump-sqlite-table.ts data/randomroll.sqlite planets src/table_data/planets.json",
+    "jp_male_json": "tsx scripts/dump-sqlite-table.ts data/randomroll.sqlite planets src/table_data/jp_male.json"
   },
   "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^25.9.3",
     "@types/seedrandom": "^3.0.8",
+    "tsx": "^4.22.4",
     "typescript": "~6.0.2",
     "vite": "^8.0.16"
   },
   "dependencies": {
+    "better-sqlite3": "^12.10.1",
     "seedrandom": "^3.0.5",
     "vitest": "^4.1.8"
   }
