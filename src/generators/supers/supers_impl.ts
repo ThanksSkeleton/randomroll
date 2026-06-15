@@ -82,7 +82,7 @@ export function build_super(seed: string, num_characters: number): [Power, Power
 
 function not_duplicate(p: Power, other_powers: Power[]): boolean 
 {
-    return other_powers.every(op => op.Name != p.Name && op.Name != p.VariantOf && (op.VariantOf != p.VariantOf || p.VariantOf == ""));
+    return other_powers.every(op => op.Name != p.Name && op.Name != p.VariantOf && op.VariantOf != p.Name && (op.VariantOf != p.VariantOf || p.VariantOf == ""));
 }
 
 function first(rng: seedrandom.PRNG): Power
