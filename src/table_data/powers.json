@@ -5,3488 +5,4700 @@
     "columns": [
       "Name",
       "Kind",
-      "Tag"
+      "Tag",
+      "Source",
+      "variantOf"
     ],
     "rows": [
       [
         "Ability/Power Drain",
         "Primary",
-        "Mutated"
+        "Mutated",
+        "IATW",
+        ""
       ],
       [
         "Ability/Power Drain: Passive Aura/Touch",
         "Primary",
-        "Mutated"
+        "Mutated",
+        "IATW",
+        "Ability/Power Drain"
       ],
       [
         "Ability/Power Mimicry",
         "Primary",
-        "Mutated"
+        "Mutated",
+        "IATW",
+        ""
       ],
       [
         "Ability/Power Transfer",
         "Primary",
-        "Mutated"
+        "Mutated",
+        "IATW",
+        ""
       ],
       [
         "Ability/Power Vampirism",
         "Primary",
-        "Mutated"
+        "Mutated",
+        "IATW",
+        ""
       ],
       [
         "Ability/Power Drain: Classic Vampirism",
         "Primary",
-        "Occult"
+        "Occult",
+        "IATW",
+        "Ability/Power Drain"
       ],
       [
         "Ability Reduction: Passive Aura",
         "Primary",
-        "Mutated"
+        "Mutated",
+        "IATW",
+        ""
       ],
       [
         "Adaptive Defense",
         "Primary",
-        "Shapeshift"
+        "Shapeshift",
+        "IATW",
+        ""
       ],
       [
         "Adaptive Defense",
         "Primary",
-        "Mutated"
+        "Mutated",
+        "IATW",
+        ""
       ],
       [
         "Adaptive Transformation",
         "Primary",
-        "Shapeshift"
+        "Shapeshift",
+        "IATW",
+        ""
       ],
       [
         "Adaptive Transformation",
         "Primary",
-        "Mutated"
+        "Mutated",
+        "IATW",
+        ""
       ],
       [
         "Adaptive Weaponry",
         "Primary",
-        "Tech"
+        "Tech",
+        "IATW",
+        ""
       ],
       [
         "Adaptive Weaponry",
         "Primary",
-        "Mutated"
+        "Mutated",
+        "IATW",
+        ""
       ],
       [
         "Adaptive Weaponry: Missiles",
         "Primary",
-        "Tech"
+        "Tech",
+        "IATW",
+        "Adaptive Weaponry"
       ],
       [
         "Adaptive Weaponry: Missiles",
         "Primary",
-        "Mutated"
+        "Mutated",
+        "IATW",
+        "Adaptive Weaponry"
       ],
       [
         "Adaptive Weaponry: Melee Weaponry",
         "Primary",
-        "Tech"
+        "Tech",
+        "IATW",
+        "Adaptive Weaponry"
       ],
       [
         "Adaptive Weaponry: Melee Weaponry",
         "Primary",
-        "Mutated"
+        "Mutated",
+        "IATW",
+        "Adaptive Weaponry"
       ],
       [
         "Adhere",
         "Secondary",
-        "Physics"
+        "Physics",
+        "IATW",
+        ""
       ],
       [
         "Adhere",
         "Secondary",
-        "Mutated"
+        "Mutated",
+        "IATW",
+        ""
       ],
       [
         "Adhere: Anchoring",
         "Secondary",
-        "Physics"
+        "Physics",
+        "IATW",
+        "Adhere"
       ],
       [
         "Adhere: Anchoring",
         "Secondary",
-        "Mutated"
+        "Mutated",
+        "IATW",
+        "Adhere"
       ],
       [
         "Adhere: Join",
         "Primary",
-        "Physics"
+        "Physics",
+        "IATW",
+        "Adhere"
       ],
       [
         "Adhere: Join",
         "Primary",
-        "Mutated"
+        "Mutated",
+        "IATW",
+        "Adhere"
       ],
       [
         "Air Control",
         "Primary",
-        "Air"
-      ],
-      [
-        "Air Control",
-        "Primary",
-        "Elemental"
+        "Air",
+        "IATW",
+        ""
       ],
       [
         "Alter Ego",
         "Secondary",
-        "Mutated"
+        "Mutated",
+        "IATW",
+        ""
       ],
       [
         "Alter Ego",
         "Secondary",
-        "Shapeshift"
+        "Shapeshift",
+        "IATW",
+        ""
       ],
       [
         "Alter Ego: Triggered",
         "Secondary",
-        "Mutated"
+        "Mutated",
+        "IATW",
+        "Alter Ego"
       ],
       [
         "Alter Ego: Triggered",
         "Secondary",
-        "Shapeshift"
+        "Shapeshift",
+        "IATW",
+        "Alter Ego"
       ],
       [
         "Alter Reality",
         "Primary",
-        "Physics"
+        "Physics",
+        "IATW",
+        ""
       ],
       [
         "Alter Reality",
         "Primary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Alternate Composition",
         "Primary",
-        "Alien"
+        "Alien",
+        "IATW",
+        ""
       ],
       [
         "Alternate Composition",
         "Primary",
-        "Chemistry"
+        "Chemistry",
+        "IATW",
+        ""
       ],
       [
         "Alternate Composition: Limited",
         "Primary",
-        "Alien"
+        "Alien",
+        "IATW",
+        "Alternate Composition"
       ],
       [
         "Alternate Composition: Limited",
         "Primary",
-        "Chemistry"
+        "Chemistry",
+        "IATW",
+        "Alternate Composition"
       ],
       [
         "Alternate Sustenance",
         "Secondary",
-        "Chemistry"
+        "Chemistry",
+        "IATW",
+        ""
       ],
       [
         "Alternate Sustenance",
         "Secondary",
-        "Alien"
+        "Alien",
+        "IATW",
+        ""
       ],
       [
         "Alternate Sustenance",
         "Secondary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Amphibious",
         "Secondary",
-        "Alien"
+        "Alien",
+        "IATW",
+        ""
       ],
       [
         "Amphibious",
         "Secondary",
-        "Animal"
+        "Animal",
+        "IATW",
+        ""
       ],
       [
         "Amphibious",
         "Secondary",
-        "Water"
+        "Water",
+        "IATW",
+        ""
       ],
       [
         "Animal Control",
         "Primary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Animal Control: Mind Link",
         "Secondary",
-        "Occult"
+        "Occult",
+        "IATW",
+        "Animal Control"
       ],
       [
         "Animal Control: Attract and Control",
         "Primary",
-        "Occult"
+        "Occult",
+        "IATW",
+        "Animal Control"
       ],
       [
         "Animal Control: Limited",
         "Primary",
-        "Occult"
+        "Occult",
+        "IATW",
+        "Animal Control"
       ],
       [
         "Animal Control: Limited Link",
         "Secondary",
-        "Occult"
+        "Occult",
+        "IATW",
+        "Animal Control"
       ],
       [
         "Animal Imitation",
         "Primary",
-        "Shapeshift"
+        "Shapeshift",
+        "IATW",
+        ""
       ],
       [
         "Animal Imitation",
         "Primary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Animal Imitation: Limited",
         "Primary",
-        "Shapeshift"
+        "Shapeshift",
+        "IATW",
+        "Animal Imitation"
       ],
       [
         "Animal Imitation: Limited",
         "Primary",
-        "Occult"
+        "Occult",
+        "IATW",
+        "Animal Imitation"
       ],
       [
         "Animal Imitation-Powers only",
         "Primary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Animate Image",
         "Primary",
-        "Occult"
-      ],
-      [
-        "Animate Image",
-        "Primary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Animate Object",
         "Primary",
-        "Occult"
-      ],
-      [
-        "Animate Object",
-        "Primary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Animate Object: Substance",
         "Primary",
-        "Occult"
+        "Occult",
+        "IATW",
+        "Animate Object"
       ],
       [
         "Armor",
         "Secondary",
-        "Alien"
+        "Alien",
+        "IATW",
+        ""
       ],
       [
         "Armor",
         "Secondary",
-        "Animal"
+        "Animal",
+        "IATW",
+        ""
       ],
       [
         "Armor: Incomplete",
         "Primary",
-        "Alien"
+        "Alien",
+        "IATW",
+        "Armor"
       ],
       [
         "Armor: Incomplete",
         "Primary",
-        "Animal"
+        "Animal",
+        "IATW",
+        "Armor"
       ],
       [
         "Armor: Incomplete",
         "Primary",
-        "Tech"
+        "Tech",
+        "IATW",
+        "Armor"
       ],
       [
-        "Armor Variant: Shield",
+        "Armor: Shield",
         "Primary",
-        "Alien"
+        "Alien",
+        "IATW",
+        "Armor"
       ],
       [
-        "Armor Variant: Shield",
+        "Armor: Shield",
         "Primary",
-        "Animal"
+        "Animal",
+        "IATW",
+        "Armor"
       ],
       [
         "Armor: Suit",
         "Primary",
-        "Alien"
+        "Alien",
+        "IATW",
+        "Armor"
       ],
       [
         "Armor: Suit",
         "Primary",
-        "Animal"
+        "Animal",
+        "IATW",
+        "Armor"
       ],
       [
         "Armor: Husk",
         "Primary",
-        "Alien"
+        "Alien",
+        "IATW",
+        "Armor"
       ],
       [
         "Armor: Husk",
         "Primary",
-        "Animal"
+        "Animal",
+        "IATW",
+        "Armor"
       ],
       [
         "Armor",
         "Primary",
-        "Alien"
+        "Alien",
+        "IATW",
+        ""
       ],
       [
         "Armor",
         "Primary",
-        "Animal"
+        "Animal",
+        "IATW",
+        ""
       ],
       [
         "Armor-Piercing Attack",
         "Secondary",
-        "Alien"
+        "Alien",
+        "IATW",
+        ""
       ],
       [
         "Armor-Piercing Attack",
         "Secondary",
-        "Animal"
+        "Animal",
+        "IATW",
+        ""
       ],
       [
         "Armor-Piercing Attack",
         "Secondary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Armor-Piercing Attack",
         "Secondary",
-        "Time"
+        "Time",
+        "IATW",
+        ""
       ],
       [
         "Armor-Piercing Attack",
         "Secondary",
-        "Chemistry"
+        "Chemistry",
+        "IATW",
+        ""
       ],
       [
         "Astral Projection",
         "Primary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Astral Projection: Astral Form",
         "Secondary",
-        "Occult"
+        "Occult",
+        "IATW",
+        "Astral Projection"
       ],
       [
         "Astral Projection: Astral Shifting",
         "Primary",
-        "Occult"
+        "Occult",
+        "IATW",
+        "Astral Projection"
       ],
       [
         "Attract Creatures",
         "Primary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Awareness",
         "Secondary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Awareness",
         "Secondary",
-        "Psionic"
+        "Psionic",
+        "IATW",
+        ""
       ],
       [
         "Banishment",
         "Secondary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Berserker",
         "Secondary",
-        "Gimmick"
+        "Gimmick",
+        "IATW",
+        ""
       ],
       [
         "Berserker",
         "Secondary",
-        "Animal"
+        "Animal",
+        "IATW",
+        ""
       ],
       [
         "Bestow Ability/Power",
         "Secondary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Bestow Ability/Power",
         "Secondary",
-        "Mutated"
+        "Mutated",
+        "IATW",
+        ""
       ],
       [
         "Bite",
         "Secondary",
-        "Alien"
+        "Alien",
+        "IATW",
+        ""
       ],
       [
         "Bite",
         "Secondary",
-        "Animal"
+        "Animal",
+        "IATW",
+        ""
       ],
       [
         "Bite: Grappling",
         "Secondary",
-        "Alien"
+        "Alien",
+        "IATW",
+        "Bite"
       ],
       [
         "Bite: Grappling",
         "Secondary",
-        "Animal"
+        "Animal",
+        "IATW",
+        "Bite"
       ],
       [
         "Bite: Injecting",
         "Primary",
-        "Alien"
+        "Alien",
+        "IATW",
+        "Bite"
       ],
       [
         "Bite: Injecting",
         "Primary",
-        "Animal"
+        "Animal",
+        "IATW",
+        "Bite"
       ],
       [
         "Bite: Armor-Piercing",
         "Secondary",
-        "Alien"
+        "Alien",
+        "IATW",
+        "Bite"
       ],
       [
         "Bite: Armor-Piercing",
         "Secondary",
-        "Animal"
+        "Animal",
+        "IATW",
+        "Bite"
       ],
       [
         "Blackout",
         "Secondary",
-        "Darkness"
+        "Darkness",
+        "IATW",
+        ""
       ],
       [
         "Blackout",
         "Secondary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Blending",
         "Secondary",
-        "Alien"
+        "Alien",
+        "IATW",
+        ""
       ],
       [
         "Blending",
         "Secondary",
-        "Animal"
+        "Animal",
+        "IATW",
+        ""
       ],
       [
         "Blending",
         "Secondary",
-        "Darkness"
+        "Darkness",
+        "IATW",
+        ""
       ],
       [
         "Blending",
         "Secondary",
-        "Shapeshift"
+        "Shapeshift",
+        "IATW",
+        ""
       ],
       [
         "Blinding Flash",
         "Secondary",
-        "Light"
+        "Light",
+        "IATW",
+        ""
       ],
       [
         "Body Material Translation",
         "Primary",
-        "Chemistry"
+        "Chemistry",
+        "IATW",
+        ""
       ],
       [
         "Body Material Translation",
         "Primary",
-        "Shapeshift"
+        "Shapeshift",
+        "IATW",
+        ""
       ],
       [
         "Body Material Translation: Absorption",
         "Primary",
-        "Chemistry"
+        "Chemistry",
+        "IATW",
+        "Body Material Translation"
       ],
       [
         "Body Material Translation: Absorption",
         "Primary",
-        "Shapeshift"
+        "Shapeshift",
+        "IATW",
+        "Body Material Translation"
       ],
       [
         "Bouncing",
         "Primary",
-        "Alien"
+        "Alien",
+        "IATW",
+        ""
       ],
       [
         "Bouncing",
         "Primary",
-        "Mutated"
+        "Mutated",
+        "IATW",
+        ""
       ],
       [
         "Bouncing",
         "Primary",
-        "Shapeshift"
+        "Shapeshift",
+        "IATW",
+        ""
       ],
       [
         "Burrowing",
         "Secondary",
-        "Animal"
+        "Animal",
+        "IATW",
+        ""
       ],
       [
         "Burrowing",
         "Secondary",
-        "Alien"
+        "Alien",
+        "IATW",
+        ""
       ],
       [
         "Burrowing",
         "Secondary",
-        "Earth"
+        "Earth",
+        "IATW",
+        ""
       ],
       [
         "Cause Invisibility",
         "Secondary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Cause Invisibility",
         "Secondary",
-        "Physics"
+        "Physics",
+        "IATW",
+        ""
       ],
       [
         "Cause Invisibility",
         "Secondary",
-        "Psionic"
+        "Psionic",
+        "IATW",
+        ""
       ],
       [
         "Chemical Transmutation",
         "Primary",
-        "Chemistry"
+        "Chemistry",
+        "IATW",
+        ""
       ],
       [
         "Claws/Horns/Blade",
         "Secondary",
-        "Alien"
+        "Alien",
+        "IATW",
+        ""
       ],
       [
         "Claws/Horns/Blade",
         "Secondary",
-        "Animal"
+        "Animal",
+        "IATW",
+        ""
       ],
       [
         "Claws: Pincer",
         "Secondary",
-        "Alien"
+        "Alien",
+        "IATW",
+        "Claws/Horns/Blade"
       ],
       [
         "Claws: Pincer",
         "Secondary",
-        "Animal"
+        "Animal",
+        "IATW",
+        "Claws/Horns/Blade"
       ],
       [
         "Claws/Blade: Armor-Piercing",
         "Primary",
-        "Alien"
+        "Alien",
+        "IATW",
+        "Claws/Horns/Blade"
       ],
       [
         "Claws/Blade: Armor-Piercing",
         "Primary",
-        "Animal"
+        "Animal",
+        "IATW",
+        "Claws/Horns/Blade"
       ],
       [
         "Climbing",
         "Secondary",
-        "Alien"
+        "Alien",
+        "IATW",
+        ""
       ],
       [
         "Climbing",
         "Secondary",
-        "Animal"
+        "Animal",
+        "IATW",
+        ""
       ],
       [
         "Climbing Claws",
         "Secondary",
-        "Alien"
+        "Alien",
+        "IATW",
+        "Claws/Horns/Blade"
       ],
       [
         "Climbing Claws",
         "Secondary",
-        "Animal"
+        "Animal",
+        "IATW",
+        "Claws/Horns/Blade"
       ],
       [
         "Clone Self",
         "Primary",
-        "Physics"
+        "Physics",
+        "IATW",
+        ""
       ],
       [
         "Clone Self",
         "Primary",
-        "Alien"
+        "Alien",
+        "IATW",
+        ""
       ],
       [
         "Clone Self",
         "Primary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Clone Self",
         "Primary",
-        "Time"
+        "Time",
+        "IATW",
+        ""
       ],
       [
         "Clone Self",
         "Primary",
-        "Chemistry"
+        "Chemistry",
+        "IATW",
+        ""
       ],
       [
         "Clone Others",
         "Primary",
-        "Physics"
+        "Physics",
+        "IATW",
+        ""
       ],
       [
         "Clone Others",
         "Primary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Clone Others",
         "Primary",
-        "Time"
+        "Time",
+        "IATW",
+        ""
       ],
       [
         "Color Control",
         "Secondary",
-        "Physics"
+        "Physics",
+        "IATW",
+        ""
       ],
       [
         "Color Control",
         "Secondary",
-        "Light"
+        "Light",
+        "IATW",
+        ""
       ],
       [
         "Contagion",
         "Primary",
-        "Chemistry"
+        "Chemistry",
+        "IATW",
+        ""
       ],
       [
         "Create and Control Undead",
         "Primary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
-        "Create and Control Dead: Corpse-Drones",
+        "Create and Control Undead: Corpse-Drones",
         "Primary",
-        "Tech"
+        "Tech",
+        "IATW",
+        "Create and Control Undead"
       ],
       [
         "Curse",
         "Primary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Custom Vehicle",
         "Primary",
-        "Gimmick"
+        "Gimmick",
+        "IATW",
+        ""
       ],
       [
         "Damage Absorption",
         "Primary",
-        "Physics"
+        "Physics",
+        "IATW",
+        ""
       ],
       [
         "Damage Transferrence",
         "Primary",
-        "Physics"
+        "Physics",
+        "IATW",
+        ""
       ],
       [
         "Damage Transferrence",
         "Primary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Density Decrease",
         "Primary",
-        "Physics"
+        "Physics",
+        "IATW",
+        ""
       ],
       [
         "Density Increase",
         "Primary",
-        "Physics"
+        "Physics",
+        "IATW",
+        ""
       ],
       [
         "Dimensional Travel",
         "Secondary",
-        "Physics"
+        "Physics",
+        "IATW",
+        ""
       ],
       [
         "Dimensional Travel",
         "Secondary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Dimensional Travel: Portal Attack",
         "Primary",
-        "Physics"
+        "Physics",
+        "IATW",
+        "Dimensional Travel"
       ],
       [
         "Dimensional Travel: Portal Attack",
         "Primary",
-        "Occult"
+        "Occult",
+        "IATW",
+        "Dimensional Travel"
       ],
       [
         "Disorient",
         "Secondary",
-        "Chemistry"
+        "Chemistry",
+        "IATW",
+        ""
       ],
       [
         "Disorient",
         "Secondary",
-        "Light"
+        "Light",
+        "IATW",
+        ""
       ],
       [
         "Disorient",
         "Secondary",
-        "Psionic"
+        "Psionic",
+        "IATW",
+        ""
       ],
       [
         "Disorient",
         "Secondary",
-        "Sonic"
+        "Sonic",
+        "IATW",
+        ""
       ],
       [
         "Disrupt Tech",
         "Secondary",
-        "Tech"
+        "Tech",
+        "IATW",
+        ""
       ],
       [
         "Disrupt Tech",
         "Secondary",
-        "Electricity"
+        "Electricity",
+        "IATW",
+        ""
       ],
       [
         "Disrupt Tech-Passive",
         "Secondary",
-        "Tech"
+        "Tech",
+        "IATW",
+        ""
       ],
       [
         "Disrupt Tech-Passive",
         "Secondary",
-        "Electricity"
+        "Electricity",
+        "IATW",
+        ""
       ],
       [
         "Distort Magic",
         "Secondary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Distort Magic: Passive Aura/Touch",
         "Secondary",
-        "Occult"
+        "Occult",
+        "IATW",
+        "Distort Magic"
       ],
       [
         "Dream Travel",
         "Secondary",
-        "Psionic"
+        "Psionic",
+        "IATW",
+        ""
       ],
       [
         "Dream Travel",
         "Secondary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Elongation",
         "Secondary",
-        "Alien"
+        "Alien",
+        "IATW",
+        ""
       ],
       [
         "Elongation",
         "Secondary",
-        "Tech"
+        "Tech",
+        "IATW",
+        ""
       ],
       [
         "Elongation",
         "Secondary",
-        "Shapeshift"
+        "Shapeshift",
+        "IATW",
+        ""
       ],
       [
         "Emotion Control",
         "Primary",
-        "Psionic"
+        "Psionic",
+        "IATW",
+        ""
       ],
       [
         "Emotion Control",
         "Primary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Emotion Control: Influence",
         "Primary",
-        "Psionic"
+        "Psionic",
+        "IATW",
+        "Emotion Control"
       ],
       [
         "Emotion Control: Influence",
         "Primary",
-        "Occult"
+        "Occult",
+        "IATW",
+        "Emotion Control"
       ],
       [
         "Emotion Control: Reverse Emotion",
         "Primary",
-        "Psionic"
+        "Psionic",
+        "IATW",
+        "Emotion Control"
       ],
       [
         "Emotion Control: Reverse Emotion",
         "Primary",
-        "Occult"
+        "Occult",
+        "IATW",
+        "Emotion Control"
       ],
       [
         "Emotion Control: Limited",
         "Primary",
-        "Psionic"
+        "Psionic",
+        "IATW",
+        "Emotion Control"
       ],
       [
         "Emotion Control: Limited",
         "Primary",
-        "Occult"
+        "Occult",
+        "IATW",
+        "Emotion Control"
       ],
       [
         "Empathy",
         "Secondary",
-        "Psionic"
+        "Psionic",
+        "IATW",
+        ""
       ],
       [
         "Empathy: Permanent Aura",
         "Secondary",
-        "Psionic"
+        "Psionic",
+        "IATW",
+        "Empathy"
       ],
       [
         "Energy Attack",
         "Primary",
-        "Energy"
+        "Energy",
+        "IATW",
+        ""
       ],
       [
         "Energy Attack",
         "Primary",
-        "Ice"
+        "Ice",
+        "IATW",
+        ""
       ],
       [
         "Energy Attack",
         "Primary",
-        "Elemental"
+        "Darkness",
+        "IATW",
+        ""
       ],
       [
         "Energy Attack",
         "Primary",
-        "Darkness"
+        "Electricity",
+        "IATW",
+        ""
       ],
       [
         "Energy Attack",
         "Primary",
-        "Electricity"
+        "Fire",
+        "IATW",
+        ""
       ],
       [
         "Energy Attack",
         "Primary",
-        "Fire"
+        "Radiation",
+        "IATW",
+        ""
       ],
       [
         "Energy Attack",
         "Primary",
-        "Radiation"
+        "Chemistry",
+        "IATW",
+        ""
       ],
       [
         "Energy Attack",
         "Primary",
-        "Chemistry"
+        "Physics",
+        "IATW",
+        ""
       ],
       [
         "Energy Attack",
         "Primary",
-        "Physics"
+        "Light",
+        "IATW",
+        ""
       ],
       [
         "Energy Attack",
         "Primary",
-        "Light"
-      ],
-      [
-        "Energy Attack",
-        "Primary",
-        "Sonic"
+        "Sonic",
+        "IATW",
+        ""
       ],
       [
         "Energy Attack: Pain",
         "Primary",
-        "Psionic"
+        "Psionic",
+        "IATW",
+        "Energy Attack"
       ],
       [
         "Plasma Cutter",
         "Primary",
-        "Energy"
+        "Energy",
+        "IATW",
+        ""
       ],
       [
         "Energy Aura",
         "Primary",
-        "Energy"
+        "Energy",
+        "IATW",
+        ""
       ],
       [
         "Energy Aura",
         "Primary",
-        "Ice"
+        "Ice",
+        "IATW",
+        ""
       ],
       [
         "Energy Aura",
         "Primary",
-        "Elemental"
+        "Darkness",
+        "IATW",
+        ""
       ],
       [
         "Energy Aura",
         "Primary",
-        "Darkness"
+        "Electricity",
+        "IATW",
+        ""
       ],
       [
         "Energy Aura",
         "Primary",
-        "Electricity"
+        "Fire",
+        "IATW",
+        ""
       ],
       [
         "Energy Aura",
         "Primary",
-        "Fire"
-      ],
-      [
-        "Energy Aura",
-        "Primary",
-        "Radiation"
+        "Radiation",
+        "IATW",
+        ""
       ],
       [
         "Energy Constructs",
         "Primary",
-        "Energy"
+        "Energy",
+        "IATW",
+        ""
       ],
       [
         "Energy Constructs",
         "Primary",
-        "Fire"
+        "Fire",
+        "IATW",
+        ""
       ],
       [
         "Energy Constructs",
         "Primary",
-        "Psionic"
+        "Psionic",
+        "IATW",
+        ""
       ],
       [
         "Energy Constructs",
         "Primary",
-        "Elemental"
-      ],
-      [
-        "Energy Constructs",
-        "Primary",
-        "Darkness"
+        "Darkness",
+        "IATW",
+        ""
       ],
       [
         "Energy Detection",
         "Secondary",
-        "Energy"
+        "Energy",
+        "IATW",
+        ""
       ],
       [
         "Energy Detection",
         "Secondary",
-        "Electricity"
+        "Electricity",
+        "IATW",
+        ""
       ],
       [
         "Energy Detection",
         "Secondary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Energy Detection",
         "Secondary",
-        "Fire"
+        "Fire",
+        "IATW",
+        ""
       ],
       [
         "Energy Detection",
         "Secondary",
-        "Mutated"
+        "Mutated",
+        "IATW",
+        ""
       ],
       [
         "Energy Detection",
         "Secondary",
-        "Psionic"
+        "Psionic",
+        "IATW",
+        ""
       ],
       [
-        "Energy/Matter Conversion Powers",
+        "Energy/Matter Conversion",
         "Primary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
-        "Energy/Matter Conversion Powers",
+        "Energy/Matter Conversion",
         "Primary",
-        "Ice"
+        "Ice",
+        "IATW",
+        ""
       ],
       [
-        "Energy/Matter Conversion Powers",
+        "Energy/Matter Conversion",
         "Primary",
-        "Air"
+        "Air",
+        "IATW",
+        ""
       ],
       [
-        "Energy/Matter Conversion Powers",
+        "Energy/Matter Conversion",
         "Primary",
-        "Water"
+        "Water",
+        "IATW",
+        ""
       ],
       [
-        "Energy/Matter Conversion Powers",
+        "Energy/Matter Conversion",
         "Primary",
-        "Elemental"
+        "Electricity",
+        "IATW",
+        ""
       ],
       [
-        "Energy/Matter Conversion Powers",
+        "Energy/Matter Conversion",
         "Primary",
-        "Electricity"
+        "Physics",
+        "IATW",
+        ""
       ],
       [
-        "Energy/Matter Conversion Powers",
+        "Energy/Matter Conversion",
         "Primary",
-        "Physics"
+        "Light",
+        "IATW",
+        ""
       ],
       [
-        "Energy/Matter Conversion Powers",
+        "Energy/Matter Conversion",
         "Primary",
-        "Light"
+        "Chemistry",
+        "IATW",
+        ""
       ],
       [
-        "Energy/Matter Conversion Powers",
+        "Energy/Matter Conversion",
         "Primary",
-        "Chemistry"
+        "Radiation",
+        "IATW",
+        ""
       ],
       [
-        "Energy/Matter Conversion Powers",
+        "Energy/Matter Conversion",
         "Primary",
-        "Radiation"
+        "Sonic",
+        "IATW",
+        ""
       ],
       [
-        "Energy/Matter Conversion Powers",
+        "Energy/Matter Conversion: Aura/Touch",
         "Primary",
-        "Sonic"
+        "Occult",
+        "IATW",
+        "Energy/Matter Conversion"
       ],
       [
-        "Energy/Matter Conversion: Passive Energy/Matter Aura/Touch",
+        "Energy/Matter Conversion: Aura/Touch",
         "Primary",
-        "Occult"
+        "Ice",
+        "IATW",
+        "Energy/Matter Conversion"
       ],
       [
-        "Energy/Matter Conversion: Passive Energy/Matter Aura/Touch",
+        "Energy/Matter Conversion: Aura/Touch",
         "Primary",
-        "Ice"
+        "Air",
+        "IATW",
+        "Energy/Matter Conversion"
       ],
       [
-        "Energy/Matter Conversion: Passive Energy/Matter Aura/Touch",
+        "Energy/Matter Conversion: Aura/Touch",
         "Primary",
-        "Air"
+        "Water",
+        "IATW",
+        "Energy/Matter Conversion"
       ],
       [
-        "Energy/Matter Conversion: Passive Energy/Matter Aura/Touch",
+        "Energy/Matter Conversion: Aura/Touch",
         "Primary",
-        "Water"
+        "Electricity",
+        "IATW",
+        "Energy/Matter Conversion"
       ],
       [
-        "Energy/Matter Conversion: Passive Energy/Matter Aura/Touch",
+        "Energy/Matter Conversion: Aura/Touch",
         "Primary",
-        "Elemental"
+        "Physics",
+        "IATW",
+        "Energy/Matter Conversion"
       ],
       [
-        "Energy/Matter Conversion: Passive Energy/Matter Aura/Touch",
+        "Energy/Matter Conversion: Aura/Touch",
         "Primary",
-        "Electricity"
+        "Light",
+        "IATW",
+        "Energy/Matter Conversion"
       ],
       [
-        "Energy/Matter Conversion: Passive Energy/Matter Aura/Touch",
+        "Energy/Matter Conversion: Aura/Touch",
         "Primary",
-        "Physics"
+        "Chemistry",
+        "IATW",
+        "Energy/Matter Conversion"
       ],
       [
-        "Energy/Matter Conversion: Passive Energy/Matter Aura/Touch",
+        "Energy/Matter Conversion: Aura/Touch",
         "Primary",
-        "Light"
+        "Radiation",
+        "IATW",
+        "Energy/Matter Conversion"
       ],
       [
-        "Energy/Matter Conversion: Passive Energy/Matter Aura/Touch",
+        "Energy/Matter Conversion: Aura/Touch",
         "Primary",
-        "Chemistry"
-      ],
-      [
-        "Energy/Matter Conversion: Passive Energy/Matter Aura/Touch",
-        "Primary",
-        "Radiation"
-      ],
-      [
-        "Energy/Matter Conversion: Passive Energy/Matter Aura/Touch",
-        "Primary",
-        "Sonic"
-      ],
-      [
-        "Energy Vampirism",
-        "Primary",
-        "Energy"
-      ],
-      [
-        "Energy Vampirism",
-        "Primary",
-        "Electricity"
-      ],
-      [
-        "Energy Vampirism",
-        "Primary",
-        "Fire"
-      ],
-      [
-        "Energy Vampirism",
-        "Primary",
-        "Ice"
-      ],
-      [
-        "Energy Vampirism",
-        "Primary",
-        "Elemental"
-      ],
-      [
-        "Energy Vampirism",
-        "Primary",
-        "Physics"
-      ],
-      [
-        "Energy Vampirism",
-        "Primary",
-        "Light"
+        "Sonic",
+        "IATW",
+        "Energy/Matter Conversion"
       ],
       [
         "Energy Vampirism",
         "Primary",
-        "Darkness"
+        "Energy",
+        "IATW",
+        ""
       ],
       [
         "Energy Vampirism",
         "Primary",
-        "Occult"
+        "Electricity",
+        "IATW",
+        ""
       ],
       [
         "Energy Vampirism",
         "Primary",
-        "Radiation"
+        "Fire",
+        "IATW",
+        ""
       ],
       [
         "Energy Vampirism",
         "Primary",
-        "Sonic"
+        "Ice",
+        "IATW",
+        ""
+      ],
+      [
+        "Energy Vampirism",
+        "Primary",
+        "Physics",
+        "IATW",
+        ""
+      ],
+      [
+        "Energy Vampirism",
+        "Primary",
+        "Light",
+        "IATW",
+        ""
+      ],
+      [
+        "Energy Vampirism",
+        "Primary",
+        "Darkness",
+        "IATW",
+        ""
+      ],
+      [
+        "Energy Vampirism",
+        "Primary",
+        "Occult",
+        "IATW",
+        ""
+      ],
+      [
+        "Energy Vampirism",
+        "Primary",
+        "Radiation",
+        "IATW",
+        ""
+      ],
+      [
+        "Energy Vampirism",
+        "Primary",
+        "Sonic",
+        "IATW",
+        ""
       ],
       [
         "Energy Vampirism: Magic",
         "Secondary",
-        "Energy"
+        "Energy",
+        "IATW",
+        "Energy Vampirism"
       ],
       [
         "Energy Vampirism: Magic",
         "Secondary",
-        "Occult"
+        "Occult",
+        "IATW",
+        "Energy Vampirism"
       ],
       [
         "Energy Vampirism: Powers",
         "Primary",
-        "Energy"
+        "Energy",
+        "IATW",
+        "Energy Vampirism"
       ],
       [
         "Energy Vampirism: Powers",
         "Primary",
-        "Mutated"
+        "Mutated",
+        "IATW",
+        "Energy Vampirism"
       ],
       [
         "Enhance Magic",
         "Secondary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Enhance Magic :  Aura",
         "Secondary",
-        "Occult"
+        "Occult",
+        "IATW",
+        "Enhance Magic"
       ],
       [
         "Enhanced Agility",
         "Secondary",
-        "Alien"
+        "Alien",
+        "IATW",
+        ""
       ],
       [
         "Enhanced Agility",
         "Secondary",
-        "Animal"
+        "Animal",
+        "IATW",
+        ""
       ],
       [
         "Enhanced Appeal",
         "Secondary",
-        "Alien"
+        "Alien",
+        "IATW",
+        ""
       ],
       [
         "Enhanced Appeal",
         "Secondary",
-        "Psionic"
+        "Psionic",
+        "IATW",
+        ""
       ],
       [
         "Enhanced Appeal: Persuasion Aura",
         "Secondary",
-        "Alien"
+        "Alien",
+        "IATW",
+        "Enhanced Appeal"
       ],
       [
         "Enhanced Appeal: Persuasion Aura",
         "Secondary",
-        "Psionic"
+        "Psionic",
+        "IATW",
+        "Enhanced Appeal"
       ],
       [
         "Enhanced Calm",
         "Secondary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Enhanced Calm",
         "Secondary",
-        "Psionic"
+        "Psionic",
+        "IATW",
+        ""
       ],
       [
         "Enhanced Calm",
         "Secondary",
-        "Tech"
+        "Tech",
+        "IATW",
+        ""
       ],
       [
         "Enhanced Hearing",
         "Secondary",
-        "Hypersensory"
+        "Hypersensory",
+        "IATW",
+        ""
       ],
       [
         "Enhanced Hearing",
         "Secondary",
-        "Animal"
+        "Animal",
+        "IATW",
+        ""
       ],
       [
         "Enhanced Hearing",
         "Secondary",
-        "Sonic"
+        "Sonic",
+        "IATW",
+        ""
       ],
       [
         "Enhanced Intellect",
         "Primary",
-        "Psionic"
+        "Psionic",
+        "IATW",
+        ""
       ],
       [
         "Enhanced Intellect",
         "Primary",
-        "Alien"
+        "Alien",
+        "IATW",
+        ""
       ],
       [
         "Enhanced Intellect",
         "Primary",
-        "Tech"
+        "Tech",
+        "IATW",
+        ""
       ],
       [
         "Enhanced Sight",
         "Secondary",
-        "Hypersensory"
+        "Hypersensory",
+        "IATW",
+        ""
       ],
       [
         "Enhanced Sight",
         "Secondary",
-        "Animal"
+        "Animal",
+        "IATW",
+        ""
       ],
       [
         "Enhanced Sight: Microscopic Only",
         "Secondary",
-        "Hypersensory"
+        "Hypersensory",
+        "IATW",
+        "Enhanced Sight"
       ],
       [
         "Enhanced Sight: Microscopic Only",
         "Secondary",
-        "Animal"
+        "Animal",
+        "IATW",
+        "Enhanced Sight"
       ],
       [
         "Enhanced Sight: Telescopic Only",
         "Secondary",
-        "Hypersensory"
+        "Hypersensory",
+        "IATW",
+        "Enhanced Sight"
       ],
       [
         "Enhanced Sight: Telescopic Only",
         "Secondary",
-        "Animal"
+        "Animal",
+        "IATW",
+        "Enhanced Sight"
       ],
       [
-        "Enhanced Smell+ Taste & Touch",
+        "Enhanced Smell & Taste & Touch",
         "Secondary",
-        "Hypersensory"
+        "Hypersensory",
+        "IATW",
+        ""
       ],
       [
-        "Enhanced Smell+ Taste & Touch",
+        "Enhanced Smell & Taste & Touch",
         "Secondary",
-        "Animal"
+        "Animal",
+        "IATW",
+        ""
       ],
       [
         "Enhanced Smell & Taste",
         "Secondary",
-        "Hypersensory"
+        "Hypersensory",
+        "IATW",
+        "Enhanced Smell & Taste & Touch"
       ],
       [
         "Enhanced Smell & Taste",
         "Secondary",
-        "Animal"
+        "Animal",
+        "IATW",
+        "Enhanced Smell & Taste & Touch"
       ],
       [
         "Enhanced Land Speed",
         "Secondary",
-        "Alien"
+        "Alien",
+        "IATW",
+        ""
       ],
       [
         "Enhanced Land Speed",
         "Secondary",
-        "Animal"
+        "Animal",
+        "IATW",
+        ""
       ],
       [
         "Enhanced Perception",
         "Secondary",
-        "Alien"
+        "Alien",
+        "IATW",
+        ""
       ],
       [
         "Enhanced Perception",
         "Secondary",
-        "Animal"
+        "Animal",
+        "IATW",
+        ""
       ],
       [
         "Enhanced Toughness",
         "Secondary",
-        "Alien"
+        "Alien",
+        "IATW",
+        ""
       ],
       [
         "Enhanced Toughness",
         "Secondary",
-        "Animal"
+        "Animal",
+        "IATW",
+        ""
       ],
       [
         "Enhanced Toughness: Enhanced Strength",
         "Secondary",
-        "Alien"
+        "Alien",
+        "IATW",
+        "Enhanced Toughness"
       ],
       [
         "Enhanced Toughness: Enhanced Strength",
         "Secondary",
-        "Animal"
+        "Animal",
+        "IATW",
+        "Enhanced Toughness"
       ],
       [
         "Enhanced Toughness: Enhanced Durability",
         "Secondary",
-        "Alien"
+        "Alien",
+        "IATW",
+        "Enhanced Toughness"
       ],
       [
         "Enhanced Toughness: Enhanced Durability",
         "Secondary",
-        "Animal"
+        "Animal",
+        "IATW",
+        "Enhanced Toughness"
       ],
       [
         "ESP/Scrying",
         "Secondary",
-        "Psionic"
+        "Psionic",
+        "IATW",
+        ""
       ],
       [
         "ESP/Scrying",
         "Secondary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "ESP/Scrying: Clairaudience",
         "Secondary",
-        "Psionic"
+        "Psionic",
+        "IATW",
+        "ESP/Scrying"
       ],
       [
         "ESP/Scrying: Clairaudience",
         "Secondary",
-        "Tech"
+        "Tech",
+        "IATW",
+        "ESP/Scrying"
       ],
       [
         "ESP/Scrying: Clairaudience",
         "Secondary",
-        "Sound"
+        "Sonic",
+        "IATW",
+        "ESP/Scrying"
       ],
       [
         "ESP/Scrying: Clairvoyance",
         "Secondary",
-        "Psionic"
+        "Psionic",
+        "IATW",
+        "ESP/Scrying"
       ],
       [
         "ESP/Scrying: Clairvoyance",
         "Secondary",
-        "Occult"
+        "Occult",
+        "IATW",
+        "ESP/Scrying"
       ],
       [
         "ESP/Scrying: Clairvoyance",
         "Secondary",
-        "Sonic"
+        "Sonic",
+        "IATW",
+        "ESP/Scrying"
       ],
       [
         "Extra Eyes",
         "Secondary",
-        "Alien"
+        "Alien",
+        "IATW",
+        ""
       ],
       [
         "Extra Eyes",
         "Secondary",
-        "Animal"
+        "Animal",
+        "IATW",
+        ""
       ],
       [
         "Extra Eyes",
         "Secondary",
-        "Hypersensory"
+        "Hypersensory",
+        "IATW",
+        ""
       ],
       [
         "Extra Limb",
         "Secondary",
-        "Alien"
+        "Alien",
+        "IATW",
+        ""
       ],
       [
         "Extra Limb",
         "Secondary",
-        "Animal"
+        "Animal",
+        "IATW",
+        ""
       ],
       [
         "Extra Limb: Striking",
         "Secondary",
-        "Alien"
+        "Alien",
+        "IATW",
+        "Extra Limb"
       ],
       [
         "Extra Limb: Striking",
         "Secondary",
-        "Animal"
+        "Animal",
+        "IATW",
+        "Extra Limb"
       ],
       [
         "Exorcism",
         "Secondary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Flatness",
         "Secondary",
-        "Physics"
+        "Physics",
+        "IATW",
+        ""
       ],
       [
         "Flight",
         "Secondary",
-        "Air"
+        "Air",
+        "IATW",
+        ""
       ],
       [
         "Flight",
         "Secondary",
-        "Mutated"
+        "Mutated",
+        "IATW",
+        ""
       ],
       [
         "Flight: Rocket flight",
         "Secondary",
-        "Tech"
+        "Tech",
+        "IATW",
+        "Flight"
       ],
       [
         "Flight: Rocket flight",
         "Secondary",
-        "Fire"
+        "Fire",
+        "IATW",
+        "Flight"
       ],
       [
         "Flight: Gliding",
         "Secondary",
-        "Alien"
+        "Alien",
+        "IATW",
+        "Flight"
       ],
       [
         "Flight: Gliding",
         "Secondary",
-        "Animal"
+        "Animal",
+        "IATW",
+        "Flight"
       ],
       [
         "Flight: Gliding",
         "Secondary",
-        "Air"
+        "Air",
+        "IATW",
+        "Flight"
       ],
       [
         "Flight: Winged",
         "Secondary",
-        "Air"
+        "Air",
+        "IATW",
+        "Flight"
       ],
       [
         "Flight: Winged",
         "Secondary",
-        "Mutated"
+        "Mutated",
+        "IATW",
+        "Flight"
       ],
       [
         "Force Field",
         "Secondary",
-        "Psionic"
+        "Psionic",
+        "IATW",
+        ""
       ],
       [
         "Force Field",
         "Secondary",
-        "Tech"
+        "Tech",
+        "IATW",
+        ""
       ],
       [
         "Force Field",
         "Secondary",
-        "Physics"
+        "Physics",
+        "IATW",
+        ""
       ],
       [
         "Force Field Projection",
         "Primary",
-        "Psionic"
+        "Psionic",
+        "IATW",
+        ""
       ],
       [
         "Force Field Projection",
         "Primary",
-        "Tech"
+        "Tech",
+        "IATW",
+        ""
       ],
       [
         "Force Field Projection",
         "Primary",
-        "Physics"
+        "Physics",
+        "IATW",
+        ""
       ],
       [
         "Force Field: Sliding Field",
         "Primary",
-        "Tech"
+        "Tech",
+        "IATW",
+        "Force Field"
       ],
       [
         "Force Field: Sliding Field",
         "Primary",
-        "Physics"
+        "Physics",
+        "IATW",
+        "Force Field"
       ],
       [
         "Force Field: Specialized",
         "Secondary",
-        "Psionic"
+        "Psionic",
+        "IATW",
+        "Force Field"
       ],
       [
         "Force Field: Specialized",
         "Secondary",
-        "Tech"
+        "Tech",
+        "IATW",
+        "Force Field"
       ],
       [
         "Force Field: Specialized",
         "Secondary",
-        "Physics"
+        "Physics",
+        "IATW",
+        "Force Field"
       ],
       [
         "Frictionlessness",
         "Secondary",
-        "Physics"
+        "Physics",
+        "IATW",
+        ""
       ],
       [
         "Frictionlessness",
         "Secondary",
-        "Chemistry"
+        "Chemistry",
+        "IATW",
+        ""
       ],
       [
         "Frictionlessness",
         "Secondary",
-        "Tech"
+        "Tech",
+        "IATW",
+        ""
       ],
       [
         "Geological Control",
         "Primary",
-        "Physics"
+        "Physics",
+        "IATW",
+        ""
       ],
       [
         "Geological Control",
         "Primary",
-        "Earth"
-      ],
-      [
-        "Geological Control",
-        "Primary",
-        "Elemental"
+        "Earth",
+        "IATW",
+        ""
       ],
       [
         "Gestalt Being",
         "Secondary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Gestalt Being",
         "Secondary",
-        "Alien"
+        "Alien",
+        "IATW",
+        ""
       ],
       [
         "Gestalt Being",
         "Secondary",
-        "Mutated"
+        "Mutated",
+        "IATW",
+        ""
       ],
       [
         "Giant Size",
         "Primary",
-        "Mutated"
+        "Mutated",
+        "IATW",
+        ""
       ],
       [
         "Giant Size",
         "Primary",
-        "Physics"
+        "Physics",
+        "IATW",
+        ""
       ],
       [
         "Giant Size: Permanent",
         "Secondary",
-        "Alien"
+        "Alien",
+        "IATW",
+        "Giant Size"
       ],
       [
         "Glow",
         "Secondary",
-        "Alien"
+        "Alien",
+        "IATW",
+        ""
       ],
       [
         "Glow",
         "Secondary",
-        "Animal"
+        "Animal",
+        "IATW",
+        ""
       ],
       [
         "Glow",
         "Secondary",
-        "Light"
+        "Light",
+        "IATW",
+        ""
       ],
       [
         "Glow",
         "Secondary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Glow",
         "Secondary",
-        "Energy"
+        "Energy",
+        "IATW",
+        ""
       ],
       [
         "Glow",
         "Secondary",
-        "Electricity"
+        "Electricity",
+        "IATW",
+        ""
       ],
       [
         "Glow",
         "Secondary",
-        "Fire"
+        "Fire",
+        "IATW",
+        ""
       ],
       [
         "Glow: Permanent",
         "Secondary",
-        "Alien"
+        "Alien",
+        "IATW",
+        "Glow"
       ],
       [
         "Glow: Permanent",
         "Secondary",
-        "Animal"
+        "Animal",
+        "IATW",
+        "Glow"
       ],
       [
         "Glow: Permanent",
         "Secondary",
-        "Light"
+        "Light",
+        "IATW",
+        "Glow"
       ],
       [
         "Glow: Permanent",
         "Secondary",
-        "Occult"
+        "Occult",
+        "IATW",
+        "Glow"
       ],
       [
         "Glow: Permanent",
         "Secondary",
-        "Energy"
+        "Energy",
+        "IATW",
+        "Glow"
       ],
       [
         "Glow: Permanent",
         "Secondary",
-        "Electricity"
+        "Electricity",
+        "IATW",
+        "Glow"
       ],
       [
         "Glow: Permanent",
         "Secondary",
-        "Fire"
+        "Fire",
+        "IATW",
+        "Glow"
       ],
       [
         "Glow: Variable",
         "Secondary",
-        "Alien"
+        "Alien",
+        "IATW",
+        "Glow"
       ],
       [
         "Glow: Variable",
         "Secondary",
-        "Animal"
+        "Animal",
+        "IATW",
+        "Glow"
       ],
       [
         "Glow: Variable",
         "Secondary",
-        "Light"
+        "Light",
+        "IATW",
+        "Glow"
       ],
       [
         "Glow: Variable",
         "Secondary",
-        "Occult"
+        "Occult",
+        "IATW",
+        "Glow"
       ],
       [
         "Glow: Variable",
         "Secondary",
-        "Energy"
+        "Energy",
+        "IATW",
+        "Glow"
       ],
       [
         "Glow: Variable",
         "Secondary",
-        "Electricity"
+        "Electricity",
+        "IATW",
+        "Glow"
       ],
       [
         "Glow: Variable",
         "Secondary",
-        "Fire"
+        "Fire",
+        "IATW",
+        "Glow"
       ],
       [
         "Grow Objects",
         "Primary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Grow Objects",
         "Primary",
-        "Physics"
+        "Physics",
+        "IATW",
+        ""
       ],
       [
         "Healing",
         "Secondary",
-        "Mutated"
+        "Mutated",
+        "IATW",
+        ""
       ],
       [
         "Healing",
         "Secondary",
-        "Time"
+        "Time",
+        "IATW",
+        ""
       ],
       [
         "Healing: Regeneration",
         "Secondary",
-        "Animal"
+        "Animal",
+        "IATW",
+        "Healing"
       ],
       [
         "Hybridize Creature",
         "Primary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Hybridize Creature",
         "Primary",
-        "Mutated"
+        "Mutated",
+        "IATW",
+        ""
       ],
       [
         "Hyper-Hacking",
         "Primary",
-        "Tech"
+        "Tech",
+        "IATW",
+        ""
       ],
       [
         "Hypnotic Suggestion",
         "Primary",
-        "Psionic"
+        "Psionic",
+        "IATW",
+        ""
       ],
       [
         "Hypnotic Suggestion: Static",
         "Primary",
-        "Psionic"
+        "Psionic",
+        "IATW",
+        "Hypnotic Suggestion"
       ],
       [
         "Illusion",
         "Primary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Illusion",
         "Primary",
-        "Psionic"
+        "Psionic",
+        "IATW",
+        ""
       ],
       [
         "Illusion",
         "Primary",
-        "Light"
+        "Light",
+        "IATW",
+        ""
       ],
       [
         "Illusory Figure",
         "Primary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Illusory Figure",
         "Primary",
-        "Psionic"
+        "Psionic",
+        "IATW",
+        ""
       ],
       [
         "Illusory Figure",
         "Primary",
-        "Light"
+        "Light",
+        "IATW",
+        ""
       ],
       [
         "Illusory Selves",
         "Primary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Illusory Selves",
         "Primary",
-        "Psionic"
+        "Psionic",
+        "IATW",
+        ""
       ],
       [
         "Illusory Selves",
         "Primary",
-        "Light"
+        "Light",
+        "IATW",
+        ""
       ],
       [
         "Illusory Sounds",
         "Secondary",
-        "Sonic"
-      ],
-      [
-        "Illusion",
-        "Primary",
-        "Occult"
-      ],
-      [
-        "Illusion",
-        "Primary",
-        "Psionic"
-      ],
-      [
-        "Illusion",
-        "Primary",
-        "Light"
+        "Sonic",
+        "IATW",
+        ""
       ],
       [
         "Immortality",
         "Primary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Immortality",
         "Primary",
-        "Mutated"
+        "Mutated",
+        "IATW",
+        ""
       ],
       [
         "Independent Body Part",
         "Secondary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Independent Body Part",
         "Secondary",
-        "Mutated"
+        "Mutated",
+        "IATW",
+        ""
       ],
       [
         "Independent Body Part",
         "Secondary",
-        "Tech"
+        "Tech",
+        "IATW",
+        ""
       ],
       [
         "Induce Amnesia",
         "Primary",
-        "Psionic"
+        "Psionic",
+        "IATW",
+        ""
       ],
       [
         "Induce Amnesia",
         "Primary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Induce Amnesia: Passive Aura/Touch",
         "Primary",
-        "Psionic"
+        "Psionic",
+        "IATW",
+        "Induce Amnesia"
       ],
       [
         "Induce Amnesia: Passive Aura/Touch",
         "Primary",
-        "Occult"
+        "Occult",
+        "IATW",
+        "Induce Amnesia"
       ],
       [
         "Induce Sleep",
         "Primary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Induce Sleep",
         "Primary",
-        "Mutated"
+        "Mutated",
+        "IATW",
+        ""
       ],
       [
         "Induce Sleep",
         "Primary",
-        "Chemistry"
-      ],
-      [
-        "Induce Sleep",
-        "Primary",
-        "Occult"
-      ],
-      [
-        "Induce Sleep",
-        "Primary",
-        "Mutated"
-      ],
-      [
-        "Induce Sleep",
-        "Primary",
-        "Chemistry"
+        "Chemistry",
+        "IATW",
+        ""
       ],
       [
         "Infrared/Thermal Vision",
         "Secondary",
-        "Hypersensory"
+        "Hypersensory",
+        "IATW",
+        ""
       ],
       [
         "Infrared/Thermal Vision",
         "Secondary",
-        "Animal"
+        "Animal",
+        "IATW",
+        ""
       ],
       [
         "Infrared/Thermal Vision",
         "Secondary",
-        "Tech"
+        "Tech",
+        "IATW",
+        ""
       ],
       [
         "Infrared/Thermal Vision Only",
         "Secondary",
-        "Hypersensory"
+        "Hypersensory",
+        "IATW",
+        "Infrared/Thermal Vision"
       ],
       [
         "Infrared/Thermal Vision Only",
         "Secondary",
-        "Animal"
+        "Animal",
+        "IATW",
+        "Infrared/Thermal Vision"
       ],
       [
         "Infrared/Thermal Vision Only",
         "Secondary",
-        "Tech"
+        "Tech",
+        "IATW",
+        "Infrared/Thermal Vision"
       ],
       [
         "Intangibility",
         "Primary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Intangibility",
         "Primary",
-        "Physics"
+        "Physics",
+        "IATW",
+        ""
       ],
       [
         "Intangibility",
         "Primary",
-        "Darkness"
+        "Darkness",
+        "IATW",
+        ""
       ],
       [
         "Intangibility",
         "Primary",
-        "Mutated"
-      ],
-      [
-        "Intangibility",
-        "Primary",
-        "Occult"
-      ],
-      [
-        "Intangibility",
-        "Primary",
-        "Physics"
-      ],
-      [
-        "Intangibility",
-        "Primary",
-        "Darkness"
-      ],
-      [
-        "Intangibility",
-        "Primary",
-        "Mutated"
+        "Mutated",
+        "IATW",
+        ""
       ],
       [
         "Internal Dimension",
         "Primary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Internal Dimension",
         "Primary",
-        "Physics"
+        "Physics",
+        "IATW",
+        ""
       ],
       [
         "Internal Dimension",
         "Primary",
-        "Darkness"
+        "Darkness",
+        "IATW",
+        ""
       ],
       [
         "Internal Database",
         "Secondary",
-        "Tech"
+        "Tech",
+        "IATW",
+        ""
       ],
       [
         "Invisibility",
         "Primary",
-        "Psionic"
+        "Psionic",
+        "IATW",
+        ""
       ],
       [
         "Invisibility",
         "Primary",
-        "Physics"
+        "Physics",
+        "IATW",
+        ""
       ],
       [
         "Leaping",
         "Secondary",
-        "Animal"
+        "Animal",
+        "IATW",
+        ""
       ],
       [
         "Leaping",
         "Secondary",
-        "Alien"
+        "Alien",
+        "IATW",
+        ""
       ],
       [
         "Life Support",
         "Secondary",
-        "Alien"
+        "Alien",
+        "IATW",
+        ""
       ],
       [
         "Life Support",
         "Secondary",
-        "Tech"
+        "Tech",
+        "IATW",
+        ""
       ],
       [
         "Life Support: Protected Breathing",
         "Secondary",
-        "Alien"
+        "Alien",
+        "IATW",
+        "Life Support"
       ],
       [
         "Life Support: Protected Breathing",
         "Secondary",
-        "Tech"
+        "Tech",
+        "IATW",
+        "Life Support"
       ],
       [
         "Life Support: Machine",
         "Secondary",
-        "Tech"
+        "Tech",
+        "IATW",
+        "Life Support"
       ],
       [
         "Limb and Feature Transferrence",
         "Secondary",
-        "Alien"
+        "Alien",
+        "IATW",
+        ""
       ],
       [
         "Limb and Feature Transferrence",
         "Secondary",
-        "Mutated"
+        "Mutated",
+        "IATW",
+        ""
       ],
       [
         "Limb and Feature Transferrence",
         "Secondary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Limb and Feature Transferrence: self only",
         "Secondary",
-        "Alien"
+        "Alien",
+        "IATW",
+        "Limb and Feature Transferrence"
       ],
       [
         "Limb and Feature Transferrence: self only",
         "Secondary",
-        "Mutated"
+        "Mutated",
+        "IATW",
+        "Limb and Feature Transferrence"
       ],
       [
         "Limb and Feature Transferrence: self only",
         "Secondary",
-        "Occult"
+        "Occult",
+        "IATW",
+        "Limb and Feature Transferrence"
       ],
       [
         "Luck",
         "Primary",
-        "Alien"
+        "Alien",
+        "IATW",
+        ""
       ],
       [
         "Luck",
         "Primary",
-        "Mutated"
+        "Mutated",
+        "IATW",
+        ""
       ],
       [
         "Luck",
         "Primary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
-        "Luck Variant: Bad Luck Aura",
+        "Luck: Bad Luck Aura",
         "Secondary",
-        "Alien"
+        "Alien",
+        "IATW",
+        "Luck"
       ],
       [
-        "Luck Variant: Bad Luck Aura",
+        "Luck: Bad Luck Aura",
         "Secondary",
-        "Mutated"
+        "Mutated",
+        "IATW",
+        "Luck"
       ],
       [
-        "Luck Variant: Bad Luck Aura",
+        "Luck: Bad Luck Aura",
         "Secondary",
-        "Occult"
+        "Occult",
+        "IATW",
+        "Luck"
       ],
       [
         "Malleability",
         "Secondary",
-        "Mutated"
+        "Mutated",
+        "IATW",
+        ""
       ],
       [
         "Massive Strike",
         "Secondary",
-        "Mutated"
+        "Mutated",
+        "IATW",
+        ""
       ],
       [
         "Massive Strike",
         "Secondary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Massive Strike",
         "Secondary",
-        "Physics"
+        "Physics",
+        "IATW",
+        ""
       ],
       [
         "Massive Strike",
         "Secondary",
-        "Energy"
+        "Energy",
+        "IATW",
+        ""
       ],
       [
         "Matter Constructs",
         "Primary",
-        "Physics"
+        "Physics",
+        "IATW",
+        ""
       ],
       [
         "Matter Constructs",
         "Primary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Matter Constructs",
         "Primary",
-        "Mutated"
+        "Mutated",
+        "IATW",
+        ""
       ],
       [
         "Matter Constructs",
         "Primary",
-        "Ice"
+        "Ice",
+        "IATW",
+        ""
       ],
       [
         "Matter Constructs",
         "Primary",
-        "Earth"
+        "Earth",
+        "IATW",
+        ""
       ],
       [
         "Mind Absorption",
         "Primary",
-        "Psionic"
+        "Psionic",
+        "IATW",
+        ""
       ],
       [
         "Mind Absorption: Passive Aura",
         "Primary",
-        "Psionic"
+        "Psionic",
+        "IATW",
+        "Mind Absorption"
       ],
       [
         "Mind Absorption: Passive Absorption Touch",
         "Primary",
-        "Psionic"
+        "Psionic",
+        "IATW",
+        "Mind Absorption"
       ],
       [
         "Mind Absorption: Permanent Aura/Touch",
         "Primary",
-        "Psionic"
+        "Psionic",
+        "IATW",
+        "Mind Absorption"
       ],
       [
         "Mind Control",
         "Primary",
-        "Psionic"
+        "Psionic",
+        "IATW",
+        ""
       ],
       [
         "Mind Control",
         "Primary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Mind Control: Control Tissue Only",
         "Primary",
-        "Psionic"
+        "Psionic",
+        "IATW",
+        "Mind Control"
       ],
       [
         "Mind Control: Control Tissue Only",
         "Primary",
-        "Occult"
+        "Occult",
+        "IATW",
+        "Mind Control"
       ],
       [
         "Mind Control: Possession",
         "Primary",
-        "Psionic"
+        "Psionic",
+        "IATW",
+        "Mind Control"
       ],
       [
         "Mind Control: Possession",
         "Primary",
-        "Occult"
+        "Occult",
+        "IATW",
+        "Mind Control"
       ],
       [
         "Mind Control: Spiritual Possession",
         "Primary",
-        "Psionic"
+        "Psionic",
+        "IATW",
+        "Mind Control"
       ],
       [
         "Mind Control: Spiritual Possession",
         "Primary",
-        "Occult"
+        "Occult",
+        "IATW",
+        "Mind Control"
       ],
       [
         "Mind Disruption",
         "Primary",
-        "Psionic"
+        "Psionic",
+        "IATW",
+        ""
       ],
       [
         "Mind Disruption: Passive Aura/Touch",
         "Primary",
-        "Psionic"
+        "Psionic",
+        "IATW",
+        "Mind Disruption"
       ],
       [
         "Mind Probe",
         "Primary",
-        "Psionic"
+        "Psionic",
+        "IATW",
+        ""
       ],
       [
         "Mind Switch",
         "Primary",
-        "Psionic"
+        "Psionic",
+        "IATW",
+        ""
       ],
       [
         "Mind Switch",
         "Primary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Miscellaneous Minor Power",
         "Secondary",
-        "Alien"
+        "Alien",
+        "IATW",
+        ""
       ],
       [
         "Miscellaneous Minor Power",
         "Secondary",
-        "Animal"
+        "Animal",
+        "IATW",
+        ""
       ],
       [
         "Miscellaneous Minor Power",
         "Secondary",
-        "Chemistry"
+        "Chemistry",
+        "IATW",
+        ""
       ],
       [
         "Miscellaneous Minor Power",
         "Secondary",
-        "Elemental"
+        "Earth",
+        "IATW",
+        ""
       ],
       [
         "Miscellaneous Minor Power",
         "Secondary",
-        "Earth"
+        "Air",
+        "IATW",
+        ""
       ],
       [
         "Miscellaneous Minor Power",
         "Secondary",
-        "Air"
+        "Fire",
+        "IATW",
+        ""
       ],
       [
         "Miscellaneous Minor Power",
         "Secondary",
-        "Fire"
+        "Water",
+        "IATW",
+        ""
       ],
       [
         "Miscellaneous Minor Power",
         "Secondary",
-        "Water"
+        "Electricity",
+        "IATW",
+        ""
       ],
       [
         "Miscellaneous Minor Power",
         "Secondary",
-        "Electricity"
+        "Darkness",
+        "IATW",
+        ""
       ],
       [
         "Miscellaneous Minor Power",
         "Secondary",
-        "Darkness"
+        "Light",
+        "IATW",
+        ""
       ],
       [
         "Miscellaneous Minor Power",
         "Secondary",
-        "Light"
+        "Radiation",
+        "IATW",
+        ""
       ],
       [
         "Miscellaneous Minor Power",
         "Secondary",
-        "Radiation"
+        "Energy",
+        "IATW",
+        ""
       ],
       [
         "Miscellaneous Minor Power",
         "Secondary",
-        "Energy"
+        "Gimmick",
+        "IATW",
+        ""
       ],
       [
         "Miscellaneous Minor Power",
         "Secondary",
-        "Gimmick"
+        "Mutated",
+        "IATW",
+        ""
       ],
       [
         "Miscellaneous Minor Power",
         "Secondary",
-        "Mutated"
+        "Physics",
+        "IATW",
+        ""
       ],
       [
         "Miscellaneous Minor Power",
         "Secondary",
-        "Physics"
+        "Psionic",
+        "IATW",
+        ""
       ],
       [
         "Miscellaneous Minor Power",
         "Secondary",
-        "Psionic"
+        "Shapeshift",
+        "IATW",
+        ""
       ],
       [
         "Miscellaneous Minor Power",
         "Secondary",
-        "Shapeshift"
+        "Sonic",
+        "IATW",
+        ""
       ],
       [
         "Miscellaneous Minor Power",
         "Secondary",
-        "Sonic"
+        "Tech",
+        "IATW",
+        ""
       ],
       [
         "Miscellaneous Minor Power",
         "Secondary",
-        "Tech"
-      ],
-      [
-        "Miscellaneous Minor Power",
-        "Secondary",
-        "Time"
+        "Time",
+        "IATW",
+        ""
       ],
       [
         "Mutate",
         "Primary",
-        "Tech"
+        "Tech",
+        "IATW",
+        ""
       ],
       [
         "Mutate",
         "Primary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Mutate",
         "Primary",
-        "Time"
+        "Time",
+        "IATW",
+        ""
       ],
       [
         "Mutate",
         "Primary",
-        "Mutated"
+        "Mutated",
+        "IATW",
+        ""
       ],
       [
         "Negate Magic",
         "Secondary",
-        "Occult"
-      ],
-      [
-        "Negate Magic",
-        "Secondary",
-        "Occult"
-      ],
-      [
-        "Negate Magic",
-        "Secondary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Night Vision",
         "Secondary",
-        "Alien"
+        "Alien",
+        "IATW",
+        ""
       ],
       [
         "Night Vision",
         "Secondary",
-        "Animal"
+        "Animal",
+        "IATW",
+        ""
       ],
       [
         "Night Vision",
         "Secondary",
-        "Hypersensory"
+        "Hypersensory",
+        "IATW",
+        ""
       ],
       [
         "Night Vision",
         "Secondary",
-        "Darkness"
+        "Darkness",
+        "IATW",
+        ""
       ],
       [
         "Night Vision: Low-Light Vision",
         "Secondary",
-        "Alien"
+        "Alien",
+        "IATW",
+        "Night Vision"
       ],
       [
         "Night Vision: Low-Light Vision",
         "Secondary",
-        "Animal"
+        "Animal",
+        "IATW",
+        "Night Vision"
       ],
       [
         "Night Vision: Low-Light Vision",
         "Secondary",
-        "Hypersensory"
+        "Hypersensory",
+        "IATW",
+        "Night Vision"
       ],
       [
         "Night Vision: Low-Light Vision",
         "Secondary",
-        "Darkness"
+        "Darkness",
+        "IATW",
+        "Night Vision"
       ],
       [
         "Night Vision: Night-Only Vision",
         "Secondary",
-        "Alien"
+        "Alien",
+        "IATW",
+        "Night Vision"
       ],
       [
         "Night Vision: Night-Only Vision",
         "Secondary",
-        "Animal"
+        "Animal",
+        "IATW",
+        "Night Vision"
       ],
       [
         "Night Vision: Night-Only Vision",
         "Secondary",
-        "Hypersensory"
+        "Hypersensory",
+        "IATW",
+        "Night Vision"
       ],
       [
         "Night Vision: Night-Only Vision",
         "Secondary",
-        "Darkness"
+        "Darkness",
+        "IATW",
+        "Night Vision"
       ],
       [
         "Numb",
         "Secondary",
-        "Mutated"
+        "Mutated",
+        "IATW",
+        ""
       ],
       [
         "Numb",
         "Secondary",
-        "Chemistry"
+        "Chemistry",
+        "IATW",
+        ""
       ],
       [
         "Object Creation",
         "Primary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Organism Creation",
         "Primary",
-        "Chemistry"
+        "Chemistry",
+        "IATW",
+        ""
       ],
       [
         "Organism Creation",
         "Primary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Paralysis",
         "Primary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Paralysis",
         "Primary",
-        "Mutated"
+        "Mutated",
+        "IATW",
+        ""
       ],
       [
         "Paralysis",
         "Primary",
-        "Chemistry"
+        "Chemistry",
+        "IATW",
+        ""
       ],
       [
         "Paralysis",
         "Primary",
-        "Psionic"
+        "Psionic",
+        "IATW",
+        ""
       ],
       [
         "Paralysis",
         "Primary",
-        "Physics"
+        "Physics",
+        "IATW",
+        ""
       ],
       [
         "Personal Armory",
         "Primary",
-        "Gimmick"
-      ],
-      [
-        "Personal Armory",
-        "Primary",
-        "Gimmick"
-      ],
-      [
-        "Personal Armory",
-        "Primary",
-        "Gimmick"
-      ],
-      [
-        "Personal Armory",
-        "Primary",
-        "Gimmick"
+        "Gimmick",
+        "IATW",
+        ""
       ],
       [
         "Plant Mutation and Control",
         "Primary",
-        "Mutated"
+        "Mutated",
+        "IATW",
+        ""
       ],
       [
         "Plant Mutation and Control",
         "Primary",
-        "Chemistry"
-      ],
-      [
-        "Plant Mutation and Control",
-        "Primary",
-        "Elemental"
+        "Chemistry",
+        "IATW",
+        ""
       ],
       [
         "Postcognition",
         "Secondary",
-        "Psionic"
+        "Psionic",
+        "IATW",
+        ""
       ],
       [
         "Postcognition",
         "Secondary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Postcognition: Passive",
         "Secondary",
-        "Psionic"
+        "Psionic",
+        "IATW",
+        "Postcognition"
       ],
       [
         "Postcognition: Passive",
         "Secondary",
-        "Occult"
+        "Occult",
+        "IATW",
+        "Postcognition"
       ],
       [
         "Precognition",
         "Secondary",
-        "Psionic"
+        "Psionic",
+        "IATW",
+        ""
       ],
       [
         "Precognition",
         "Secondary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Probability Control",
         "Primary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Probability Control",
         "Primary",
-        "Physics"
+        "Physics",
+        "IATW",
+        ""
       ],
       [
         "Projectile Attack",
         "Primary",
-        "Tech"
+        "Tech",
+        "IATW",
+        ""
       ],
       [
         "Projectile Attack",
         "Primary",
-        "Mutated"
+        "Mutated",
+        "IATW",
+        ""
       ],
       [
         "Radiowave Control",
         "Secondary",
-        "Tech"
+        "Tech",
+        "IATW",
+        ""
       ],
       [
         "Radiowave Control",
         "Secondary",
-        "Sonic"
+        "Sonic",
+        "IATW",
+        ""
       ],
       [
         "Rapid Construction",
         "Primary",
-        "Tech"
+        "Tech",
+        "IATW",
+        ""
       ],
       [
         "Rapid Construction",
         "Primary",
-        "Mutated"
+        "Mutated",
+        "IATW",
+        ""
       ],
       [
         "Reflect Energy",
         "Secondary",
-        "Energy"
+        "Energy",
+        "IATW",
+        ""
       ],
       [
         "Reflect Energy",
         "Secondary",
-        "Electricity"
+        "Electricity",
+        "IATW",
+        ""
       ],
       [
         "Reflect Energy",
         "Secondary",
-        "Fire"
+        "Fire",
+        "IATW",
+        ""
       ],
       [
         "Reflect Energy",
         "Secondary",
-        "Psionic"
+        "Psionic",
+        "IATW",
+        ""
       ],
       [
         "Reflect Magic",
         "Secondary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
-        "Reflect Sonics",
+        "Reflect Energy",
         "Secondary",
-        "Sonic"
+        "Sonic",
+        "IATW",
+        ""
       ],
       [
-        "Reflect Energy Aura: Passive",
+        "Reflect Energy: Passive Aura",
         "Secondary",
-        "Energy"
+        "Energy",
+        "IATW",
+        "Reflect Energy"
       ],
       [
-        "Reflect Energy Aura: Passive",
+        "Reflect Energy: Passive Aura",
         "Secondary",
-        "Electricity"
+        "Electricity",
+        "IATW",
+        "Reflect Energy"
       ],
       [
-        "Reflect Energy Aura: Passive",
+        "Reflect Energy: Passive Aura",
         "Secondary",
-        "Fire"
+        "Fire",
+        "IATW",
+        "Reflect Energy"
       ],
       [
-        "Reflect Energy Aura: Passive",
+        "Reflect Energy: Passive Aura",
         "Secondary",
-        "Psionic"
+        "Psionic",
+        "IATW",
+        "Reflect Energy"
       ],
       [
-        "Reflect Magic Aura: Passive",
+        "Reflect Magic: Passive Aura",
         "Secondary",
-        "Occult"
+        "Occult",
+        "IATW",
+        "Reflect Magic"
       ],
       [
-        "Reflect Sonic Aura: Passive",
+        "Reflect Energy: Passive Aura",
         "Secondary",
-        "Sonic"
+        "Sonic",
+        "IATW",
+        "Reflect Energy"
       ],
       [
         "Reincarnation",
         "Primary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Reincarnation",
         "Primary",
-        "Mutated"
-      ],
-      [
-        "Reincarnation",
-        "Primary",
-        "Occult"
-      ],
-      [
-        "Reincarnation",
-        "Primary",
-        "Mutated"
+        "Mutated",
+        "IATW",
+        ""
       ],
       [
         "Resistance to Energy",
         "Secondary",
-        "Energy"
+        "Energy",
+        "IATW",
+        ""
       ],
       [
         "Resistance to Energy",
         "Secondary",
-        "Electricity"
+        "Electricity",
+        "IATW",
+        ""
       ],
       [
         "Resistance to Energy",
         "Secondary",
-        "Fire"
+        "Fire",
+        "IATW",
+        ""
       ],
       [
         "Resistance to Energy",
         "Secondary",
-        "Psionic"
+        "Psionic",
+        "IATW",
+        ""
       ],
       [
         "Resistance to Magic",
         "Secondary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Resistance to Psionic Influence",
         "Secondary",
-        "Psionic"
+        "Psionic",
+        "IATW",
+        ""
       ],
       [
         "Resistance",
         "Secondary",
-        "Ice"
+        "Ice",
+        "IATW",
+        ""
       ],
       [
         "Resistance",
         "Secondary",
-        "Fire"
+        "Fire",
+        "IATW",
+        ""
       ],
       [
         "Resistance",
         "Secondary",
-        "Elemental"
+        "Electricity",
+        "IATW",
+        ""
       ],
       [
         "Resistance",
         "Secondary",
-        "Electricity"
+        "Light",
+        "IATW",
+        ""
       ],
       [
         "Resistance",
         "Secondary",
-        "Ice"
+        "Darkness",
+        "IATW",
+        ""
       ],
       [
         "Resistance",
         "Secondary",
-        "Fire"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Resistance",
         "Secondary",
-        "Elemental"
+        "Psionic",
+        "IATW",
+        ""
       ],
       [
         "Resistance",
         "Secondary",
-        "Light"
+        "Radiation",
+        "IATW",
+        ""
       ],
       [
         "Resistance",
         "Secondary",
-        "Darkness"
-      ],
-      [
-        "Resistance",
-        "Secondary",
-        "Occult"
-      ],
-      [
-        "Resistance",
-        "Secondary",
-        "Psionic"
-      ],
-      [
-        "Resistance",
-        "Secondary",
-        "Radiation"
-      ],
-      [
-        "Resistance",
-        "Secondary",
-        "Sonic"
+        "Sonic",
+        "IATW",
+        ""
       ],
       [
         "Immunity",
         "Secondary",
-        "Ice"
+        "Ice",
+        "IATW",
+        "Resistance"
       ],
       [
         "Immunity",
         "Secondary",
-        "Fire"
+        "Fire",
+        "IATW",
+        "Resistance"
       ],
       [
         "Immunity",
         "Secondary",
-        "Elemental"
+        "Electricity",
+        "IATW",
+        "Resistance"
       ],
       [
         "Immunity",
         "Secondary",
-        "Electricity"
+        "Light",
+        "IATW",
+        "Resistance"
       ],
       [
         "Immunity",
         "Secondary",
-        "Ice"
+        "Darkness",
+        "IATW",
+        "Resistance"
       ],
       [
         "Immunity",
         "Secondary",
-        "Fire"
+        "Occult",
+        "IATW",
+        "Resistance"
       ],
       [
         "Immunity",
         "Secondary",
-        "Elemental"
+        "Psionic",
+        "IATW",
+        "Resistance"
       ],
       [
         "Immunity",
         "Secondary",
-        "Light"
+        "Radiation",
+        "IATW",
+        "Resistance"
       ],
       [
         "Immunity",
         "Secondary",
-        "Darkness"
-      ],
-      [
-        "Immunity",
-        "Secondary",
-        "Occult"
-      ],
-      [
-        "Immunity",
-        "Secondary",
-        "Psionic"
-      ],
-      [
-        "Immunity",
-        "Secondary",
-        "Radiation"
-      ],
-      [
-        "Immunity",
-        "Secondary",
-        "Sonic"
+        "Sonic",
+        "IATW",
+        "Resistance"
       ],
       [
         "Resurrect",
         "Secondary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Resurrect",
         "Secondary",
-        "Mutated"
+        "Mutated",
+        "IATW",
+        ""
       ],
       [
         "Secondary Form",
         "Primary",
-        "Shapeshift"
+        "Shapeshift",
+        "IATW",
+        ""
       ],
       [
         "Secondary Form",
         "Primary",
-        "Mutated"
+        "Mutated",
+        "IATW",
+        ""
       ],
       [
         "Sensory Rearrangement",
         "Secondary",
-        "Alien"
+        "Alien",
+        "IATW",
+        ""
       ],
       [
         "Shapeshift",
         "Primary",
-        "Mutated"
+        "Mutated",
+        "IATW",
+        ""
       ],
       [
         "Shapeshift",
         "Primary",
+        "Shapeshift",
+        "IATW",
+        ""
+      ],
+      [
+        "Shapeshift: Imitation",
+        "Primary",
+        "Mutated",
+        "IATW",
         "Shapeshift"
       ],
       [
         "Shapeshift: Imitation",
         "Primary",
-        "Mutated"
-      ],
-      [
-        "Shapeshift: Imitation",
-        "Primary",
+        "Shapeshift",
+        "IATW",
         "Shapeshift"
       ],
       [
         "Shapeshift: Facechanging",
         "Primary",
-        "Mutated"
+        "Mutated",
+        "IATW",
+        "Shapeshift"
       ],
       [
         "Shapeshift: Facechanging",
         "Primary",
+        "Shapeshift",
+        "IATW",
         "Shapeshift"
       ],
       [
         "Shapeshift: Total Mimicry",
         "Primary",
-        "Mutated"
+        "Mutated",
+        "IATW",
+        "Shapeshift"
       ],
       [
         "Shapeshift: Total Mimicry",
         "Primary",
+        "Shapeshift",
+        "IATW",
         "Shapeshift"
       ],
       [
         "Sharp Protrusions",
         "Secondary",
-        "Alien"
+        "Alien",
+        "IATW",
+        ""
       ],
       [
         "Sharp Protrusions",
         "Secondary",
-        "Animal"
+        "Animal",
+        "IATW",
+        ""
       ],
       [
         "Sharp Protrusions: superdense",
         "Primary",
-        "Alien"
+        "Alien",
+        "IATW",
+        "Sharp Protrusions"
       ],
       [
         "Sharp Protrusions: superdense",
         "Primary",
-        "Animal"
+        "Animal",
+        "IATW",
+        "Sharp Protrusions"
       ],
       [
         "Shrink",
         "Primary",
-        "Alien"
+        "Alien",
+        "IATW",
+        ""
       ],
       [
         "Shrink",
         "Primary",
-        "Animal"
+        "Animal",
+        "IATW",
+        ""
       ],
       [
         "Shrink Objects",
         "Primary",
-        "Physics"
+        "Physics",
+        "IATW",
+        ""
       ],
       [
         "Silence",
         "Secondary",
-        "Sonic"
+        "Sonic",
+        "IATW",
+        ""
       ],
       [
         "Silence",
         "Secondary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Silence: Personal",
         "Secondary",
-        "Sonic"
+        "Sonic",
+        "IATW",
+        "Silence"
       ],
       [
         "Silence: Personal",
         "Secondary",
-        "Occult"
+        "Occult",
+        "IATW",
+        "Silence"
       ],
       [
         "Silence: Personal+ Permanent",
         "Secondary",
-        "Sonic"
+        "Sonic",
+        "IATW",
+        "Silence"
       ],
       [
         "Silence: Personal+ Permanent",
         "Secondary",
-        "Occult"
+        "Occult",
+        "IATW",
+        "Silence"
       ],
       [
         "Silence: Permanent Silence Aura",
         "Secondary",
-        "Sonic"
+        "Sonic",
+        "IATW",
+        "Silence"
       ],
       [
         "Silence: Permanent Silence Aura",
         "Secondary",
-        "Occult"
+        "Occult",
+        "IATW",
+        "Silence"
       ],
       [
         "Skill Duplication",
         "Primary",
-        "Sonic"
+        "Sonic",
+        "IATW",
+        ""
       ],
       [
         "Skill Duplication",
         "Primary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Skill Duplication",
         "Secondary",
-        "Sonic"
+        "Sonic",
+        "IATW",
+        ""
       ],
       [
         "Skill Duplication",
         "Secondary",
-        "Occult"
-      ],
-      [
-        "Skill Duplication",
-        "Secondary",
-        "Sonic"
-      ],
-      [
-        "Skill Duplication",
-        "Secondary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Slick",
         "Secondary",
-        "Tech"
+        "Tech",
+        "IATW",
+        ""
       ],
       [
         "Slick",
         "Secondary",
-        "Ice"
+        "Ice",
+        "IATW",
+        ""
       ],
       [
         "Slick",
         "Secondary",
-        "Animal"
+        "Animal",
+        "IATW",
+        ""
       ],
       [
         "Slow",
         "Primary",
-        "Physics"
+        "Physics",
+        "IATW",
+        ""
       ],
       [
         "Slow",
         "Primary",
-        "Time"
+        "Time",
+        "IATW",
+        ""
       ],
       [
         "Slow: Passive Aura",
         "Primary",
-        "Physics"
+        "Physics",
+        "IATW",
+        "Slow"
       ],
       [
         "Slow: Passive Aura",
         "Primary",
-        "Time"
+        "Time",
+        "IATW",
+        "Slow"
       ],
       [
         "Sonar",
         "Secondary",
-        "Hypersensory"
+        "Hypersensory",
+        "IATW",
+        ""
       ],
       [
         "Sonar",
         "Secondary",
-        "Animal"
+        "Animal",
+        "IATW",
+        ""
       ],
       [
         "Sonar",
         "Secondary",
-        "Sonic"
+        "Sonic",
+        "IATW",
+        ""
       ],
       [
         "Sonar: Only",
         "Secondary",
-        "Hypersensory"
+        "Hypersensory",
+        "IATW",
+        "Sonar"
       ],
       [
         "Sonar: Only",
         "Secondary",
-        "Animal"
+        "Animal",
+        "IATW",
+        "Sonar"
       ],
       [
         "Sonar: Only",
         "Secondary",
-        "Sonic"
+        "Sonic",
+        "IATW",
+        "Sonar"
       ],
       [
         "Sonic Manipulation",
         "Primary",
-        "Sonic"
+        "Sonic",
+        "IATW",
+        ""
       ],
       [
         "Sorcery",
         "Primary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Speak With Animals",
         "Secondary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Speak With Animals: Animal Language",
         "Secondary",
-        "Animal"
+        "Animal",
+        "IATW",
+        "Speak With Animals"
       ],
       [
         "Speak With Objects",
         "Secondary",
-        "Occult"
-      ],
-      [
-        "Speak With Objects",
-        "Secondary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Speak with Plants",
         "Secondary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Spirit Theft",
         "Primary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Spiritual Reading",
         "Secondary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Spiritual Reading: Divination",
         "Secondary",
-        "Occult"
+        "Occult",
+        "IATW",
+        "Spiritual Reading"
       ],
       [
         "Stretching",
         "Primary",
-        "Mutated"
+        "Mutated",
+        "IATW",
+        ""
       ],
       [
         "Stretching",
         "Primary",
-        "Shapeshift"
+        "Shapeshift",
+        "IATW",
+        ""
       ],
       [
         "Summon Mortal",
         "Secondary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Summoning Portal",
         "Primary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Superspeed",
         "Primary",
-        "Mutated"
+        "Mutated",
+        "IATW",
+        ""
       ],
       [
         "Superspeed",
         "Primary",
-        "Physics"
+        "Physics",
+        "IATW",
+        ""
       ],
       [
         "Superspeed",
         "Primary",
-        "Time"
+        "Time",
+        "IATW",
+        ""
       ],
       [
         "Surveillance Drone",
         "Secondary",
-        "Psionic"
+        "Psionic",
+        "IATW",
+        ""
       ],
       [
         "Surveillance Drone",
         "Secondary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Telekinesis",
         "Primary",
-        "Psionic"
+        "Psionic",
+        "IATW",
+        ""
       ],
       [
         "Telepathy",
         "Secondary",
-        "Psionic"
+        "Psionic",
+        "IATW",
+        ""
       ],
       [
         "Teleportation Powers",
         "Primary",
-        "Physics"
+        "Physics",
+        "IATW",
+        ""
       ],
       [
         "Teleportation Powers",
         "Primary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Teleportation: Long Range Teleporter",
         "Primary",
-        "Physics"
+        "Physics",
+        "IATW",
+        ""
       ],
       [
         "Teleportation: Long Range Teleporter",
         "Primary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Teleportation: Short Range Teleporter",
         "Primary",
-        "Physics"
+        "Physics",
+        "IATW",
+        ""
       ],
       [
         "Teleportation: Short Range Teleporter",
         "Primary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Teleportation: Personal Long Range Teleporter",
         "Primary",
-        "Physics"
+        "Physics",
+        "IATW",
+        ""
       ],
       [
         "Teleportation: Personal Long Range Teleporter",
         "Primary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Teleportation: Personal Short Range Teleporter",
         "Primary",
-        "Physics"
+        "Physics",
+        "IATW",
+        ""
       ],
       [
         "Teleportation: Personal Short Range Teleporter",
         "Primary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Time Control",
         "Primary",
-        "Time"
+        "Time",
+        "IATW",
+        ""
       ],
       [
         "True Sight",
         "Secondary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Time Stop",
         "Primary",
-        "Time"
+        "Time",
+        "IATW",
+        ""
       ],
       [
         "Time Travel",
         "Secondary",
-        "Time"
+        "Time",
+        "IATW",
+        ""
       ],
       [
         "Tracking",
         "Secondary",
-        "Tech"
+        "Tech",
+        "IATW",
+        ""
       ],
       [
         "Tracking",
         "Secondary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Tracking",
         "Secondary",
-        "Psionic"
+        "Psionic",
+        "IATW",
+        ""
       ],
       [
         "Trackless",
         "Secondary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Trackless",
         "Secondary",
-        "Mutated"
+        "Mutated",
+        "IATW",
+        ""
       ],
       [
         "Transform Other",
         "Primary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Transform Other",
         "Primary",
-        "Mutated"
+        "Mutated",
+        "IATW",
+        ""
       ],
       [
         "Trap",
         "Secondary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Trap",
         "Secondary",
-        "Tech"
+        "Tech",
+        "IATW",
+        ""
       ],
       [
         "Universal Translation",
         "Secondary",
-        "Psionic"
+        "Psionic",
+        "IATW",
+        ""
       ],
       [
         "Universal Translation",
         "Secondary",
-        "Mutated"
+        "Mutated",
+        "IATW",
+        ""
       ],
       [
         "Universal Translation",
         "Secondary",
-        "Tech"
+        "Tech",
+        "IATW",
+        ""
       ],
       [
         "Unstoppability",
         "Primary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Various Devices",
         "Primary",
-        "Gimmick"
+        "Gimmick",
+        "IATW",
+        ""
       ],
       [
         "Various Devices",
         "Primary",
-        "Tech"
-      ],
-      [
-        "Various Devices",
-        "Primary",
-        "Gimmick"
-      ],
-      [
-        "Various Devices",
-        "Primary",
-        "Tech"
+        "Tech",
+        "IATW",
+        ""
       ],
       [
         "Venom/Poison",
         "Primary",
-        "Animal"
+        "Animal",
+        "IATW",
+        ""
       ],
       [
         "Spit Poison",
         "Primary",
-        "Animal"
+        "Animal",
+        "IATW",
+        ""
       ],
       [
         "Water Walking",
         "Secondary",
-        "Occult"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Water Walking",
         "Secondary",
-        "Mutated"
+        "Mutated",
+        "IATW",
+        ""
       ],
       [
         "Water Walking",
         "Secondary",
-        "Physics"
+        "Physics",
+        "IATW",
+        ""
       ],
       [
         "Water Walking",
         "Secondary",
-        "Animal"
+        "Animal",
+        "IATW",
+        ""
       ],
       [
         "Weather Control",
         "Primary",
-        "Physics"
+        "Physics",
+        "IATW",
+        ""
       ],
       [
         "Weather Control",
         "Primary",
-        "Elemental"
+        "Occult",
+        "IATW",
+        ""
       ],
       [
         "Weather Control",
         "Primary",
-        "Occult"
+        "Water",
+        "IATW",
+        ""
       ],
       [
         "Weather Control",
         "Primary",
-        "Water"
+        "Air",
+        "IATW",
+        ""
       ],
       [
         "Weather Control",
         "Primary",
-        "Air"
-      ],
-      [
-        "Weather Control",
-        "Primary",
-        "Electricity"
+        "Electricity",
+        "IATW",
+        ""
       ],
       [
         "Web",
         "Primary",
-        "Animal"
+        "Animal",
+        "IATW",
+        ""
       ],
       [
         "Web",
         "Primary",
-        "Tech"
+        "Tech",
+        "IATW",
+        ""
       ],
       [
         "Web",
         "Primary",
-        "Chemistry"
+        "Chemistry",
+        "IATW",
+        ""
       ],
       [
         "Web: Conjured",
         "Primary",
-        "Animal"
+        "Animal",
+        "IATW",
+        "Web"
       ],
       [
         "Web: Conjured",
         "Primary",
-        "Tech"
+        "Tech",
+        "IATW",
+        "Web"
       ],
       [
         "Web: Conjured",
         "Primary",
-        "Chemistry"
+        "Chemistry",
+        "IATW",
+        "Web"
       ],
       [
         "Web: Foam",
         "Primary",
-        "Animal"
+        "Animal",
+        "IATW",
+        "Web"
       ],
       [
         "Web: Foam",
         "Primary",
-        "Tech"
+        "Tech",
+        "IATW",
+        "Web"
       ],
       [
         "Web: Foam",
         "Primary",
-        "Chemistry"
+        "Chemistry",
+        "IATW",
+        "Web"
       ],
       [
-        "World: s Greatest: ",
+        "Worlds Greatest",
         "Primary",
-        "Gimmick"
+        "Gimmick",
+        "IATW",
+        ""
       ],
       [
         "X-Ray Vision",
         "Secondary",
-        "Physics"
+        "Physics",
+        "IATW",
+        ""
       ],
       [
         "X-Ray Vision",
         "Secondary",
-        "Hypersensory"
+        "Hypersensory",
+        "IATW",
+        ""
       ],
       [
         "X-Ray Vision",
         "Secondary",
-        "Light"
+        "Light",
+        "IATW",
+        ""
       ],
       [
         "X-Ray Vision",
         "Secondary",
-        "Radiation"
+        "Radiation",
+        "IATW",
+        ""
+      ],
+      [
+        "Enhanced Hearing",
+        "Secondary",
+        "Tech",
+        "IATW_HYPERSENSORY_DLC_1",
+        ""
+      ],
+      [
+        "Enhanced Sight",
+        "Secondary",
+        "Tech",
+        "IATW_HYPERSENSORY_DLC_1",
+        ""
+      ],
+      [
+        "Enhanced Sight",
+        "Secondary",
+        "Alien",
+        "IATW_HYPERSENSORY_DLC_1",
+        ""
+      ],
+      [
+        "Enhanced Sight: Microscopic Only",
+        "Secondary",
+        "Alien",
+        "IATW_HYPERSENSORY_DLC_1",
+        "Enhanced Sight"
+      ],
+      [
+        "Enhanced Sight: Telescopic Only",
+        "Secondary",
+        "Alien",
+        "IATW_HYPERSENSORY_DLC_1",
+        "Enhanced Sight"
+      ],
+      [
+        "Enhanced Smell & Taste",
+        "Secondary",
+        "Alien",
+        "IATW_HYPERSENSORY_DLC_1",
+        "Enhanced Smell & Taste & Touch"
+      ],
+      [
+        "Enhanced Smell & Taste & Touch",
+        "Secondary",
+        "Alien",
+        "IATW_HYPERSENSORY_DLC_1",
+        ""
+      ],
+      [
+        "Infrared/Thermal Vision",
+        "Secondary",
+        "Alien",
+        "IATW_HYPERSENSORY_DLC_1",
+        ""
+      ],
+      [
+        "Infrared/Thermal Vision Only",
+        "Secondary",
+        "Alien",
+        "IATW_HYPERSENSORY_DLC_1",
+        "Infrared/Thermal Vision"
+      ],
+      [
+        "Night Vision",
+        "Secondary",
+        "Tech",
+        "IATW_HYPERSENSORY_DLC_1",
+        ""
+      ],
+      [
+        "Night Vision: Low-Light Vision",
+        "Secondary",
+        "Tech",
+        "IATW_HYPERSENSORY_DLC_1",
+        "Night Vision"
+      ],
+      [
+        "Night Vision: Night-Only Vision",
+        "Secondary",
+        "Tech",
+        "IATW_HYPERSENSORY_DLC_1",
+        "Night Vision"
+      ],
+      [
+        "Sonar",
+        "Secondary",
+        "Alien",
+        "IATW_HYPERSENSORY_DLC_1",
+        ""
+      ],
+      [
+        "Sonar: Only",
+        "Secondary",
+        "Alien",
+        "IATW_HYPERSENSORY_DLC_1",
+        "Sonar"
+      ],
+      [
+        "X-Ray Vision",
+        "Secondary",
+        "Tech",
+        "IATW_HYPERSENSORY_DLC_1",
+        ""
+      ],
+      [
+        "X-Ray Vision",
+        "Secondary",
+        "Alien",
+        "IATW_HYPERSENSORY_DLC_1",
+        ""
+      ],
+      [
+        "Water Walking",
+        "Secondary",
+        "Water",
+        "IATW",
+        ""
       ]
     ]
   }
