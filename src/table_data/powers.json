@@ -354,11 +354,11 @@
         "Animal Imitation"
       ],
       [
-        "Animal Imitation-Powers only",
+        "Animal Imitation: Powers only",
         "Primary",
         "Occult",
         "IATW",
-        ""
+        "Animal Imitation"
       ],
       [
         "Animate Image",
@@ -457,20 +457,6 @@
         "Animal",
         "IATW",
         "Armor"
-      ],
-      [
-        "Armor",
-        "Primary",
-        "Alien",
-        "IATW",
-        ""
-      ],
-      [
-        "Armor",
-        "Primary",
-        "Animal",
-        "IATW",
-        ""
       ],
       [
         "Armor-Piercing Attack",
@@ -1068,18 +1054,18 @@
         ""
       ],
       [
-        "Disrupt Tech-Passive",
+        "Disrupt Tech: Passive",
         "Secondary",
         "Tech",
         "IATW",
-        ""
+        "Disrupt Tech"
       ],
       [
-        "Disrupt Tech-Passive",
+        "Disrupt Tech: Passive",
         "Secondary",
         "Electricity",
         "IATW",
-        ""
+        "Disrupt Tech"
       ],
       [
         "Distort Magic",
@@ -3597,13 +3583,6 @@
       [
         "Resistance to Energy",
         "Secondary",
-        "Fire",
-        "IATW",
-        ""
-      ],
-      [
-        "Resistance to Energy",
-        "Secondary",
         "Psionic",
         "IATW",
         ""
@@ -3612,13 +3591,6 @@
         "Resistance to Magic",
         "Secondary",
         "Occult",
-        "IATW",
-        ""
-      ],
-      [
-        "Resistance to Psionic Influence",
-        "Secondary",
-        "Psionic",
         "IATW",
         ""
       ],
@@ -3954,20 +3926,6 @@
       [
         "Skill Duplication",
         "Primary",
-        "Occult",
-        "IATW",
-        ""
-      ],
-      [
-        "Skill Duplication",
-        "Secondary",
-        "Sonic",
-        "IATW",
-        ""
-      ],
-      [
-        "Skill Duplication",
-        "Secondary",
         "Occult",
         "IATW",
         ""
@@ -4585,112 +4543,112 @@
         "Enhanced Hearing",
         "Secondary",
         "Tech",
-        "IATW_HYPERSENSORY_DLC_1",
+        "DLC_1_Secondaries",
         ""
       ],
       [
         "Enhanced Sight",
         "Secondary",
         "Tech",
-        "IATW_HYPERSENSORY_DLC_1",
+        "DLC_1_Secondaries",
         ""
       ],
       [
         "Enhanced Sight",
         "Secondary",
         "Alien",
-        "IATW_HYPERSENSORY_DLC_1",
+        "DLC_1_Secondaries",
         ""
       ],
       [
         "Enhanced Sight: Microscopic Only",
         "Secondary",
         "Alien",
-        "IATW_HYPERSENSORY_DLC_1",
+        "DLC_1_Secondaries",
         "Enhanced Sight"
       ],
       [
         "Enhanced Sight: Telescopic Only",
         "Secondary",
         "Alien",
-        "IATW_HYPERSENSORY_DLC_1",
+        "DLC_1_Secondaries",
         "Enhanced Sight"
       ],
       [
         "Enhanced Smell & Taste",
         "Secondary",
         "Alien",
-        "IATW_HYPERSENSORY_DLC_1",
+        "DLC_1_Secondaries",
         "Enhanced Smell & Taste & Touch"
       ],
       [
         "Enhanced Smell & Taste & Touch",
         "Secondary",
         "Alien",
-        "IATW_HYPERSENSORY_DLC_1",
+        "DLC_1_Secondaries",
         ""
       ],
       [
         "Infrared/Thermal Vision",
         "Secondary",
         "Alien",
-        "IATW_HYPERSENSORY_DLC_1",
+        "DLC_1_Secondaries",
         ""
       ],
       [
         "Infrared/Thermal Vision Only",
         "Secondary",
         "Alien",
-        "IATW_HYPERSENSORY_DLC_1",
+        "DLC_1_Secondaries",
         "Infrared/Thermal Vision"
       ],
       [
         "Night Vision",
         "Secondary",
         "Tech",
-        "IATW_HYPERSENSORY_DLC_1",
+        "DLC_1_Secondaries",
         ""
       ],
       [
         "Night Vision: Low-Light Vision",
         "Secondary",
         "Tech",
-        "IATW_HYPERSENSORY_DLC_1",
+        "DLC_1_Secondaries",
         "Night Vision"
       ],
       [
         "Night Vision: Night-Only Vision",
         "Secondary",
         "Tech",
-        "IATW_HYPERSENSORY_DLC_1",
+        "DLC_1_Secondaries",
         "Night Vision"
       ],
       [
         "Sonar",
         "Secondary",
         "Alien",
-        "IATW_HYPERSENSORY_DLC_1",
+        "DLC_1_Secondaries",
         ""
       ],
       [
         "Sonar: Only",
         "Secondary",
         "Alien",
-        "IATW_HYPERSENSORY_DLC_1",
+        "DLC_1_Secondaries",
         "Sonar"
       ],
       [
         "X-Ray Vision",
         "Secondary",
         "Tech",
-        "IATW_HYPERSENSORY_DLC_1",
+        "DLC_1_Secondaries",
         ""
       ],
       [
         "X-Ray Vision",
         "Secondary",
         "Alien",
-        "IATW_HYPERSENSORY_DLC_1",
+        "DLC_1_Secondaries",
         ""
       ],
       [
@@ -4699,6 +4657,797 @@
         "Water",
         "IATW",
         ""
+      ],
+      [
+        "Enhanced Smell & Taste",
+        "Secondary",
+        "Gimmick",
+        "DLC_1_Secondaries",
+        ""
+      ],
+      [
+        "Slick",
+        "Secondary",
+        "Gimmick",
+        "DLC_1_Secondaries",
+        ""
+      ],
+      [
+        "Enhanced Appeal",
+        "Secondary",
+        "Gimmick",
+        "DLC_1_Secondaries",
+        ""
+      ],
+      [
+        "Tracking",
+        "Secondary",
+        "Gimmick",
+        "DLC_1_Secondaries",
+        ""
+      ],
+      [
+        "Trackless",
+        "Secondary",
+        "Gimmick",
+        "DLC_1_Secondaries",
+        ""
+      ],
+      [
+        "Internal Database",
+        "Secondary",
+        "Gimmick",
+        "DLC_1_Secondaries",
+        ""
+      ],
+      [
+        "Climbing",
+        "Secondary",
+        "Gimmick",
+        "DLC_1_Secondaries",
+        ""
+      ],
+      [
+        "Frictionlessness",
+        "Secondary",
+        "Air",
+        "DLC_1_Secondaries",
+        ""
+      ],
+      [
+        "Leaping",
+        "Secondary",
+        "Air",
+        "DLC_1_Secondaries",
+        ""
+      ],
+      [
+        "Life Support: Protected Breathing",
+        "Secondary",
+        "Air",
+        "DLC_1_Secondaries",
+        ""
+      ],
+      [
+        "Massive Strike",
+        "Secondary",
+        "Air",
+        "DLC_1_Secondaries",
+        ""
+      ],
+      [
+        "Claws/Horns/Blade",
+        "Secondary",
+        "Ice",
+        "DLC_1_Secondaries",
+        ""
+      ],
+      [
+        "Climbing Claws",
+        "Secondary",
+        "Ice",
+        "DLC_1_Secondaries",
+        "Claws/Horns/Blade"
+      ],
+      [
+        "Numb",
+        "Secondary",
+        "Ice",
+        "DLC_1_Secondaries",
+        ""
+      ],
+      [
+        "Sharp Protrusions",
+        "Secondary",
+        "Ice",
+        "DLC_1_Secondaries",
+        ""
+      ],
+      [
+        "Weather Control",
+        "Secondary",
+        "Ice",
+        "DLC_1_Secondaries",
+        ""
+      ],
+      [
+        "Enhanced Land Speed",
+        "Secondary",
+        "Ice",
+        "DLC_1_Secondaries",
+        ""
+      ],
+      [
+        "Infrared/Thermal Vision",
+        "Secondary",
+        "Ice",
+        "DLC_1_Secondaries",
+        ""
+      ],
+      [
+        "Frictionlessness",
+        "Secondary",
+        "Ice",
+        "DLC_1_Secondaries",
+        ""
+      ],
+      [
+        "Enhanced Toughness",
+        "Secondary",
+        "Water",
+        "DLC_1_Secondaries",
+        ""
+      ],
+      [
+        "Slick",
+        "Secondary",
+        "Water",
+        "DLC_1_Secondaries",
+        ""
+      ],
+      [
+        "Sonar",
+        "Secondary",
+        "Water",
+        "DLC_1_Secondaries",
+        ""
+      ],
+      [
+        "Sonar: Only",
+        "Secondary",
+        "Water",
+        "DLC_1_Secondaries",
+        ""
+      ],
+      [
+        "Climbing",
+        "Secondary",
+        "Earth",
+        "DLC_1_Secondaries",
+        ""
+      ],
+      [
+        "Adhere",
+        "Secondary",
+        "Earth",
+        "DLC_1_Secondaries",
+        ""
+      ],
+      [
+        "Claws/Horns/Blade",
+        "Secondary",
+        "Earth",
+        "DLC_1_Secondaries",
+        ""
+      ],
+      [
+        "Climbing Claws",
+        "Secondary",
+        "Earth",
+        "DLC_1_Secondaries",
+        "Claws/Horns/Blade"
+      ],
+      [
+        "Sharp Protrusions",
+        "Secondary",
+        "Earth",
+        "DLC_1_Secondaries",
+        ""
+      ],
+      [
+        "Sharp Protrusions: superdense",
+        "Secondary",
+        "Earth",
+        "DLC_1_Secondaries",
+        "Sharp Protrusions"
+      ],
+      [
+        "Enhanced Hearing",
+        "Secondary",
+        "Earth",
+        "DLC_1_Secondaries",
+        ""
+      ],
+      [
+        "Enhanced Toughness",
+        "Secondary",
+        "Earth",
+        "DLC_1_Secondaries",
+        ""
+      ],
+      [
+        "Enhanced Toughness: Enhanced Durability",
+        "Secondary",
+        "Earth",
+        "DLC_1_Secondaries",
+        "Enhanced Toughness"
+      ],
+      [
+        "Enhanced Land Speed",
+        "Secondary",
+        "Earth",
+        "DLC_1_Secondaries",
+        ""
+      ],
+      [
+        "Energy Detection",
+        "Secondary",
+        "Radiation",
+        "DLC_1_Secondaries",
+        ""
+      ],
+      [
+        "Glow",
+        "Secondary",
+        "Radiation",
+        "DLC_1_Secondaries",
+        ""
+      ],
+      [
+        "Glow: Permanent",
+        "Secondary",
+        "Radiation",
+        "DLC_1_Secondaries",
+        ""
+      ],
+      [
+        "Glow: Variable",
+        "Secondary",
+        "Radiation",
+        "DLC_1_Secondaries",
+        ""
+      ],
+      [
+        "Disrupt Tech",
+        "Secondary",
+        "Radiation",
+        "DLC_1_Secondaries",
+        ""
+      ],
+      [
+        "Disrupt Tech: Passive",
+        "Secondary",
+        "Radiation",
+        "DLC_1_Secondaries",
+        "Disrupt Tech"
+      ],
+      [
+        "Armor-Piercing Attack",
+        "Secondary",
+        "Radiation",
+        "DLC_1_Secondaries",
+        ""
+      ],
+      [
+        "Postcognition",
+        "Secondary",
+        "Time",
+        "DLC_1_Secondaries",
+        ""
+      ],
+      [
+        "Postcognition: Passive",
+        "Secondary",
+        "Time",
+        "DLC_1_Secondaries",
+        "Postcognition"
+      ],
+      [
+        "Precognition",
+        "Secondary",
+        "Time",
+        "DLC_1_Secondaries",
+        ""
+      ],
+      [
+        "Tracking",
+        "Secondary",
+        "Time",
+        "DLC_1_Secondaries",
+        ""
+      ],
+      [
+        "Enhanced Land Speed",
+        "Secondary",
+        "Time",
+        "DLC_1_Secondaries",
+        ""
+      ],
+      [
+        "Enhanced Agility",
+        "Secondary",
+        "Time",
+        "DLC_1_Secondaries",
+        ""
+      ],
+      [
+        "Alter Ego",
+        "Secondary",
+        "Time",
+        "DLC_1_Secondaries",
+        ""
+      ],
+      [
+        "Alter Ego: Triggered",
+        "Secondary",
+        "Time",
+        "DLC_1_Secondaries",
+        "Alter Ego"
+      ],
+      [
+        "Awareness",
+        "Secondary",
+        "Time",
+        "DLC_1_Secondaries",
+        ""
+      ],
+      [
+        "Disorient",
+        "Secondary",
+        "Time",
+        "DLC_1_Secondaries",
+        ""
+      ],
+      [
+        "Enhanced Perception",
+        "Secondary",
+        "Time",
+        "DLC_1_Secondaries",
+        ""
+      ],
+      [
+        "Amphibious",
+        "Secondary",
+        "Shapeshift",
+        "DLC_1_Secondaries",
+        ""
+      ],
+      [
+        "Armor",
+        "Secondary",
+        "Shapeshift",
+        "DLC_1_Secondaries",
+        ""
+      ],
+      [
+        "Armor-Piercing Attack",
+        "Secondary",
+        "Shapeshift",
+        "DLC_1_Secondaries",
+        ""
+      ],
+      [
+        "Berserker",
+        "Secondary",
+        "Alien",
+        "DLC_1_Secondaries",
+        ""
+      ],
+      [
+        "Berserker",
+        "Secondary",
+        "Shapeshift",
+        "DLC_1_Secondaries",
+        ""
+      ],
+      [
+        "Bite",
+        "Secondary",
+        "Shapeshift",
+        "DLC_1_Secondaries",
+        ""
+      ],
+      [
+        "Bite: Grappling",
+        "Secondary",
+        "Shapeshift",
+        "DLC_1_Secondaries",
+        "Bite"
+      ],
+      [
+        "Bite: Armor-Piercing",
+        "Secondary",
+        "Shapeshift",
+        "DLC_1_Secondaries",
+        "Bite"
+      ],
+      [
+        "Burrowing",
+        "Secondary",
+        "Shapeshift",
+        "DLC_1_Secondaries",
+        ""
+      ],
+      [
+        "Claws/Horns/Blade",
+        "Secondary",
+        "Shapeshift",
+        "DLC_1_Secondaries",
+        ""
+      ],
+      [
+        "Claws: Pincer",
+        "Secondary",
+        "Shapeshift",
+        "DLC_1_Secondaries",
+        "Claws/Horns/Blade"
+      ],
+      [
+        "Climbing",
+        "Secondary",
+        "Shapeshift",
+        "DLC_1_Secondaries",
+        ""
+      ],
+      [
+        "Climbing Claws",
+        "Secondary",
+        "Shapeshift",
+        "DLC_1_Secondaries",
+        "Claws/Horns/Blade"
+      ],
+      [
+        "Enhanced Agility",
+        "Secondary",
+        "Shapeshift",
+        "DLC_1_Secondaries",
+        ""
+      ],
+      [
+        "Enhanced Hearing",
+        "Secondary",
+        "Alien",
+        "DLC_1_Secondaries",
+        ""
+      ],
+      [
+        "Enhanced Hearing",
+        "Secondary",
+        "Shapeshift",
+        "DLC_1_Secondaries",
+        ""
+      ],
+      [
+        "Enhanced Sight",
+        "Secondary",
+        "Shapeshift",
+        "DLC_1_Secondaries",
+        ""
+      ],
+      [
+        "Enhanced Sight: Microscopic Only",
+        "Secondary",
+        "Shapeshift",
+        "DLC_1_Secondaries",
+        "Enhanced Sight"
+      ],
+      [
+        "Enhanced Sight: Telescopic Only",
+        "Secondary",
+        "Shapeshift",
+        "DLC_1_Secondaries",
+        "Enhanced Sight"
+      ],
+      [
+        "Enhanced Smell & Taste & Touch",
+        "Secondary",
+        "Shapeshift",
+        "DLC_1_Secondaries",
+        ""
+      ],
+      [
+        "Enhanced Smell & Taste",
+        "Secondary",
+        "Shapeshift",
+        "DLC_1_Secondaries",
+        "Enhanced Smell & Taste & Touch"
+      ],
+      [
+        "Enhanced Land Speed",
+        "Secondary",
+        "Shapeshift",
+        "DLC_1_Secondaries",
+        ""
+      ],
+      [
+        "Enhanced Perception",
+        "Secondary",
+        "Shapeshift",
+        "DLC_1_Secondaries",
+        ""
+      ],
+      [
+        "Enhanced Toughness",
+        "Secondary",
+        "Shapeshift",
+        "DLC_1_Secondaries",
+        ""
+      ],
+      [
+        "Enhanced Toughness: Enhanced Strength",
+        "Secondary",
+        "Shapeshift",
+        "DLC_1_Secondaries",
+        "Enhanced Toughness"
+      ],
+      [
+        "Enhanced Toughness: Enhanced Durability",
+        "Secondary",
+        "Shapeshift",
+        "DLC_1_Secondaries",
+        "Enhanced Toughness"
+      ],
+      [
+        "Extra Eyes",
+        "Secondary",
+        "Shapeshift",
+        "DLC_1_Secondaries",
+        ""
+      ],
+      [
+        "Extra Limb",
+        "Secondary",
+        "Shapeshift",
+        "DLC_1_Secondaries",
+        ""
+      ],
+      [
+        "Extra Limb: Striking",
+        "Secondary",
+        "Shapeshift",
+        "DLC_1_Secondaries",
+        "Extra Limb"
+      ],
+      [
+        "Flight: Gliding",
+        "Secondary",
+        "Shapeshift",
+        "DLC_1_Secondaries",
+        "Flight"
+      ],
+      [
+        "Glow",
+        "Secondary",
+        "Shapeshift",
+        "DLC_1_Secondaries",
+        ""
+      ],
+      [
+        "Glow: Permanent",
+        "Secondary",
+        "Shapeshift",
+        "DLC_1_Secondaries",
+        "Glow"
+      ],
+      [
+        "Glow: Variable",
+        "Secondary",
+        "Shapeshift",
+        "DLC_1_Secondaries",
+        "Glow"
+      ],
+      [
+        "Healing: Regeneration",
+        "Secondary",
+        "Alien",
+        "DLC_1_Secondaries",
+        "Healing"
+      ],
+      [
+        "Healing: Regeneration",
+        "Secondary",
+        "Shapeshift",
+        "DLC_1_Secondaries",
+        "Healing"
+      ],
+      [
+        "Infrared/Thermal Vision",
+        "Secondary",
+        "Shapeshift",
+        "DLC_1_Secondaries",
+        ""
+      ],
+      [
+        "Infrared/Thermal Vision Only",
+        "Secondary",
+        "Shapeshift",
+        "DLC_1_Secondaries",
+        "Infrared/Thermal Vision"
+      ],
+      [
+        "Leaping",
+        "Secondary",
+        "Shapeshift",
+        "DLC_1_Secondaries",
+        ""
+      ],
+      [
+        "Night Vision",
+        "Secondary",
+        "Shapeshift",
+        "DLC_1_Secondaries",
+        ""
+      ],
+      [
+        "Night Vision: Low-Light Vision",
+        "Secondary",
+        "Shapeshift",
+        "DLC_1_Secondaries",
+        "Night Vision"
+      ],
+      [
+        "Night Vision: Night-Only Vision",
+        "Secondary",
+        "Shapeshift",
+        "DLC_1_Secondaries",
+        "Night Vision"
+      ],
+      [
+        "Sharp Protrusions",
+        "Secondary",
+        "Shapeshift",
+        "DLC_1_Secondaries",
+        ""
+      ],
+      [
+        "Slick",
+        "Secondary",
+        "Alien",
+        "DLC_1_Secondaries",
+        ""
+      ],
+      [
+        "Slick",
+        "Secondary",
+        "Shapeshift",
+        "DLC_1_Secondaries",
+        ""
+      ],
+      [
+        "Sonar",
+        "Secondary",
+        "Shapeshift",
+        "DLC_1_Secondaries",
+        ""
+      ],
+      [
+        "Sonar: Only",
+        "Secondary",
+        "Shapeshift",
+        "DLC_1_Secondaries",
+        "Sonar"
+      ],
+      [
+        "Speak With Animals: Animal Language",
+        "Secondary",
+        "Alien",
+        "DLC_1_Secondaries",
+        "Speak With Animals"
+      ],
+      [
+        "Speak With Animals: Animal Language",
+        "Secondary",
+        "Shapeshift",
+        "DLC_1_Secondaries",
+        "Speak With Animals"
+      ],
+      [
+        "Water Walking",
+        "Secondary",
+        "Alien",
+        "DLC_1_Secondaries",
+        ""
+      ],
+      [
+        "Water Walking",
+        "Secondary",
+        "Shapeshift",
+        "DLC_1_Secondaries",
+        ""
+      ],
+      [
+        "Projectile Attack",
+        "Primary",
+        "Alien",
+        "IATW",
+        ""
+      ],
+      [
+        "Projectile Attack",
+        "Primary",
+        "Mutated",
+        "IATW",
+        ""
+      ],
+      [
+        "Projectile Attack",
+        "Primary",
+        "Tech",
+        "IATW",
+        ""
+      ],
+      [
+        "Projectile Attack",
+        "Primary",
+        "Gimmick",
+        "IATW",
+        ""
+      ],
+      [
+        "Projectile Attack: Armor-Piercing",
+        "Primary",
+        "Alien",
+        "IATW",
+        "Projectile Attack"
+      ],
+      [
+        "Projectile Attack: Armor-Piercing",
+        "Primary",
+        "Mutated",
+        "IATW",
+        "Projectile Attack"
+      ],
+      [
+        "Projectile Attack: Armor-Piercing",
+        "Primary",
+        "Tech",
+        "IATW",
+        "Projectile Attack"
+      ],
+      [
+        "Projectile Attack: Armor-Piercing",
+        "Primary",
+        "Gimmick",
+        "IATW",
+        "Projectile Attack"
+      ],
+      [
+        "Projectile Attack: Limited ammunition",
+        "Primary",
+        "Alien",
+        "IATW",
+        "Projectile Attack"
+      ],
+      [
+        "Projectile Attack: Limited ammunition",
+        "Primary",
+        "Mutated",
+        "IATW",
+        "Projectile Attack"
+      ],
+      [
+        "Projectile Attack: Limited ammunition",
+        "Primary",
+        "Tech",
+        "IATW",
+        "Projectile Attack"
+      ],
+      [
+        "Projectile Attack: Limited ammunition",
+        "Primary",
+        "Gimmick",
+        "IATW",
+        "Projectile Attack"
       ]
     ]
   }

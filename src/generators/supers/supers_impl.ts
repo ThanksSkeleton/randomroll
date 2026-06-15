@@ -8,6 +8,8 @@ type Power = {
     Kind: string
     Name: string
     Tag: string
+    Source: string,
+    VariantOf: string
 }
 
 function array_to_power(a: string[]) : Power 
@@ -15,11 +17,13 @@ function array_to_power(a: string[]) : Power
     return {
         Kind: a[KIND],
         Name: a[NAME],
-        Tag: a[TAG]
+        Tag: a[TAG],
+        Source: a[SOURCE],
+        VariantOf: a[VARIANTOF]
     }
 }
 
-const fields: (keyof Power)[] = ["Kind", "Name", "Tag"];
+const fields: (keyof Power)[] = ["Kind", "Name", "Tag", "Source", "VariantOf"];
 
 const columnNames: string[] = [
     ...fields.map(field => `Primary Power 1 ${field}`),
@@ -42,8 +46,9 @@ function flattenPowers(powers: [Power, Power, Power, Power, Power]): string[] {
 const NAME = 0;
 const KIND = 1;
 const TAG = 2;
+const SOURCE = 3;
+const VARIANTOF = 4;
 
-const Excluded_Powers = ["Elemental"];
 const Colorless = ["Gimmick", "Mutated", "Hypersensory"];
 const Color = ["Physics","Air","Alien","Chemistry","Animal","Water","Time","Darkness","Light","Earth","Sonic","Electricity","Energy","Ice","Fire","Radiation", "Tech", "Shapeshift"];
 const Strong_Color = ["Psionic", "Occult"];
@@ -75,49 +80,55 @@ export function build_super(seed: string, num_characters: number): [Power, Power
     return to_return;
 }
 
+function not_duplicate(p: Power, other_powers: Power[]): boolean 
+{
+    return other_powers.every(op => op.Name != p.Name && op.Name != p.VariantOf && (op.VariantOf != p.VariantOf || p.VariantOf == ""));
+}
+
 function first(rng: seedrandom.PRNG): Power
 {
     // Any primary power except Excluded Power Tags
-    return array_to_power(random_multi(rng, powers_table.table.rows.filter(r => r[KIND] == "Primary").filter(r => !Excluded_Powers.includes(r[TAG]))));
+    return array_to_power(random_multi(rng, powers_table.table.rows.filter(r => r[KIND] == "Primary")));
 }
 
 function second(rng: seedrandom.PRNG, first_power: Power): Power
 {
+    let primaries = powers_table.table.rows.filter(r => r[KIND] == "Primary");
+    let non_dupes = primaries.filter(a => not_duplicate(array_to_power(a), [first_power]));
+
     let color_restricted = []
     if (Colorless.includes(first_power.Tag))
     {
         // Colorless or new Color but not Strong Color
-        color_restricted = powers_table.table.rows.filter(r => Colorless.includes(r[TAG]) || Color.includes(r[TAG]));
+        color_restricted = non_dupes.filter(r => Colorless.includes(r[TAG]) || Color.includes(r[TAG]));
     } 
     else if (Color.includes(first_power.Tag)) 
     {
         // Colorless or Same Color
-        color_restricted = powers_table.table.rows.filter(r => Colorless.includes(r[TAG]) || r[TAG] == first_power.Tag)
+        color_restricted = non_dupes.filter(r => Colorless.includes(r[TAG]) || r[TAG] == first_power.Tag)
     } 
     else if (Strong_Color.includes(first_power.Tag)) 
     {
         // only matching
-        color_restricted = powers_table.table.rows.filter(r => r[TAG] == first_power.Tag);
+        color_restricted = non_dupes.filter(r => r[TAG] == first_power.Tag);
     } else {
         throw Error("Impossible_Category" + first_power.Tag)
     }
 
-    // Second primary
-    // Excludes Excluded Powers
-    // Not the exact same power
-    return array_to_power(random_multi(rng, color_restricted
-        .filter(r => r[KIND] == "Primary")
-        .filter(r => !Excluded_Powers.includes(r[TAG]))
-        .filter(r => !(r[TAG] == first_power.Tag && r[NAME] == first_power.Name))));
+    return array_to_power(random_multi(rng, color_restricted));
 }
 
 function three_secondary(rng: seedrandom.PRNG, first_power: Power, second_power: Power): [Power, Power, Power] 
 {
-    let secondary_1_table = powers_table.table.rows.filter(r => r[KIND] == "Secondary" && (r[TAG] == first_power.Tag || r[TAG] == second_power.Tag))
+    let secondary_1_table = powers_table.table.rows
+        .filter(r => r[KIND] == "Secondary")
+        .filter(r=> r[TAG] == first_power.Tag || r[TAG] == second_power.Tag)
+        .filter(r=> not_duplicate(array_to_power(r), [first_power, second_power]));
+        
     let secondary_1 = array_to_power(random_multi(rng, secondary_1_table));
-    let secondary_2_table = secondary_1_table.filter(r => r[NAME] != secondary_1.Name);
+    let secondary_2_table = secondary_1_table.filter(r=> not_duplicate(array_to_power(r), [secondary_1]));
     let secondary_2 = array_to_power(random_multi(rng, secondary_2_table))
-    let secondary_3_table = secondary_2_table.filter(r=> r[NAME] != secondary_2.Name);
+    let secondary_3_table = secondary_2_table.filter(r=> not_duplicate(array_to_power(r), [secondary_2]));
     let secondary_3 = array_to_power(random_multi(rng, secondary_3_table));
     return [secondary_1, secondary_2, secondary_3]
 }
