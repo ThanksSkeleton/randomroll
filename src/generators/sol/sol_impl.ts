@@ -1,9 +1,8 @@
-import { BuildExportFormat, random_multi, random_single, type ExportFormat, type MultiColumnTable } from "../../framework";
-import firstNames from "../../table_data/jp_male.json";
+import { BuildExportFormat, random_multi, type ExportFormat, type MultiColumnTable } from "../../framework";
+import { full_name } from "../../names_framework";
 import planets from "../../table_data/planets.json"
 import seedrandom from "seedrandom";
 
-let t1 : MultiColumnTable = firstNames;
 let t2 : MultiColumnTable = planets;
 
 let OUTPUT_NAME = "SOL_PEOPLE";
@@ -75,7 +74,7 @@ function build_inner(seed: string, num_rows: number, reroll: [number, number][],
 
 function name_part(rng : seedrandom.PRNG): string 
 {
-    return random_single(rng, t1.table.rows.map(r => r[0]));
+    return full_name(rng, "Male", "Japanese")[0];
 }
 
 function planet_part(rng: seedrandom.PRNG, planet_data: string[][]) : [string, string] 

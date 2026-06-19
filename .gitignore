@@ -26,3 +26,5 @@ dist-ssr
 # sqlite temp files
 *.sqlite-shm
 *.sqlite-wal
+
+/temp/
