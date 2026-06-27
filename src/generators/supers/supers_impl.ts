@@ -3,6 +3,9 @@ import { BuildExportFormat, random_multi, type ExportFormat } from "../../framew
 import powers_raw from "../../table_data/powers.json";
 import type { PowersRow } from "../../table_data/powers";
 
+let PRIMARY = "Primary";
+let SECONDARY = "Secondary";
+
 let powers_table : PowersRow[] = powers_raw;
 
 type FivePowers = [PowersRow, PowersRow, PowersRow, PowersRow, PowersRow];
@@ -17,7 +20,7 @@ const columnNames: string[] = [
     ...fields.map(field => `Secondary Power 3 ${field}`),
 ];
 
-function flattenPowers(powers: [PowersRow, PowersRow, PowersRow, PowersRow, PowersRow]): string[] {
+function flattenPowers(powers: FivePowers): string[] {
     if (powers.length !== 5) {
         throw new Error(`Expected exactly 5 powers, got ${powers.length}`);
     }
@@ -66,12 +69,12 @@ function not_duplicate(p: PowersRow, other_powers: PowersRow[]): boolean
 function first(rng: seedrandom.PRNG): PowersRow
 {
     // Any primary power except Excluded Power Tags
-    return random_multi(rng, powers_table.filter(r => r.Kind == "Primary"));
+    return random_multi(rng, powers_table.filter(r => r.Kind == PRIMARY));
 }
 
 function second(rng: seedrandom.PRNG, first_power: PowersRow): PowersRow
 {
-    let primaries = powers_table.filter(r => r.Kind == "Primary");
+    let primaries = powers_table.filter(r => r.Kind == PRIMARY);
     let non_dupes = primaries.filter(a => not_duplicate(a, [first_power]));
 
     let color_restricted = []
@@ -99,7 +102,7 @@ function second(rng: seedrandom.PRNG, first_power: PowersRow): PowersRow
 function three_secondary(rng: seedrandom.PRNG, first_power: PowersRow, second_power: PowersRow): [PowersRow, PowersRow, PowersRow] 
 {
     let secondary_1_table = powers_table
-        .filter(r => r.Kind == "Secondary")
+        .filter(r => r.Kind == SECONDARY)
         .filter(r=> r.Tag == first_power.Tag || r.Tag == second_power.Tag)
         .filter(r=> not_duplicate(r, [first_power, second_power]));
         
