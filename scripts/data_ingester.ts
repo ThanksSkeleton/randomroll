@@ -5,7 +5,7 @@ import path from "node:path";
 import Database from "better-sqlite3";
 import { parse } from "csv-parse/sync";
 
-type Mode = "FULL" | "STRUCTURE";
+type Mode = "BULK" | "FULL" | "STRUCTURE";
 
 type TableSchema = {
   tableName: string;
@@ -30,6 +30,13 @@ const IDENTIFIER_REGEX = /^[A-Za-z_][A-Za-z0-9_]*$/;
 function main(): void {
   const args = process.argv.slice(2);
 
+  // New default mode:
+  // npx tsx script.ts <csv-folder> <data-folder> <db-path>
+  if (args.length === 3 && !looksLikeMode(args[0])) {
+    runBulkMode(args);
+    return;
+  }
+
   if (args.length < 1) {
     printUsageAndExit();
   }
@@ -37,6 +44,10 @@ function main(): void {
   const mode = normalizeMode(args[0]);
 
   switch (mode) {
+    case "BULK":
+      runBulkMode(args.slice(1));
+      return;
+
     case "FULL":
       runFullMode(args);
       return;
@@ -48,6 +59,64 @@ function main(): void {
     default:
       assertNever(mode);
   }
+}
+
+function runBulkMode(args: string[]): void {
+  if (args.length !== 3) {
+    printUsageAndExit();
+  }
+
+  const [sourceCsvFolder, destinationDataFolder, destinationDbPath] = args;
+
+  if (!fs.existsSync(sourceCsvFolder)) {
+    throw new Error(`Source CSV folder does not exist: ${sourceCsvFolder}`);
+  }
+
+  if (!fs.statSync(sourceCsvFolder).isDirectory()) {
+    throw new Error(`Source CSV path is not a folder: ${sourceCsvFolder}`);
+  }
+
+  fs.mkdirSync(destinationDataFolder, { recursive: true });
+  fs.mkdirSync(path.dirname(destinationDbPath), { recursive: true });
+
+  const csvFiles = fs
+    .readdirSync(sourceCsvFolder, { withFileTypes: true })
+    .filter((entry) => entry.isFile())
+    .map((entry) => entry.name)
+    .filter((filename) => filename.toLowerCase().endsWith(".csv"))
+    .sort();
+
+  let created = 0;
+  let skipped = 0;
+
+  for (const csvFilename of csvFiles) {
+    const sourceCsvPath = path.join(sourceCsvFolder, csvFilename);
+    const tableName = path.basename(csvFilename, path.extname(csvFilename)).trim();
+
+    assertValidIdentifier("table name derived from CSV filename", tableName);
+
+    if (sqliteTableExists(destinationDbPath, tableName)) {
+      console.log(`SKIP existing table: ${tableName}`);
+      skipped++;
+      continue;
+    }
+
+    const parsed = readAndValidateCsv(sourceCsvPath);
+    const generatedTsPath = path.join(destinationDataFolder, `${parsed.tableName}.ts`);
+
+    ensureOutputTsFileDoesNotExist(generatedTsPath);
+
+    createSqliteTable(destinationDbPath, parsed);
+    writeTypeScriptDataFile(generatedTsPath, parsed);
+
+    console.log(`CREATE table: ${parsed.tableName} (${parsed.rows.length} rows)`);
+    created++;
+  }
+
+  console.log("");
+  console.log(`CSV files found: ${csvFiles.length}`);
+  console.log(`Tables created: ${created}`);
+  console.log(`Tables skipped: ${skipped}`);
 }
 
 function runFullMode(args: string[]): void {
@@ -100,6 +169,10 @@ function runStructureMode(args: string[]): void {
 function normalizeMode(modeRaw: string): Mode {
   const mode = modeRaw.trim().toUpperCase();
 
+  if (mode === "BULK" || mode === "DEFAULT") {
+    return "BULK";
+  }
+
   if (mode === "FULL") {
     return "FULL";
   }
@@ -109,8 +182,21 @@ function normalizeMode(modeRaw: string): Mode {
   }
 
   throw new Error(
-    `Unsupported mode: ${modeRaw}. Supported modes: FULL, STRUCTURE.`
+    `Unsupported mode: ${modeRaw}. Supported modes: BULK, FULL, STRUCTURE.`
   );
+}
+
+function looksLikeMode(value: string): boolean {
+  const normalized = value.trim().toUpperCase();
+
+  return [
+    "BULK",
+    "DEFAULT",
+    "FULL",
+    "STRUCTURE",
+    "SCHEMA",
+    "MODE2",
+  ].includes(normalized);
 }
 
 function readAndValidateCsv(sourceCsvPath: string): ParsedCsv {
@@ -169,17 +255,7 @@ function readAndValidateSqliteTableSchema(
   });
 
   try {
-    const existingTable = db
-      .prepare(
-        `
-        SELECT name
-        FROM sqlite_master
-        WHERE type = 'table'
-          AND lower(name) = lower(?)
-        LIMIT 1
-        `
-      )
-      .get(requestedTableName) as { name: string } | undefined;
+    const existingTable = findSqliteTable(db, requestedTableName);
 
     if (!existingTable) {
       throw new Error(
@@ -211,6 +287,40 @@ function readAndValidateSqliteTableSchema(
   } finally {
     db.close();
   }
+}
+
+function sqliteTableExists(sqliteDbPath: string, tableName: string): boolean {
+  if (!fs.existsSync(sqliteDbPath)) {
+    return false;
+  }
+
+  const db = new Database(sqliteDbPath, {
+    readonly: true,
+    fileMustExist: true,
+  });
+
+  try {
+    return findSqliteTable(db, tableName) !== undefined;
+  } finally {
+    db.close();
+  }
+}
+
+function findSqliteTable(
+  db: Database.Database,
+  tableName: string
+): { name: string } | undefined {
+  return db
+    .prepare(
+      `
+      SELECT name
+      FROM sqlite_master
+      WHERE type = 'table'
+        AND lower(name) = lower(?)
+      LIMIT 1
+      `
+    )
+    .get(tableName) as { name: string } | undefined;
 }
 
 function validateColumnNames(columns: string[]): void {
@@ -254,17 +364,7 @@ function createSqliteTable(destinationDbPath: string, parsed: ParsedCsv): void {
   const db = new Database(destinationDbPath);
 
   try {
-    const existingTable = db
-      .prepare(
-        `
-        SELECT name
-        FROM sqlite_master
-        WHERE type = 'table'
-          AND lower(name) = lower(?)
-        LIMIT 1
-        `
-      )
-      .get(parsed.tableName) as { name: string } | undefined;
+    const existingTable = findSqliteTable(db, parsed.tableName);
 
     if (existingTable) {
       throw new Error(
@@ -383,22 +483,27 @@ function printUsageAndExit(): never {
   console.error(`
 Usage:
 
+  DEFAULT BULK mode:
+    npx tsx scripts/data_ingester_builder.ts <source-csv-folder> <destination-data-folder> <destination-sqlite-db-path>
+
+  Explicit BULK mode:
+    npx tsx scripts/data_ingester_builder.ts BULK <source-csv-folder> <destination-data-folder> <destination-sqlite-db-path>
+
   FULL mode:
     npx tsx scripts/data_ingester_builder.ts FULL <source-csv-path> <destination-data-folder> <destination-sqlite-db-path>
 
   STRUCTURE mode:
     npx tsx scripts/data_ingester_builder.ts STRUCTURE <sqlite-db-path> <table-name> <destination-data-folder>
 
-Aliases:
-    MODE2 and SCHEMA are accepted aliases for STRUCTURE.
-
 Examples:
+
+  npx tsx scripts/data_ingester_builder.ts ./csv ./src/data ./randomroll.sqlite
+
+  npx tsx scripts/data_ingester_builder.ts BULK ./csv ./src/data ./randomroll.sqlite
 
   npx tsx scripts/data_ingester_builder.ts FULL ./Pokemon.csv ./src/data ./randomroll.sqlite
 
   npx tsx scripts/data_ingester_builder.ts STRUCTURE ./randomroll.sqlite Pokemon ./src/data
-
-  npx tsx scripts/data_ingester_builder.ts MODE2 ./randomroll.sqlite Pokemon ./src/data
 `);
   process.exit(1);
 }
