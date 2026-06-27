@@ -38,3 +38,43 @@ export type LuckyRow = {
   HP: string;
   Speed: string;
 };
+
+export type LuckyNice = {
+  Original_Name: string;
+  Description: string;
+  Tarot: string;
+
+  Melee_Attack: number;
+  Ranged_Attack: number;
+  Melee_Damage: number;
+  Ranged_Damage: number;
+
+  Fortitude_Save: number;
+  Reflex_Save: number;
+  Will_Save: number;
+
+  AC: number;
+  Init: number;
+  HP: number;
+  Speed: number;
+};
+
+export function luckyRowToNice(row: LuckyRow): LuckyNice {
+  return {
+    ...row,
+
+    Melee_Attack: Number(row.Melee_Attack),
+    Ranged_Attack: Number(row.Ranged_Attack),
+    Melee_Damage: Number(row.Melee_Damage),
+    Ranged_Damage: Number(row.Ranged_Damage),
+
+    Fortitude_Save: Number(row.Fortitude_Save),
+    Reflex_Save: Number(row.Reflex_Save),
+    Will_Save: Number(row.Will_Save),
+
+    AC: Number(row.AC),
+    Init: Number(row.Init),
+    HP: Number(row.HP),
+    Speed: Number(row.Speed),
+  };
+}

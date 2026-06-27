@@ -2,10 +2,11 @@ import seedrandom from "seedrandom";
 import { type ExportFormat } from "../../framework";
 import { full_name } from "../../names_framework";
 
-import type { LuckyRow } from "../../table_data/Lucky";
+import { luckyRowToNice, type LuckyNice, type LuckyRow } from "../../table_data/Lucky";
 import rawLucky from "../../table_data/Lucky.json";
 
 const lucky : LuckyRow[] = rawLucky;
+const luckyNice = lucky.filter(luckyRowToNice)
 
 export type StudentCharacter = {
   // Student Stuff
@@ -128,9 +129,9 @@ function build_dcc_student(rng: seedrandom.PRNG, nationality: string, school: st
     let hitPoints = hit_points_base + con_mod + luckySign.HP * luck_mod;
     let speed = 30 + luckySign.Speed * luck_mod;
     let initiative = agi_mod + luckySign.Init * luck_mod;
-    let saveReflex = agi_mod + luckySign.ReflexSave * luck_mod;
-    let saveFort = con_mod + luckySign.FortitudeSave * luck_mod;
-    let saveWill = per_mod + luckySign.WillSave * luck_mod;
+    let saveReflex = agi_mod + luckySign.Reflex_Save * luck_mod;
+    let saveFort = con_mod + luckySign.Fortitude_Save * luck_mod;
+    let saveWill = per_mod + luckySign.Will_Save * luck_mod;
     
     let weaponDisplay = profession.weaponDisplay;
     let weaponUnderlying = profession.weaponUnderlying;
@@ -208,7 +209,7 @@ function additional_equipment(rng:seedrandom.PRNG) : string {
 }
 
 // FROM TABLE
-function lucky_sign(rng:seedrandom.PRNG) : LuckyRow 
+function lucky_sign(rng:seedrandom.PRNG) : LuckyNice 
 {
 
 }
