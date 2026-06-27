@@ -268,7 +268,7 @@ export function random_single(rng: seedrandom.PRNG, data:string[]) : string
     return data[index];
 }
 
-export function random_multi(rng: seedrandom.PRNG, data:string[][]) : string[]
+export function random_multi<TData>(rng: seedrandom.PRNG, data:TData[]) : TData
 {
     let len = data.length;
     if (len == 0) { throw Error("No Data"); }

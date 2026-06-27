@@ -1,258 +1,214 @@
-// import seedrandom from "seedrandom";
-// import { random_multi, type ExportFormat } from "../../framework";
+import seedrandom from "seedrandom";
+import { type ExportFormat } from "../../framework";
+import { full_name } from "../../names_framework";
 
-// export type StudentCharacter = {
-//   // Student Stuff
-//   studentStyle: string;
-//   school: string;
-//   gender: "Male" | "Female" | string;
-//   gpa: string;
-//   portrait: string;
-//   age: number;
-//   firstName: string;
-//   lastName: string;
+import type { LuckyRow } from "../../table_data/Lucky";
+import rawLucky from "../../table_data/Lucky.json";
 
-//   // Profession
-//   professionTitle: string;
+const lucky : LuckyRow[] = rawLucky;
 
-//   // Core Stats + Mods
-//   strengthScore: number;
-//   strengthMod: number;
-//   agilityScore: number;
-//   agilityMod: number;
-//   staminaScore: number;
-//   staminaMod: number;
-//   personalityScore: number;
-//   personalityMod: number;
-//   intelligenceScore: number;
-//   intelligenceMod: number;
-//   luckScore: number;
-//   luckMod: number;
+export type StudentCharacter = {
+  // Student Stuff
+  studentStyle: string;
+  school: string;
+  gender: string;
+  gpa: string;
+  portrait: string;
+  age: number;
+  firstName: string;
+  lastName: string;
 
-//   // Attacks and Defenses
-//   armorClass: number;
-//   hitPoints: number;
-//   weaponDisplay: string;
-//   weaponUnderlying: string;
-//   attackDamageBase: string;
-//   weaponUnderlyingType: "Melee" | "Missile";
-//   attackMod: number;
-//   attackDamageMod: number;
-//   speed: number;
-//   initiative: number;
-//   saveReflex: number;
-//   saveFort: number;
-//   saveWill: number;
+  // Profession
+  professionTitle: string;
 
-//   // Other Equipment
-//   equipment: string;
-//   equipment2: string;
-//   equipment3: string;
-//   tradeGood: string;
-//   startingFunds: number;
+  // Core Stats + Mods
+  strengthScore: number;
+  strengthMod: number;
+  agilityScore: number;
+  agilityMod: number;
+  staminaScore: number;
+  staminaMod: number;
+  personalityScore: number;
+  personalityMod: number;
+  intelligenceScore: number;
+  intelligenceMod: number;
+  luckScore: number;
+  luckMod: number;
 
-//   // Lucky Sign
-//   luckySignName: string;
-//   luckySignDescription: string;
+  // Attacks and Defenses
+  armorClass: number;  
+  hitPoints: number;
+  speed: number;
+  initiative: number;
+  saveReflex: number;
+  saveFort: number;
+  saveWill: number;
 
-//   // Other Stuff
-//   fantasylanguages: string;
-//   fantasyTraits: string;
-//   fantasyRace: string;
-// };  
+  // Weapon
+  weaponDisplay: string;
+  weaponUnderlying: string;
+  weaponDamageBase: string;
+  weaponType: string;
 
-// const MALE_FEMALE = ["MALE", "FEMALE"];
+  attackMod: number;
+  attackDamageMod: number;
 
-// const US_STYLE = "US";
+  // Other Equipment
+  equipment: string;
+  equipment2: string;
+  equipment3: string;
+  startingFunds: number;
 
-// const DEFAULT_SCHOOL = "St. Cuthbert's Prepatory Academy";
+  // Lucky Sign
+  luckySignName: string;
+  luckySignDescription: string;
 
-// const DEFAULT_PORTRAIT = "Default Portrait";
+  // Other Stuff
+  languages: string[];
+  fantasyTraits: string;
+  fantasyRace: string;
+};  
 
-// const DEFAULT_AGE = 18;
+const MALE_FEMALE = ["MALE", "FEMALE"];
 
+const US_STYLE = "US";
 
+const DEFAULT_SCHOOL = "St. Cuthbert's Prepatory Academy";
 
-// export function default_build(seed: string): ExportFormat<StudentCharacter> 
-// {
-//     let rng : seedrandom.PRNG = seedrandom(seed);
-//     let to_return = [];
-//     for (let i = 0; i < 4; i++) 
-//     {
-//         to_return.push(build_dcc_student(rng, US_STYLE, DEFAULT_SCHOOL, DEFAULT_AGE));
-//     }
-//     return to_return;
-// }
+const DEFAULT_PORTRAIT = "Default Portrait";
+
+const DEFAULT_AGE = 18;
 
 
 
-
-// function build_dcc_student(rng: seedrandom.PRNG, nationality: NationalityKey, school: string, age: number): StudentCharacter 
-// {
-//     let gender = male_female(rng);
-//     let first_name = random_multi(rng, NAME_FILES()
-
-
-
-
-// }
-
-
-// export type NationalityKey = "US" | "JP";
-// export type GenderKey = "Male" | "Female";
-
-// export type NameFileSet = {
-//   firstNames: string;
-//   lastNames: string;
-// };
-
-// export const NAME_FILES: Record<NationalityKey, Record<GenderKey, NameFileSet>> = {
-//   US: {
-//     Male: {
-//       firstNames: "US_male_first_names.json",
-//       lastNames: "US_last_names.json",
-//     },
-//     Female: {
-//       firstNames: "US_female_first_names.json",
-//       lastNames: "US_last_names.json",
-//     },
-//   },
-
-//   JP: {
-//     Male: {
-//       firstNames: "JP_male_first_names.json",
-//       lastNames: "JP_last_names.json",
-//     },
-//     Female: {
-//       firstNames: "JP_female_first_names.json",
-//       lastNames: "JP_last_names.json",
-//     },
-//   },
-// } as const;
-
-// function male_female(rng: seedrandom.PRNG): string 
-// {
-//     let index = Math.floor(rng()* MALE_FEMALE.length);
-//     return MALE_FEMALE[index];
-// }
-
-// function roll_3_d_6(rng: seedrandom.PRNG) : number 
-// {
-//     let a = Math.floor(rng()* 6) + 1;
-//     let b = Math.floor(rng()* 6) + 1;
-//     let c = Math.floor(rng()* 6) + 1;
-//     return a+b+c;
-// }
-
-// function ability_mod(score : number): number
-// {
-//   if (score === 3) return -3;
-//   if (score <= 5) return -2;
-//   if (score <= 7) return -1;
-//   if (score <= 12) return 0;
-//   if (score <= 15) return 1;
-//   if (score <= 17) return 2;
-//   return 3;
-// }
-
-// function roll_1_d_4(rng: seedrandom.PRNG) : number 
-// {
-//     return Math.floor(rng()* 4) + 1;
-// }
-
-// type ProfessionInfo = {
-//   professionTitle: string;
-//   weaponDisplay: string;
-//   weaponUnderlying: string;
-//   attackDamageBase: string;
-//   weaponUnderlyingType: "Melee" | "Missile";
-//   tradeGood: string;
-// }
-
-// // FROM TABLE
-// function profession_info(rng:seedrandom.PRNG): ProfessionInfo {
-
-// }
+export function default_build(seed: string): ExportFormat<StudentCharacter> 
+{
+    let rng : seedrandom.PRNG = seedrandom(seed);
+    let to_return = [];
+    for (let i = 0; i < 4; i++) 
+    {
+        to_return.push(build_dcc_student(rng, US_STYLE, DEFAULT_SCHOOL, DEFAULT_AGE));
+    }
+    return to_return;
+}
 
 
-// // FROM TABLE
-// function additional_equipment(rng:seedrandom.PRNG) : string {
+
+
+function build_dcc_student(rng: seedrandom.PRNG, nationality: string, school: string, age: number): StudentCharacter 
+{
+    // randomly rolled and mods
+
+    let gender = male_female(rng);
+    let name = full_name(rng, gender, nationality);
+    let profession = profession_info(rng, gender);
+
+    let str = roll_3_d_6(rng);
+    let str_mod = ability_mod(str);
+    let agi = roll_3_d_6(rng);
+    let agi_mod = ability_mod(agi);
+    let con = roll_3_d_6(rng);
+    let con_mod = ability_mod(con);
+    let per = roll_3_d_6(rng);
+    let per_mod = ability_mod(per);
+    let int = roll_3_d_6(rng);
+    let int_mod = ability_mod(int);
+    let luck = roll_3_d_6(rng);
+    let luck_mod = ability_mod(luck);
+
+    let luckySign = lucky_sign(rng);
+
+    let hit_points_base = roll_1_d_4(rng);
+
+    let equipment1 = additional_equipment(rng);
+
+    // dependents
+
+    let ac = 10 + agi_mod + luckySign.AC * luck_mod
+    let hitPoints = hit_points_base + con_mod + luckySign.HP * luck_mod;
+    let speed = 30 + luckySign.Speed * luck_mod;
+    let initiative = agi_mod + luckySign.Init * luck_mod;
+    let saveReflex = agi_mod + luckySign.ReflexSave * luck_mod;
+    let saveFort = con_mod + luckySign.FortitudeSave * luck_mod;
+    let saveWill = per_mod + luckySign.WillSave * luck_mod;
     
-// }
+    let weaponDisplay = profession.weaponDisplay;
+    let weaponUnderlying = profession.weaponUnderlying;
+    let attackDamageBase = profession.weaponDamageBase;
+    let weaponType = profession.weaponType;
+    let attackMod = weaponType == MELEE ? str_mod + luckySign.Melee_Attack * luck_mod : agi_mod + luckySign.Ranged_Attack * luck_mod;
+    let attackDamageMod = weaponType == MELEE ? str_mod + luckySign.Melee_Damage * luck : agi_mod + luckySign.Ranged_Damage * luck_mod;
 
-// type LuckySignInfo = {
-//   originalName: string;
-//   effectDescription: string;
-//   tarot: string;
+    let luckySignName = luckySign.Tarot;
+    let luckySignDescription = luckySign.Description;
 
-//   meleeAttack: number;
-//   rangedAttack: number;
-//   meleeDamage: number;
-//   rangedDamage: number;
+    let equipment2 = "";
+    let equipment3 = profession.tradeGood;
 
-//   fortitudeSave: number;
-//   reflexSave: number;
-//   willSave: number;
+    let languages = ["English"];
+    let fantasyRace = "Human";
+    let fantasyTraits = "";
+    let startingFunds = 0;
 
-//   ac: number;
-//   init: number;
-//   hp: number;
-//   speed: number;
-// };
+}
 
-// // FROM TABLE
-// function LuckySignInfo(rng:seedrandom.PRNG) : LuckySignInfo {
+function male_female(rng: seedrandom.PRNG): string 
+{
+    let index = Math.floor(rng()* MALE_FEMALE.length);
+    return MALE_FEMALE[index];
+}
 
-// }
+function roll_3_d_6(rng: seedrandom.PRNG) : number 
+{
+    let a = Math.floor(rng()* 6) + 1;
+    let b = Math.floor(rng()* 6) + 1;
+    let c = Math.floor(rng()* 6) + 1;
+    return a+b+c;
+}
 
-// // // Student STuff
-// //   "studentStyle" : "US", 
-// //   "school": "St. Cutherbert's School For Gifted Children",
-// //   "gender": "Male",
-// //   "gpa" : "3.9",
-// //   "portrait" : "8",
-// //   "age" : "18",
-// //   "firstName" : "Bob",
-// //   "lastName" : "Johnson" 
-// // // Profession
-// //   "occTitle": "Cheesemaker",
-// // // Core Stats + Mods
-// //   "strengthScore": "13",
-// //   "strengthMod": "1",
-// //   "agilityScore": "11",
-// //   "agilityMod": "0",
-// //   "staminaScore": "16",
-// //   "staminaMod": "2",
-// //   "personalityScore": "15",
-// //   "personalityMod": "1",
-// //   "intelligenceScore": "15",
-// //   "intelligenceMod": "1",
-// //   "luckScore": "9",
-// //   "luckMod": "0",
-// // // Attacks and Defenses
-// //   "armorClass": "10",
-// //   "hitPoints": "3",
-// //   "weaponDisplay": "Cudgel",
-// //   "weaponUnderlying": "Staff",
-// //   "attackDamageBase": "1d4",
-// //   "weaponUnderlyingType" : "Melee", #or Missile
-// //   "attackMod": "1",
-// //   "attackDamageMod": "1",
-// //   "speed": "30",
-// //   "initiative": "0",
-// //   "saveReflex": "0",
-// //   "saveFort": "2",
-// //   "saveWill": "1",
-// // // Other Equipment
-// //   "equipment": "Sack (small) (8 cp)",
-// //   "equipment2": "",
-// //   "equipment3": "Water skin",
-// //   "tradeGood": "Stinky cheese",
-// //   "startingFunds": "29 cp",
-// // // Lucky Sign
-// //   "luckySign": "Born on the battlefield (Damage rolls) (+0)",
-// // // Other Stuff
-// //   "fantasylanguages": "Common/Dwarf",
-// //   "fantasyTraits": "", 
-// //   "fantasyRace": ""
-// // }
+function ability_mod(score : number): number
+{
+  if (score === 3) return -3;
+  if (score <= 5) return -2;
+  if (score <= 7) return -1;
+  if (score <= 12) return 0;
+  if (score <= 15) return 1;
+  if (score <= 17) return 2;
+  return 3;
+}
+
+function roll_1_d_4(rng: seedrandom.PRNG) : number 
+{
+    return Math.floor(rng()* 4) + 1;
+}
+
+const MELEE = "Melee";
+const RANGED = "Ranged";
+
+type ProfessionInfo = {
+  professionTitle: string;
+  weaponDisplay: string;
+  weaponUnderlying: string;
+  weaponDamageBase: string;
+  weaponType: string;
+  tradeGood: string;
+  genderLock: string;
+}
+
+// FROM TABLE
+function profession_info(rng:seedrandom.PRNG, gender: string): ProfessionInfo 
+{
+
+}
+
+
+// FROM TABLE
+function additional_equipment(rng:seedrandom.PRNG) : string {
+
+}
+
+// FROM TABLE
+function lucky_sign(rng:seedrandom.PRNG) : LuckyRow 
+{
+
+}

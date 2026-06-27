@@ -1,99 +1,198 @@
-import Database from "better-sqlite3";
+// scripts/dump_sqlite_table_to_object_json.ts
+
 import fs from "node:fs";
 import path from "node:path";
-import type { MultiColumnTable } from "../src/framework";
+import Database from "better-sqlite3";
 
-type SQLiteValue = string | number | bigint | Buffer | null;
+type JsonPrimitive = string;
+type StrongNamedRow = Record<string, JsonPrimitive>;
 
-function quoteIdentifier(identifier: string): string {
-  return `"${identifier.replaceAll('"', '""')}"`;
-}
+type SqliteTableInfoRow = {
+  cid: number;
+  name: string;
+  type: string;
+  notnull: number;
+  dflt_value: string | null;
+  pk: number;
+};
 
-function ensureParentDirectoryExists(filePath: string): void {
-  fs.mkdirSync(path.dirname(filePath), { recursive: true });
-}
+const IDENTIFIER_REGEX = /^[A-Za-z_][A-Za-z0-9_]*$/;
 
-function getColumns(db: Database.Database, tableName: string): string[] {
-  const rows = db
-    .prepare(`PRAGMA table_info(${quoteIdentifier(tableName)});`)
-    .all() as { name: string }[];
+function main(): void {
+  const args = process.argv.slice(2);
 
-  if (rows.length === 0) {
-    throw new Error(`Table does not exist or has no columns: ${tableName}`);
+  if (args.length !== 3) {
+    printUsageAndExit();
   }
 
-  return rows.map((row) => row.name);
+  const [sqliteDbPath, tableNameRaw, outFolder] = args;
+
+  const tableName = tableNameRaw.trim();
+  assertValidIdentifier("table name", tableName);
+
+  if (!fs.existsSync(sqliteDbPath)) {
+    throw new Error(`SQLite database does not exist: ${sqliteDbPath}`);
+  }
+
+  fs.mkdirSync(outFolder, { recursive: true });
+
+  const outPath = path.join(outFolder, `${tableName}.json`);
+
+  const rows = dumpTableToStrongNamedObjects(sqliteDbPath, tableName);
+
+  fs.writeFileSync(outPath, JSON.stringify(rows, null, 2), {
+    encoding: "utf8",
+    flag: "w",
+  });
+
+  console.log(`Dumped table: ${tableName}`);
+  console.log(`Rows: ${rows.length}`);
+  console.log(`Created JSON file: ${outPath}`);
 }
 
-function sqliteValueToString(value: SQLiteValue): string {
-  if (value === null) {
-    return "";
-  }
-
-  if (Buffer.isBuffer(value)) {
-    return value.toString("base64");
-  }
-
-  return String(value);
-}
-
-function dumpSqliteTable(
-  dbPath: string,
-  tableName: string,
-  outputPath: string,
-  label?: string
-): void {
-  if (!fs.existsSync(dbPath)) {
-    throw new Error(`SQLite database file does not exist: ${dbPath}`);
-  }
-
-  const db = new Database(dbPath, { readonly: true });
+function dumpTableToStrongNamedObjects(
+  sqliteDbPath: string,
+  requestedTableName: string
+): StrongNamedRow[] {
+  const db = new Database(sqliteDbPath, {
+    readonly: true,
+    fileMustExist: true,
+  });
 
   try {
-    const columns = getColumns(db, tableName);
-    const columnSql = columns.map(quoteIdentifier).join(", ");
+    const existingTable = db
+      .prepare(
+        `
+        SELECT name
+        FROM sqlite_master
+        WHERE type = 'table'
+          AND lower(name) = lower(?)
+        LIMIT 1
+        `
+      )
+      .get(requestedTableName) as { name: string } | undefined;
 
-    const records = db
-      .prepare(`SELECT ${columnSql} FROM ${quoteIdentifier(tableName)};`)
-      .all() as Record<string, SQLiteValue>[];
+    if (!existingTable) {
+      throw new Error(
+        `SQLite table does not exist: ${requestedTableName} in ${sqliteDbPath}`
+      );
+    }
 
-    const output: MultiColumnTable = {
-      version: "1.0.0",
-      name: tableName,
-      ...(label ? { label } : {}),
-      table: {
-        columns,
-        rows: records.map((record) =>
-          columns.map((column) => sqliteValueToString(record[column]))
-        ),
-      },
-    };
+    const actualTableName = existingTable.name;
+    assertValidIdentifier("table name from SQLite", actualTableName);
 
-    ensureParentDirectoryExists(outputPath);
-    fs.writeFileSync(outputPath, JSON.stringify(output, null, 2), "utf8");
+    const columns = readAndValidateColumns(db, actualTableName);
+
+    const sql = `
+      SELECT ${columns.map(quoteSqlIdentifier).join(", ")}
+      FROM ${quoteSqlIdentifier(actualTableName)}
+    `;
+
+    const rawRows = db.prepare(sql).all() as Record<string, unknown>[];
+
+    return rawRows.map((rawRow, rowIndex) => {
+      const outRow: StrongNamedRow = {};
+
+      for (const column of columns) {
+        const value = rawRow[column];
+
+        if (value === null || value === undefined) {
+          outRow[column] = "";
+          continue;
+        }
+
+        if (
+          typeof value !== "string" &&
+          typeof value !== "number" &&
+          typeof value !== "boolean" &&
+          typeof value !== "bigint"
+        ) {
+          throw new Error(
+            `Unsupported value in row ${rowIndex + 1}, column "${column}": ${String(value)}`
+          );
+        }
+
+        outRow[column] = String(value);
+      }
+
+      return outRow;
+    });
   } finally {
     db.close();
   }
 }
 
-function main(): void {
-  const [, , dbPath, tableName, outputPath] = process.argv;
+function readAndValidateColumns(
+  db: Database.Database,
+  tableName: string
+): string[] {
+  const tableInfoRows = db
+    .prepare(`PRAGMA table_info(${quoteSqlIdentifier(tableName)})`)
+    .all() as SqliteTableInfoRow[];
 
-  if (!dbPath || !tableName || !outputPath) {
-    console.error(
-      [
-        "Usage:",
-        "  tsx scripts/from_sql.ts <sqlite-db-path> <table-name> <output-json-path>",
-        "",
-        "Example:",
-        "  tsx scripts/from_sql.ts data/randomroll.sqlite powers src/data/generated/powers.json",
-      ].join("\n")
-    );
-
-    process.exit(1);
+  if (tableInfoRows.length === 0) {
+    throw new Error(`SQLite table has no columns: ${tableName}`);
   }
 
-  dumpSqliteTable(dbPath, tableName, outputPath);
+  const columns = tableInfoRows.map((row) => row.name.trim());
+
+  validateColumnNames(columns);
+
+  return columns;
+}
+
+function validateColumnNames(columns: string[]): void {
+  if (columns.length === 0) {
+    throw new Error("Table has no columns.");
+  }
+
+  for (const column of columns) {
+    assertValidIdentifier("column name", column);
+  }
+
+  assertNoDuplicateColumns(columns);
+}
+
+function assertValidIdentifier(label: string, value: string): void {
+  if (!IDENTIFIER_REGEX.test(value)) {
+    throw new Error(
+      `Invalid ${label}: "${value}". ` +
+        "Names must start with a letter or underscore and contain only letters, numbers, and underscores."
+    );
+  }
+}
+
+function assertNoDuplicateColumns(columns: string[]): void {
+  const seen = new Set<string>();
+
+  for (const column of columns) {
+    const normalized = column.toLowerCase();
+
+    if (seen.has(normalized)) {
+      throw new Error(
+        `Duplicate column name after case-normalization: "${column}". SQLite identifiers are case-insensitive.`
+      );
+    }
+
+    seen.add(normalized);
+  }
+}
+
+function quoteSqlIdentifier(identifier: string): string {
+  return `"${identifier.replaceAll('"', '""')}"`;
+}
+
+function printUsageAndExit(): never {
+  console.error(`
+Usage:
+
+  npx tsx scripts/from_sql.ts <sqlite-db-path> <table-name> <out-folder>
+
+Example:
+
+  npx tsx scripts/from_sql.ts ./randomroll.sqlite Pokemon ./src/generated-data
+`);
+  process.exit(1);
 }
 
 main();

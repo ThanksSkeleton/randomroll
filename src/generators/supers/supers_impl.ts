@@ -1,29 +1,13 @@
 import seedrandom from "seedrandom";
-import { BuildExportFormat, random_multi, type ExportFormat, type MultiColumnTable } from "../../framework";
-import powers from "../../table_data/powers.json";
+import { BuildExportFormat, random_multi, type ExportFormat } from "../../framework";
+import powers_raw from "../../table_data/powers.json";
+import type { PowersRow } from "../../table_data/powers";
 
-let powers_table : MultiColumnTable = powers;
+let powers_table : PowersRow[] = powers_raw;
 
-type Power = {
-    Kind: string
-    Name: string
-    Tag: string
-    Source: string,
-    VariantOf: string
-}
+type FivePowers = [PowersRow, PowersRow, PowersRow, PowersRow, PowersRow];
 
-function array_to_power(a: string[]) : Power 
-{
-    return {
-        Kind: a[KIND],
-        Name: a[NAME],
-        Tag: a[TAG],
-        Source: a[SOURCE],
-        VariantOf: a[VARIANTOF]
-    }
-}
-
-const fields: (keyof Power)[] = ["Kind", "Name", "Tag", "Source", "VariantOf"];
+const fields: (keyof PowersRow)[] = ["Kind", "Name", "Tag", "Source", "variantOf"];
 
 const columnNames: string[] = [
     ...fields.map(field => `Primary Power 1 ${field}`),
@@ -33,7 +17,7 @@ const columnNames: string[] = [
     ...fields.map(field => `Secondary Power 3 ${field}`),
 ];
 
-function flattenPowers(powers: [Power, Power, Power, Power, Power]): string[] {
+function flattenPowers(powers: [PowersRow, PowersRow, PowersRow, PowersRow, PowersRow]): string[] {
     if (powers.length !== 5) {
         throw new Error(`Expected exactly 5 powers, got ${powers.length}`);
     }
@@ -43,34 +27,28 @@ function flattenPowers(powers: [Power, Power, Power, Power, Power]): string[] {
     );
 }
 
-const NAME = 0;
-const KIND = 1;
-const TAG = 2;
-const SOURCE = 3;
-const VARIANTOF = 4;
-
 const Colorless = ["Gimmick", "Mutated", "Hypersensory"];
 const Color = ["Physics","Air","Alien","Chemistry","Animal","Water","Time","Darkness","Light","Earth","Sonic","Electricity","Energy","Ice","Fire","Radiation", "Tech", "Shapeshift"];
 const Strong_Color = ["Psionic", "Occult"];
 
 const OutputName = "GRUNGE SUPERPOWERS";
 
-export function default_build(seed: string): ExportFormat<[Power, Power, Power, Power, Power]> 
+export function default_build(seed: string): ExportFormat<FivePowers> 
 {
     return build_super_export(seed, 1);
 }
 
-export function build_super_export(seed: string, num_characters: number) : ExportFormat<[Power, Power, Power, Power, Power]> 
+export function build_super_export(seed: string, num_characters: number) : ExportFormat<FivePowers> 
 {
     let output_data = build_super(seed, num_characters);
     let flatted_powers = output_data.map(p => flattenPowers(p));
     return BuildExportFormat(OutputName, seed, columnNames, flatted_powers, output_data);
 }
 
-export function build_super(seed: string, num_characters: number): [Power, Power, Power, Power, Power][] 
+export function build_super(seed: string, num_characters: number): FivePowers[] 
 {
     let rng : seedrandom.PRNG = seedrandom(seed);
-    let to_return:[Power, Power, Power, Power, Power][] = [];
+    let to_return: FivePowers[] = [];
     for (let i = 0; i < num_characters; i++) {
         let first_power = first(rng);
         let second_power = second(rng, first_power);
@@ -80,110 +58,55 @@ export function build_super(seed: string, num_characters: number): [Power, Power
     return to_return;
 }
 
-function not_duplicate(p: Power, other_powers: Power[]): boolean 
+function not_duplicate(p: PowersRow, other_powers: PowersRow[]): boolean 
 {
-    return other_powers.every(op => op.Name != p.Name && op.Name != p.VariantOf && op.VariantOf != p.Name && (op.VariantOf != p.VariantOf || p.VariantOf == ""));
+    return other_powers.every(op => op.Name != p.Name && op.Name != p.variantOf && op.variantOf != p.Name && (op.variantOf != p.variantOf || p.variantOf == ""));
 }
 
-function first(rng: seedrandom.PRNG): Power
+function first(rng: seedrandom.PRNG): PowersRow
 {
     // Any primary power except Excluded Power Tags
-    return array_to_power(random_multi(rng, powers_table.table.rows.filter(r => r[KIND] == "Primary")));
+    return random_multi(rng, powers_table.filter(r => r.Kind == "Primary"));
 }
 
-function second(rng: seedrandom.PRNG, first_power: Power): Power
+function second(rng: seedrandom.PRNG, first_power: PowersRow): PowersRow
 {
-    let primaries = powers_table.table.rows.filter(r => r[KIND] == "Primary");
-    let non_dupes = primaries.filter(a => not_duplicate(array_to_power(a), [first_power]));
+    let primaries = powers_table.filter(r => r.Kind == "Primary");
+    let non_dupes = primaries.filter(a => not_duplicate(a, [first_power]));
 
     let color_restricted = []
     if (Colorless.includes(first_power.Tag))
     {
         // Colorless or new Color but not Strong Color
-        color_restricted = non_dupes.filter(r => Colorless.includes(r[TAG]) || Color.includes(r[TAG]));
+        color_restricted = non_dupes.filter(r => Colorless.includes(r.Tag) || Color.includes(r.Tag));
     } 
     else if (Color.includes(first_power.Tag)) 
     {
         // Colorless or Same Color
-        color_restricted = non_dupes.filter(r => Colorless.includes(r[TAG]) || r[TAG] == first_power.Tag)
+        color_restricted = non_dupes.filter(r => Colorless.includes(r.Tag) || r.Tag == first_power.Tag)
     } 
     else if (Strong_Color.includes(first_power.Tag)) 
     {
         // only matching
-        color_restricted = non_dupes.filter(r => r[TAG] == first_power.Tag);
+        color_restricted = non_dupes.filter(r => r.Tag == first_power.Tag);
     } else {
         throw Error("Impossible_Category" + first_power.Tag)
     }
 
-    return array_to_power(random_multi(rng, color_restricted));
+    return random_multi(rng, color_restricted);
 }
 
-function three_secondary(rng: seedrandom.PRNG, first_power: Power, second_power: Power): [Power, Power, Power] 
+function three_secondary(rng: seedrandom.PRNG, first_power: PowersRow, second_power: PowersRow): [PowersRow, PowersRow, PowersRow] 
 {
-    let secondary_1_table = powers_table.table.rows
-        .filter(r => r[KIND] == "Secondary")
-        .filter(r=> r[TAG] == first_power.Tag || r[TAG] == second_power.Tag)
-        .filter(r=> not_duplicate(array_to_power(r), [first_power, second_power]));
+    let secondary_1_table = powers_table
+        .filter(r => r.Kind == "Secondary")
+        .filter(r=> r.Tag == first_power.Tag || r.Tag == second_power.Tag)
+        .filter(r=> not_duplicate(r, [first_power, second_power]));
         
-    let secondary_1 = array_to_power(random_multi(rng, secondary_1_table));
-    let secondary_2_table = secondary_1_table.filter(r=> not_duplicate(array_to_power(r), [secondary_1]));
-    let secondary_2 = array_to_power(random_multi(rng, secondary_2_table))
-    let secondary_3_table = secondary_2_table.filter(r=> not_duplicate(array_to_power(r), [secondary_2]));
-    let secondary_3 = array_to_power(random_multi(rng, secondary_3_table));
+    let secondary_1 = random_multi(rng, secondary_1_table);
+    let secondary_2_table = secondary_1_table.filter(r=> not_duplicate(r, [secondary_1]));
+    let secondary_2 = random_multi(rng, secondary_2_table)
+    let secondary_3_table = secondary_2_table.filter(r=> not_duplicate(r, [secondary_2]));
+    let secondary_3 = random_multi(rng, secondary_3_table);
     return [secondary_1, secondary_2, secondary_3]
 }
-
-
-// export function build(seed: string, num_rows: number, reroll: [number, number][]): string[][] 
-// {
-//     return build_inner(seed, num_rows, reroll, []);
-// }
-
-// export function build_terrestrial(seed: string, num_rows: number, reroll: [number, number][])
-// {
-//     let terrestrial_filter : EntryFilter = {
-//         include_exclude: IncludeExclude.Include,
-//         column_index: 3,
-//         filter: 'true'
-//     };
-//     return build_inner(seed, num_rows, reroll, [terrestrial_filter]);
-// }
-
-// function build_inner(seed: string, num_rows: number, reroll: [number, number][], filters: EntryFilter[] ): string[][] 
-// {
-//     let output: string[][] = [];
-
-//     let rng : seedrandom.PRNG = seedrandom(seed);
-//     for (let i = 0; i < num_rows; i++) {
-//         let planet = planet_part(rng, filters);
-//         output[i] = [name_part(rng), planet[0], planet[1]]
-//     }
-
-//     for (let k = 0; k < reroll.length; k++) 
-//     {
-//         let row = reroll[k][0];
-//         let col = reroll[k][1];
-//         if (col == NAME_INDEX) 
-//         {
-//             output[row][0] = name_part(rng);
-//         } else {
-//             let new_planet = planet_part(rng, filters);
-//             output[row][1] = new_planet[0];
-//             output[row][2] = new_planet[1];
-//         }
-//     }
-
-//     return output;
-// }
-
-// function name_part(rng : seedrandom.PRNG): string 
-// {
-//     return random_single(rng, t1);
-// }
-
-// function planet_part(rng: seedrandom.PRNG, filters: EntryFilter[]) : [string, string] 
-// {
-//     let planet = random_multi_filter(rng, t2, filters);
-//     let grounded = (planet[3] === "true") ? "grounded" : "floating";
-//     return [planet[0], grounded];
-// }
