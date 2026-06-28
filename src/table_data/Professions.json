@@ -1,0 +1,366 @@
+[
+  {
+    "ProfessionTitle": "Student Council Member",
+    "Genderlock": "",
+    "TradeGood": "Clipboard",
+    "Weapon": "",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "ProfessionTitle": "Overprotected Kid",
+    "Genderlock": "",
+    "TradeGood": "Bike Helmet",
+    "Weapon": "Umbrella",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "ProfessionTitle": "Pastor's Daughter",
+    "Genderlock": "Female",
+    "TradeGood": "Crucifix",
+    "Weapon": "Bible",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "ProfessionTitle": "Pastor's Son",
+    "Genderlock": "Male",
+    "TradeGood": "Crucifix",
+    "Weapon": "Bible",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "ProfessionTitle": "Arcade Fanatic",
+    "Genderlock": "",
+    "TradeGood": "Roll Of Quarters",
+    "Weapon": "",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "ProfessionTitle": "Poet",
+    "Genderlock": "",
+    "TradeGood": "Notepad (poetry)",
+    "Weapon": "Fountain Pen",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "ProfessionTitle": "Poor Kid",
+    "Genderlock": "",
+    "TradeGood": "Bottle Of Coke",
+    "Weapon": "Broom",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "ProfessionTitle": "AV Club",
+    "Genderlock": "",
+    "TradeGood": "Vhs Tape",
+    "Weapon": "Electrical Cord",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "ProfessionTitle": "Class Clown",
+    "Genderlock": "",
+    "TradeGood": "20 Feet Of Rope",
+    "Weapon": "",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "ProfessionTitle": "Foreign Exchange Student",
+    "Genderlock": "",
+    "TradeGood": "Metal Lunchbox",
+    "Weapon": "",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "ProfessionTitle": "Drama Kid",
+    "Genderlock": "",
+    "TradeGood": "Hamlet",
+    "Weapon": "",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "ProfessionTitle": "Band Kid",
+    "Genderlock": "",
+    "TradeGood": "Trumpet Case",
+    "Weapon": "Trumpet",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "ProfessionTitle": "New Waver",
+    "Genderlock": "",
+    "TradeGood": "Sunglasses",
+    "Weapon": "",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "ProfessionTitle": "Computer Wiz",
+    "Genderlock": "",
+    "TradeGood": "Computer Manual",
+    "Weapon": "Electrical Cord",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "ProfessionTitle": "Party Animal",
+    "Genderlock": "",
+    "TradeGood": "Six Pack Of Beer",
+    "Weapon": "Beer Bottle",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "ProfessionTitle": "Military Brat",
+    "Genderlock": "",
+    "TradeGood": "20 Feet Of Rope",
+    "Weapon": "Entrenching Tool",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "ProfessionTitle": "Stoner",
+    "Genderlock": "",
+    "TradeGood": "2 Zippo Lighters",
+    "Weapon": "",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "ProfessionTitle": "Preppy",
+    "Genderlock": "",
+    "TradeGood": "Silver Medal",
+    "Weapon": "Lacross Stick",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "ProfessionTitle": "Metalhead",
+    "Genderlock": "",
+    "TradeGood": "Guitar",
+    "Weapon": "",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "ProfessionTitle": "Goth",
+    "Genderlock": "",
+    "TradeGood": "Goth Makeup Kit",
+    "Weapon": "Ornate Letter Opener",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "ProfessionTitle": "Gearhead",
+    "Genderlock": "Male",
+    "TradeGood": "Bottle Of Oil",
+    "Weapon": "Wrench",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "ProfessionTitle": "Misfit Artist",
+    "Genderlock": "",
+    "TradeGood": "Colored Chalk",
+    "Weapon": "",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "ProfessionTitle": "Delinquent",
+    "Genderlock": "",
+    "TradeGood": "Switchcomb",
+    "Weapon": "Switchblade",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "ProfessionTitle": "Cheerleader",
+    "Genderlock": "Female",
+    "TradeGood": "Megaphone",
+    "Weapon": "Baton",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "ProfessionTitle": "Baseball Jock",
+    "Genderlock": "Male",
+    "TradeGood": "Baseball",
+    "Weapon": "Baseball Bat",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "ProfessionTitle": "Basketball Jock",
+    "Genderlock": "Male",
+    "TradeGood": "Basketball",
+    "Weapon": "",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "ProfessionTitle": "Football Jock",
+    "Genderlock": "",
+    "TradeGood": "Football Gear (as Leather Armor)",
+    "Weapon": "",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "ProfessionTitle": "Punk",
+    "Genderlock": "",
+    "TradeGood": "Spray Paint Can",
+    "Weapon": "",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "ProfessionTitle": "Valley Girl",
+    "Genderlock": "Female",
+    "TradeGood": "Hand Mirror And Makeup Kit",
+    "Weapon": "",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "ProfessionTitle": "Skater",
+    "Genderlock": "",
+    "TradeGood": "Knee And Elbow Pads",
+    "Weapon": "Skateboard",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "ProfessionTitle": "Pagent Queen",
+    "Genderlock": "Female",
+    "TradeGood": "Lipstick",
+    "Weapon": "",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "ProfessionTitle": "Prom King",
+    "Genderlock": "Male",
+    "TradeGood": "Flask Of Whiskey",
+    "Weapon": "",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "ProfessionTitle": "Rich Kid",
+    "Genderlock": "",
+    "TradeGood": "Keys To A Hot Rod",
+    "Weapon": "9 Iron",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "ProfessionTitle": "Farm Kid",
+    "Genderlock": "",
+    "TradeGood": "Work Gloves",
+    "Weapon": "",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "ProfessionTitle": "Chemistry Nerd",
+    "Genderlock": "",
+    "TradeGood": "Vial Of Acid",
+    "Weapon": "",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "ProfessionTitle": "Quiz Bowl Nerd",
+    "Genderlock": "",
+    "TradeGood": "Book Of Quiz Questions",
+    "Weapon": "",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "ProfessionTitle": "Chess Club Strategist",
+    "Genderlock": "",
+    "TradeGood": "Chess Set",
+    "Weapon": "",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "ProfessionTitle": "Comic Book Nerd",
+    "Genderlock": "",
+    "TradeGood": "5 Mint Comics In Plastic Bags",
+    "Weapon": "",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "ProfessionTitle": "History Buff",
+    "Genderlock": "",
+    "TradeGood": "Box Of Army Men",
+    "Weapon": "",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "ProfessionTitle": "My Dad's A Doctor",
+    "Genderlock": "",
+    "TradeGood": "First Aid Kit",
+    "Weapon": "Scalpel",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "ProfessionTitle": "Speech And Debate",
+    "Genderlock": "",
+    "TradeGood": "Whistle",
+    "Weapon": "",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "ProfessionTitle": "School Newspaper Editor",
+    "Genderlock": "",
+    "TradeGood": "Flash Polaroid Camera (3 Shots)",
+    "Weapon": "",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "ProfessionTitle": "I Like Carpentry",
+    "Genderlock": "",
+    "TradeGood": "Handsaw",
+    "Weapon": "Chisel",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "ProfessionTitle": "Boy Scout",
+    "Genderlock": "Male",
+    "TradeGood": "Compass",
+    "Weapon": "Hunting Knife",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "ProfessionTitle": "Girl Scout",
+    "Genderlock": "Female",
+    "TradeGood": "Compass",
+    "Weapon": "Hunting Knife",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "ProfessionTitle": "Hunting Kid",
+    "Genderlock": "",
+    "TradeGood": "Camo Vest",
+    "Weapon": "Hunting Knife",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "ProfessionTitle": "Hiker",
+    "Genderlock": "",
+    "TradeGood": "Rock Hammer",
+    "Weapon": "Hiking Stick",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "ProfessionTitle": "Breakdancer",
+    "Genderlock": "",
+    "TradeGood": "Walkman Low On Batteries",
+    "Weapon": "",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "ProfessionTitle": "Theater Tech",
+    "Genderlock": "",
+    "TradeGood": "Fake Knife",
+    "Weapon": "",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "ProfessionTitle": "Shoplifter",
+    "Genderlock": "",
+    "TradeGood": "Plastic Bags",
+    "Weapon": "",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "ProfessionTitle": "Gardener",
+    "Genderlock": "",
+    "TradeGood": "Pruning Shears",
+    "Weapon": "Trowel",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "ProfessionTitle": "Grocer Store Worker",
+    "Genderlock": "",
+    "TradeGood": "Roll Of \"sale\" Stickers",
+    "Weapon": "Cleaver",
+    "Source": "USSTUDENTS"
+  }
+]

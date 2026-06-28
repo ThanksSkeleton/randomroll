@@ -1,0 +1,1087 @@
+[
+  {
+    "Item": "2 Zippo Lighters",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "FALSE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "20 Feet Of Rope",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "FALSE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "5 Mint Comics In Plastic Bags",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "FALSE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Apple",
+    "Category": "FoodSide",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Athletic Tape",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Backpack",
+    "Category": "Bag",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Bag Of Chips",
+    "Category": "FoodSide",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Banana",
+    "Category": "FoodSide",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Bandana",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Baseball",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "FALSE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Baseball Cards",
+    "Category": "Cultural Goods",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Basketball",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "FALSE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Bike Helmet",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "FALSE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Bike Lock",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Binoculars",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Flask Of Whiskey",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "FALSE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Bologna Sandwich",
+    "Category": "FoodMain",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Book Of Quiz Questions",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "FALSE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Bookbag",
+    "Category": "Bag",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Bottle Of Coke",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "FALSE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Bottle Of Oil",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "FALSE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Box Of Army Men",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "FALSE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Breakup Note",
+    "Category": "Cultural Goods",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Breath Mints",
+    "Category": "Cultural Goods",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Brown Paper Lunch Bag",
+    "Category": "FoodContainer",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Bubble Gum",
+    "Category": "Cultural Goods",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Bug Spray",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Calculator",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Candy Bars (2)",
+    "Category": "FoodMain",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Carrot Sticks",
+    "Category": "FoodSide",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Chalk",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Cheese Crackers",
+    "Category": "FoodSide",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Cheese Sandwich",
+    "Category": "FoodMain",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Chess Set",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "FALSE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Class Ring",
+    "Category": "Cultural Goods",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Clipboard",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "FALSE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Colored Chalk",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "FALSE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Combination Lock",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Comic Book (choose)",
+    "Category": "Cultural Goods",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Compass",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Compass",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "FALSE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Computer Manual",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "FALSE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Crucifix",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "FALSE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Crystal Pendant",
+    "Category": "Cultural Goods",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Diary",
+    "Category": "Cultural Goods",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Dice",
+    "Category": "Cultural Goods",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Drawstring Bag",
+    "Category": "Bag",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Camo Vest",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "FALSE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Duct Tape",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Duffle Bag",
+    "Category": "Bag",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Extension Cord",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Extra Shoelaces",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Extra Socks",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Family Photograph",
+    "Category": "Cultural Goods",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Fanny Pack",
+    "Category": "Bag",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "First Aid Kit",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "FALSE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Fishing Line",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Flash Polaroid Camera (3 Shots)",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "FALSE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Flashlight",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Football Gear (as Leather Armor)",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "FALSE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Foreign Coin",
+    "Category": "Cultural Goods",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Fake Knife",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "FALSE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Gauze Roll",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Goth Makeup Kit",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "FALSE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Guitar",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "FALSE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Gym Bag",
+    "Category": "Bag",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Hamlet",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "FALSE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Hand Mirror And Makeup Kit",
+    "Category": "Tool",
+    "Genderlock": "Female",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Handsaw",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "FALSE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Homemade Cookies",
+    "Category": "FoodSide",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Index Cards",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Inhaler",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Juice Box",
+    "Category": "FoodDrink",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Keys To A Hot Rod",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "FALSE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Knee And Elbow Pads",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "FALSE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Letterman Patch (choose)",
+    "Category": "Cultural Goods",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Library Book (choose)",
+    "Category": "Cultural Goods",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Lighter",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Metal Lunchbox",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "FALSE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Megaphone",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "FALSE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Love Note",
+    "Category": "Cultural Goods",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Plastic Lunchbox",
+    "Category": "FoodContainer",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Notepad (poetry)",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "FALSE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Magazine (choose)",
+    "Category": "Cultural Goods",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Magnifying Glass",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Masking Tape",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Matches",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Measuring Tape",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Medal (choose)",
+    "Category": "Cultural Goods",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Rock Hammer",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "FALSE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Nail File",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Notebook",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Roll Of \"sale\" Stickers",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "FALSE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Orange",
+    "Category": "FoodSide",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Paper Bag",
+    "Category": "FoodContainer",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Paperback Novel (choose)",
+    "Category": "Cultural Goods",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Patches (choose)",
+    "Category": "Cultural Goods",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Pb&j Sandwich",
+    "Category": "FoodMain",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Peanuts (bag)",
+    "Category": "FoodSide",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Pen",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Pencil",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Permanent Marker",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Pickle",
+    "Category": "FoodSide",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Plastic Grocery Bag",
+    "Category": "FoodContainer",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Playing Cards",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Pliers",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Pocket Bible",
+    "Category": "Cultural Goods",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Pocketknife",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Postcard",
+    "Category": "Cultural Goods",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Pretzels",
+    "Category": "FoodSide",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Pudding Cup",
+    "Category": "FoodSide",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Small Purse",
+    "Category": "Wallet",
+    "Genderlock": "Female",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Purse",
+    "Category": "Bag",
+    "Genderlock": "Female",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Rabbit’s Foot Keychain",
+    "Category": "Cultural Goods",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Raisins (box)",
+    "Category": "FoodSide",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Roll Of Quarters",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "FALSE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Silver Medal",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "FALSE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Rosary",
+    "Category": "Cultural Goods",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Rubber Bands, Paper Clips And String",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Safety Goggles",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Scissors",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Sewing Kit",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Sheet Music",
+    "Category": "Cultural Goods",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Six Pack Of Beer",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "FALSE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Spray Paint Can",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "FALSE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Sunglasses",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "FALSE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Small Blanket",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Soap",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Soda Can",
+    "Category": "FoodDrink",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Spare Batteries",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Switchcomb",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "FALSE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Sunflower Seeds",
+    "Category": "Cultural Goods",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Trumpet Case",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "FALSE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Super Glue",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Swiss Army Knife",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Pruning Shears",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "FALSE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Tape Recorder",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Thermos Of Soup",
+    "Category": "FoodMain",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Trash Bag",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Trivia Book",
+    "Category": "Cultural Goods",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Vhs Tape",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "FALSE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Tuna Sandwich",
+    "Category": "FoodMain",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Tv Guide",
+    "Category": "Cultural Goods",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Tweezers",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Vial Of Acid",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "FALSE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Walkman Low On Batteries",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "FALSE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Flowers",
+    "Category": "Cultural Goods",
+    "Genderlock": "Female",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Lipstick",
+    "Category": "Tool",
+    "Genderlock": "Female",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Wallet",
+    "Category": "Wallet",
+    "Genderlock": "Male",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Whistle",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Work Gloves",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Wristwatch",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Yearbook",
+    "Category": "Cultural Goods",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Zine (choose)",
+    "Category": "Cultural Goods",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Item": "Plastic Bags",
+    "Category": "Tool",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  }
+]

@@ -1,0 +1,299 @@
+[
+  {
+    "Weapon": "9 Iron",
+    "WeaponType": "Melee",
+    "WeaponUnderlying": "Club",
+    "WeaponDamageBase": "1d4",
+    "Genderlock": "",
+    "Random": "FALSE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Weapon": "Baseball Bat",
+    "WeaponType": "Melee",
+    "WeaponUnderlying": "Mace",
+    "WeaponDamageBase": "1d6",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Weapon": "Baton",
+    "WeaponType": "Melee",
+    "WeaponUnderlying": "Staff",
+    "WeaponDamageBase": "1d4",
+    "Genderlock": "",
+    "Random": "FALSE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Weapon": "Beer Bottle",
+    "WeaponType": "Melee",
+    "WeaponUnderlying": "Dagger",
+    "WeaponDamageBase": "1d4",
+    "Genderlock": "",
+    "Random": "FALSE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Weapon": "Bible",
+    "WeaponType": "Melee",
+    "WeaponUnderlying": "Club",
+    "WeaponDamageBase": "1d4",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Weapon": "Bike Chain With Lock",
+    "WeaponType": "Melee",
+    "WeaponUnderlying": "Flail",
+    "WeaponDamageBase": "1d6",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Weapon": "Box Cutter",
+    "WeaponType": "Melee",
+    "WeaponUnderlying": "Dagger",
+    "WeaponDamageBase": "1d4",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Weapon": "Broom",
+    "WeaponType": "Melee",
+    "WeaponUnderlying": "Staff",
+    "WeaponDamageBase": "1d4",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Weapon": "Chisel",
+    "WeaponType": "Melee",
+    "WeaponUnderlying": "Dagger",
+    "WeaponDamageBase": "1d4",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Weapon": "Cleaver",
+    "WeaponType": "Melee",
+    "WeaponUnderlying": "Handaxe",
+    "WeaponDamageBase": "1d6",
+    "Genderlock": "",
+    "Random": "FALSE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Weapon": "Drumsticks",
+    "WeaponType": "Melee",
+    "WeaponUnderlying": "Club",
+    "WeaponDamageBase": "1d4",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Weapon": "Electrical Cord",
+    "WeaponType": "Melee",
+    "WeaponUnderlying": "Garrote",
+    "WeaponDamageBase": "1",
+    "Genderlock": "",
+    "Random": "FALSE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Weapon": "Entrenching Tool",
+    "WeaponType": "Melee",
+    "WeaponUnderlying": "Hand Axe",
+    "WeaponDamageBase": "1d6",
+    "Genderlock": "",
+    "Random": "FALSE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Weapon": "Exacto Knife",
+    "WeaponType": "Melee",
+    "WeaponUnderlying": "Dagger",
+    "WeaponDamageBase": "1d4",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Weapon": "Fountain Pen",
+    "WeaponType": "Melee",
+    "WeaponUnderlying": "Dagger",
+    "WeaponDamageBase": "1d4",
+    "Genderlock": "",
+    "Random": "FALSE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Weapon": "Heavy Textbook (choose topic)",
+    "WeaponType": "Melee",
+    "WeaponUnderlying": "Club",
+    "WeaponDamageBase": "1d4",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Weapon": "Hiking Stick",
+    "WeaponType": "Melee",
+    "WeaponUnderlying": "Staff",
+    "WeaponDamageBase": "1d4",
+    "Genderlock": "",
+    "Random": "FALSE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Weapon": "Hunting Knife",
+    "WeaponType": "Melee",
+    "WeaponUnderlying": "Dagger",
+    "WeaponDamageBase": "1d4",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Weapon": "Metal Lunchbox",
+    "WeaponType": "Melee",
+    "WeaponUnderlying": "Club",
+    "WeaponDamageBase": "1d4",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Weapon": "Metal Ruler",
+    "WeaponType": "Melee",
+    "WeaponUnderlying": "Dagger",
+    "WeaponDamageBase": "1d4",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Weapon": "Ornate Letter Opener",
+    "WeaponType": "Melee",
+    "WeaponUnderlying": "Dagger",
+    "WeaponDamageBase": "1d4",
+    "Genderlock": "",
+    "Random": "FALSE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Weapon": "Pocketknife",
+    "WeaponType": "Melee",
+    "WeaponUnderlying": "Dagger",
+    "WeaponDamageBase": "1d4",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Weapon": "Scalpel",
+    "WeaponType": "Melee",
+    "WeaponUnderlying": "Dagger",
+    "WeaponDamageBase": "1d4",
+    "Genderlock": "",
+    "Random": "FALSE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Weapon": "Scissors",
+    "WeaponType": "Melee",
+    "WeaponUnderlying": "Dagger",
+    "WeaponDamageBase": "1d4",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Weapon": "Screwdriver",
+    "WeaponType": "Melee",
+    "WeaponUnderlying": "Dagger",
+    "WeaponDamageBase": "1d4",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Weapon": "Skateboard",
+    "WeaponType": "Melee",
+    "WeaponUnderlying": "Club",
+    "WeaponDamageBase": "1d4",
+    "Genderlock": "",
+    "Random": "FALSE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Weapon": "Switchblade",
+    "WeaponType": "Melee",
+    "WeaponUnderlying": "Dagger",
+    "WeaponDamageBase": "1d4",
+    "Genderlock": "",
+    "Random": "FALSE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Weapon": "Thermos",
+    "WeaponType": "Melee",
+    "WeaponUnderlying": "Club",
+    "WeaponDamageBase": "1d4",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Weapon": "Trowel",
+    "WeaponType": "Melee",
+    "WeaponUnderlying": "Dagger",
+    "WeaponDamageBase": "1d4",
+    "Genderlock": "",
+    "Random": "FALSE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Weapon": "Trumpet",
+    "WeaponType": "Melee",
+    "WeaponUnderlying": "Mace",
+    "WeaponDamageBase": "1d6",
+    "Genderlock": "",
+    "Random": "FALSE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Weapon": "Umbrella",
+    "WeaponType": "Melee",
+    "WeaponUnderlying": "Staff",
+    "WeaponDamageBase": "1d4",
+    "Genderlock": "",
+    "Random": "TRUE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Weapon": "Wrench",
+    "WeaponType": "Melee",
+    "WeaponUnderlying": "Mace",
+    "WeaponDamageBase": "1d6",
+    "Genderlock": "",
+    "Random": "FALSE",
+    "Source": "USSTUDENTS"
+  },
+  {
+    "Weapon": "Lacross Stick",
+    "WeaponType": "Melee",
+    "WeaponUnderlying": "Staff",
+    "WeaponDamageBase": "1d4",
+    "Genderlock": "",
+    "Random": "FALSE",
+    "Source": "USSTUDENTS"
+  }
+]

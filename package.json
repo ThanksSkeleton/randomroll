@@ -8,10 +8,13 @@
     "build": "npm run json && tsc && vite build",
     "preview": "vite preview",
     "test": "vitest",
-    "json": "npm run powers_json && npm run names_json && npm run lucky_json",
+    "json": "npm run powers_json && npm run names_json && npm run lucky_json && npm run items_json && npm run professions_json && npm run weapons_json",
     "powers_json": "tsx scripts/from_sql.ts data/randomroll.sqlite powers src/table_data",
     "names_json": "tsx scripts/from_sql.ts data/randomroll.sqlite names src/table_data",
-    "lucky_json": "tsx scripts/from_sql.ts data/randomroll.sqlite Lucky src/table_data"
+    "lucky_json": "tsx scripts/from_sql.ts data/randomroll.sqlite Lucky src/table_data",
+    "items_json": "tsx scripts/from_sql.ts data/randomroll.sqlite Items src/table_data",
+    "professions_json": "tsx scripts/from_sql.ts data/randomroll.sqlite Professions src/table_data",
+    "weapons_json": "tsx scripts/from_sql.ts data/randomroll.sqlite Weapons src/table_data"
   },
   "devDependencies": {
     "@types/better-sqlite3": "^7.6.13",

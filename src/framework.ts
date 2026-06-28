@@ -229,7 +229,7 @@ function escapeCsvCell(value: string): string {
 
 import seedrandom from "seedrandom";
 
-export function BuildExportFormat<TObject>(name: string, seed: string, col_names: string[], flattened_input: string[][], data_object: TObject[]) : ExportFormat<TObject> 
+export function buildExportFormat<TObject>(name: string, seed: string, col_names: string[], flattened_input: string[][], data_object: TObject[]) : ExportFormat<TObject> 
 {
     return {
         name: name,
@@ -240,6 +240,14 @@ export function BuildExportFormat<TObject>(name: string, seed: string, col_names
         flattened: flattened_input,
         objects: data_object
     }
+}
+
+export function autoflatten<TObject extends Record<string, unknown>>(name: string, seed: string, data_objects: TObject[]) : ExportFormat<TObject> 
+{
+    let column_names = Object.keys(data_objects[0]);
+    let flattened = data_objects.map(obj => column_names.map(col => String(obj[col] ?? "")));
+
+    return buildExportFormat(name, seed, column_names, flattened, data_objects);
 }
 
 export type SingletonTable = {

@@ -1,5 +1,5 @@
 import seedrandom from "seedrandom";
-import { BuildExportFormat, random_multi, type ExportFormat } from "../../framework";
+import { buildExportFormat, random_multi, type ExportFormat } from "../../framework";
 import powers_raw from "../../table_data/powers.json";
 import type { PowersRow } from "../../table_data/powers";
 
@@ -45,7 +45,7 @@ export function build_super_export(seed: string, num_characters: number) : Expor
 {
     let output_data = build_super(seed, num_characters);
     let flatted_powers = output_data.map(p => flattenPowers(p));
-    return BuildExportFormat(OutputName, seed, columnNames, flatted_powers, output_data);
+    return buildExportFormat(OutputName, seed, columnNames, flatted_powers, output_data);
 }
 
 export function build_super(seed: string, num_characters: number): FivePowers[] 
