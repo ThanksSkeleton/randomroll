@@ -1,0 +1,223 @@
+{
+  "source": {
+    "document": "Stars Without Number: Revised Edition — Free Edition",
+    "file": "temp/StarsWithoutNumberRevised-FreeEdition-122917.pdf",
+    "pdfPages": "133–175",
+    "printedPages": "129–171",
+    "extractedOn": "2026-09-12"
+  },
+  "dice": "2d6",
+  "tables": [
+    {
+      "id": "atmosphere",
+      "printedPage": 160,
+      "rows": [
+        {
+          "roll": 2,
+          "result": "Corrosive, damaging to foreign objects",
+          "hab": 0
+        },
+        {
+          "roll": 3,
+          "result": "Inert gas, useless for respiration",
+          "hab": 1
+        },
+        {
+          "roll": 4,
+          "result": "Airless or thin to the point of suffocation",
+          "hab": 1
+        },
+        {
+          "roll": "5-9",
+          "result": "Breathable mix",
+          "hab": 3
+        },
+        {
+          "roll": 10,
+          "result": "Thick, but breathable with a pressure mask",
+          "hab": 1
+        },
+        {
+          "roll": 11,
+          "result": "Invasive, penetrating suit seals",
+          "hab": 0
+        },
+        {
+          "roll": 12,
+          "result": "Both corrosive and invasive in its effects",
+          "hab": 0
+        }
+      ],
+      "pdfPage": 164
+    },
+    {
+      "id": "temperature",
+      "printedPage": 162,
+      "rows": [
+        {
+          "roll": 2,
+          "result": "Frozen, locked in perpetual ice",
+          "hab": 1
+        },
+        {
+          "roll": 3,
+          "result": "Cold, dominated by glaciers and tundra",
+          "hab": 3
+        },
+        {
+          "roll": "4-5",
+          "result": "Variable cold with temperate places",
+          "hab": 3
+        },
+        {
+          "roll": "6-8",
+          "result": "Temperate, Earthlike in its ranges",
+          "hab": 3
+        },
+        {
+          "roll": "9-10",
+          "result": "Variable warm, with temperate places",
+          "hab": 3
+        },
+        {
+          "roll": 11,
+          "result": "Warm, tropical and hotter in places",
+          "hab": 3
+        },
+        {
+          "roll": 12,
+          "result": "Burning, intolerably hot on its surface",
+          "hab": 1
+        }
+      ],
+      "pdfPage": 166
+    },
+    {
+      "id": "biosphere",
+      "printedPage": 164,
+      "rows": [
+        {
+          "roll": 2,
+          "result": "Remnant biosphere",
+          "hab": 1
+        },
+        {
+          "roll": 3,
+          "result": "Microbial life forms exist",
+          "hab": 1
+        },
+        {
+          "roll": "4-5",
+          "result": "No native biosphere",
+          "hab": 2
+        },
+        {
+          "roll": "6-8",
+          "result": "Human-miscible biosphere",
+          "hab": 3
+        },
+        {
+          "roll": "9-10",
+          "result": "Immiscible biosphere",
+          "hab": 2
+        },
+        {
+          "roll": 11,
+          "result": "Hybrid biosphere",
+          "hab": 3
+        },
+        {
+          "roll": 12,
+          "result": "Engineered biosphere",
+          "hab": 3
+        }
+      ],
+      "pdfPage": 168
+    },
+    {
+      "id": "population",
+      "printedPage": 166,
+      "rows": [
+        {
+          "roll": 2,
+          "result": "Failed colony",
+          "hab": 0
+        },
+        {
+          "roll": 3,
+          "result": "Outpost",
+          "hab": 0
+        },
+        {
+          "roll": "4-5",
+          "result": "Fewer than a million inhabitants",
+          "hab": 0
+        },
+        {
+          "roll": "6-8",
+          "result": "Several million inhabitants",
+          "hab": 2
+        },
+        {
+          "roll": "9-10",
+          "result": "Hundreds of millions of inhabitants",
+          "hab": 2
+        },
+        {
+          "roll": 11,
+          "result": "Billions of inhabitants",
+          "hab": 3
+        },
+        {
+          "roll": 12,
+          "result": "Alien inhabitants",
+          "hab": 1,
+          "alien": true
+        }
+      ],
+      "pdfPage": 170
+    },
+    {
+      "id": "tech_level",
+      "printedPage": 168,
+      "rows": [
+        {
+          "roll": 2,
+          "result": "TL0, neolithic-level technology",
+          "hab": 3
+        },
+        {
+          "roll": 3,
+          "result": "TL1, medieval technology",
+          "hab": 3
+        },
+        {
+          "roll": "4-5",
+          "result": "TL2, early Industrial Age tech",
+          "hab": 3
+        },
+        {
+          "roll": "6-8",
+          "result": "TL4, modern postech",
+          "hab": 0
+        },
+        {
+          "roll": "9-10",
+          "result": "TL3, tech like that of present-day Earth",
+          "hab": 2
+        },
+        {
+          "roll": 11,
+          "result": "TL4+, postech with specialties",
+          "hab": 0
+        },
+        {
+          "roll": 12,
+          "result": "TL5, pretech with surviving infrastructure",
+          "hab": 0
+        }
+      ],
+      "pdfPage": 172
+    }
+  ]
+}

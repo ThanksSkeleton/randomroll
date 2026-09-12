@@ -1,0 +1,453 @@
+{
+  "source": {
+    "document": "Stars Without Number: Revised Edition — Free Edition",
+    "file": "temp/StarsWithoutNumberRevised-FreeEdition-122917.pdf",
+    "pdfPages": "133–175",
+    "printedPages": "129–171",
+    "extractedOn": "2026-09-12"
+  },
+  "secondaryWorld": {
+    "printedPage": 170,
+    "pdfPage": 174,
+    "rows": [
+      {
+        "roll": 1,
+        "origin": "Recent colony from the primary world",
+        "relationship": "Confirmed hatred of each other",
+        "contactPoint": "Trade in vital goods"
+      },
+      {
+        "roll": 2,
+        "origin": "Refuge for exiles from primary",
+        "relationship": "Active cold war between them",
+        "contactPoint": "Shared religion"
+      },
+      {
+        "roll": 3,
+        "origin": "Founded ages ago by a different group",
+        "relationship": "Old grudges or resentments",
+        "contactPoint": "Mutual language"
+      },
+      {
+        "roll": 4,
+        "origin": "Founded long before the primary world",
+        "relationship": "Cultural disgust and avoidance",
+        "contactPoint": "Entertainment content"
+      },
+      {
+        "roll": 5,
+        "origin": "Lost ancient colony of the primary",
+        "relationship": "Polite interchange and trade",
+        "contactPoint": "Shared research"
+      },
+      {
+        "roll": 6,
+        "origin": "Colony recently torn free of the primary",
+        "relationship": "Cultural admiration for primary",
+        "contactPoint": "Threat to both of them"
+      },
+      {
+        "roll": 7,
+        "origin": "Long-standing cooperative colony world",
+        "relationship": "Long-standing friendship",
+        "contactPoint": "Shared elite families"
+      },
+      {
+        "roll": 8,
+        "origin": "Recent interstellar colony from elsewhere",
+        "relationship": "Unflinching mutual loyalty",
+        "contactPoint": "Exploiting shared resource"
+      }
+    ]
+  },
+  "otherPoint": {
+    "printedPage": 171,
+    "pdfPage": 175,
+    "rows": [
+      {
+        "roll": 1,
+        "point": "Deep-space station",
+        "occupants": [
+          {
+            "roll": "1-2",
+            "result": "Dangerously odd transhumans"
+          },
+          {
+            "roll": "3-4",
+            "result": "Freeze-dried ancient corpses"
+          },
+          {
+            "roll": "5-6",
+            "result": "Secretive military observers"
+          },
+          {
+            "roll": "7-8",
+            "result": "Eccentric oligarch and minions"
+          },
+          {
+            "roll": "9-10",
+            "result": "Deranged but brilliant scientist"
+          }
+        ],
+        "situations": [
+          {
+            "roll": "1-2",
+            "result": "Systems breaking down"
+          },
+          {
+            "roll": "3-4",
+            "result": "Foreign sabotage attempt"
+          },
+          {
+            "roll": "5-6",
+            "result": "Black market for the elite"
+          },
+          {
+            "roll": "7-8",
+            "result": "Vault for dangerous pretech"
+          },
+          {
+            "roll": "9-10",
+            "result": "Supply base for pirates"
+          }
+        ]
+      },
+      {
+        "roll": 2,
+        "point": "Asteroid base",
+        "occupants": [
+          {
+            "roll": "1-2",
+            "result": "Zealous religious sectarians"
+          },
+          {
+            "roll": "3-4",
+            "result": "Failed rebels from another world"
+          },
+          {
+            "roll": "5-6",
+            "result": "Wage-slave corporate miners"
+          },
+          {
+            "roll": "7-8",
+            "result": "Independent asteroid prospectors"
+          },
+          {
+            "roll": "9-10",
+            "result": "Pirates masquerading as otherwise"
+          }
+        ],
+        "situations": [
+          {
+            "roll": "1-2",
+            "result": "Life support is threatened"
+          },
+          {
+            "roll": "3-4",
+            "result": "Base needs a new asteroid"
+          },
+          {
+            "roll": "5-6",
+            "result": "Dug out something nasty"
+          },
+          {
+            "roll": "7-8",
+            "result": "Fighting another asteroid"
+          },
+          {
+            "roll": "9-10",
+            "result": "Hit a priceless vein of ore"
+          }
+        ]
+      },
+      {
+        "roll": 3,
+        "point": "Remote moon base",
+        "occupants": [
+          {
+            "roll": "1-2",
+            "result": "Unlucky corporate researchers"
+          },
+          {
+            "roll": "3-4",
+            "result": "Reclusive hermit genius"
+          },
+          {
+            "roll": "5-6",
+            "result": "Remnants of a failed colony"
+          },
+          {
+            "roll": "7-8",
+            "result": "Military listening post"
+          },
+          {
+            "roll": "9-10",
+            "result": "Lonely overseers and robot miners"
+          }
+        ],
+        "situations": [
+          {
+            "roll": "1-2",
+            "result": "Something dark has awoken"
+          },
+          {
+            "roll": "3-4",
+            "result": "Criminals trying to take over"
+          },
+          {
+            "roll": "5-6",
+            "result": "Moon plague breaking out"
+          },
+          {
+            "roll": "7-8",
+            "result": "Desperate for vital supplies"
+          },
+          {
+            "roll": "9-10",
+            "result": "Rich but badly-protected"
+          }
+        ]
+      },
+      {
+        "roll": 4,
+        "point": "Ancient orbital ruin",
+        "occupants": [
+          {
+            "roll": "1-2",
+            "result": "Robots of dubious sentience"
+          },
+          {
+            "roll": "3-4",
+            "result": "Trigger-happy scavengers"
+          },
+          {
+            "roll": "5-6",
+            "result": "Government researchers"
+          },
+          {
+            "roll": "7-8",
+            "result": "Military quarantine enforcers"
+          },
+          {
+            "roll": "9-10",
+            "result": "Heirs of the original alien builders"
+          }
+        ],
+        "situations": [
+          {
+            "roll": "1-2",
+            "result": "Trying to stop it awakening"
+          },
+          {
+            "roll": "3-4",
+            "result": "Meddling with strange tech"
+          },
+          {
+            "roll": "5-6",
+            "result": "Impending tech calamity"
+          },
+          {
+            "roll": "7-8",
+            "result": "A terrible secret is unearthed"
+          },
+          {
+            "roll": "9-10",
+            "result": "Fighting outside interlopers"
+          }
+        ]
+      },
+      {
+        "roll": 5,
+        "point": "Research base",
+        "occupants": [
+          {
+            "roll": "1-2",
+            "result": "Experiments that have gotten loose"
+          },
+          {
+            "roll": "3-4",
+            "result": "Scientists from a major local corp"
+          },
+          {
+            "roll": "5-6",
+            "result": "Black-ops governmental researchers"
+          },
+          {
+            "roll": "7-8",
+            "result": "Secret employees of a foreign power"
+          },
+          {
+            "roll": "9-10",
+            "result": "Aliens studying the human locals"
+          }
+        ],
+        "situations": [
+          {
+            "roll": "1-2",
+            "result": "Perilous research underway"
+          },
+          {
+            "roll": "3-4",
+            "result": "Hideously immoral research"
+          },
+          {
+            "roll": "5-6",
+            "result": "Held hostage by outsiders"
+          },
+          {
+            "roll": "7-8",
+            "result": "Science monsters run amok"
+          },
+          {
+            "roll": "9-10",
+            "result": "Selling black-market tech"
+          }
+        ]
+      },
+      {
+        "roll": 6,
+        "point": "Asteroid belt",
+        "occupants": [
+          {
+            "roll": "1-2",
+            "result": "Grizzled belter mine laborers"
+          },
+          {
+            "roll": "3-4",
+            "result": "Ancient automated guardian drones"
+          },
+          {
+            "roll": "5-6",
+            "result": "Survivors of destroyed asteroid base"
+          },
+          {
+            "roll": "7-8",
+            "result": "Pirates hiding out among the rocks"
+          },
+          {
+            "roll": "9-10",
+            "result": "Lonely military patrol base staff"
+          }
+        ],
+        "situations": [
+          {
+            "roll": "1-2",
+            "result": "Ruptured rock released a peril"
+          },
+          {
+            "roll": "3-4",
+            "result": "Foreign spy ships hide there"
+          },
+          {
+            "roll": "5-6",
+            "result": "Gold rush for new minerals"
+          },
+          {
+            "roll": "7-8",
+            "result": "Ancient ruins dot the rocks"
+          },
+          {
+            "roll": "9-10",
+            "result": "War between rival rocks"
+          }
+        ]
+      },
+      {
+        "roll": 7,
+        "point": "Gas giant mine",
+        "occupants": [
+          {
+            "roll": "1-2",
+            "result": "Miserable gas-miner slaves or serfs"
+          },
+          {
+            "roll": "3-4",
+            "result": "Strange robots and their overseers"
+          },
+          {
+            "roll": "5-6",
+            "result": "Scientists studying the alien life"
+          },
+          {
+            "roll": "7-8",
+            "result": "Scrappers in the ruined old mine"
+          },
+          {
+            "roll": "9-10",
+            "result": "Impoverished separatist group"
+          }
+        ],
+        "situations": [
+          {
+            "roll": "1-2",
+            "result": "Things are emerging below"
+          },
+          {
+            "roll": "3-4",
+            "result": "They need vital supplies"
+          },
+          {
+            "roll": "5-6",
+            "result": "The workers are in revolt"
+          },
+          {
+            "roll": "7-8",
+            "result": "Pirates secretly fuel there"
+          },
+          {
+            "roll": "9-10",
+            "result": "Alien remnants were found"
+          }
+        ]
+      },
+      {
+        "roll": 8,
+        "point": "Refueling station",
+        "occupants": [
+          {
+            "roll": "1-2",
+            "result": "Half-crazed hermit caretaker"
+          },
+          {
+            "roll": "3-4",
+            "result": "Sordid purveyors of decadent fun"
+          },
+          {
+            "roll": "5-6",
+            "result": "Extortionate corporate minions"
+          },
+          {
+            "roll": "7-8",
+            "result": "Religious missionaries to travelers"
+          },
+          {
+            "roll": "9-10",
+            "result": "Brainless automated vendors"
+          }
+        ],
+        "situations": [
+          {
+            "roll": "1-2",
+            "result": "A ship is in severe distress"
+          },
+          {
+            "roll": "3-4",
+            "result": "Pirates have taken over"
+          },
+          {
+            "roll": "5-6",
+            "result": "Has corrupt customs agents"
+          },
+          {
+            "roll": "7-8",
+            "result": "Foreign saboteurs are active"
+          },
+          {
+            "roll": "9-10",
+            "result": "Deep-space alien signal"
+          }
+        ]
+      }
+    ]
+  }
+}
