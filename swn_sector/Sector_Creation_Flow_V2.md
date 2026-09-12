@@ -11,7 +11,7 @@ For example, a large low-tech human population on a world with hostile environme
 
 ## V2 world-tag compatibility rules
 
-The following accepted constraints define the first V2 refinement rules. Their machine-readable source is `swn_sector/world_tag_constraints.json`; the validation-only checker is `src/test/swn_sector_v2_constraints.test.ts`; and `src/generators/swn_sector/sector_v2.ts` applies them during generation. `TL2+`, `TL3+`, and `TL4+` refer to the displayed technology level or a more advanced level. `Pop` refers to the population table’s 2d6 roll. `Biosphere 6+` similarly refers to its 2d6 roll.
+The following accepted constraints define the first V2 refinement rules. Their machine-readable source is [world_tag_constraints.json](world_tag_constraints.json); the validation-only checker is [swn_sector_v2_constraints.test.ts](../src/test/swn_sector_v2_constraints.test.ts); and [sector_v2.ts](../src/generators/swn_sector/sector_v2.ts) applies them during generation. `TL2+`, `TL3+`, and `TL4+` refer to the displayed technology level or a more advanced level. `Pop` refers to the population table’s 2d6 roll. `Biosphere 6+` similarly refers to its 2d6 roll.
 
 `Hab` in this table refers to the calculated environmental Hab: the minimum of atmosphere, temperature, and biosphere metadata. It is not an additive score with population or tech level.
 
@@ -118,8 +118,8 @@ V2 applies the accepted compatibility rules above by limiting each selection to 
 
 | Data file | Used at flow step | Dice/mechanism | Uses per inhabited world | Role |
 | --- | --- | --- | --- | --- |
-| `world_tags.json` | 2.1–2.2 | Two `d100` rolls; retry the second only when it duplicates the first | 2 | Supplies two distinct world tags. Tag prompt lists are retained in the data but not used in V2. |
-| `world_attributes.json` | 2.3–2.7 | One `2d6` roll for each listed table, rerolled when it violates an accumulated constraint | 5 | Supplies atmosphere, temperature, biosphere, population, and tech level, in that order. |
+| `world_tags.json` | 2.1–2.2 | Two `d100` rolls; candidates are filtered by ALIEN state, compatibility, and valid later completion | 2 | Supplies two distinct, compatible world tags. Tag prompt lists are retained in the data but not used in V2. |
+| `world_attributes.json` | 2.3–2.7 | One `2d6` roll for each listed table, rerolled when it violates an accumulated constraint or cannot lead to a valid later completion | 5 | Supplies atmosphere, temperature, biosphere, population, and tech level, in that order; calculated Hab must meet Population Hab and Tech Level Hab. |
 
 `system_points_of_interest.json` is intentionally not used in V2.
 
@@ -136,4 +136,4 @@ The following parts of the raw/book flow are omitted from V2:
 
 ## V2 completion conditions
 
-A V2 sector is complete when every randomly placed star has one to three inhabited worlds, and every one of those worlds has two different tags, all five 2d6 attributes, and a generated `TAG1_TAG2_XYZ` name. No omitted information is implicitly generated.
+A V2 sector is complete when every randomly placed star has one to three inhabited worlds, and every one of those worlds has two distinct compatible tags, all five 2d6 attributes, a generated `TAG1_TAG2_XYZ` name, and satisfies every declared V2 constraint. In particular, calculated environmental Hab must be at least both Population Hab and Tech Level Hab. No omitted information is implicitly generated.
