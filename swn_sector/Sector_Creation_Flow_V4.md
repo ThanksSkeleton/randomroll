@@ -2,7 +2,7 @@
 
 ## Scope
 
-V4 extends the V3 star-and-inhabited-world result with a deterministic hierarchy of system locations and location-bound points of interest. The existing UI remains V3-only; V4 is a pure data-generation and validation layer.
+V4 extends the V3 star-and-inhabited-world result with a deterministic hierarchy of system locations and location-bound points of interest. The V4 visualizer directly consumes the `SectorV4` object returned by `generateSectorV4`; it does not use a separate view-model transformation. [sector_v4.schema.json](sector_v4.schema.json) is the machine-readable contract for that structured result.
 
 ## System hierarchy
 

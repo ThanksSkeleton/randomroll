@@ -12,13 +12,13 @@ We will proceed in the following general phases, under human supervision quality
 8. UI Design 
 9. Frontend Implementation - Design the user interface and implement it
 
-## Current V2 handoff
+## Implementation references
 
-The canonical sector workspace is now this `swn_sector/` directory. V2 is the current working implementation of the phase 5–6 generation/cleaning work.
+The canonical sector workspace is this `swn_sector/` directory.
 
-- [Sector_Creation_Flow_V2.md](Sector_Creation_Flow_V2.md) is the current flow specification.
-- `world_attributes.json` stores per-result `hab` metadata. Calculated environmental Hab is the minimum of atmosphere, temperature, and biosphere. It must be at least both Population Hab and Tech Level Hab.
-- `world_tag_constraints.json` is the machine-readable source for the accepted world-tag restrictions and ALIEN-state requirements.
-- `src/generators/swn_sector/sector_v2.ts` performs constraint-aware generation in the established order: Tag 1, Tag 2, atmosphere, temperature, biosphere, population, then tech level.
-- `src/test/swn_sector_v2_constraints.test.ts` verifies that every eligible first tag has a compatible second tag and a complete valid continuation. `src/test/swn_sector_v2.test.ts` writes the deterministic V2 artifact to `/tmp/randomroll-swn-sector-v2.json`.
-- Worlds default to `hasAliens: false`; this excludes ALIEN-dependent tags and Population roll 12. The generator accepts `{ hasAliens: true }` to enable them.
+- [Sector_Creation_Flow_V2.md](Sector_Creation_Flow_V2.md) records the constraint-aware world-generation rules.
+- [Sector_Creation_Flow_V3.md](Sector_Creation_Flow_V3.md) records the star and physical-world extensions.
+- [Sector_Creation_Flow_V4.md](Sector_Creation_Flow_V4.md) records orbital locations, points of interest, and the visualizer's data contract.
+- `world_tag_constraints.json` is the machine-readable source for world-tag restrictions and ALIEN-state requirements.
+- `src/generators/swn_sector/sector_v2.ts` implements constraint-aware world generation in the order Tag 1, Tag 2, atmosphere, temperature, biosphere, population, then tech level. Worlds default to `hasAliens: false`; `{ hasAliens: true }` enables ALIEN-dependent entries.
+- `src/test/swn_sector_v2_constraints.test.ts` checks that every eligible first tag has a compatible second tag and a valid completion.

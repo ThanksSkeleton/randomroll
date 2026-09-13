@@ -1,0 +1,196 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://randomroll.local/schemas/swn-sector-v4.schema.json",
+  "title": "SWN Sector V4 output",
+  "description": "The structured SectorV4 result returned by generateSectorV4 and rendered directly by the V4 visualizer.",
+  "type": "object",
+  "required": ["version", "seed", "starCount", "systems"],
+  "additionalProperties": false,
+  "properties": {
+    "version": { "const": "v4" },
+    "seed": { "type": "string" },
+    "starCount": { "type": "integer", "minimum": 21, "maximum": 30 },
+    "systems": {
+      "type": "array",
+      "minItems": 21,
+      "maxItems": 30,
+      "items": { "$ref": "#/$defs/starSystem" }
+    }
+  },
+  "$defs": {
+    "sectorHex": {
+      "type": "object",
+      "required": ["column", "row"],
+      "additionalProperties": false,
+      "properties": {
+        "column": { "type": "integer", "minimum": 1, "maximum": 8 },
+        "row": { "type": "integer", "minimum": 1, "maximum": 10 }
+      }
+    },
+    "worldTag": {
+      "type": "object",
+      "required": ["roll", "tag"],
+      "additionalProperties": false,
+      "properties": {
+        "roll": { "type": "integer", "minimum": 1, "maximum": 100 },
+        "tag": { "type": "string", "minLength": 1 }
+      }
+    },
+    "worldAttribute": {
+      "type": "object",
+      "required": ["roll", "result"],
+      "additionalProperties": false,
+      "properties": {
+        "roll": { "type": "integer", "minimum": 1, "maximum": 100 },
+        "result": { "type": "string", "minLength": 1 },
+        "hab": { "type": "integer", "minimum": 0, "maximum": 3 },
+        "habRequired": { "type": "integer", "minimum": 0, "maximum": 3 },
+        "tl": { "type": "number", "minimum": 0, "maximum": 5 },
+        "temperatureValue": { "type": "number" },
+        "thermalOrbits": {
+          "type": "array",
+          "items": { "enum": ["Too Hot", "Hot", "Temperate", "Cold", "Too Cold"] },
+          "minItems": 1,
+          "maxItems": 1
+        },
+        "alien": { "const": true }
+      }
+    },
+    "worldAttributes": {
+      "type": "object",
+      "required": ["atmosphere", "temperature", "native_biosphere", "terran_biosphere", "population", "tech_level"],
+      "additionalProperties": false,
+      "properties": {
+        "atmosphere": { "$ref": "#/$defs/worldAttribute" },
+        "temperature": { "$ref": "#/$defs/worldAttribute" },
+        "native_biosphere": { "$ref": "#/$defs/worldAttribute" },
+        "terran_biosphere": { "$ref": "#/$defs/worldAttribute" },
+        "population": { "$ref": "#/$defs/worldAttribute" },
+        "tech_level": { "$ref": "#/$defs/worldAttribute" }
+      }
+    },
+    "planetDetails": {
+      "type": "object",
+      "required": ["terrestrialSize", "bulkComposition", "surfaceWaterPresent", "isGasGiantMoon", "gasGiantMoonRoll", "tidallyLocked"],
+      "additionalProperties": false,
+      "properties": {
+        "terrestrialSize": {
+          "type": "object",
+          "required": ["roll", "result", "hab"],
+          "additionalProperties": false,
+          "properties": {
+            "roll": { "type": "integer", "minimum": 1, "maximum": 100 },
+            "result": { "enum": ["Luna", "Mars", "Earth", "Super-Earth"] },
+            "hab": { "type": "integer", "minimum": 1, "maximum": 3 }
+          }
+        },
+        "bulkComposition": {
+          "type": "object",
+          "required": ["roll", "result", "hab", "color"],
+          "additionalProperties": false,
+          "properties": {
+            "roll": { "type": "integer", "minimum": 1, "maximum": 100 },
+            "result": { "type": "string", "minLength": 1 },
+            "hab": { "type": "integer", "minimum": 1, "maximum": 3 },
+            "color": { "type": "string", "minLength": 1 }
+          }
+        },
+        "surfaceWaterPresent": {
+          "type": "object",
+          "required": ["result"],
+          "additionalProperties": false,
+          "properties": {
+            "result": { "enum": ["Yes", "No"] },
+            "roll": { "type": "integer", "minimum": 1, "maximum": 100 },
+            "override": { "type": "string" }
+          }
+        },
+        "isGasGiantMoon": { "type": "boolean" },
+        "gasGiantMoonRoll": { "type": "integer", "minimum": 1, "maximum": 100 },
+        "tidallyLocked": { "type": "boolean" }
+      }
+    },
+    "world": {
+      "type": "object",
+      "required": ["id", "order", "orbitSlot", "isPrimary", "name", "hasAliens", "specialStates", "tags", "attributes", "planetDetails", "calculatedHab", "civilizationTier"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "order": { "type": "integer", "minimum": 1, "maximum": 3 },
+        "orbitSlot": { "type": "integer", "minimum": 1, "maximum": 3 },
+        "isPrimary": { "type": "boolean" },
+        "name": { "type": "string", "minLength": 1 },
+        "hasAliens": { "type": "boolean" },
+        "specialStates": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+        "tags": {
+          "type": "array",
+          "prefixItems": [{ "$ref": "#/$defs/worldTag" }, { "$ref": "#/$defs/worldTag" }],
+          "minItems": 2,
+          "maxItems": 2,
+          "items": false
+        },
+        "attributes": { "$ref": "#/$defs/worldAttributes" },
+        "planetDetails": { "$ref": "#/$defs/planetDetails" },
+        "calculatedHab": { "type": "integer", "minimum": 0, "maximum": 3 },
+        "civilizationTier": { "enum": ["Primitive", "Facility", "Substantial", "Brilliant", "Domineering"] }
+      }
+    },
+    "primaryStar": {
+      "type": "object",
+      "required": ["roll", "result", "hab", "habitableSlots"],
+      "additionalProperties": false,
+      "properties": {
+        "roll": { "type": "integer", "minimum": 1, "maximum": 100 },
+        "result": { "type": "string", "minLength": 1 },
+        "hab": { "type": "integer", "minimum": 0, "maximum": 3 },
+        "habitableSlots": { "type": "integer", "minimum": 0, "maximum": 3 }
+      }
+    },
+    "location": {
+      "type": "object",
+      "required": ["id", "kind", "orbitalPositionCategory", "orbitalOrder", "au", "pointIds"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "kind": { "enum": ["PrimaryPlanet", "EgressIngressRegion", "ExtraWorld", "ParentGasGiant", "IndependentOrbit"] },
+        "orbitalPositionCategory": { "enum": ["TooHot", "Goldilocks", "TooCold_1", "IngressEgress", "TooCold_3"] },
+        "orbitalOrder": { "type": "integer", "minimum": 1 },
+        "au": { "type": "number", "minimum": 0 },
+        "archetype": { "type": "string", "minLength": 1 },
+        "category": { "enum": ["TerrestrialPlanet", "GasGiant", "OtherObject"] },
+        "worldId": { "type": "string", "minLength": 1 },
+        "isPrimary": { "type": "boolean" },
+        "habitableSlot": { "enum": [1, 2, 3] },
+        "parentLocationId": { "type": "string", "minLength": 1 },
+        "pointIds": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true }
+      }
+    },
+    "pointOfInterest": {
+      "type": "object",
+      "required": ["id", "kind", "point", "locationId"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "kind": { "enum": ["Ingress Point", "Egress Point", "Other"] },
+        "point": { "type": "string", "minLength": 1 },
+        "locationId": { "type": "string", "minLength": 1 },
+        "roll": { "type": "integer", "minimum": 1, "maximum": 100 },
+        "occupant": { "type": "string", "minLength": 1 },
+        "situation": { "type": "string", "minLength": 1 }
+      }
+    },
+    "starSystem": {
+      "type": "object",
+      "required": ["id", "hex", "worlds", "primaryStar", "locations", "pointsOfInterest"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "hex": { "$ref": "#/$defs/sectorHex" },
+        "worlds": { "type": "array", "minItems": 1, "maxItems": 3, "items": { "$ref": "#/$defs/world" } },
+        "primaryStar": { "$ref": "#/$defs/primaryStar" },
+        "locations": { "type": "array", "minItems": 4, "items": { "$ref": "#/$defs/location" } },
+        "pointsOfInterest": { "type": "array", "minItems": 4, "maxItems": 7, "items": { "$ref": "#/$defs/pointOfInterest" } }
+      }
+    }
+  }
+}
