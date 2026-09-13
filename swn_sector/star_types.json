@@ -1,0 +1,23 @@
+{
+  "source": {
+    "file": "temp/Stars_Table.txt",
+    "extractedOn": "2026-09-12"
+  },
+  "dice": "d100",
+  "tables": [
+    {
+      "id": "star_type",
+      "rows": [
+        {"roll": "01-04", "weight": 4, "result": "A-type", "includes": ["B-type", "O-type"], "hab": 1, "habitableSlots": 1, "example": "Sirius A", "description": "Hot, luminous main-sequence stars. Temperate terrestrial planets are possible, but stronger UV and shorter stellar lifetimes make naturally Earthlike worlds less likely."},
+        {"roll": "05-16", "weight": 12, "result": "F-type", "hab": 2, "habitableSlots": 2, "example": "Procyon A", "description": "Hotter and more luminous than the Sun. Temperate terrestrial planets remain plausible despite greater UV exposure."},
+        {"roll": "17-46", "weight": 30, "result": "G-type", "hab": 3, "habitableSlots": 3, "example": "Sol", "description": "Sun-like stars and the baseline for long-term temperate terrestrial environments."},
+        {"roll": "47-76", "weight": 30, "result": "K-type", "hab": 3, "habitableSlots": 2, "example": "Alpha Centauri B", "description": "Cooler and dimmer than G stars, but stable, long-lived, and highly favorable to habitability."},
+        {"roll": "77-88", "weight": 12, "result": "M-type", "hab": 2, "habitableSlots": 1, "example": "Proxima Centauri", "description": "Red dwarfs. Temperate planets are plausible, but close-in habitable zones have tidal, atmospheric, and stellar-activity complications."},
+        {"roll": "89-92", "weight": 4, "result": "Giant", "includes": ["subgiants"], "hab": 1, "habitableSlots": 1, "example": "Pollux", "description": "Evolved stars with outward-shifted habitable zones. Existing outer planets or moons can become temperate, though Earthlike worlds are unusual."},
+        {"roll": "93-96", "weight": 4, "result": "White dwarf", "hab": 0, "habitableSlots": 0, "example": "Sirius B", "description": "Compact stellar remnant. Planets and temporary habitable zones are possible, but naturally Earthlike worlds are exceptional."},
+        {"roll": "97-98", "weight": 2, "result": "Neutron star", "hab": 0, "habitableSlots": 0, "example": "PSR B1257+12", "description": "Collapsed stellar remnant. Planet formation history and extreme radiation make naturally Earthlike conditions highly improbable."},
+        {"roll": "99-100", "weight": 2, "result": "Stellar-mass black hole", "hab": 0, "habitableSlots": 0, "example": "Gaia BH1", "description": "Collapsed remnant without an ordinary luminous surface. Conventional naturally Earthlike planets require unusual circumstances or another luminous companion."}
+      ]
+    }
+  ]
+}

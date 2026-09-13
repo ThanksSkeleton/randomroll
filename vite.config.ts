@@ -13,6 +13,7 @@ export default defineConfig({
         dcc_students: resolve(__dirname, "dcc_students/index.html"),
         masks: resolve(__dirname, "masks/index.html"),
         swn: resolve(__dirname, "swn/index.html"),
+        swn_sector: resolve(__dirname, "swn_sector/index.html"),
         supers: resolve(__dirname, "supers/index.html"),
         xcc: resolve(__dirname, "xcc/index.html"),
         xcc_webgl: resolve(__dirname, "xcc_webgl/index.html"),

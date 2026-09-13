@@ -1,5 +1,6 @@
 import seedrandom from "seedrandom";
-import rawWorldAttributes from "../../../swn_sector/world_attributes.json";
+import rawStarTypes from "../../../swn_sector/star_types.json";
+import rawWorldAttributes from "../../../swn_sector/world_attributes_2.json";
 import rawConstraints from "../../../swn_sector/world_tag_constraints.json";
 import rawWorldTags from "../../../swn_sector/world_tags.json";
 import { SECTOR_V1_GRID, type SectorHex, type WorldAttributeId, type WorldTagReference } from "./sector_v1";
@@ -7,19 +8,31 @@ import { SECTOR_V1_GRID, type SectorHex, type WorldAttributeId, type WorldTagRef
 export type WorldAttributeResultV2 = {
   roll: number;
   result: string;
-  hab: number;
+  hab?: number;
+  habRequired?: number;
+  thermalOrbits?: string[];
   alien?: true;
+};
+
+export type TerrestrialSizeResultV3 = {
+  roll: number;
+  result: "Luna" | "Mars" | "Earth" | "Super-Earth";
+  hab: number;
 };
 
 export type InhabitedWorldV2 = {
   id: string;
   order: number;
+  orbitSlot: 1 | 2 | 3;
   isPrimary: boolean;
   name: string;
   hasAliens: boolean;
   specialStates: string[];
   tags: readonly [WorldTagReference, WorldTagReference];
   attributes: Record<WorldAttributeId, WorldAttributeResultV2>;
+  planetDetails: {
+    terrestrialSize: TerrestrialSizeResultV3;
+  };
   calculatedHab: number;
 };
 
@@ -27,6 +40,27 @@ export type StarSystemV2 = {
   id: string;
   hex: SectorHex;
   worlds: InhabitedWorldV2[];
+};
+
+export type StarTypeResultV3 = {
+  roll: number;
+  result: string;
+  hab: number;
+  habitableSlots: number;
+};
+
+export type StarSystemV3 = {
+  id: string;
+  hex: SectorHex;
+  worlds: InhabitedWorldV2[];
+  primaryStar: StarTypeResultV3;
+};
+
+export type SectorV3 = {
+  version: "v3";
+  seed: string;
+  starCount: number;
+  systems: StarSystemV3[];
 };
 
 export type SectorV2 = {
@@ -37,7 +71,7 @@ export type SectorV2 = {
 };
 
 export type SectorV2Options = {
-  /** Defaults to false. When false, ALIEN-dependent tags and Population 12 are unavailable. */
+  /** Defaults to false. When false, ALIEN-dependent tags are unavailable. */
   hasAliens?: boolean;
 };
 
@@ -49,23 +83,39 @@ type RawWorldTag = {
 type RawAttributeRow = {
   roll: number | string;
   result: string;
-  hab: number;
+  hab?: number;
+  habRequired?: number;
+  thermalOrbits?: string[];
   alien?: boolean;
 };
 
 type RawAttributeTable = {
   id: WorldAttributeId;
+  dice: string;
   rows: RawAttributeRow[];
+};
+
+type RawStarTypeRow = {
+  roll: number | string;
+  result: string;
+  hab: number;
+  habitableSlots: number;
+};
+
+type RawTerrestrialSizeRow = {
+  roll: number | string;
+  result: TerrestrialSizeResultV3["result"];
+  hab: number;
 };
 
 type Constraint = {
   tag: string;
-  maxHab?: number;
-  minBiosphereRoll?: number;
-  excludedAtmosphereResults?: string[];
-  minTechLevel?: number;
-  allowedPopulationRolls?: number[];
-  minPopulationRoll?: number;
+  maxEnvironmentalHab?: number;
+  maxAtmospherePercentile?: number;
+  minBiospherePercentile?: number;
+  minTechLevelPercentile?: number;
+  minPopulationPercentile?: number;
+  maxPopulationPercentile?: number;
   requiresAliens?: boolean;
   specialStates?: string[];
 };
@@ -82,15 +132,23 @@ const WORLD_ATTRIBUTE_IDS: readonly WorldAttributeId[] = [
 
 const worldTags = rawWorldTags as { tags: RawWorldTag[] };
 const worldAttributes = rawWorldAttributes as { tables: RawAttributeTable[] };
+const starTypes = rawStarTypes as { tables: Array<{ id: string; rows: RawStarTypeRow[] }> };
+const terrestrialSizeTable = (rawWorldAttributes as {
+  tables: Array<{ id: string; dice: string; rows: RawTerrestrialSizeRow[] }>;
+}).tables.find(table => table.id === "terrestrial_size");
 const constraints = rawConstraints.constraints as Constraint[];
 const constraintByTag = new Map(constraints.map(constraint => [constraint.tag, constraint]));
+const completionCache = new Map<string, boolean>();
 
 function rollDie(rng: seedrandom.PRNG, sides: number): number {
   return Math.floor(rng() * sides) + 1;
 }
 
-function roll2d6(rng: seedrandom.PRNG): number {
-  return rollDie(rng, 6) + rollDie(rng, 6);
+function rollForDice(rng: seedrandom.PRNG, dice: string): number {
+  if (dice === "d100") {
+    return rollDie(rng, 100);
+  }
+  throw new Error(`Unsupported attribute dice expression: ${dice}`);
 }
 
 function pick<T>(rng: seedrandom.PRNG, values: readonly T[]): T {
@@ -128,12 +186,33 @@ function rowForRoll(id: WorldAttributeId, rolled: number): RawAttributeRow {
   return row;
 }
 
-function techRank(row: RawAttributeRow): number {
-  const match = /^TL(\d+)/.exec(row.result);
-  if (match === null) {
-    throw new Error(`Cannot determine tech rank from ${row.result}`);
+function starTypeForRoll(rolled: number): RawStarTypeRow {
+  const table = starTypes.tables.find(candidate => candidate.id === "star_type");
+  const row = table?.rows.find(candidate => matchesRoll(rolled, candidate.roll));
+  if (row === undefined) {
+    throw new Error(`No star type result for ${rolled}`);
   }
-  return Number(match[1]);
+  return row;
+}
+
+function rollTerrestrialSize(rng: seedrandom.PRNG): TerrestrialSizeResultV3 {
+  if (terrestrialSizeTable === undefined) {
+    throw new Error("Missing terrestrial_size table");
+  }
+  const roll = rollForDice(rng, terrestrialSizeTable.dice);
+  const row = terrestrialSizeTable.rows.find(candidate => matchesRoll(roll, candidate.roll));
+  if (row === undefined) {
+    throw new Error(`No terrestrial size result for ${roll}`);
+  }
+  return { roll, result: row.result, hab: row.hab };
+}
+
+function requiredHab(row: RawAttributeRow, id: WorldAttributeId): number {
+  const value = id === "tech_level" ? row.habRequired : row.hab;
+  if (value === undefined) {
+    throw new Error(`Missing ${id === "tech_level" ? "habRequired" : "hab"} on ${id} row`);
+  }
+  return value;
 }
 
 function rulesForTags(tags: readonly string[]): Constraint[] {
@@ -144,12 +223,13 @@ function rulesForTags(tags: readonly string[]): Constraint[] {
 }
 
 function allowsAtmosphere(row: RawAttributeRow, rules: readonly Constraint[]): boolean {
-  return rules.every(rule => !rule.excludedAtmosphereResults?.includes(row.result));
+  return rules.every(rule => rule.maxAtmospherePercentile === undefined
+    || rollValues(row.roll).every(roll => roll <= rule.maxAtmospherePercentile!));
 }
 
 function allowsBiosphere(row: RawAttributeRow, rules: readonly Constraint[]): boolean {
-  return rules.every(rule => rule.minBiosphereRoll === undefined
-    || rollValues(row.roll).every(roll => roll >= rule.minBiosphereRoll!));
+  return rules.every(rule => rule.minBiospherePercentile === undefined
+    || rollValues(row.roll).every(roll => roll >= rule.minBiospherePercentile!));
 }
 
 function allowsPopulation(row: RawAttributeRow, rules: readonly Constraint[], hasAliens: boolean): boolean {
@@ -158,17 +238,16 @@ function allowsPopulation(row: RawAttributeRow, rules: readonly Constraint[], ha
   }
   return rules.every((rule) => {
     const rolls = rollValues(row.roll);
-    const minimumPopulationRoll = rule.minPopulationRoll;
-    return (rule.allowedPopulationRolls === undefined
-      || rolls.every(roll => rule.allowedPopulationRolls!.includes(roll)))
-      && (minimumPopulationRoll === undefined
-        || rolls.every(roll => roll >= minimumPopulationRoll));
+    return (rule.minPopulationPercentile === undefined
+      || rolls.every(roll => roll >= rule.minPopulationPercentile!))
+      && (rule.maxPopulationPercentile === undefined
+        || rolls.every(roll => roll <= rule.maxPopulationPercentile!));
   });
 }
 
 function allowsTech(row: RawAttributeRow, rules: readonly Constraint[]): boolean {
-  return rules.every(rule => rule.minTechLevel === undefined
-    || techRank(row) >= rule.minTechLevel);
+  return rules.every(rule => rule.minTechLevelPercentile === undefined
+    || rollValues(row.roll).every(roll => roll >= rule.minTechLevelPercentile!));
 }
 
 function allowsHab(
@@ -179,10 +258,14 @@ function allowsHab(
   techLevel: RawAttributeRow,
   rules: readonly Constraint[],
 ): boolean {
-  const calculatedHab = Math.min(atmosphere.hab, temperature.hab, biosphere.hab);
-  return calculatedHab >= population.hab
-    && calculatedHab >= techLevel.hab
-    && rules.every(rule => rule.maxHab === undefined || calculatedHab <= rule.maxHab);
+  const calculatedHab = Math.min(
+    requiredHab(atmosphere, "atmosphere"),
+    requiredHab(temperature, "temperature"),
+    requiredHab(biosphere, "biosphere"),
+  );
+  return calculatedHab >= requiredHab(population, "population")
+    && calculatedHab >= requiredHab(techLevel, "tech_level")
+    && rules.every(rule => rule.maxEnvironmentalHab === undefined || calculatedHab <= rule.maxEnvironmentalHab);
 }
 
 /** Whether the supplied partial result can still be completed without violating the tag rules. */
@@ -191,6 +274,17 @@ function hasValidCompletion(
   hasAliens: boolean,
   partial: PartialAttributes = {},
 ): boolean {
+  const cacheKey = [
+    hasAliens,
+    rules.map(rule => rule.tag).sort().join("|"),
+    ...Object.entries(partial)
+      .map(([id, row]) => `${id}:${row.roll}`)
+      .sort(),
+  ].join(";");
+  const cached = completionCache.get(cacheKey);
+  if (cached !== undefined) {
+    return cached;
+  }
   const atmospheres = partial.atmosphere === undefined ? attributeTable("atmosphere").rows : [partial.atmosphere];
   const temperatures = partial.temperature === undefined ? attributeTable("temperature").rows : [partial.temperature];
   const biospheres = partial.biosphere === undefined ? attributeTable("biosphere").rows : [partial.biosphere];
@@ -207,6 +301,7 @@ function hasValidCompletion(
           for (const biosphere of biospheres) {
             if (allowsBiosphere(biosphere, rules)
               && allowsHab(atmosphere, temperature, biosphere, population, tech, rules)) {
+              completionCache.set(cacheKey, true);
               return true;
             }
           }
@@ -214,6 +309,7 @@ function hasValidCompletion(
       }
     }
   }
+  completionCache.set(cacheKey, false);
   return false;
 }
 
@@ -244,7 +340,7 @@ function rollConstrainedAttribute(
   partial: PartialAttributes,
 ): { row: RawAttributeRow; roll: number } {
   for (let attempts = 0; attempts < 10_000; attempts += 1) {
-    const roll = roll2d6(rng);
+    const roll = rollForDice(rng, attributeTable(id).dice);
     const row = rowForRoll(id, roll);
     if (hasValidCompletion(rules, hasAliens, { ...partial, [id]: row })) {
       return { row, roll };
@@ -272,13 +368,45 @@ function worldCountForSystem(rng: seedrandom.PRNG): number {
   return 3;
 }
 
+const ORBIT_SLOT_ORDER = [2, 1, 3] as const;
+
+function orbitSlotForOrder(order: number): 1 | 2 | 3 {
+  const slot = ORBIT_SLOT_ORDER[order - 1];
+  if (slot === undefined) {
+    throw new Error(`No orbit slot for world order ${order}`);
+  }
+  return slot;
+}
+
+function selectDependentStarType(
+  rng: seedrandom.PRNG,
+  requiredHab: number,
+  requiredHabitableSlots: number,
+): StarTypeResultV3 {
+  for (let attempts = 0; attempts < 10_000; attempts += 1) {
+    const roll = rollDie(rng, 100);
+    const starType = starTypeForRoll(roll);
+    if (starType.hab >= requiredHab && starType.habitableSlots >= requiredHabitableSlots) {
+      return {
+        roll,
+        result: starType.result,
+        hab: starType.hab,
+        habitableSlots: starType.habitableSlots,
+      };
+    }
+  }
+  throw new Error(
+    `Could not roll a star type with Hab ${requiredHab} and ${requiredHabitableSlots} habitable slots after 10,000 attempts`,
+  );
+}
+
 function buildWorld(
   rng: seedrandom.PRNG,
   systemId: string,
   order: number,
   hasAliens: boolean,
+  selectedTags: readonly [RawWorldTag, RawWorldTag] = selectTags(rng, hasAliens),
 ): InhabitedWorldV2 {
-  const selectedTags = selectTags(rng, hasAliens);
   const rules = rulesForTags(selectedTags.map(tag => tag.tag));
   const partial: PartialAttributes = {};
   const rolls: Partial<Record<WorldAttributeId, number>> = {};
@@ -301,16 +429,20 @@ function buildWorld(
     return [id, {
       roll,
       result: row.result,
-      hab: row.hab,
+      ...(row.hab === undefined ? {} : { hab: row.hab }),
+      ...(row.habRequired === undefined ? {} : { habRequired: row.habRequired }),
+      ...(row.thermalOrbits === undefined ? {} : { thermalOrbits: row.thermalOrbits }),
       ...(row.alien === true ? { alien: true as const } : {}),
     }];
   })) as Record<WorldAttributeId, WorldAttributeResultV2>;
   const specialStates = [...new Set(rules.flatMap(rule => rule.specialStates ?? []))];
   const xyz = String(rollDie(rng, 1_000) - 1).padStart(3, "0");
+  const terrestrialSize = rollTerrestrialSize(rng);
 
   return {
     id: `${systemId}-world-${String(order).padStart(2, "0")}`,
     order,
+    orbitSlot: orbitSlotForOrder(order),
     isPrimary: order === 1,
     name: `${tagToken(selectedTags[0].tag)}_${tagToken(selectedTags[1].tag)}_${xyz}`,
     hasAliens,
@@ -320,8 +452,33 @@ function buildWorld(
       { roll: selectedTags[1].roll, tag: selectedTags[1].tag },
     ],
     attributes,
-    calculatedHab: Math.min(attributes.atmosphere.hab, attributes.temperature.hab, attributes.biosphere.hab),
+    planetDetails: { terrestrialSize },
+    calculatedHab: Math.min(
+      requiredHab(partial.atmosphere!, "atmosphere"),
+      requiredHab(partial.temperature!, "temperature"),
+      requiredHab(partial.biosphere!, "biosphere"),
+    ),
   };
+}
+
+/** Validates a V3 system, including its star's dependency on completed inhabited worlds. */
+export function isV3SystemValid(system: StarSystemV3): boolean {
+  const requiredHab = Math.max(...system.worlds.map(world => world.calculatedHab));
+  return system.worlds.length > 0
+    && system.worlds.every(isV2WorldValid)
+    && system.primaryStar.hab >= requiredHab
+    && system.primaryStar.habitableSlots >= system.worlds.length
+    && system.worlds.every(world => {
+      const size = world.planetDetails.terrestrialSize;
+      return size.roll >= 1
+        && size.roll <= 100
+        && terrestrialSizeTable?.rows.some(row =>
+          matchesRoll(size.roll, row.roll) && row.result === size.result && row.hab === size.hab,
+        ) === true;
+    })
+    && starTypeForRoll(system.primaryStar.roll).result === system.primaryStar.result
+    && starTypeForRoll(system.primaryStar.roll).hab === system.primaryStar.hab
+    && starTypeForRoll(system.primaryStar.roll).habitableSlots === system.primaryStar.habitableSlots;
 }
 
 /** Validates a generated world against V2's declarative tag and attribute constraints. */
@@ -337,7 +494,11 @@ export function isV2WorldValid(world: InhabitedWorldV2): boolean {
   for (const id of WORLD_ATTRIBUTE_IDS) {
     const actual = world.attributes[id];
     const expected = rowForRoll(id, actual.roll);
-    if (actual.result !== expected.result || actual.hab !== expected.hab || actual.alien !== expected.alien) {
+    if (actual.result !== expected.result
+      || actual.hab !== expected.hab
+      || actual.habRequired !== expected.habRequired
+      || JSON.stringify(actual.thermalOrbits) !== JSON.stringify(expected.thermalOrbits)
+      || actual.alien !== expected.alien) {
       return false;
     }
     partial[id] = expected;
@@ -348,9 +509,9 @@ export function isV2WorldValid(world: InhabitedWorldV2): boolean {
   }
   return hasValidCompletion(rules, world.hasAliens, partial)
     && world.calculatedHab === Math.min(
-      world.attributes.atmosphere.hab,
-      world.attributes.temperature.hab,
-      world.attributes.biosphere.hab,
+      requiredHab(partial.atmosphere!, "atmosphere"),
+      requiredHab(partial.temperature!, "temperature"),
+      requiredHab(partial.biosphere!, "biosphere"),
     );
 }
 
@@ -366,28 +527,51 @@ function randomEmptyHex(rng: seedrandom.PRNG, occupied: Set<string>): SectorHex 
   }
 }
 
-/** Generates the constraint-aware V2 sector flow. */
-export function generateSectorV2(seed: string, options: SectorV2Options = {}): SectorV2 {
+/** Generates the constraint-aware V3 sector flow, with stars selected after all world results. */
+export function generateSectorV3(seed: string, options: SectorV2Options = {}): SectorV3 {
   const rng = seedrandom(seed);
   const hasAliens = options.hasAliens ?? false;
   const starCount = rollDie(rng, 10) + 20;
   const occupied = new Set<string>();
-  const systems: StarSystemV2[] = Array.from(
+  const plans = Array.from(
     { length: starCount },
     (_, systemIndex) => ({
       id: `system-${String(systemIndex + 1).padStart(2, "0")}`,
       hex: randomEmptyHex(rng, occupied),
-      worlds: [],
+      worldCount: worldCountForSystem(rng),
     }),
   );
 
-  for (const system of systems) {
-    const worldCount = worldCountForSystem(rng);
-    system.worlds = Array.from(
-      { length: worldCount },
-      (_, worldIndex) => buildWorld(rng, system.id, worldIndex + 1, hasAliens),
-    );
+  // Tags are a sector-wide first pass; all later world results depend on them.
+  const tagsByWorldId = new Map<string, readonly [RawWorldTag, RawWorldTag]>();
+  for (const plan of plans) {
+    for (let order = 1; order <= plan.worldCount; order += 1) {
+      tagsByWorldId.set(`${plan.id}-world-${String(order).padStart(2, "0")}`, selectTags(rng, hasAliens));
+    }
   }
 
-  return { version: "v2", seed, starCount, systems };
+  const systemsWithoutStars = plans.map((plan) => ({
+    id: plan.id,
+    hex: plan.hex,
+    worlds: Array.from({ length: plan.worldCount }, (_, worldIndex) => {
+      const order = worldIndex + 1;
+      const worldId = `${plan.id}-world-${String(order).padStart(2, "0")}`;
+      const selectedTags = tagsByWorldId.get(worldId);
+      if (selectedTags === undefined) {
+        throw new Error(`Missing tags for ${worldId}`);
+      }
+      return buildWorld(rng, plan.id, order, hasAliens, selectedTags);
+    }),
+  }));
+
+  const systems: StarSystemV3[] = systemsWithoutStars.map(system => ({
+    ...system,
+    primaryStar: selectDependentStarType(
+      rng,
+      Math.max(...system.worlds.map(world => world.calculatedHab)),
+      system.worlds.length,
+    ),
+  }));
+
+  return { version: "v3", seed, starCount, systems };
 }

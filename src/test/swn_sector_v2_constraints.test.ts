@@ -1,23 +1,24 @@
 import { describe, expect, it } from "vitest";
-import rawAttributes from "../../swn_sector/world_attributes.json";
+import rawAttributes from "../../swn_sector/world_attributes_2.json";
 import rawConstraints from "../../swn_sector/world_tag_constraints.json";
 import rawTags from "../../swn_sector/world_tags.json";
 
 type AttributeRow = {
   roll: number | string;
   result: string;
-  hab: number;
+  hab?: number;
+  habRequired?: number;
   alien?: boolean;
 };
 
 type Constraint = {
   tag: string;
-  maxHab?: number;
-  minBiosphereRoll?: number;
-  excludedAtmosphereResults?: string[];
-  minTechLevel?: number;
-  allowedPopulationRolls?: number[];
-  minPopulationRoll?: number;
+  maxEnvironmentalHab?: number;
+  maxAtmospherePercentile?: number;
+  minBiospherePercentile?: number;
+  minTechLevelPercentile?: number;
+  minPopulationPercentile?: number;
+  maxPopulationPercentile?: number;
   requiresAliens?: boolean;
   specialStates?: string[];
 };
@@ -46,12 +47,10 @@ function rollValues(roll: number | string): number[] {
   return Array.from({ length: end - start + 1 }, (_, index) => start + index);
 }
 
-function techRank(row: AttributeRow): number {
-  const match = /^TL(\d+)/.exec(row.result);
-  if (match === null) {
-    throw new Error(`Cannot determine tech level from ${row.result}`);
-  }
-  return Number(match[1]);
+function requiredHab(row: AttributeRow, isTechLevel = false): number {
+  const value = isTechLevel ? row.habRequired : row.hab;
+  if (value === undefined) throw new Error("Missing required Hab metadata");
+  return value;
 }
 
 function combinedConstraints(first: string, second: string): Constraint[] {
@@ -66,25 +65,26 @@ function allowsPopulation(row: AttributeRow, rules: Constraint[], hasAliens: boo
   }
   return rules.every((rule) => {
     const rolls = rollValues(row.roll);
-    return (rule.allowedPopulationRolls === undefined
-      || rolls.every(roll => rule.allowedPopulationRolls?.includes(roll)))
-      && (rule.minPopulationRoll === undefined
-        || rolls.every(roll => roll >= rule.minPopulationRoll!));
+    return (rule.minPopulationPercentile === undefined
+      || rolls.every(roll => roll >= rule.minPopulationPercentile!))
+      && (rule.maxPopulationPercentile === undefined
+        || rolls.every(roll => roll <= rule.maxPopulationPercentile!));
   });
 }
 
 function allowsAtmosphere(row: AttributeRow, rules: Constraint[]): boolean {
-  return rules.every(rule => !rule.excludedAtmosphereResults?.includes(row.result));
+  return rules.every(rule => rule.maxAtmospherePercentile === undefined
+    || rollValues(row.roll).every(roll => roll <= rule.maxAtmospherePercentile!));
 }
 
 function allowsBiosphere(row: AttributeRow, rules: Constraint[]): boolean {
-  return rules.every(rule => rule.minBiosphereRoll === undefined
-    || rollValues(row.roll).every(roll => roll >= rule.minBiosphereRoll!));
+  return rules.every(rule => rule.minBiospherePercentile === undefined
+    || rollValues(row.roll).every(roll => roll >= rule.minBiospherePercentile!));
 }
 
 function allowsTech(row: AttributeRow, rules: Constraint[]): boolean {
-  return rules.every(rule => rule.minTechLevel === undefined
-    || techRank(row) >= rule.minTechLevel);
+  return rules.every(rule => rule.minTechLevelPercentile === undefined
+    || rollValues(row.roll).every(roll => roll >= rule.minTechLevelPercentile!));
 }
 
 function allowsHab(
@@ -95,10 +95,10 @@ function allowsHab(
   techLevel: AttributeRow,
   rules: Constraint[],
 ): boolean {
-  const calculatedHab = Math.min(atmosphere.hab, temperature.hab, biosphere.hab);
-  return calculatedHab >= population.hab
-    && calculatedHab >= techLevel.hab
-    && rules.every(rule => rule.maxHab === undefined || calculatedHab <= rule.maxHab);
+  const calculatedHab = Math.min(requiredHab(atmosphere), requiredHab(temperature), requiredHab(biosphere));
+  return calculatedHab >= requiredHab(population)
+    && calculatedHab >= requiredHab(techLevel, true)
+    && rules.every(rule => rule.maxEnvironmentalHab === undefined || calculatedHab <= rule.maxEnvironmentalHab);
 }
 
 function hasValidCompletion(first: string, second: string, hasAliens: boolean): boolean {
@@ -135,17 +135,23 @@ describe("SWN sector V2 constraint checker", () => {
     expect(new Set(constraints.map(rule => rule.tag)).size).toBe(constraints.length);
     for (const rule of constraints) {
       expect(tagNames).toContain(rule.tag);
-      expect(rule.maxHab === undefined || (rule.maxHab >= 0 && rule.maxHab <= 3)).toBe(true);
-      expect(rule.minTechLevel === undefined || rule.minTechLevel >= 0).toBe(true);
+      expect(rule.maxEnvironmentalHab === undefined || (rule.maxEnvironmentalHab >= 0 && rule.maxEnvironmentalHab <= 3)).toBe(true);
+      for (const cutoff of [
+        rule.maxAtmospherePercentile,
+        rule.minBiospherePercentile,
+        rule.minTechLevelPercentile,
+        rule.minPopulationPercentile,
+        rule.maxPopulationPercentile,
+      ]) {
+        expect(cutoff === undefined || (cutoff >= 1 && cutoff <= 100)).toBe(true);
+      }
     }
   });
 
-  it("excludes ALIEN-dependent tags and alien population results when aliens are absent", () => {
+  it("excludes ALIEN-dependent tags when aliens are absent", () => {
     const noAlienTags = eligibleTags(false);
     expect(noAlienTags).not.toContain("Primitive Aliens");
     expect(noAlienTags).not.toContain("Xenophiles");
-    expect(table("population").filter(row => allowsPopulation(row, [], false))
-      .some(row => row.alien === true)).toBe(false);
   });
 
   it("leaves every eligible first tag at least one compatible second tag and full attribute completion", () => {
