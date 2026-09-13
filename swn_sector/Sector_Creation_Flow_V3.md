@@ -43,7 +43,7 @@ Every star system has at least one primary inhabited world. Independently for ea
 | 10% | 2 |
 | 5% | 3 |
 
-The first inhabited world is the system's primary world. Additional inhabited worlds are generated independently in step 2, with no origin, relationship, contact point, or other inter-world detail in V3. Every temperature result retains its numeric source-table `originalRoll` as `temperatureValue`. After all worlds in a system have temperature values, assign orbit slots left to right in descending `temperatureValue` order; ties retain generated-world order.
+The first inhabited world is the system's primary world. Additional inhabited worlds are generated independently in step 2, with no origin, relationship, contact point, or other inter-world detail in V3. Every temperature result declares an `orbitalOrder`. After all worlds in a system have temperature orbital orders, assign orbit slots left to right in descending `orbitalOrder`; ties retain generated-world order.
 
 ## 2. Generate world tags
 
@@ -86,13 +86,13 @@ Perform this step after 3.8 for every inhabited world. Terrestrial size is alrea
 
 | Field | Allowed values | Source status |
 | --- | --- | --- |
-| Thermal orbit | Too Hot; Hot; Temperate; Cold; Too Cold | `thermalOrbits` on the selected temperature result in `world_attributes_2.json` |
+| Thermal orbit | Too Hot; Hot; Temperate; Cold; Too Cold | `thermalOrbit` on the selected temperature result in `world_attributes_2.json` |
 | Bulk composition | Sulfur; Carbon; Iron; Silicon; Water; Magnesium; Calcium-Aluminum | `world_attributes_2.json`, `tables[id="bulk_composition"]` |
 | Surface water present | Yes; No | `world_attributes_2.json`, `tables[id="surface_water_present"]` |
 | Moon of gas giant | Yes; No | `world_attributes_2.json`, `tables[id="gas_giant_moon"]` |
 | Tidal locking | True; False | Derived from primary-star type |
 
-Temperature is a `d100` dependent attribute. Its selected row has exactly one `thermalOrbits` value: Too Hot and Too Cold remain extreme slots; Hot, Temperate, and Cold are distinct thermal descriptions within the broader Goldilocks region used by V4. Titan-Pluto is intentionally omitted because Too Cold covers that territory.
+Temperature is a `d100` dependent attribute. Its selected row has one `thermalOrbit` value: Too Hot and Too Cold remain extreme slots; Hot, Temperate, and Cold are distinct thermal descriptions within the broader Goldilocks region used by V4. Titan-Pluto is intentionally omitted because Too Cold covers that territory.
 
 Bulk composition is a compatible `d100` V3 world field. Its results describe the planet's bulk material rather than surface deposits or terrain; its `hab` participates in calculated environmental Hab.
 
@@ -148,7 +148,7 @@ The primary-star Hab Score is stored as system metadata. It does not add to or r
 
 ## V3 completion conditions
 
-A V3 sector meets V2 completion conditions: every placed star has one to three inhabited worlds, and every inhabited world has two distinct compatible tags, six compatible attributes, a generated name, an orbit slot determined by descending `temperatureValue`, and a V3 physical-elaboration record. Every system additionally has one weighted primary-star classification from `star_types.json`, whose Hab Score is at least the highest calculated environmental Hab of its inhabited worlds and whose habitable slots meet its inhabited-world count. No V4 information is implicitly generated.
+A V3 sector meets V2 completion conditions: every placed star has one to three inhabited worlds, and every inhabited world has two distinct compatible tags, six compatible attributes, a generated name, an orbit slot determined by descending temperature `orbitalOrder`, and a V3 physical-elaboration record. Every system additionally has one weighted primary-star classification from `star_types.json`, whose Hab Score is at least the highest calculated environmental Hab of its inhabited worlds and whose habitable slots meet its inhabited-world count. No V4 information is implicitly generated.
 
 ## Change verification and artifact handoff
 

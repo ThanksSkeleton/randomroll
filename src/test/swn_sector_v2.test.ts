@@ -1,7 +1,7 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { describe, expect, it } from "vitest";
-import { SECTOR_V1_GRID } from "../generators/swn_sector/sector_v1";
+import { SECTOR_GRID } from "../generators/swn_sector/sector_shared";
 import { generateSectorV3, isV2WorldValid, isV3SystemValid } from "../generators/swn_sector/sector_v2";
 
 const ARTIFACT_PATH = resolve("/tmp/randomroll-swn-sector-v3.json");
@@ -24,9 +24,9 @@ describe("SWN sector V3", () => {
     const occupiedHexes = new Set<string>();
     for (const system of sector.systems) {
       expect(system.hex.column).toBeGreaterThanOrEqual(1);
-      expect(system.hex.column).toBeLessThanOrEqual(SECTOR_V1_GRID.columns);
+      expect(system.hex.column).toBeLessThanOrEqual(SECTOR_GRID.columns);
       expect(system.hex.row).toBeGreaterThanOrEqual(1);
-      expect(system.hex.row).toBeLessThanOrEqual(SECTOR_V1_GRID.rows);
+      expect(system.hex.row).toBeLessThanOrEqual(SECTOR_GRID.rows);
       occupiedHexes.add(`${system.hex.column}:${system.hex.row}`);
 
       expect(system.worlds.length).toBeGreaterThanOrEqual(1);
@@ -39,9 +39,9 @@ describe("SWN sector V3", () => {
       expect(Number.isInteger(system.primaryStar.habitableSlots)).toBe(true);
       expect(system.primaryStar.habitableSlots).toBeGreaterThanOrEqual(system.worlds.length);
       const worldsByOrbit = [...system.worlds].sort((left, right) => left.orbitSlot - right.orbitSlot);
-      expect(worldsByOrbit.map(world => world.attributes.temperature.temperatureValue)).toEqual(
+      expect(worldsByOrbit.map(world => world.attributes.temperature.orbitalOrder)).toEqual(
         [...worldsByOrbit]
-          .map(world => world.attributes.temperature.temperatureValue)
+          .map(world => world.attributes.temperature.orbitalOrder)
           .sort((left, right) => (right ?? -1) - (left ?? -1)),
       );
       expect(isV3SystemValid(system)).toBe(true);
@@ -80,7 +80,11 @@ describe("SWN sector V3", () => {
         expect(world.planetDetails.gasGiantMoonRoll).toBeGreaterThanOrEqual(1);
         expect(world.planetDetails.gasGiantMoonRoll).toBeLessThanOrEqual(100);
         const tl = world.attributes.tech_level.tl ?? 0;
-        const lowPopulation = world.attributes.population.result === "Fewer than 500";
+        const lowPopulation = world.attributes.population.populationMax === 500;
+        expect(world.attributes.population.populationMin).toBeDefined();
+        expect(world.attributes.population.populationMax).toBeGreaterThanOrEqual(
+          world.attributes.population.populationMin!,
+        );
         expect(world.civilizationTier).toBe(
           tl < 4 ? "Primitive"
             : tl >= 5 ? lowPopulation ? "Brilliant" : "Domineering"

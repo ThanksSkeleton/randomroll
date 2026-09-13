@@ -9,6 +9,9 @@ type AttributeRow = {
   hab?: number;
   habRequired?: number;
   tl?: number;
+  populationMin?: number;
+  populationMax?: number;
+  optionalDescription?: string;
   alien?: boolean;
 };
 
@@ -134,6 +137,28 @@ function eligibleTags(hasAliens: boolean): string[] {
 }
 
 describe("SWN sector V2 constraint checker", () => {
+  it("keeps atmosphere results concise and separates optional descriptions", () => {
+    expect(table("atmosphere").map(row => [row.result, row.optionalDescription])).toEqual([
+      ["Vacuum", undefined],
+      ["Corrosive", undefined],
+      ["Invasive", "penetrates suit seals"],
+      ["Corrosive+Invasive", "penetrates suit seals"],
+      ["Inert gas", undefined],
+      ["Breathable: Thin/Thick", "requires pressure mask"],
+      ["Breathable", undefined],
+    ]);
+  });
+
+  it("defines contiguous inclusive numeric population ranges", () => {
+    expect(table("population").map(row => [row.populationMin, row.populationMax])).toEqual([
+      [20, 500],
+      [501, 1_000_000],
+      [1_000_001, 100_000_000],
+      [100_000_001, 1_000_000_000],
+      [1_000_000_001, 5_000_000_000],
+    ]);
+  });
+
   it("references real tags and has valid metadata", () => {
     expect(new Set(constraints.map(rule => rule.tag)).size).toBe(constraints.length);
     for (const rule of constraints) {

@@ -3,7 +3,7 @@ import rawStarTypes from "../../../swn_sector/star_types.json";
 import rawWorldAttributes from "../../../swn_sector/world_attributes_2.json";
 import rawConstraints from "../../../swn_sector/world_tag_constraints.json";
 import rawWorldTags from "../../../swn_sector/world_tags.json";
-import { SECTOR_V1_GRID, type SectorHex, type WorldTagReference } from "./sector_v1";
+import { SECTOR_GRID, type SectorHex, type WorldTagReference } from "./sector_shared";
 
 type WorldAttributeId =
   | "atmosphere"
@@ -13,14 +13,20 @@ type WorldAttributeId =
   | "population"
   | "tech_level";
 
+export type ThermalOrbit = "Too Hot" | "Hot" | "Temperate" | "Cold" | "Too Cold";
+
 export type WorldAttributeResultV2 = {
   roll: number;
   result: string;
   hab?: number;
   habRequired?: number;
   tl?: number;
-  temperatureValue?: number;
-  thermalOrbits?: string[];
+  populationMin?: number;
+  populationMax?: number;
+  optionalDescription?: string;
+  /** Relative temperature order used to assign inhabited-world orbit slots. */
+  orbitalOrder?: number;
+  thermalOrbit?: ThermalOrbit;
   alien?: true;
 };
 
@@ -118,9 +124,12 @@ type RawAttributeRow = {
   hab?: number;
   habRequired?: number;
   tl?: number;
-  thermalOrbits?: string[];
+  populationMin?: number;
+  populationMax?: number;
+  optionalDescription?: string;
+  thermalOrbit?: ThermalOrbit;
   alien?: boolean;
-  originalRoll?: number | string;
+  orbitalOrder?: number;
 };
 
 type RawAttributeTable = {
@@ -291,7 +300,7 @@ function rollSurfaceWater(rng: seedrandom.PRNG): SurfaceWaterResultV3 {
 
 function civilizationTier(attributes: Record<WorldAttributeId, WorldAttributeResultV2>): CivilizationTier {
   const technologyLevel = attributes.tech_level.tl ?? 0;
-  const lowPopulation = attributes.population.result === "Fewer than 500";
+  const lowPopulation = attributes.population.populationMax === 500;
   if (technologyLevel < 4) return "Primitive";
   if (technologyLevel >= 5) return lowPopulation ? "Brilliant" : "Domineering";
   return lowPopulation ? "Facility" : "Substantial";
@@ -581,12 +590,12 @@ function assignOrbitSlotsByTemperature(worlds: readonly InhabitedWorldV2[]): Inh
   const orderedWorlds = worlds
     .slice()
     .sort((left, right) => {
-      const leftTemperature = left.attributes.temperature.temperatureValue;
-      const rightTemperature = right.attributes.temperature.temperatureValue;
-      if (leftTemperature === undefined || rightTemperature === undefined) {
-        throw new Error("Missing temperatureValue while assigning orbit slots");
+      const leftOrbitalOrder = left.attributes.temperature.orbitalOrder;
+      const rightOrbitalOrder = right.attributes.temperature.orbitalOrder;
+      if (leftOrbitalOrder === undefined || rightOrbitalOrder === undefined) {
+        throw new Error("Missing temperature orbitalOrder while assigning orbit slots");
       }
-      return rightTemperature - leftTemperature || left.order - right.order;
+      return rightOrbitalOrder - leftOrbitalOrder || left.order - right.order;
     });
   const slotByWorldId = new Map(orderedWorlds.map((world, index) => [world.id, (index + 1) as 1 | 2 | 3]));
   return worlds.map(world => {
@@ -652,10 +661,13 @@ function buildWorld(
       ...(row.hab === undefined ? {} : { hab: row.hab }),
       ...(row.habRequired === undefined ? {} : { habRequired: row.habRequired }),
       ...(row.tl === undefined ? {} : { tl: row.tl }),
-      ...(id === "temperature" && typeof row.originalRoll === "number"
-        ? { temperatureValue: row.originalRoll }
+      ...(row.populationMin === undefined ? {} : { populationMin: row.populationMin }),
+      ...(row.populationMax === undefined ? {} : { populationMax: row.populationMax }),
+      ...(row.optionalDescription === undefined ? {} : { optionalDescription: row.optionalDescription }),
+      ...(id === "temperature" && row.orbitalOrder !== undefined
+        ? { orbitalOrder: row.orbitalOrder }
         : {}),
-      ...(row.thermalOrbits === undefined ? {} : { thermalOrbits: row.thermalOrbits }),
+      ...(row.thermalOrbit === undefined ? {} : { thermalOrbit: row.thermalOrbit }),
       ...(row.alien === true ? { alien: true as const } : {}),
     }];
   })) as Record<WorldAttributeId, WorldAttributeResultV2>;
@@ -728,8 +740,8 @@ export function isV3SystemValid(system: StarSystemV3): boolean {
     && [...system.worlds]
       .sort((left, right) => left.orbitSlot - right.orbitSlot)
       .every((world, index, worlds) => index === 0
-        || (worlds[index - 1].attributes.temperature.temperatureValue ?? -1)
-          >= (world.attributes.temperature.temperatureValue ?? -1))
+        || (worlds[index - 1].attributes.temperature.orbitalOrder ?? -1)
+          >= (world.attributes.temperature.orbitalOrder ?? -1))
     && system.primaryStar.hab >= requiredHab
     && system.primaryStar.habitableSlots >= system.worlds.length
     && system.worlds.every(world => {
@@ -782,10 +794,12 @@ export function isV2WorldValid(world: InhabitedWorldV2): boolean {
       || actual.hab !== expected.hab
       || actual.habRequired !== expected.habRequired
       || actual.tl !== expected.tl
-      || actual.temperatureValue !== (id === "temperature" && typeof expected.originalRoll === "number"
-        ? expected.originalRoll
+      || actual.populationMin !== expected.populationMin
+      || actual.populationMax !== expected.populationMax
+      || actual.optionalDescription !== expected.optionalDescription
+      || actual.orbitalOrder !== (id === "temperature" ? expected.orbitalOrder
         : undefined)
-      || JSON.stringify(actual.thermalOrbits) !== JSON.stringify(expected.thermalOrbits)
+      || actual.thermalOrbit !== expected.thermalOrbit
       || actual.alien !== expected.alien) {
       return false;
     }
@@ -817,8 +831,8 @@ export function isV2WorldValid(world: InhabitedWorldV2): boolean {
 
 function randomEmptyHex(rng: seedrandom.PRNG, occupied: Set<string>): SectorHex {
   while (true) {
-    const column = rollDie(rng, SECTOR_V1_GRID.columns);
-    const row = rollDie(rng, SECTOR_V1_GRID.rows);
+    const column = rollDie(rng, SECTOR_GRID.columns);
+    const row = rollDie(rng, SECTOR_GRID.rows);
     const key = `${column}:${row}`;
     if (!occupied.has(key)) {
       occupied.add(key);

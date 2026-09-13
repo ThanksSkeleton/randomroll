@@ -46,13 +46,11 @@
         "hab": { "type": "integer", "minimum": 0, "maximum": 3 },
         "habRequired": { "type": "integer", "minimum": 0, "maximum": 3 },
         "tl": { "type": "number", "minimum": 0, "maximum": 5 },
-        "temperatureValue": { "type": "number" },
-        "thermalOrbits": {
-          "type": "array",
-          "items": { "enum": ["Too Hot", "Hot", "Temperate", "Cold", "Too Cold"] },
-          "minItems": 1,
-          "maxItems": 1
-        },
+        "populationMin": { "type": "integer", "minimum": 0 },
+        "populationMax": { "type": "integer", "minimum": 0 },
+        "optionalDescription": { "type": "string", "minLength": 1 },
+        "orbitalOrder": { "type": "number", "minimum": 2, "maximum": 16 },
+        "thermalOrbit": { "enum": ["Too Hot", "Hot", "Temperate", "Cold", "Too Cold"] },
         "alien": { "const": true }
       }
     },

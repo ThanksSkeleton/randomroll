@@ -132,7 +132,7 @@ function choose<T>(rng: seedrandom.PRNG, values: readonly T[]): T {
 }
 
 function thermalOrbit(world: StarSystemV3["worlds"][number]): string {
-  const [thermalOrbit] = world.attributes.temperature.thermalOrbits ?? [];
+  const thermalOrbit = world.attributes.temperature.thermalOrbit;
   if (thermalOrbit === undefined) throw new Error(`Missing thermal orbit for ${world.id}`);
   return thermalOrbit;
 }

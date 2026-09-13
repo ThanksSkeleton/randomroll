@@ -19,5 +19,6 @@
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src", "scripts/from_sql.ts"]
+  "include": ["src", "scripts/from_sql.ts"],
+  "exclude": ["src/generators/swn_sector/sector_v1.ts"]
 }

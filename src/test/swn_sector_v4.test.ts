@@ -57,11 +57,11 @@ describe("SWN sector V4", () => {
       const worldsById = new Map(system.worlds.map(world => [world.id, world]));
       for (const location of system.locations.filter(location => location.kind === "PrimaryPlanet")) {
         const world = worldsById.get(location.worldId!);
-        const thermalOrbits = world?.attributes.temperature.thermalOrbits;
-        expect(thermalOrbits).toHaveLength(1);
+        const thermalOrbit = world?.attributes.temperature.thermalOrbit;
+        expect(thermalOrbit).toBeDefined();
         expect(location.orbitalPositionCategory).toBe(
-          thermalOrbits?.[0] === "Too Hot" ? "TooHot"
-            : thermalOrbits?.[0] === "Too Cold" ? "TooCold_1"
+          thermalOrbit === "Too Hot" ? "TooHot"
+            : thermalOrbit === "Too Cold" ? "TooCold_1"
               : "Goldilocks",
         );
         if (location.orbitalPositionCategory === "TooHot") expect(world?.planetDetails.tidallyLocked).toBe(true);

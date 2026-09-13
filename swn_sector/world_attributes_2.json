@@ -6,41 +6,41 @@
   "dice": "d100",
   "conversion": {
     "method": "Original 2d6 and 2d8 probabilities were apportioned to integer d100 bands by largest remainder. Where ordinary nearest-percent rounding would total 101, the central result is rounded down so each table totals exactly 100.",
-    "rowOrder": "Increasing hab rating, then original roll order within each hab rating. d100 bands are reassigned into contiguous Hab cutoffs; every roll at or above a table's Hab 3 cutoff has Hab 3."
+    "rowOrder": "Increasing hab rating within each table. d100 bands are reassigned into contiguous Hab cutoffs; every roll at or above a table's Hab 3 cutoff has Hab 3."
   },
   "tables": [
     {
       "id": "atmosphere",
       "dice": "d100",
       "rows": [
-        { "roll": "1-8", "originalRoll": 4, "result": "Vacuum", "hab": 0 },
-        { "roll": "9-11", "originalRoll": 2, "result": "Corrosive", "hab": 0 },
-        { "roll": "12-17", "originalRoll": 11, "result": "Invasive, penetrating suit seals", "hab": 0 },
-        { "roll": "18-20", "originalRoll": 12, "result": "Both corrosive and invasive", "hab": 0 },
-        { "roll": "21-26", "originalRoll": 3, "result": "Inert gas", "hab": 0 },
-        { "roll": "27-34", "originalRoll": 10, "result": "Breathable - thin or thick (pressure mask required)", "hab": 2 },
-        { "roll": "35-100", "originalRoll": "5-9", "result": "Breathable", "hab": 3 }
+        { "roll": "1-8", "result": "Vacuum", "hab": 0 },
+        { "roll": "9-11", "result": "Corrosive", "hab": 0 },
+        { "roll": "12-17", "result": "Invasive", "optionalDescription": "penetrates suit seals", "hab": 0 },
+        { "roll": "18-20", "result": "Corrosive+Invasive", "optionalDescription": "penetrates suit seals", "hab": 0 },
+        { "roll": "21-26", "result": "Inert gas", "hab": 0 },
+        { "roll": "27-34", "result": "Breathable: Thin/Thick", "optionalDescription": "requires pressure mask", "hab": 2 },
+        { "roll": "35-100", "result": "Breathable", "hab": 3 }
       ]
     },
     {
       "id": "temperature",
       "dice": "d100",
       "rows": [
-        { "roll": "1-2", "originalRoll": 2, "result": "Cryogenic", "description": "Freezing point of nitrogen", "hab": 0, "thermalOrbits": ["Too Cold"] },
-        { "roll": "3-4", "originalRoll": 16, "result": "Volcanic", "description": "Melting point of lead", "hab": 0, "thermalOrbits": ["Too Hot"] },
-        { "roll": "5-7", "originalRoll": 3, "result": "Glacial", "description": "Antarctica records, approximately ±10", "hab": 1, "thermalOrbits": ["Cold"] },
-        { "roll": "8-12", "originalRoll": 4, "result": "Polar", "description": "Antarctica; core uninhabitable cold", "hab": 1, "thermalOrbits": ["Cold"] },
-        { "roll": "13-17", "originalRoll": 14, "result": "Arid / Thermal", "description": "Death Valley", "hab": 1, "thermalOrbits": ["Hot"] },
-        { "roll": "18-20", "originalRoll": 15, "result": "Infernal", "description": "Death Valley + 10", "hab": 1, "thermalOrbits": ["Hot"] },
-        { "roll": "21-26", "originalRoll": 5, "result": "Subarctic", "description": "Siberia / Russian winters", "hab": 2, "thermalOrbits": ["Cold"] },
-        { "roll": "27-32", "originalRoll": 13, "result": "Equatorial", "description": "Extreme real-world heat", "hab": 2, "thermalOrbits": ["Hot"] },
-        { "roll": "33-40", "originalRoll": 6, "result": "Boreal", "description": "Scandinavian / cool temperate", "hab": 3, "thermalOrbits": ["Temperate"] },
-        { "roll": "41-49", "originalRoll": 7, "result": "Maritime", "description": "Brisk / cool temperate", "hab": 3, "thermalOrbits": ["Temperate"] },
-        { "roll": "50-60", "originalRoll": 8, "result": "Ideal", "description": "Perfect baseline temperate", "hab": 3, "thermalOrbits": ["Temperate"] },
-        { "roll": "61-72", "originalRoll": 9, "result": "Ideal", "description": "Perfect baseline temperate", "hab": 3, "thermalOrbits": ["Temperate"] },
-        { "roll": "73-83", "originalRoll": 10, "result": "Ideal", "description": "Perfect baseline temperate", "hab": 3, "thermalOrbits": ["Temperate"] },
-        { "roll": "84-92", "originalRoll": 11, "result": "Mediterranean", "description": "Warm temperate", "hab": 3, "thermalOrbits": ["Temperate"] },
-        { "roll": "93-100", "originalRoll": 12, "result": "Subtropical", "description": "Warm / Saudi Arabia", "hab": 3, "thermalOrbits": ["Temperate"] }
+        { "roll": "1-2", "orbitalOrder": 2, "result": "Cryogenic", "description": "Freezing point of nitrogen", "hab": 0, "thermalOrbit": "Too Cold" },
+        { "roll": "3-4", "orbitalOrder": 16, "result": "Volcanic", "description": "Melting point of lead", "hab": 0, "thermalOrbit": "Too Hot" },
+        { "roll": "5-7", "orbitalOrder": 3, "result": "Glacial", "description": "Antarctica records, approximately ±10", "hab": 1, "thermalOrbit": "Cold" },
+        { "roll": "8-12", "orbitalOrder": 4, "result": "Polar", "description": "Antarctica; core uninhabitable cold", "hab": 1, "thermalOrbit": "Cold" },
+        { "roll": "13-17", "orbitalOrder": 14, "result": "Arid", "description": "Death Valley", "hab": 1, "thermalOrbit": "Hot" },
+        { "roll": "18-20", "orbitalOrder": 15, "result": "Infernal", "description": "Death Valley + 10", "hab": 1, "thermalOrbit": "Hot" },
+        { "roll": "21-26", "orbitalOrder": 5, "result": "Subarctic", "description": "Siberia / Russian winters", "hab": 2, "thermalOrbit": "Cold" },
+        { "roll": "27-32", "orbitalOrder": 13, "result": "Equatorial", "description": "Extreme real-world heat", "hab": 2, "thermalOrbit": "Hot" },
+        { "roll": "33-40", "orbitalOrder": 6, "result": "Boreal", "description": "Scandinavian / cool temperate", "hab": 3, "thermalOrbit": "Temperate" },
+        { "roll": "41-49", "orbitalOrder": 7, "result": "Alpine", "description": "Brisk / cool temperate", "hab": 3, "thermalOrbit": "Temperate" },
+        { "roll": "50-60", "orbitalOrder": 8, "result": "Temperate", "description": "Perfect baseline temperate", "hab": 3, "thermalOrbit": "Temperate" },
+        { "roll": "61-72", "orbitalOrder": 9, "result": "Temperate", "description": "Perfect baseline temperate", "hab": 3, "thermalOrbit": "Temperate" },
+        { "roll": "73-83", "orbitalOrder": 10, "result": "Temperate", "description": "Perfect baseline temperate", "hab": 3, "thermalOrbit": "Temperate" },
+        { "roll": "84-92", "orbitalOrder": 11, "result": "Mediterranean", "description": "Warm temperate", "hab": 3, "thermalOrbit": "Temperate" },
+        { "roll": "93-100", "orbitalOrder": 12, "result": "Subtropical", "description": "Warm / Saudi Arabia", "hab": 3, "thermalOrbit": "Temperate" }
       ]
     },
     {
@@ -71,24 +71,24 @@
       "id": "population",
       "dice": "d100",
       "rows": [
-        { "roll": "1-9", "originalRoll": "2-3", "result": "Fewer than 500", "habRequired": 0 },
-        { "roll": "10-31", "originalRoll": "4-5, 12", "result": "Fewer than a million inhabitants", "habRequired": 0 },
-        { "roll": "32-75", "originalRoll": "6-8", "result": "Several million inhabitants", "habRequired": 2 },
-        { "roll": "76-94", "originalRoll": "9-10", "result": "Hundreds of millions of inhabitants", "habRequired": 2 },
-        { "roll": "95-100", "originalRoll": 11, "result": "Billions of inhabitants", "habRequired": 3 }
+        { "roll": "1-9", "result": "Fewer than 500", "populationMin": 20, "populationMax": 500, "habRequired": 0 },
+        { "roll": "10-31", "result": "Fewer than a million inhabitants", "populationMin": 501, "populationMax": 1000000, "habRequired": 0 },
+        { "roll": "32-75", "result": "Several million inhabitants", "populationMin": 1000001, "populationMax": 100000000, "habRequired": 2 },
+        { "roll": "76-94", "result": "Hundreds of millions of inhabitants", "populationMin": 100000001, "populationMax": 1000000000, "habRequired": 2 },
+        { "roll": "95-100", "result": "Billions of inhabitants", "populationMin": 1000000001, "populationMax": 5000000000, "habRequired": 3 }
       ]
     },
     {
       "id": "tech_level",
       "dice": "d100",
       "rows": [
-        { "roll": "1-3", "originalRoll": 2, "result": "TL0, neolithic-level technology", "tl": 0, "habRequired": 3 },
-        { "roll": "4-9", "originalRoll": 3, "result": "TL1, medieval technology", "tl": 1, "habRequired": 3 },
-        { "roll": "10-28", "originalRoll": "4-5", "result": "TL2, early Industrial Age tech", "tl": 2, "habRequired": 3 },
-        { "roll": "29-47", "originalRoll": "9-10", "result": "TL3, tech like that of present-day Earth", "tl": 3, "habRequired": 2 },
-        { "roll": "48-91", "originalRoll": "6-8", "result": "TL4, modern postech", "tl": 4, "habRequired": 0 },
-        { "roll": "92-97", "originalRoll": 11, "result": "TL4+, postech with specialties", "tl": 4.1, "habRequired": 0 },
-        { "roll": "98-100", "originalRoll": 12, "result": "TL5, pretech with surviving infrastructure", "tl": 5, "habRequired": 0 }
+        { "roll": "1-3", "result": "Neolithic-level technology", "tl": 0, "habRequired": 3 },
+        { "roll": "4-9", "result": "Medieval technology", "tl": 1, "habRequired": 3 },
+        { "roll": "10-28", "result": "Early Industrial Age tech", "tl": 2, "habRequired": 3 },
+        { "roll": "29-47", "result": "Tech like that of present-day Earth", "tl": 3, "habRequired": 2 },
+        { "roll": "48-91", "result": "Modern postech", "tl": 4, "habRequired": 0 },
+        { "roll": "92-97", "result": "Postech with specialties", "tl": 4.1, "habRequired": 0 },
+        { "roll": "98-100", "result": "Pretech with surviving infrastructure", "tl": 5, "habRequired": 0 }
       ]
     },
     {
@@ -96,13 +96,13 @@
       "dice": "d100",
       "source": "V3 custom bulk-composition table supplied by the user",
       "rows": [
-        { "roll": "1-3", "originalRoll": 2, "result": "Sulfur", "hab": 1, "color": "Yellow" },
-        { "roll": "4-6", "originalRoll": 3, "result": "Carbon", "hab": 1, "color": "Black" },
-        { "roll": "7-9", "originalRoll": 11, "result": "Magnesium", "hab": 1, "color": "Green" },
-        { "roll": "10-12", "originalRoll": 12, "result": "Calcium-Aluminum", "hab": 1, "color": "White" },
-        { "roll": "13-15", "originalRoll": 4, "result": "Iron", "hab": 1, "color": "Red" },
-        { "roll": "16-18", "originalRoll": 10, "result": "Water", "hab": 2, "color": "Water" },
-        { "roll": "19-100", "originalRoll": "5-9", "result": "Silicon", "hab": 3, "color": "Light brown" }
+        { "roll": "1-3", "result": "Sulfur", "hab": 1, "color": "Yellow" },
+        { "roll": "4-6", "result": "Carbon", "hab": 1, "color": "Black" },
+        { "roll": "7-9", "result": "Magnesium", "hab": 1, "color": "Green" },
+        { "roll": "10-12", "result": "Calcium-Aluminum", "hab": 1, "color": "White" },
+        { "roll": "13-15", "result": "Iron", "hab": 1, "color": "Red" },
+        { "roll": "16-18", "result": "Water", "hab": 2, "color": "Water" },
+        { "roll": "19-100", "result": "Silicon", "hab": 3, "color": "Light brown" }
       ]
     },
     {
@@ -128,10 +128,10 @@
       "dice": "d100",
       "source": "V3 habitable planet size table supplied by the user",
       "rows": [
-        { "roll": "1-3", "originalRoll": 2, "result": "Luna", "hab": 1 },
-        { "roll": "4-17", "originalRoll": "3-4", "result": "Mars", "hab": 2 },
-        { "roll": "18-25", "originalRoll": "11-12", "result": "Super-Earth", "hab": 2 },
-        { "roll": "26-100", "originalRoll": "5-10", "result": "Earth", "hab": 3 }
+        { "roll": "1-3", "result": "Luna", "hab": 1 },
+        { "roll": "4-17", "result": "Mars", "hab": 2 },
+        { "roll": "18-25", "result": "Super-Earth", "hab": 2 },
+        { "roll": "26-100", "result": "Earth", "hab": 3 }
       ]
     }
   ]
