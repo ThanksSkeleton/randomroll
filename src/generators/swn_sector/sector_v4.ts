@@ -247,6 +247,7 @@ function auRange(star: StarSystemV3["primaryStar"], category: OrbitalPositionCat
 function assignOrbitalPositions(system: StarSystemV3, locations: SystemLocationV4[], rng: seedrandom.PRNG): void {
   for (const category of v4.orbitalPositionCategories) {
     const inRegion = locations.filter(location => location.orbitalPositionCategory === category);
+    if (inRegion.length === 0) continue;
     const [minimumAu, maximumAu] = auRange(system.primaryStar, category);
     inRegion.forEach((location, index) => {
       location.orbitalOrder = index + 1;
@@ -261,19 +262,23 @@ function eligibleArchetypesFor(position: OrbitalPositionCategory): RawArchetype[
 }
 
 function otherPointCandidates(locations: readonly SystemLocationV4[]): RawPoint[] {
-  return systemPointData.otherPoint.rows.filter(row => {
-    if (row.point === "Deep-space station") return true;
-    if (row.point === "Asteroid base" || row.point === "Asteroid belt") {
-      return locations.some(location => location.archetype === "AsteroidBelt");
-    }
-    if (row.point === "Remote moon base") {
-      return locations.some(location => location.kind === "ExtraWorld" && location.category === "TerrestrialPlanet");
-    }
-    if (row.point === "Ancient orbital ruin" || row.point === "Research base") {
-      return locations.some(location => location.kind === "ExtraWorld" && (location.category === "TerrestrialPlanet" || location.category === "GasGiant"));
-    }
-    return locations.some(location => location.category === "GasGiant");
-  });
+  return systemPointData.otherPoint.rows.filter(row => row.point === "Deep-space station" || pointLocationCandidates(row, locations).length > 0);
+}
+
+function gasGiantCanHostPoint(location: SystemLocationV4, locations: readonly SystemLocationV4[]): boolean {
+  return location.category !== "GasGiant" || !locations.some(candidate =>
+    candidate.parentLocationId === location.id && candidate.kind === "PrimaryPlanet");
+}
+
+function pointLocationCandidates(row: RawPoint, locations: readonly SystemLocationV4[]): SystemLocationV4[] {
+  const candidates = row.point === "Asteroid base" || row.point === "Asteroid belt"
+    ? locations.filter(location => location.archetype === "AsteroidBelt")
+    : row.point === "Remote moon base"
+      ? locations.filter(location => location.kind === "ExtraWorld" && location.category === "TerrestrialPlanet")
+      : row.point === "Ancient orbital ruin" || row.point === "Research base"
+        ? locations.filter(location => location.kind === "ExtraWorld" && (location.category === "TerrestrialPlanet" || location.category === "GasGiant"))
+        : locations.filter(location => location.category === "GasGiant");
+  return candidates.filter(location => gasGiantCanHostPoint(location, locations));
 }
 
 function locationForOtherPoint(row: RawPoint, locations: SystemLocationV4[], createId: () => string, rng: seedrandom.PRNG): SystemLocationV4 {
@@ -291,13 +296,7 @@ function locationForOtherPoint(row: RawPoint, locations: SystemLocationV4[], cre
     locations.push(location);
     return location;
   }
-  const candidates = row.point === "Asteroid base" || row.point === "Asteroid belt"
-    ? locations.filter(location => location.archetype === "AsteroidBelt")
-    : row.point === "Remote moon base"
-      ? locations.filter(location => location.kind === "ExtraWorld" && location.category === "TerrestrialPlanet")
-      : row.point === "Ancient orbital ruin" || row.point === "Research base"
-        ? locations.filter(location => location.kind === "ExtraWorld" && (location.category === "TerrestrialPlanet" || location.category === "GasGiant"))
-        : locations.filter(location => location.category === "GasGiant");
+  const candidates = pointLocationCandidates(row, locations);
   if (candidates.length === 0) throw new Error(`No eligible location for ${row.point}`);
   return candidates[0]!;
 }

@@ -79,6 +79,13 @@ describe("SWN sector V3", () => {
         expect(world.planetDetails.surfaceWaterPresent).toBeDefined();
         expect(world.planetDetails.gasGiantMoonRoll).toBeGreaterThanOrEqual(1);
         expect(world.planetDetails.gasGiantMoonRoll).toBeLessThanOrEqual(100);
+        const tl = world.attributes.tech_level.tl ?? 0;
+        const lowPopulation = world.attributes.population.result === "Fewer than 500";
+        expect(world.civilizationTier).toBe(
+          tl < 4 ? "Primitive"
+            : tl >= 5 ? lowPopulation ? "Brilliant" : "Domineering"
+              : lowPopulation ? "Facility" : "Substantial",
+        );
         expect(world.planetDetails.tidallyLocked).toBe(system.primaryStar.result === "M-type");
         expect(isV2WorldValid(world)).toBe(true);
       }

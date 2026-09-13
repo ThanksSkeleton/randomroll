@@ -37,6 +37,10 @@ Star `habitableSlots` are numbered locations **within Goldilocks only**. A TooHo
 
 Every location records one `au` value and a one-based `orbitalOrder` within its orbital region. For each region, locations remain in generation order; the region's AU span is divided into equal contiguous subdivisions, and each location is placed uniformly at random in its own subdivision. The IngressEgress region has zero width, so its location is exactly at the star type's warp-point AU. These values currently appear only in location mouseover details and do not alter the symbolic map layout.
 
+## Inhabited-world civilization tier
+
+Every inhabited world has one computed `civilizationTier`, based on its generated technology and population bucket. `Primitive` is TL0–TL3. TL4 through TL4.x worlds are `Facility` when their population is fewer than 500 and `Substantial` otherwise. TL5 worlds are `Brilliant` when fewer than 500 and `Domineering` otherwise.
+
 ## Extra-world placement rules
 
 | Archetype group | Allowed orbital categories |

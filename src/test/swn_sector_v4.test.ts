@@ -36,6 +36,8 @@ describe("SWN sector V4", () => {
       expect(system.locations.filter(location => location.kind === "ExtraWorld" && location.orbitalPositionCategory === "TooHot").length).toBeGreaterThanOrEqual(1);
       expect(system.locations.filter(location => location.kind === "ExtraWorld" && location.orbitalPositionCategory === "TooCold_1").length).toBeGreaterThanOrEqual(1);
       expect(system.locations.filter(location => location.kind === "ExtraWorld" && location.orbitalPositionCategory === "TooCold_3").length).toBeLessThanOrEqual(1);
+      expect(system.locations.filter(location => location.kind === "ParentGasGiant" && system.locations.some(child =>
+        child.parentLocationId === location.id && child.kind === "PrimaryPlanet")).every(location => location.pointIds.length === 0)).toBe(true);
       expect(system.locations.filter(location => location.kind === "ExtraWorld" && location.orbitalPositionCategory === "Goldilocks").every(location =>
         location.habitableSlot !== undefined)).toBe(true);
       for (const location of system.locations) {

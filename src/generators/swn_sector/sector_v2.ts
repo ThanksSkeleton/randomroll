@@ -43,6 +43,9 @@ export type SurfaceWaterResultV3 = {
   override?: string;
 };
 
+/** Technology/population settlement classification, derived from generated world attributes. */
+export type CivilizationTier = "Primitive" | "Facility" | "Substantial" | "Brilliant" | "Domineering";
+
 export type InhabitedWorldV2 = {
   id: string;
   order: number;
@@ -62,6 +65,7 @@ export type InhabitedWorldV2 = {
     tidallyLocked: boolean;
   };
   calculatedHab: number;
+  civilizationTier: CivilizationTier;
 };
 
 export type StarSystemV2 = {
@@ -283,6 +287,14 @@ function rollSurfaceWater(rng: seedrandom.PRNG): SurfaceWaterResultV3 {
     throw new Error(`No surface-water result for ${roll}`);
   }
   return { roll, result: row.result };
+}
+
+function civilizationTier(attributes: Record<WorldAttributeId, WorldAttributeResultV2>): CivilizationTier {
+  const technologyLevel = attributes.tech_level.tl ?? 0;
+  const lowPopulation = attributes.population.result === "Fewer than 500";
+  if (technologyLevel < 4) return "Primitive";
+  if (technologyLevel >= 5) return lowPopulation ? "Brilliant" : "Domineering";
+  return lowPopulation ? "Facility" : "Substantial";
 }
 
 function rollGasGiantMoon(rng: seedrandom.PRNG): { isGasGiantMoon: boolean; gasGiantMoonRoll: number } {
@@ -703,6 +715,7 @@ function buildWorld(
       terrestrialSize.hab,
       bulkComposition.hab,
     ),
+    civilizationTier: civilizationTier(attributes),
   };
 }
 
@@ -798,7 +811,8 @@ export function isV2WorldValid(world: InhabitedWorldV2): boolean {
       requiredHab(partial.terran_biosphere!, "terran_biosphere"),
       world.planetDetails.terrestrialSize.hab,
       world.planetDetails.bulkComposition.hab,
-    );
+    )
+    && world.civilizationTier === civilizationTier(world.attributes);
 }
 
 function randomEmptyHex(rng: seedrandom.PRNG, occupied: Set<string>): SectorHex {
