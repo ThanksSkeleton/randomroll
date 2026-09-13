@@ -4,7 +4,7 @@
 
 V3 is V2 with two additional layers of system detail: a primary-star result for every star system and a physical elaboration for each system's first (primary) inhabited world. Except where this document explicitly changes it, every V2 rule, constraint, table interaction, exclusion, and completion condition remains in force. The canonical V2 baseline is [Sector_Creation_Flow_V2.md](Sector_Creation_Flow_V2.md).
 
-In particular, V3's calculated environmental Hab is the minimum of atmosphere, temperature, and biosphere; it must be at least both Population Hab and Tech Level `habRequired`. Direct table constraints use the V3 percentile cutoffs in `world_tag_constraints.json`. V3 deliberately changes the sector-wide ordering so that all world tags precede all later world and star generation.
+In particular, V3's calculated environmental Hab is the minimum of every generated result with a `hab` rating: atmosphere, temperature, Terran biosphere, terrestrial size, and primary-world bulk composition. It must be at least the `habRequired` of Terran biosphere, Population, and Tech Level. Terran Biosphere None requires Hab 0; every other Terran-biosphere result requires Hab 1. Native biosphere has no Hab effect. Future generated Hab-rated fields also participate in this minimum. Atmosphere, population, and native-biosphere constraints use V3 percentile cutoffs; tech-level constraints compare the selected `tl` value in `world_tag_constraints.json`. V3 deliberately changes the sector-wide ordering so that all world tags precede all later world and star generation.
 
 ## Scope
 
@@ -64,24 +64,25 @@ After the sector-wide tag pass, generate each inhabited world in turn. Its exist
 | --- | --- | --- | --- |
 | 3.1 | Roll atmosphere. | `world_attributes_2.json`, `tables[id="atmosphere"]`: one compatible `d100` result that permits valid completion. | Atmosphere. |
 | 3.2 | Roll temperature. | `world_attributes_2.json`, `tables[id="temperature"]`: one compatible `d100` result that permits valid completion. | Temperature and eligible thermal orbits. |
-| 3.3 | Roll biosphere. | `world_attributes_2.json`, `tables[id="biosphere"]`: one compatible `d100` result that permits valid completion. | Biosphere. |
-| 3.4 | Roll population. | `world_attributes_2.json`, `tables[id="population"]`: one compatible `d100` result. | Population. |
-| 3.5 | Roll tech level. | `world_attributes_2.json`, `tables[id="tech_level"]`: one compatible `d100` result. | Tech level and `habRequired`. |
-| 3.6 | Construct the world name. | No source table. | `TAG1_TAG2_XYZ`. |
-| 3.7 | Roll terrestrial size. | `world_attributes_2.json`, `tables[id="terrestrial_size"]`: one `d100` result. | Terrestrial size. |
-| 3.8 | Elaborate the primary inhabited world, when applicable. | Primary Inhabited World table; see below. | Remaining primary-world detail record. |
+| 3.3 | Roll native biosphere. | `world_attributes_2.json`, `tables[id="native_biosphere"]`: one compatible `d100` result. It has no Hab effect; native-biosphere tag constraints apply here. | Native biosphere. |
+| 3.4 | Roll Terran biosphere. | `world_attributes_2.json`, `tables[id="terran_biosphere"]`: one compatible `d100` result that permits valid completion. | Terran biosphere. |
+| 3.5 | Roll population. | `world_attributes_2.json`, `tables[id="population"]`: one compatible `d100` result. | Population. |
+| 3.6 | Roll tech level. | `world_attributes_2.json`, `tables[id="tech_level"]`: one compatible `d100` result. | Tech level and `habRequired`. |
+| 3.7 | Construct the world name. | No source table. | `TAG1_TAG2_XYZ`. |
+| 3.8 | Roll terrestrial size. | `world_attributes_2.json`, `tables[id="terrestrial_size"]`: one `d100` result. | Terrestrial size. |
+| 3.9 | Elaborate the primary inhabited world, when applicable. | Primary Inhabited World table; see below. | Remaining primary-world detail record. |
 
 `XYZ` is a random inclusive `000`–`999` value. `TAG1` and `TAG2` are rolled tag names normalized by replacing spaces with underscores. V3 performs no name-collision correction.
 
-The V3 constraints remain mandatory: Tag 2 is distinct and compatible; each later selection must preserve a valid completion; population and tech level cannot require more environmental Hab than atmosphere, temperature, and biosphere provide. Direct table requirements are inclusive d100 cutoffs. The `ALIEN`/`NONTERRESTRIAL` tag-state rules and ALIEN inclusion state are unchanged; population has no separate Alien Inhabitants outcome.
+The V3 constraints remain mandatory: Tag 2 is distinct and compatible; each later selection must preserve a valid completion; population and tech level cannot require more environmental Hab than atmosphere, temperature, and Terran biosphere provide. Direct table requirements are inclusive d100 cutoffs. Native-biosphere requirements are Hostile Biosphere 20+, Beastmasters 60+, Night World 60+, and Primitive Aliens 60+. The `ALIEN`/`NONTERRESTRIAL` tag-state rules and ALIEN inclusion state are unchanged; population has no separate Alien Inhabitants outcome.
 
-### 3.7. Roll terrestrial size
+### 3.8. Roll terrestrial size
 
-Every inhabited world receives a terrestrial size from `world_attributes_2.json`, `tables[id="terrestrial_size"]`, using one `d100` roll: Luna (Hab 1) on 1–3; Mars (Hab 2) on 4–17; Super-Earth (Hab 2) on 18–25; and Earth (Hab 3) on 26–100. The result is stored with the world and controls its displayed planet size. Size Hab is retained as V3 metadata; it does not yet alter the established calculated environmental-Hab formula.
+Every inhabited world receives a terrestrial size from `world_attributes_2.json`, `tables[id="terrestrial_size"]`, using one compatible `d100` roll: Luna (Hab 1) on 1–3; Mars (Hab 2) on 4–17; Super-Earth (Hab 2) on 18–25; and Earth (Hab 3) on 26–100. The result is stored with the world, controls its displayed planet size, and participates in calculated environmental Hab.
 
-### 3.8. Elaborate the primary inhabited world
+### 3.9. Elaborate the primary inhabited world
 
-Perform this step only once per system, after step 3.7, for its first inhabited world. Terrestrial size is already generated for every inhabited world; this step stores the following remaining V3 elaboration fields alongside the primary world:
+Perform this step only once per system, after step 3.8, for its first inhabited world. Terrestrial size is already generated for every inhabited world; this step stores the following remaining V3 elaboration fields alongside the primary world:
 
 | Field | Allowed values | Source status |
 | --- | --- | --- |
@@ -93,14 +94,13 @@ Perform this step only once per system, after step 3.7, for its first inhabited 
 
 Temperature is a `d100` dependent attribute. Its selected row explicitly lists the eligible `thermalOrbits`, preserving overlapping choices without a separate mapping element. Titan-Pluto is intentionally omitted because Too Cold covers that territory.
 
-Bulk composition is a `d100` V3 primary-world field. Its results describe the planet's bulk material rather than surface deposits or terrain; its `hab` values are retained in the table for later V3 dependency rules.
+Bulk composition is a compatible `d100` V3 primary-world field. Its results describe the planet's bulk material rather than surface deposits or terrain; its `hab` participates in calculated environmental Hab.
 
 The source table supplies no dice weights or cross-field restrictions for the remaining physical fields. Therefore V3 must preserve these as **unresolved generation rules** rather than inventing probabilities or physical constraints:
 
 - the selection distribution for terrestrial size, water, and gas-giant-moon status;
 - the rule deriving tidal locking;
-- how bulk-composition Hab participates in the calculated environmental Hab or other V3 constraints; and
-- any relation between these fields and V2 atmosphere, temperature, biosphere, environmental Hab, or the star Hab Score.
+- any relation between these fields and V3 atmosphere, temperature, either biosphere table, environmental Hab, or the star Hab Score.
 
 Until those rules are approved, V3 can represent the fields in its schema and UI but must not claim an authoritative randomized elaboration. This is intentional: the available V3 tables define categories, while V2's existing rolls and constraints remain authoritative.
 
@@ -129,8 +129,8 @@ The primary-star Hab Score is stored as system metadata. It does not add to or r
 | Data file / source | Used at flow step | Dice/mechanism | Uses | Role |
 | --- | --- | --- | --- | --- |
 | `world_tags.json` | 2.1–2.2 | Two filtered `d100` rolls | 2 per inhabited world | Supplies two distinct compatible world tags before all other world generation. |
-| `world_attributes_2.json` | 3.1–3.5, 3.7 | One filtered `d100` roll for each table | 6 per inhabited world | Supplies atmosphere, temperature, biosphere, population, tech level, and terrestrial size after tags are fixed. |
-| Primary-world table (`temp/planets_table.txt`) | 3.8 | Category schema only; selection rules pending | 1 record per system | Defines the remaining primary-world elaboration fields and their allowed values. |
+| `world_attributes_2.json` | 3.1–3.6, 3.8 | One filtered `d100` roll for each table | 7 per inhabited world | Supplies atmosphere, temperature, native biosphere, Terran biosphere, population, tech level, and terrestrial size after tags are fixed. |
+| Primary-world table (`temp/planets_table.txt`) | 3.9 | Category schema only; selection rules pending | 1 record per system | Defines the remaining primary-world elaboration fields and their allowed values. |
 | `star_types.json` | 4 | Filtered weighted `d100`; star `hab` must meet the highest inhabited-world environmental Hab and `habitableSlots` must meet the inhabited-world count | 1 per system | Supplies the primary-star type and dependent Hab Score after all worlds are complete. |
 
 `system_points_of_interest.json` remains intentionally unused in V3.

@@ -3,13 +3,22 @@ import rawStarTypes from "../../../swn_sector/star_types.json";
 import rawWorldAttributes from "../../../swn_sector/world_attributes_2.json";
 import rawConstraints from "../../../swn_sector/world_tag_constraints.json";
 import rawWorldTags from "../../../swn_sector/world_tags.json";
-import { SECTOR_V1_GRID, type SectorHex, type WorldAttributeId, type WorldTagReference } from "./sector_v1";
+import { SECTOR_V1_GRID, type SectorHex, type WorldTagReference } from "./sector_v1";
+
+type WorldAttributeId =
+  | "atmosphere"
+  | "temperature"
+  | "native_biosphere"
+  | "terran_biosphere"
+  | "population"
+  | "tech_level";
 
 export type WorldAttributeResultV2 = {
   roll: number;
   result: string;
   hab?: number;
   habRequired?: number;
+  tl?: number;
   thermalOrbits?: string[];
   alien?: true;
 };
@@ -18,6 +27,13 @@ export type TerrestrialSizeResultV3 = {
   roll: number;
   result: "Luna" | "Mars" | "Earth" | "Super-Earth";
   hab: number;
+};
+
+export type BulkCompositionResultV3 = {
+  roll: number;
+  result: string;
+  hab: number;
+  color: string;
 };
 
 export type InhabitedWorldV2 = {
@@ -32,6 +48,7 @@ export type InhabitedWorldV2 = {
   attributes: Record<WorldAttributeId, WorldAttributeResultV2>;
   planetDetails: {
     terrestrialSize: TerrestrialSizeResultV3;
+    bulkComposition?: BulkCompositionResultV3;
   };
   calculatedHab: number;
 };
@@ -85,6 +102,7 @@ type RawAttributeRow = {
   result: string;
   hab?: number;
   habRequired?: number;
+  tl?: number;
   thermalOrbits?: string[];
   alien?: boolean;
 };
@@ -108,12 +126,16 @@ type RawTerrestrialSizeRow = {
   hab: number;
 };
 
+type RawBulkCompositionRow = Omit<BulkCompositionResultV3, "roll"> & {
+  roll: number | string;
+};
+
 type Constraint = {
   tag: string;
   maxEnvironmentalHab?: number;
   maxAtmospherePercentile?: number;
-  minBiospherePercentile?: number;
-  minTechLevelPercentile?: number;
+  minNativeBiospherePercentile?: number;
+  minTechLevel?: number;
   minPopulationPercentile?: number;
   maxPopulationPercentile?: number;
   requiresAliens?: boolean;
@@ -125,7 +147,8 @@ type PartialAttributes = Partial<Record<WorldAttributeId, RawAttributeRow>>;
 const WORLD_ATTRIBUTE_IDS: readonly WorldAttributeId[] = [
   "atmosphere",
   "temperature",
-  "biosphere",
+  "native_biosphere",
+  "terran_biosphere",
   "population",
   "tech_level",
 ];
@@ -136,6 +159,9 @@ const starTypes = rawStarTypes as { tables: Array<{ id: string; rows: RawStarTyp
 const terrestrialSizeTable = (rawWorldAttributes as {
   tables: Array<{ id: string; dice: string; rows: RawTerrestrialSizeRow[] }>;
 }).tables.find(table => table.id === "terrestrial_size");
+const bulkCompositionTable = (rawWorldAttributes as {
+  tables: Array<{ id: string; dice: string; rows: RawBulkCompositionRow[] }>;
+}).tables.find(table => table.id === "bulk_composition");
 const constraints = rawConstraints.constraints as Constraint[];
 const constraintByTag = new Map(constraints.map(constraint => [constraint.tag, constraint]));
 const completionCache = new Map<string, boolean>();
@@ -207,12 +233,31 @@ function rollTerrestrialSize(rng: seedrandom.PRNG): TerrestrialSizeResultV3 {
   return { roll, result: row.result, hab: row.hab };
 }
 
+function rollBulkComposition(rng: seedrandom.PRNG): BulkCompositionResultV3 {
+  if (bulkCompositionTable === undefined) {
+    throw new Error("Missing bulk_composition table");
+  }
+  const roll = rollForDice(rng, bulkCompositionTable.dice);
+  const row = bulkCompositionTable.rows.find(candidate => matchesRoll(roll, candidate.roll));
+  if (row === undefined) {
+    throw new Error(`No bulk composition result for ${roll}`);
+  }
+  return { roll, result: row.result, hab: row.hab, color: row.color };
+}
+
 function requiredHab(row: RawAttributeRow, id: WorldAttributeId): number {
-  const value = id === "tech_level" ? row.habRequired : row.hab;
+  const value = id === "population" || id === "tech_level" ? row.habRequired : row.hab;
   if (value === undefined) {
-    throw new Error(`Missing ${id === "tech_level" ? "habRequired" : "hab"} on ${id} row`);
+    throw new Error(`Missing ${id === "population" || id === "tech_level" ? "habRequired" : "hab"} on ${id} row`);
   }
   return value;
+}
+
+function habRequirement(row: RawAttributeRow, id: WorldAttributeId): number {
+  if (row.habRequired === undefined) {
+    throw new Error(`Missing habRequired on ${id} row`);
+  }
+  return row.habRequired;
 }
 
 function rulesForTags(tags: readonly string[]): Constraint[] {
@@ -227,9 +272,9 @@ function allowsAtmosphere(row: RawAttributeRow, rules: readonly Constraint[]): b
     || rollValues(row.roll).every(roll => roll <= rule.maxAtmospherePercentile!));
 }
 
-function allowsBiosphere(row: RawAttributeRow, rules: readonly Constraint[]): boolean {
-  return rules.every(rule => rule.minBiospherePercentile === undefined
-    || rollValues(row.roll).every(roll => roll >= rule.minBiospherePercentile!));
+function allowsNativeBiosphere(row: RawAttributeRow, rules: readonly Constraint[]): boolean {
+  return rules.every(rule => rule.minNativeBiospherePercentile === undefined
+    || rollValues(row.roll).every(roll => roll >= rule.minNativeBiospherePercentile!));
 }
 
 function allowsPopulation(row: RawAttributeRow, rules: readonly Constraint[], hasAliens: boolean): boolean {
@@ -246,26 +291,73 @@ function allowsPopulation(row: RawAttributeRow, rules: readonly Constraint[], ha
 }
 
 function allowsTech(row: RawAttributeRow, rules: readonly Constraint[]): boolean {
-  return rules.every(rule => rule.minTechLevelPercentile === undefined
-    || rollValues(row.roll).every(roll => roll >= rule.minTechLevelPercentile!));
+  return rules.every(rule => rule.minTechLevel === undefined || row.tl !== undefined && row.tl >= rule.minTechLevel);
 }
 
 function allowsHab(
   atmosphere: RawAttributeRow,
   temperature: RawAttributeRow,
-  biosphere: RawAttributeRow,
+  terranBiosphere: RawAttributeRow,
   population: RawAttributeRow,
   techLevel: RawAttributeRow,
   rules: readonly Constraint[],
+  additionalHabRatings: readonly number[] = [],
 ): boolean {
   const calculatedHab = Math.min(
     requiredHab(atmosphere, "atmosphere"),
     requiredHab(temperature, "temperature"),
-    requiredHab(biosphere, "biosphere"),
+    requiredHab(terranBiosphere, "terran_biosphere"),
+    ...additionalHabRatings,
   );
   return calculatedHab >= requiredHab(population, "population")
     && calculatedHab >= requiredHab(techLevel, "tech_level")
+    && calculatedHab >= habRequirement(terranBiosphere, "terran_biosphere")
     && rules.every(rule => rule.maxEnvironmentalHab === undefined || calculatedHab <= rule.maxEnvironmentalHab);
+}
+
+function rollCompatibleTerrestrialSize(
+  rng: seedrandom.PRNG,
+  atmosphere: RawAttributeRow,
+  temperature: RawAttributeRow,
+  terranBiosphere: RawAttributeRow,
+  population: RawAttributeRow,
+  techLevel: RawAttributeRow,
+  rules: readonly Constraint[],
+): TerrestrialSizeResultV3 {
+  for (let attempts = 0; attempts < 10_000; attempts += 1) {
+    const size = rollTerrestrialSize(rng);
+    if (allowsHab(atmosphere, temperature, terranBiosphere, population, techLevel, rules, [size.hab])) {
+      return size;
+    }
+  }
+  throw new Error("Could not roll a terrestrial size compatible with world constraints after 10,000 attempts");
+}
+
+function rollCompatibleBulkComposition(
+  rng: seedrandom.PRNG,
+  atmosphere: RawAttributeRow,
+  temperature: RawAttributeRow,
+  terranBiosphere: RawAttributeRow,
+  population: RawAttributeRow,
+  techLevel: RawAttributeRow,
+  terrestrialSize: TerrestrialSizeResultV3,
+  rules: readonly Constraint[],
+): BulkCompositionResultV3 {
+  for (let attempts = 0; attempts < 10_000; attempts += 1) {
+    const bulkComposition = rollBulkComposition(rng);
+    if (allowsHab(
+      atmosphere,
+      temperature,
+      terranBiosphere,
+      population,
+      techLevel,
+      rules,
+      [terrestrialSize.hab, bulkComposition.hab],
+    )) {
+      return bulkComposition;
+    }
+  }
+  throw new Error("Could not roll a bulk composition compatible with world constraints after 10,000 attempts");
 }
 
 /** Whether the supplied partial result can still be completed without violating the tag rules. */
@@ -287,7 +379,12 @@ function hasValidCompletion(
   }
   const atmospheres = partial.atmosphere === undefined ? attributeTable("atmosphere").rows : [partial.atmosphere];
   const temperatures = partial.temperature === undefined ? attributeTable("temperature").rows : [partial.temperature];
-  const biospheres = partial.biosphere === undefined ? attributeTable("biosphere").rows : [partial.biosphere];
+  const nativeBiospheres = partial.native_biosphere === undefined
+    ? attributeTable("native_biosphere").rows
+    : [partial.native_biosphere];
+  const terranBiospheres = partial.terran_biosphere === undefined
+    ? attributeTable("terran_biosphere").rows
+    : [partial.terran_biosphere];
   const populations = partial.population === undefined ? attributeTable("population").rows : [partial.population];
   const techLevels = partial.tech_level === undefined ? attributeTable("tech_level").rows : [partial.tech_level];
 
@@ -298,11 +395,13 @@ function hasValidCompletion(
       for (const atmosphere of atmospheres) {
         if (!allowsAtmosphere(atmosphere, rules)) continue;
         for (const temperature of temperatures) {
-          for (const biosphere of biospheres) {
-            if (allowsBiosphere(biosphere, rules)
-              && allowsHab(atmosphere, temperature, biosphere, population, tech, rules)) {
-              completionCache.set(cacheKey, true);
-              return true;
+          for (const nativeBiosphere of nativeBiospheres) {
+            if (!allowsNativeBiosphere(nativeBiosphere, rules)) continue;
+            for (const terranBiosphere of terranBiospheres) {
+              if (allowsHab(atmosphere, temperature, terranBiosphere, population, tech, rules)) {
+                completionCache.set(cacheKey, true);
+                return true;
+              }
             }
           }
         }
@@ -431,13 +530,34 @@ function buildWorld(
       result: row.result,
       ...(row.hab === undefined ? {} : { hab: row.hab }),
       ...(row.habRequired === undefined ? {} : { habRequired: row.habRequired }),
+      ...(row.tl === undefined ? {} : { tl: row.tl }),
       ...(row.thermalOrbits === undefined ? {} : { thermalOrbits: row.thermalOrbits }),
       ...(row.alien === true ? { alien: true as const } : {}),
     }];
   })) as Record<WorldAttributeId, WorldAttributeResultV2>;
   const specialStates = [...new Set(rules.flatMap(rule => rule.specialStates ?? []))];
   const xyz = String(rollDie(rng, 1_000) - 1).padStart(3, "0");
-  const terrestrialSize = rollTerrestrialSize(rng);
+  const terrestrialSize = rollCompatibleTerrestrialSize(
+    rng,
+    partial.atmosphere!,
+    partial.temperature!,
+    partial.terran_biosphere!,
+    partial.population!,
+    partial.tech_level!,
+    rules,
+  );
+  const bulkComposition = order === 1
+    ? rollCompatibleBulkComposition(
+      rng,
+      partial.atmosphere!,
+      partial.temperature!,
+      partial.terran_biosphere!,
+      partial.population!,
+      partial.tech_level!,
+      terrestrialSize,
+      rules,
+    )
+    : undefined;
 
   return {
     id: `${systemId}-world-${String(order).padStart(2, "0")}`,
@@ -452,11 +572,16 @@ function buildWorld(
       { roll: selectedTags[1].roll, tag: selectedTags[1].tag },
     ],
     attributes,
-    planetDetails: { terrestrialSize },
+    planetDetails: {
+      terrestrialSize,
+      ...(bulkComposition === undefined ? {} : { bulkComposition }),
+    },
     calculatedHab: Math.min(
       requiredHab(partial.atmosphere!, "atmosphere"),
       requiredHab(partial.temperature!, "temperature"),
-      requiredHab(partial.biosphere!, "biosphere"),
+      requiredHab(partial.terran_biosphere!, "terran_biosphere"),
+      terrestrialSize.hab,
+      ...(bulkComposition === undefined ? [] : [bulkComposition.hab]),
     ),
   };
 }
@@ -470,11 +595,22 @@ export function isV3SystemValid(system: StarSystemV3): boolean {
     && system.primaryStar.habitableSlots >= system.worlds.length
     && system.worlds.every(world => {
       const size = world.planetDetails.terrestrialSize;
-      return size.roll >= 1
+      const bulkComposition = world.planetDetails.bulkComposition;
+      const validSize = size.roll >= 1
         && size.roll <= 100
         && terrestrialSizeTable?.rows.some(row =>
           matchesRoll(size.roll, row.roll) && row.result === size.result && row.hab === size.hab,
         ) === true;
+      const validBulkComposition = bulkComposition !== undefined
+        && bulkComposition.roll >= 1
+        && bulkComposition.roll <= 100
+        && bulkCompositionTable?.rows.some(row =>
+          matchesRoll(bulkComposition.roll, row.roll)
+            && row.result === bulkComposition.result
+            && row.hab === bulkComposition.hab
+            && row.color === bulkComposition.color,
+        ) === true;
+      return validSize && (world.isPrimary ? validBulkComposition : bulkComposition === undefined);
     })
     && starTypeForRoll(system.primaryStar.roll).result === system.primaryStar.result
     && starTypeForRoll(system.primaryStar.roll).hab === system.primaryStar.hab
@@ -497,6 +633,7 @@ export function isV2WorldValid(world: InhabitedWorldV2): boolean {
     if (actual.result !== expected.result
       || actual.hab !== expected.hab
       || actual.habRequired !== expected.habRequired
+      || actual.tl !== expected.tl
       || JSON.stringify(actual.thermalOrbits) !== JSON.stringify(expected.thermalOrbits)
       || actual.alien !== expected.alien) {
       return false;
@@ -508,10 +645,24 @@ export function isV2WorldValid(world: InhabitedWorldV2): boolean {
     return false;
   }
   return hasValidCompletion(rules, world.hasAliens, partial)
+    && allowsHab(
+      partial.atmosphere!,
+      partial.temperature!,
+      partial.terran_biosphere!,
+      partial.population!,
+      partial.tech_level!,
+      rules,
+      [
+        world.planetDetails.terrestrialSize.hab,
+        ...(world.planetDetails.bulkComposition === undefined ? [] : [world.planetDetails.bulkComposition.hab]),
+      ],
+    )
     && world.calculatedHab === Math.min(
       requiredHab(partial.atmosphere!, "atmosphere"),
       requiredHab(partial.temperature!, "temperature"),
-      requiredHab(partial.biosphere!, "biosphere"),
+      requiredHab(partial.terran_biosphere!, "terran_biosphere"),
+      world.planetDetails.terrestrialSize.hab,
+      ...(world.planetDetails.bulkComposition === undefined ? [] : [world.planetDetails.bulkComposition.hab]),
     );
 }
 

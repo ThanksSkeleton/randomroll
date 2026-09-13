@@ -56,17 +56,25 @@ describe("SWN sector V3", () => {
         expect(world.calculatedHab).toBe(Math.min(
           world.attributes.atmosphere.hab ?? -1,
           world.attributes.temperature.hab ?? -1,
-          world.attributes.biosphere.hab ?? -1,
+          world.attributes.terran_biosphere.hab ?? -1,
+          world.planetDetails.terrestrialSize.hab,
+          ...(world.planetDetails.bulkComposition === undefined ? [] : [world.planetDetails.bulkComposition.hab]),
         ));
         expect(world.calculatedHab).toBeGreaterThanOrEqual(Math.max(
-          world.attributes.population.hab ?? -1,
+          world.attributes.population.habRequired ?? -1,
           world.attributes.tech_level.habRequired ?? -1,
+          world.attributes.terran_biosphere.habRequired ?? -1,
         ));
         expect(world.planetDetails.terrestrialSize.roll).toBeGreaterThanOrEqual(1);
         expect(world.planetDetails.terrestrialSize.roll).toBeLessThanOrEqual(100);
         expect(["Luna", "Mars", "Earth", "Super-Earth"]).toContain(world.planetDetails.terrestrialSize.result);
         expect(world.planetDetails.terrestrialSize.hab).toBeGreaterThanOrEqual(1);
         expect(world.planetDetails.terrestrialSize.hab).toBeLessThanOrEqual(3);
+        if (world.isPrimary) {
+          expect(world.planetDetails.bulkComposition).toBeDefined();
+        } else {
+          expect(world.planetDetails.bulkComposition).toBeUndefined();
+        }
         expect(isV2WorldValid(world)).toBe(true);
       }
     }

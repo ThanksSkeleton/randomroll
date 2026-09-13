@@ -8,6 +8,7 @@ type AttributeRow = {
   result: string;
   hab?: number;
   habRequired?: number;
+  tl?: number;
   alien?: boolean;
 };
 
@@ -15,8 +16,8 @@ type Constraint = {
   tag: string;
   maxEnvironmentalHab?: number;
   maxAtmospherePercentile?: number;
-  minBiospherePercentile?: number;
-  minTechLevelPercentile?: number;
+  minNativeBiospherePercentile?: number;
+  minTechLevel?: number;
   minPopulationPercentile?: number;
   maxPopulationPercentile?: number;
   requiresAliens?: boolean;
@@ -47,8 +48,8 @@ function rollValues(roll: number | string): number[] {
   return Array.from({ length: end - start + 1 }, (_, index) => start + index);
 }
 
-function requiredHab(row: AttributeRow, isTechLevel = false): number {
-  const value = isTechLevel ? row.habRequired : row.hab;
+function requiredHab(row: AttributeRow, isRequirement = false): number {
+  const value = isRequirement ? row.habRequired : row.hab;
   if (value === undefined) throw new Error("Missing required Hab metadata");
   return value;
 }
@@ -77,27 +78,27 @@ function allowsAtmosphere(row: AttributeRow, rules: Constraint[]): boolean {
     || rollValues(row.roll).every(roll => roll <= rule.maxAtmospherePercentile!));
 }
 
-function allowsBiosphere(row: AttributeRow, rules: Constraint[]): boolean {
-  return rules.every(rule => rule.minBiospherePercentile === undefined
-    || rollValues(row.roll).every(roll => roll >= rule.minBiospherePercentile!));
+function allowsNativeBiosphere(row: AttributeRow, rules: Constraint[]): boolean {
+  return rules.every(rule => rule.minNativeBiospherePercentile === undefined
+    || rollValues(row.roll).every(roll => roll >= rule.minNativeBiospherePercentile!));
 }
 
 function allowsTech(row: AttributeRow, rules: Constraint[]): boolean {
-  return rules.every(rule => rule.minTechLevelPercentile === undefined
-    || rollValues(row.roll).every(roll => roll >= rule.minTechLevelPercentile!));
+  return rules.every(rule => rule.minTechLevel === undefined || row.tl !== undefined && row.tl >= rule.minTechLevel);
 }
 
 function allowsHab(
   atmosphere: AttributeRow,
   temperature: AttributeRow,
-  biosphere: AttributeRow,
+  terranBiosphere: AttributeRow,
   population: AttributeRow,
   techLevel: AttributeRow,
   rules: Constraint[],
 ): boolean {
-  const calculatedHab = Math.min(requiredHab(atmosphere), requiredHab(temperature), requiredHab(biosphere));
-  return calculatedHab >= requiredHab(population)
+  const calculatedHab = Math.min(requiredHab(atmosphere), requiredHab(temperature), requiredHab(terranBiosphere));
+  return calculatedHab >= requiredHab(population, true)
     && calculatedHab >= requiredHab(techLevel, true)
+    && calculatedHab >= requiredHab(terranBiosphere, true)
     && rules.every(rule => rule.maxEnvironmentalHab === undefined || calculatedHab <= rule.maxEnvironmentalHab);
 }
 
@@ -110,10 +111,12 @@ function hasValidCompletion(first: string, second: string, hasAliens: boolean): 
       for (const atmosphere of table("atmosphere")) {
         if (!allowsAtmosphere(atmosphere, rules)) continue;
         for (const temperature of table("temperature")) {
-          for (const biosphere of table("biosphere")) {
-            if (allowsBiosphere(biosphere, rules)
-              && allowsHab(atmosphere, temperature, biosphere, population, tech, rules)) {
-              return true;
+          for (const nativeBiosphere of table("native_biosphere")) {
+            if (!allowsNativeBiosphere(nativeBiosphere, rules)) continue;
+            for (const terranBiosphere of table("terran_biosphere")) {
+              if (allowsHab(atmosphere, temperature, terranBiosphere, population, tech, rules)) {
+                return true;
+              }
             }
           }
         }
@@ -138,13 +141,13 @@ describe("SWN sector V2 constraint checker", () => {
       expect(rule.maxEnvironmentalHab === undefined || (rule.maxEnvironmentalHab >= 0 && rule.maxEnvironmentalHab <= 3)).toBe(true);
       for (const cutoff of [
         rule.maxAtmospherePercentile,
-        rule.minBiospherePercentile,
-        rule.minTechLevelPercentile,
+        rule.minNativeBiospherePercentile,
         rule.minPopulationPercentile,
         rule.maxPopulationPercentile,
       ]) {
         expect(cutoff === undefined || (cutoff >= 1 && cutoff <= 100)).toBe(true);
       }
+      expect(rule.minTechLevel === undefined || (rule.minTechLevel >= 0 && rule.minTechLevel <= 5)).toBe(true);
     }
   });
 

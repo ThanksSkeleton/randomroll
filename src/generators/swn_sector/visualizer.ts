@@ -14,10 +14,14 @@ const STAR_COLORS: Record<string, string> = {
   "Stellar-mass black hole": "#17151d",
 };
 
-type VisualWorld = InhabitedWorldV2 & {
-  planetDetails: InhabitedWorldV2["planetDetails"] & {
-    bulkComposition?: { color?: string };
-  };
+const COMPOSITION_COLORS: Record<string, string> = {
+  Yellow: "#e3ca3d",
+  Black: "#30333a",
+  Green: "#65a86b",
+  White: "#e3e6e8",
+  Red: "#bb6258",
+  Water: "#3a94c8",
+  Normal: "#87a4c1",
 };
 
 function element<K extends keyof HTMLElementTagNameMap>(tag: K, className?: string): HTMLElementTagNameMap[K] {
@@ -26,7 +30,7 @@ function element<K extends keyof HTMLElementTagNameMap>(tag: K, className?: stri
   return node;
 }
 
-function sizeClass(world: VisualWorld): string {
+function sizeClass(world: InhabitedWorldV2): string {
   const size = world.planetDetails.terrestrialSize.result;
   if (size === "Luna") return "planet--luna";
   if (size === "Mars") return "planet--mars";
@@ -35,15 +39,67 @@ function sizeClass(world: VisualWorld): string {
   return "planet--earth";
 }
 
-function planetColor(world: VisualWorld): string {
-  return world.planetDetails.bulkComposition?.color ?? "#87a4c1";
+function planetColor(world: InhabitedWorldV2): string {
+  const color = world.planetDetails.bulkComposition?.color;
+  return color === undefined ? "#87a4c1" : COMPOSITION_COLORS[color] ?? "#87a4c1";
+}
+
+function populationLevel(world: InhabitedWorldV2): number {
+  const roll = world.attributes.population.roll;
+  if (roll <= 9) return 1;
+  if (roll <= 31) return 2;
+  if (roll <= 75) return 3;
+  if (roll <= 94) return 4;
+  return 5;
+}
+
+function technologyLevel(world: InhabitedWorldV2): number {
+  return Math.floor(world.attributes.tech_level.tl ?? 0);
+}
+
+function stackedIcons(icon: string, count: number, className: string): HTMLElement {
+  const stack = element("span", `icon-stack ${className}`);
+  for (let index = 0; index < count; index += 1) {
+    const item = element("span", "stacked-icon");
+    item.textContent = icon;
+    stack.append(item);
+  }
+  return stack;
+}
+
+function worldStatus(world: InhabitedWorldV2): HTMLElement {
+  const status = element("div", "world-status");
+  status.title = `Hab ${world.calculatedHab}; population level ${populationLevel(world)}; TL ${world.attributes.tech_level.tl ?? 0}`;
+
+  const habRow = element("div", "status-row status-row--hab");
+  const habMarker = element("span", `hab-marker hab-marker--${world.calculatedHab}`);
+  habMarker.setAttribute("aria-label", `Habitability ${world.calculatedHab}`);
+  habRow.append(habMarker);
+
+  const populationRow = element("div", "status-row");
+  populationRow.append(stackedIcons("👨", populationLevel(world), "population-icons"));
+
+  const techRow = element("div", "status-row");
+  const tl = world.attributes.tech_level.tl ?? 0;
+  techRow.append(stackedIcons("★", technologyLevel(world), "technology-icons"));
+  if (tl > 4) {
+    const plus = element("span", "tl-plus");
+    plus.textContent = "+";
+    techRow.append(plus);
+  }
+
+  status.append(habRow, populationRow, techRow);
+  return status;
 }
 
 function worldSummary(world: InhabitedWorldV2): string {
   const attributes = Object.entries(world.attributes)
     .map(([id, value]) => `${id.replace("_", " ")}: ${value.result}`)
     .join(" · ");
-  return `${world.name}\n${world.tags.map(tag => tag.tag).join(" / ")}\n${world.planetDetails.terrestrialSize.result}-sized (Size Hab ${world.planetDetails.terrestrialSize.hab}) · Environmental Hab ${world.calculatedHab} · ${attributes}`;
+  const composition = world.planetDetails.bulkComposition;
+  const detail = `${world.planetDetails.terrestrialSize.result}-sized (Size Hab ${world.planetDetails.terrestrialSize.hab})`
+    + `${composition === undefined ? "" : ` · ${composition.result} composition (Hab ${composition.hab})`}`;
+  return `${world.name}\n${world.tags.map(tag => tag.tag).join(" / ")}\n${detail} · Environmental Hab ${world.calculatedHab} · ${attributes}`;
 }
 
 function systemDetails(system: StarSystemV3): string {
@@ -68,14 +124,16 @@ function renderSystem(system: StarSystemV3): HTMLElement {
   for (let index = 0; index < 3; index += 1) {
     const slot = element("div", "planet-slot");
     const orbitSlot = index + 1;
-    const world = system.worlds.find(candidate => candidate.orbitSlot === orbitSlot) as VisualWorld | undefined;
+    const world = system.worlds.find(candidate => candidate.orbitSlot === orbitSlot);
     if (world !== undefined) {
+      const cluster = element("div", "planet-cluster");
       const planet = element("button", `planet ${sizeClass(world)}`);
       planet.type = "button";
       planet.style.backgroundColor = planetColor(world);
       planet.textContent = String(world.orbitSlot);
       planet.title = worldSummary(world);
-      slot.append(planet);
+      cluster.append(planet, worldStatus(world));
+      slot.append(cluster);
     }
     slots.append(slot);
   }
@@ -119,12 +177,13 @@ function createApp(root: HTMLElement): void {
     form { display: flex; gap: 8px; } input, button { font: inherit; } input { width: 220px; padding: 8px 10px; color: inherit; background: #10233a; border: 1px solid #426789; border-radius: 5px; }
     form button { padding: 8px 12px; color: #08111f; background: #9ed8ff; border: 0; border-radius: 5px; cursor: pointer; }
     #system-rows { display: grid; gap: 10px; margin-top: 20px; }
-    .system-row { position: relative; display: grid; grid-template-columns: 150px minmax(250px, .8fr) minmax(420px, 1.5fr); align-items: center; gap: 20px; min-height: 100px; padding: 14px 18px; background: #0d1a2c; border: 1px solid #203c59; border-radius: 8px; outline: none; }
+    .system-row { position: relative; display: grid; grid-template-columns: 150px minmax(330px, .8fr) minmax(420px, 1.5fr); align-items: center; gap: 20px; min-height: 100px; padding: 14px 18px; background: #0d1a2c; border: 1px solid #203c59; border-radius: 8px; outline: none; }
     .system-row:hover, .system-row:focus { border-color: #74bdf0; background: #102139; }
     .star-column { display: grid; justify-items: center; gap: 4px; min-width: 0; } .star-symbol { color: var(--star-color); font-size: 3rem; line-height: 1; text-shadow: 0 0 13px var(--star-color); } .star-caption { font-size: .75rem; color: #b8c9dd; text-align: center; }
     .planet-slots { display: flex; align-items: center; justify-content: space-around; min-height: 72px; border-left: 1px solid #294563; border-right: 1px solid #294563; }
-    .planet-slot { width: 64px; height: 64px; display: grid; place-items: center; }
+    .planet-slot { width: 104px; height: 64px; display: grid; place-items: center; } .planet-cluster { display: inline-flex; align-items: center; gap: 3px; }
     .planet { border: 2px solid rgba(230,245,255,.72); border-radius: 50%; color: #06111c; font-weight: 800; box-shadow: inset -7px -6px 0 rgba(0,0,0,.24), 0 0 12px rgba(135,164,193,.32); cursor: help; } .planet--luna { width: 20px; height: 20px; font-size: 9px; } .planet--mars { width: 29px; height: 29px; font-size: 10px; } .planet--earth { width: 39px; height: 39px; font-size: 12px; } .planet--super-earth { width: 52px; height: 52px; font-size: 14px; }
+    .world-status { display: grid; gap: 1px; min-width: 35px; padding: 2px 3px; border: 1px solid #426789; border-radius: 4px; background: #08111fdd; } .status-row { display: flex; align-items: center; min-height: 11px; color: #dce9f8; font: 9px/1 sans-serif; white-space: nowrap; } .status-row--hab { justify-content: center; } .hab-marker { width: 10px; height: 10px; border: 1px solid #000; border-radius: 50%; } .hab-marker--0 { background: transparent; } .hab-marker--1 { background: #e34c4c; } .hab-marker--2 { background: #f0cf48; } .hab-marker--3 { background: #56af65; } .icon-stack { display: inline-flex; align-items: center; padding-left: 1px; } .stacked-icon { display: inline-block; font-size: 10px; line-height: 10px; text-shadow: 0 0 1px #000; } .stacked-icon + .stacked-icon { margin-left: -5px; } .technology-icons .stacked-icon { color: #f5da5c; font-size: 10px; } .tl-plus { margin-left: 1px; color: #f5da5c; font-size: 10px; font-weight: 800; }
     .label-box h2 { margin: 0 0 8px; font-size: .95rem; color: #8fd3ff; } .world-label { display: grid; gap: 2px; margin: 5px 0; font-size: .8rem; } .world-label span { color: #9bb0c8; }
     .detail-card { position: absolute; z-index: 2; right: 16px; top: calc(100% + 4px); width: min(760px, calc(100vw - 64px)); margin: 0; padding: 14px; white-space: pre-wrap; color: #e6f4ff; background: #132942; border: 1px solid #79bce9; border-radius: 6px; box-shadow: 0 14px 34px #020810cc; font: .78rem/1.45 ui-monospace, monospace; opacity: 0; pointer-events: none; transform: translateY(-4px); transition: opacity .14s, transform .14s; }
     .system-row:hover .detail-card, .system-row:focus .detail-card { opacity: 1; transform: translateY(0); }
@@ -143,7 +202,7 @@ function createApp(root: HTMLElement): void {
   const generate = element("button"); generate.type = "submit"; generate.textContent = "Generate";
   form.append(seed, generate); header.append(title, form);
   const rows = element("section"); rows.id = "system-rows"; rows.setAttribute("aria-live", "polite");
-  const legend = element("p", "legend"); legend.textContent = "Worlds are assigned the middle orbit first (slot 2), then the inner orbit (slot 1), then the outer orbit (slot 3). Empty orbit positions are not shown. Planet size is generated from the V3 terrestrial-size table; bulk-composition color will replace the neutral-color fallback when that field is generated.";
+  const legend = element("p", "legend"); legend.textContent = "Worlds are assigned the middle orbit first (slot 2), then the inner orbit (slot 1), then the outer orbit (slot 3). Empty orbit positions are not shown. Primary-world planet colors show their generated bulk composition; secondary worlds use the neutral fallback.";
   root.replaceChildren(header, rows, legend);
 
   const generateSector = (): void => renderSector(root, generateSectorV3(seed.value || DEFAULT_SEED));

@@ -13,13 +13,13 @@
       "id": "atmosphere",
       "dice": "d100",
       "rows": [
-        { "roll": "1-3", "originalRoll": 2, "result": "Corrosive, damaging to foreign objects", "hab": 0 },
-        { "roll": "4-9", "originalRoll": 11, "result": "Invasive, penetrating suit seals", "hab": 0 },
-        { "roll": "10-12", "originalRoll": 12, "result": "Both corrosive and invasive in its effects", "hab": 0 },
-        { "roll": "13-18", "originalRoll": 3, "result": "Inert gas, useless for respiration", "hab": 1 },
-        { "roll": "19-26", "originalRoll": 4, "result": "Airless or thin to the point of suffocation", "hab": 1 },
-        { "roll": "27-34", "originalRoll": 10, "result": "Thick, but breathable with a pressure mask", "hab": 1 },
-        { "roll": "35-100", "originalRoll": "5-9", "result": "Breathable mix", "hab": 3 }
+        { "roll": "1-8", "originalRoll": 4, "result": "Vacuum", "hab": 0 },
+        { "roll": "9-11", "originalRoll": 2, "result": "Corrosive", "hab": 0 },
+        { "roll": "12-17", "originalRoll": 11, "result": "Invasive, penetrating suit seals", "hab": 0 },
+        { "roll": "18-20", "originalRoll": 12, "result": "Both corrosive and invasive", "hab": 0 },
+        { "roll": "21-26", "originalRoll": 3, "result": "Inert gas", "hab": 0 },
+        { "roll": "27-34", "originalRoll": 10, "result": "Breathable - thin or thick (pressure mask required)", "hab": 2 },
+        { "roll": "35-100", "originalRoll": "5-9", "result": "Breathable", "hab": 3 }
       ]
     },
     {
@@ -44,28 +44,38 @@
       ]
     },
     {
-      "id": "biosphere",
+      "id": "native_biosphere",
       "dice": "d100",
+      "source": "V3 custom native biosphere table supplied by the user",
       "rows": [
-        { "roll": "1-3", "originalRoll": 2, "result": "Remnant biosphere", "hab": 1 },
-        { "roll": "4-9", "originalRoll": 3, "result": "Microbial life forms exist", "hab": 1 },
-        { "roll": "10-28", "originalRoll": "4-5", "result": "No native biosphere", "hab": 2 },
-        { "roll": "29-47", "originalRoll": "9-10", "result": "Immiscible biosphere", "hab": 2 },
-        { "roll": "48-91", "originalRoll": "6-8", "result": "Human-miscible biosphere", "hab": 3 },
-        { "roll": "92-97", "originalRoll": 11, "result": "Hybrid biosphere", "hab": 3 },
-        { "roll": "98-100", "originalRoll": 12, "result": "Engineered biosphere", "hab": 3 }
+        { "roll": "1-19", "result": "None" },
+        { "roll": "20-49", "result": "Microbial" },
+        { "roll": "50-59", "result": "Limited" },
+        { "roll": "60-94", "result": "Significant" },
+        { "roll": "95-100", "result": "Engineered" }
+      ]
+    },
+    {
+      "id": "terran_biosphere",
+      "dice": "d100",
+      "source": "V3 custom Terran biosphere table supplied by the user",
+      "rows": [
+        { "roll": "1-9", "result": "None", "hab": 0, "habRequired": 0 },
+        { "roll": "10-14", "result": "Microbial", "hab": 1, "habRequired": 1 },
+        { "roll": "15-44", "result": "Limited", "hab": 2, "habRequired": 1 },
+        { "roll": "45-94", "result": "Significant", "hab": 3, "habRequired": 2 },
+        { "roll": "95-100", "result": "Engineered", "hab": 3, "habRequired": 1 }
       ]
     },
     {
       "id": "population",
       "dice": "d100",
       "rows": [
-        { "roll": "1-3", "originalRoll": 2, "result": "Failed colony", "hab": 0 },
-        { "roll": "4-9", "originalRoll": 3, "result": "Outpost", "hab": 0 },
-        { "roll": "10-31", "originalRoll": "4-5, 12", "result": "Fewer than a million inhabitants", "hab": 0 },
-        { "roll": "32-75", "originalRoll": "6-8", "result": "Several million inhabitants", "hab": 2 },
-        { "roll": "76-94", "originalRoll": "9-10", "result": "Hundreds of millions of inhabitants", "hab": 2 },
-        { "roll": "95-100", "originalRoll": 11, "result": "Billions of inhabitants", "hab": 3 }
+        { "roll": "1-9", "originalRoll": "2-3", "result": "Fewer than 500", "habRequired": 0 },
+        { "roll": "10-31", "originalRoll": "4-5, 12", "result": "Fewer than a million inhabitants", "habRequired": 0 },
+        { "roll": "32-75", "originalRoll": "6-8", "result": "Several million inhabitants", "habRequired": 2 },
+        { "roll": "76-94", "originalRoll": "9-10", "result": "Hundreds of millions of inhabitants", "habRequired": 2 },
+        { "roll": "95-100", "originalRoll": 11, "result": "Billions of inhabitants", "habRequired": 3 }
       ]
     },
     {
@@ -86,12 +96,12 @@
       "dice": "d100",
       "source": "V3 custom bulk-composition table supplied by the user",
       "rows": [
-        { "roll": "1-3", "originalRoll": 2, "result": "Sulfur", "hab": 0, "color": "Yellow" },
-        { "roll": "4-9", "originalRoll": 3, "result": "Carbon", "hab": 0, "color": "Black" },
-        { "roll": "10-15", "originalRoll": 11, "result": "Magnesium", "hab": 0, "color": "Green" },
-        { "roll": "16-18", "originalRoll": 12, "result": "Calcium-Aluminum", "hab": 0, "color": "White" },
+        { "roll": "1-3", "originalRoll": 2, "result": "Sulfur", "hab": 1, "color": "Yellow" },
+        { "roll": "4-9", "originalRoll": 3, "result": "Carbon", "hab": 1, "color": "Black" },
+        { "roll": "10-15", "originalRoll": 11, "result": "Magnesium", "hab": 1, "color": "Green" },
+        { "roll": "16-18", "originalRoll": 12, "result": "Calcium-Aluminum", "hab": 1, "color": "White" },
         { "roll": "19-26", "originalRoll": 4, "result": "Iron", "hab": 1, "color": "Red" },
-        { "roll": "27-34", "originalRoll": 10, "result": "Water", "hab": 1, "color": "Water" },
+        { "roll": "27-34", "originalRoll": 10, "result": "Water", "hab": 2, "color": "Water" },
         { "roll": "35-100", "originalRoll": "5-9", "result": "Silicon", "hab": 3, "color": "Normal" }
       ]
     },
