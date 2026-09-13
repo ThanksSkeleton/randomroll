@@ -51,7 +51,7 @@ Source: printed pages 170–171 (PDF 174–175). This is an optional branch afte
 
 ### 3A. Additional inhabited world
 
-If the GM adds another inhabited planet, generate its ordinary world details by returning to section 2. Then use one `d8` row from `system_points_of_interest.json` → `secondaryWorld.rows` to supply three linked prompts:
+If the GM adds another inhabited planet, generate its ordinary world details by returning to section 2. Then roll or choose independently from the three `d8` tables in `system_points_of_interest.json` → `secondaryWorld`:
 
 1. `origin`: how the additional world came to be.
 2. `relationship`: its current relationship with the primary world.
@@ -59,11 +59,15 @@ If the GM adds another inhabited planet, generate its ordinary world details by 
 
 If three or more inhabited worlds are added, the book asks the GM to determine how each feels about the others; relations need not be reciprocal. The table does not prescribe a complete matrix of relations.
 
+### 3A.1 Extra-world archetypes
+
+Optional extra worlds and objects use the archetypes in `system_points_of_interest.json` → `extraWorlds.archetypes`. Each record supplies an `archetype`, physical `description`, and one of the `TerrestrialPlanet`, `GasGiant`, or `OtherObject` categories. No roll distribution is specified for these user-supplied archetypes.
+
 ### 3B. Other point of interest
 
 To add a station, base, asteroid belt, or equivalent point, use `system_points_of_interest.json` → `otherPoint.rows`:
 
-1. Roll or choose a `d8` `point` row.
+1. Roll or choose a `d8` `point` row; its `locationType` identifies the eligible placement category.
 2. Within that row, roll or choose one `d10`-range entry from `occupants`.
 3. Independently roll or choose one `d10`-range entry from `situations`.
 
@@ -117,7 +121,7 @@ Faction rules themselves begin outside the approved sector-creation material and
 | --- | --- | --- | --- | --- |
 | `world_tags.json` | 2.1; revisited at 5 | Two `d100` results per primary world, or GM picks | Yes for each inhabited primary world | Establishes tags and provides raw adventure components. |
 | `world_attributes.json` | 2.2–2.6 | Five `2d6` results per primary world, or GM picks | Yes for each inhabited primary world | Establishes atmosphere, temperature, biosphere, population, and tech level. |
-| `system_points_of_interest.json` → `secondaryWorld` | 3A | One `d8` row, or GM pick | Only when adding an inhabited world | Prompts the secondary world’s origin, relationship, and contact. |
+| `system_points_of_interest.json` → `secondaryWorld` | 3A | Three independent `d8` rolls, or GM picks | Only when adding an inhabited world | Prompts the secondary world’s origin, relationship, and contact. |
 | `system_points_of_interest.json` → `otherPoint` | 3B | One `d8` point row plus independent `d10` occupant and situation selections | Only when adding another point of interest | Builds an optional station/base/etc. |
 
 ## Explicit non-table decisions

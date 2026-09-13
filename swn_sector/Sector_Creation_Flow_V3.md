@@ -92,7 +92,7 @@ Perform this step after 3.8 for every inhabited world. Terrestrial size is alrea
 | Moon of gas giant | Yes; No | `world_attributes_2.json`, `tables[id="gas_giant_moon"]` |
 | Tidal locking | True; False | Derived from primary-star type |
 
-Temperature is a `d100` dependent attribute. Its selected row explicitly lists the eligible `thermalOrbits`, preserving overlapping choices without a separate mapping element. Titan-Pluto is intentionally omitted because Too Cold covers that territory.
+Temperature is a `d100` dependent attribute. Its selected row has exactly one `thermalOrbits` value: Too Hot and Too Cold remain extreme slots; Hot, Temperate, and Cold are distinct thermal descriptions within the broader Goldilocks region used by V4. Titan-Pluto is intentionally omitted because Too Cold covers that territory.
 
 Bulk composition is a compatible `d100` V3 world field. Its results describe the planet's bulk material rather than surface deposits or terrain; its `hab` participates in calculated environmental Hab.
 

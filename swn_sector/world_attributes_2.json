@@ -28,19 +28,19 @@
       "rows": [
         { "roll": "1-2", "originalRoll": 2, "result": "Cryogenic", "description": "Freezing point of nitrogen", "hab": 0, "thermalOrbits": ["Too Cold"] },
         { "roll": "3-4", "originalRoll": 16, "result": "Volcanic", "description": "Melting point of lead", "hab": 0, "thermalOrbits": ["Too Hot"] },
-        { "roll": "5-7", "originalRoll": 3, "result": "Glacial", "description": "Antarctica records, approximately ±10", "hab": 1, "thermalOrbits": ["Too Cold", "Cold"] },
-        { "roll": "8-12", "originalRoll": 4, "result": "Polar", "description": "Antarctica; core uninhabitable cold", "hab": 1, "thermalOrbits": ["Too Cold", "Cold"] },
-        { "roll": "13-17", "originalRoll": 14, "result": "Arid / Thermal", "description": "Death Valley", "hab": 1, "thermalOrbits": ["Too Hot", "Hot"] },
-        { "roll": "18-20", "originalRoll": 15, "result": "Infernal", "description": "Death Valley + 10", "hab": 1, "thermalOrbits": ["Too Hot", "Hot"] },
+        { "roll": "5-7", "originalRoll": 3, "result": "Glacial", "description": "Antarctica records, approximately ±10", "hab": 1, "thermalOrbits": ["Cold"] },
+        { "roll": "8-12", "originalRoll": 4, "result": "Polar", "description": "Antarctica; core uninhabitable cold", "hab": 1, "thermalOrbits": ["Cold"] },
+        { "roll": "13-17", "originalRoll": 14, "result": "Arid / Thermal", "description": "Death Valley", "hab": 1, "thermalOrbits": ["Hot"] },
+        { "roll": "18-20", "originalRoll": 15, "result": "Infernal", "description": "Death Valley + 10", "hab": 1, "thermalOrbits": ["Hot"] },
         { "roll": "21-26", "originalRoll": 5, "result": "Subarctic", "description": "Siberia / Russian winters", "hab": 2, "thermalOrbits": ["Cold"] },
         { "roll": "27-32", "originalRoll": 13, "result": "Equatorial", "description": "Extreme real-world heat", "hab": 2, "thermalOrbits": ["Hot"] },
-        { "roll": "33-40", "originalRoll": 6, "result": "Boreal", "description": "Scandinavian / cool temperate", "hab": 3, "thermalOrbits": ["Cold", "Temperate"] },
-        { "roll": "41-49", "originalRoll": 7, "result": "Maritime", "description": "Brisk / cool temperate", "hab": 3, "thermalOrbits": ["Cold", "Temperate"] },
+        { "roll": "33-40", "originalRoll": 6, "result": "Boreal", "description": "Scandinavian / cool temperate", "hab": 3, "thermalOrbits": ["Temperate"] },
+        { "roll": "41-49", "originalRoll": 7, "result": "Maritime", "description": "Brisk / cool temperate", "hab": 3, "thermalOrbits": ["Temperate"] },
         { "roll": "50-60", "originalRoll": 8, "result": "Ideal", "description": "Perfect baseline temperate", "hab": 3, "thermalOrbits": ["Temperate"] },
         { "roll": "61-72", "originalRoll": 9, "result": "Ideal", "description": "Perfect baseline temperate", "hab": 3, "thermalOrbits": ["Temperate"] },
         { "roll": "73-83", "originalRoll": 10, "result": "Ideal", "description": "Perfect baseline temperate", "hab": 3, "thermalOrbits": ["Temperate"] },
-        { "roll": "84-92", "originalRoll": 11, "result": "Mediterranean", "description": "Warm temperate", "hab": 3, "thermalOrbits": ["Hot", "Temperate"] },
-        { "roll": "93-100", "originalRoll": 12, "result": "Subtropical", "description": "Warm / Saudi Arabia", "hab": 3, "thermalOrbits": ["Hot", "Temperate"] }
+        { "roll": "84-92", "originalRoll": 11, "result": "Mediterranean", "description": "Warm temperate", "hab": 3, "thermalOrbits": ["Temperate"] },
+        { "roll": "93-100", "originalRoll": 12, "result": "Subtropical", "description": "Warm / Saudi Arabia", "hab": 3, "thermalOrbits": ["Temperate"] }
       ]
     },
     {

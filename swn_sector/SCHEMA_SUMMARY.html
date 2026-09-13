@@ -68,15 +68,25 @@
     </table>
 
     <h2><a href="system_points_of_interest.json">system_points_of_interest.json</a></h2>
-    <p>Two optional system-detail tables from printed pages 170–171.</p>
+    <p>Source tables from printed pages 170–171 plus reviewed V4 system-location data supplied by the user.</p>
     <table>
       <thead><tr><th>Path</th><th>Type</th><th>Meaning</th></tr></thead>
       <tbody>
-        <tr><td><code>secondaryWorld</code></td><td>SecondaryWorldTable</td><td>One d8 row combines an origin, current relationship, and contact point for an added inhabited world.</td></tr>
-        <tr><td><code>secondaryWorld.rows[].roll</code></td><td>integer</td><td>Unique 1–8 origin-row outcome.</td></tr>
-        <tr><td><code>secondaryWorld.rows[].origin</code>, <code>relationship</code>, <code>contactPoint</code></td><td>string</td><td>The three columns from that source row.</td></tr>
+        <tr><td><code>v4.orbitalPositionCategories</code></td><td>array&lt;string&gt;</td><td>The complete V4 location-category vocabulary.</td></tr>
+        <tr><td><code>v4.requiredLocations</code></td><td>array&lt;LocationTemplate&gt;</td><td>Locations created for every system; currently the EgressIngress region.</td></tr>
+        <tr><td><code>v4.extraWorlds</code></td><td>object</td><td>Extra-world count, eligible archetypes, orbital placement rules, and moon rules.</td></tr>
+        <tr><td><code>v4.pointsOfInterest</code></td><td>object</td><td>Ingress/egress minimums, other-POI count, and IndependentOrbit creation policy.</td></tr>
+        <tr><td><code>extraWorlds.archetypes</code></td><td>array&lt;ExtraWorldArchetype&gt;</td><td>Optional extra-world archetypes supplied for system-detail generation.</td></tr>
+        <tr><td><code>extraWorlds.archetypes[].archetype</code></td><td>string</td><td>Archetype name.</td></tr>
+        <tr><td><code>extraWorlds.archetypes[].description</code></td><td>string</td><td>Concise physical description.</td></tr>
+        <tr><td><code>extraWorlds.archetypes[].category</code></td><td>string enum</td><td><code>TerrestrialPlanet</code>, <code>GasGiant</code>, or <code>OtherObject</code>.</td></tr>
+        <tr><td><code>secondaryWorld.origin</code>, <code>relationship</code>, <code>contactPoint</code></td><td>SecondaryWorldPromptTable</td><td>Three separately rolled d8 tables for an added inhabited world.</td></tr>
+        <tr><td><code>secondaryWorld.*.dice</code></td><td>string</td><td>Always <code>"d8"</code>.</td></tr>
+        <tr><td><code>secondaryWorld.*.rows[].roll</code></td><td>integer</td><td>Unique 1–8 outcome for that prompt table.</td></tr>
+        <tr><td><code>secondaryWorld.*.rows[].result</code></td><td>string</td><td>Source result text for that prompt table.</td></tr>
         <tr><td><code>otherPoint</code></td><td>OtherPointTable</td><td>One d8 point type; each point has independent d10 occupant and situation results.</td></tr>
         <tr><td><code>otherPoint.rows[].point</code></td><td>string</td><td>Type of additional system point.</td></tr>
+        <tr><td><code>otherPoint.rows[].locationType</code></td><td>string</td><td>Eligible location category for that point type.</td></tr>
         <tr><td><code>occupants</code>, <code>situations</code></td><td>array&lt;RollResult&gt;</td><td>Five inclusive d10 ranges: 1–2, 3–4, 5–6, 7–8, and 9–10.</td></tr>
       </tbody>
     </table>

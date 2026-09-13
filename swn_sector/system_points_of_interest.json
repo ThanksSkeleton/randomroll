@@ -6,59 +6,227 @@
     "printedPages": "129–171",
     "extractedOn": "2026-09-12"
   },
+  "v4": {
+    "orbitalPositionCategories": ["TooHot", "Goldilocks", "TooCold_1", "IngressEgress", "TooCold_3"],
+    "requiredLocations": [
+      { "kind": "EgressIngressRegion", "orbitalPositionCategory": "IngressEgress" }
+    ],
+    "extraWorlds": {
+      "countDice": "1d6",
+      "minimumByOrbitalPosition": {
+        "TooHot": 1,
+        "TooCold_1": 1
+      },
+      "maximumByOrbitalPosition": {
+        "TooCold_3": 1
+      },
+      "goldilocksOpenSlotExtraChance": 0.5,
+      "eligibleArchetypes": ["Mercurian", "Europan / Plutonic", "Lunar", "Ioan", "Titanian", "Martian", "Venusian", "Jovian", "Neptunian", "KupierBelt", "AsteroidBelt", "GasCloud"],
+      "allowedOrbitalPositionCategories": {
+        "TerrestrialPlanet": ["TooHot", "TooCold_1", "TooCold_3"],
+        "GasGiant": ["TooHot", "TooCold_1", "TooCold_3"],
+        "AsteroidBelt": ["TooHot", "TooCold_1"],
+        "GasCloud": ["TooCold_1", "TooCold_3"],
+        "KupierBelt": ["TooCold_3"]
+      },
+      "moonRules": {
+        "terrestrialExtraWorldMayOrbitGasGiant": true,
+        "terrestrialExtraWorldMoonChance": "same as world_attributes_2 gas_giant_moon table",
+        "primaryPlanetMoonCreatesParentGasGiant": true,
+        "parentGasGiantMayUseGoldilocks": true
+      }
+    },
+    "pointsOfInterest": {
+      "minimumIngressPoints": 1,
+      "minimumEgressPoints": 1,
+      "otherCountDice": "1d4+1",
+      "independentOrbit": {
+        "kind": "IndependentOrbit",
+        "createdByPoint": "Deep-space station",
+        "onlyContainsPoint": "Deep-space station",
+        "allowedOrbitalPositionCategories": ["TooHot", "TooCold_1", "TooCold_3"]
+      }
+    }
+  },
+  "extraWorlds": {
+    "source": "V3 extra-world archetype table supplied by the user",
+    "archetypes": [
+      {
+        "archetype": "Mercurian",
+        "description": "Metal-rich, airless",
+        "category": "TerrestrialPlanet"
+      },
+      {
+        "archetype": "Europan / Plutonic",
+        "description": "Ice/water-rich",
+        "category": "TerrestrialPlanet"
+      },
+      {
+        "archetype": "Lunar",
+        "description": "Rocky, airless",
+        "category": "TerrestrialPlanet"
+      },
+      {
+        "archetype": "Ioan",
+        "description": "Volcanic rocky",
+        "category": "TerrestrialPlanet"
+      },
+      {
+        "archetype": "Titanian",
+        "description": "Hydrocarbon/organic-rich volatile world",
+        "category": "TerrestrialPlanet"
+      },
+      {
+        "archetype": "Martian",
+        "description": "Small rocky world with a thin atmosphere",
+        "category": "TerrestrialPlanet"
+      },
+      {
+        "archetype": "Venusian",
+        "description": "Earth-sized rocky world with a massive atmosphere",
+        "category": "TerrestrialPlanet"
+      },
+      {
+        "archetype": "Jovian",
+        "description": "H/He gas giant",
+        "category": "GasGiant"
+      },
+      {
+        "archetype": "Neptunian",
+        "description": "Volatile-rich ice giant",
+        "category": "GasGiant"
+      },
+      {
+        "archetype": "KupierBelt",
+        "description": "KupierBelt",
+        "category": "OtherObject"
+      },
+      {
+        "archetype": "AsteroidBelt",
+        "description": "AsteroidBelt",
+        "category": "OtherObject"
+      },
+      {
+        "archetype": "GasCloud",
+        "description": "GasCloud",
+        "category": "OtherObject"
+      }
+    ]
+  },
   "secondaryWorld": {
     "printedPage": 170,
     "pdfPage": 174,
-    "rows": [
-      {
-        "roll": 1,
-        "origin": "Recent colony from the primary world",
-        "relationship": "Confirmed hatred of each other",
-        "contactPoint": "Trade in vital goods"
-      },
-      {
-        "roll": 2,
-        "origin": "Refuge for exiles from primary",
-        "relationship": "Active cold war between them",
-        "contactPoint": "Shared religion"
-      },
-      {
-        "roll": 3,
-        "origin": "Founded ages ago by a different group",
-        "relationship": "Old grudges or resentments",
-        "contactPoint": "Mutual language"
-      },
-      {
-        "roll": 4,
-        "origin": "Founded long before the primary world",
-        "relationship": "Cultural disgust and avoidance",
-        "contactPoint": "Entertainment content"
-      },
-      {
-        "roll": 5,
-        "origin": "Lost ancient colony of the primary",
-        "relationship": "Polite interchange and trade",
-        "contactPoint": "Shared research"
-      },
-      {
-        "roll": 6,
-        "origin": "Colony recently torn free of the primary",
-        "relationship": "Cultural admiration for primary",
-        "contactPoint": "Threat to both of them"
-      },
-      {
-        "roll": 7,
-        "origin": "Long-standing cooperative colony world",
-        "relationship": "Long-standing friendship",
-        "contactPoint": "Shared elite families"
-      },
-      {
-        "roll": 8,
-        "origin": "Recent interstellar colony from elsewhere",
-        "relationship": "Unflinching mutual loyalty",
-        "contactPoint": "Exploiting shared resource"
-      }
-    ]
+    "origin": {
+      "dice": "d8",
+      "rows": [
+        {
+          "roll": 1,
+          "result": "Recent colony from the primary world"
+        },
+        {
+          "roll": 2,
+          "result": "Refuge for exiles from primary"
+        },
+        {
+          "roll": 3,
+          "result": "Founded ages ago by a different group"
+        },
+        {
+          "roll": 4,
+          "result": "Founded long before the primary world"
+        },
+        {
+          "roll": 5,
+          "result": "Lost ancient colony of the primary"
+        },
+        {
+          "roll": 6,
+          "result": "Colony recently torn free of the primary"
+        },
+        {
+          "roll": 7,
+          "result": "Long-standing cooperative colony world"
+        },
+        {
+          "roll": 8,
+          "result": "Recent interstellar colony from elsewhere"
+        }
+      ]
+    },
+    "relationship": {
+      "dice": "d8",
+      "rows": [
+        {
+          "roll": 1,
+          "result": "Confirmed hatred of each other"
+        },
+        {
+          "roll": 2,
+          "result": "Active cold war between them"
+        },
+        {
+          "roll": 3,
+          "result": "Old grudges or resentments"
+        },
+        {
+          "roll": 4,
+          "result": "Cultural disgust and avoidance"
+        },
+        {
+          "roll": 5,
+          "result": "Polite interchange and trade"
+        },
+        {
+          "roll": 6,
+          "result": "Cultural admiration for primary"
+        },
+        {
+          "roll": 7,
+          "result": "Long-standing friendship"
+        },
+        {
+          "roll": 8,
+          "result": "Unflinching mutual loyalty"
+        }
+      ]
+    },
+    "contactPoint": {
+      "dice": "d8",
+      "rows": [
+        {
+          "roll": 1,
+          "result": "Trade in vital goods"
+        },
+        {
+          "roll": 2,
+          "result": "Shared religion"
+        },
+        {
+          "roll": 3,
+          "result": "Mutual language"
+        },
+        {
+          "roll": 4,
+          "result": "Entertainment content"
+        },
+        {
+          "roll": 5,
+          "result": "Shared research"
+        },
+        {
+          "roll": 6,
+          "result": "Threat to both of them"
+        },
+        {
+          "roll": 7,
+          "result": "Shared elite families"
+        },
+        {
+          "roll": 8,
+          "result": "Exploiting shared resource"
+        }
+      ]
+    }
   },
   "otherPoint": {
     "printedPage": 171,
@@ -67,6 +235,7 @@
       {
         "roll": 1,
         "point": "Deep-space station",
+        "locationType": "OwnOrbit",
         "occupants": [
           {
             "roll": "1-2",
@@ -115,6 +284,7 @@
       {
         "roll": 2,
         "point": "Asteroid base",
+        "locationType": "AsteroidBelt",
         "occupants": [
           {
             "roll": "1-2",
@@ -163,6 +333,7 @@
       {
         "roll": 3,
         "point": "Remote moon base",
+        "locationType": "Any NonPrimary Terrestrial Planet",
         "occupants": [
           {
             "roll": "1-2",
@@ -211,6 +382,7 @@
       {
         "roll": 4,
         "point": "Ancient orbital ruin",
+        "locationType": "Any NonPrimary Planet",
         "occupants": [
           {
             "roll": "1-2",
@@ -259,6 +431,7 @@
       {
         "roll": 5,
         "point": "Research base",
+        "locationType": "Any NonPrimary Planet",
         "occupants": [
           {
             "roll": "1-2",
@@ -307,6 +480,7 @@
       {
         "roll": 6,
         "point": "Asteroid belt",
+        "locationType": "AsteroidBelt",
         "occupants": [
           {
             "roll": "1-2",
@@ -355,6 +529,7 @@
       {
         "roll": 7,
         "point": "Gas giant mine",
+        "locationType": "GasGiant Planet",
         "occupants": [
           {
             "roll": "1-2",
@@ -403,6 +578,7 @@
       {
         "roll": 8,
         "point": "Refueling station",
+        "locationType": "GasGiant Planet",
         "occupants": [
           {
             "roll": "1-2",
