@@ -38,7 +38,12 @@ describe("SWN sector V3", () => {
       expect(system.primaryStar.habitableSlots).toBeGreaterThanOrEqual(0);
       expect(Number.isInteger(system.primaryStar.habitableSlots)).toBe(true);
       expect(system.primaryStar.habitableSlots).toBeGreaterThanOrEqual(system.worlds.length);
-      expect(system.worlds.map(world => world.orbitSlot)).toEqual([2, 1, 3].slice(0, system.worlds.length));
+      const worldsByOrbit = [...system.worlds].sort((left, right) => left.orbitSlot - right.orbitSlot);
+      expect(worldsByOrbit.map(world => world.attributes.temperature.temperatureValue)).toEqual(
+        [...worldsByOrbit]
+          .map(world => world.attributes.temperature.temperatureValue)
+          .sort((left, right) => (right ?? -1) - (left ?? -1)),
+      );
       expect(isV3SystemValid(system)).toBe(true);
 
       for (const world of system.worlds) {
@@ -58,7 +63,7 @@ describe("SWN sector V3", () => {
           world.attributes.temperature.hab ?? -1,
           world.attributes.terran_biosphere.hab ?? -1,
           world.planetDetails.terrestrialSize.hab,
-          ...(world.planetDetails.bulkComposition === undefined ? [] : [world.planetDetails.bulkComposition.hab]),
+          world.planetDetails.bulkComposition.hab,
         ));
         expect(world.calculatedHab).toBeGreaterThanOrEqual(Math.max(
           world.attributes.population.habRequired ?? -1,
@@ -70,11 +75,11 @@ describe("SWN sector V3", () => {
         expect(["Luna", "Mars", "Earth", "Super-Earth"]).toContain(world.planetDetails.terrestrialSize.result);
         expect(world.planetDetails.terrestrialSize.hab).toBeGreaterThanOrEqual(1);
         expect(world.planetDetails.terrestrialSize.hab).toBeLessThanOrEqual(3);
-        if (world.isPrimary) {
-          expect(world.planetDetails.bulkComposition).toBeDefined();
-        } else {
-          expect(world.planetDetails.bulkComposition).toBeUndefined();
-        }
+        expect(world.planetDetails.bulkComposition).toBeDefined();
+        expect(world.planetDetails.surfaceWaterPresent).toBeDefined();
+        expect(world.planetDetails.gasGiantMoonRoll).toBeGreaterThanOrEqual(1);
+        expect(world.planetDetails.gasGiantMoonRoll).toBeLessThanOrEqual(100);
+        expect(world.planetDetails.tidallyLocked).toBe(system.primaryStar.result === "M-type");
         expect(isV2WorldValid(world)).toBe(true);
       }
     }

@@ -97,12 +97,30 @@
       "source": "V3 custom bulk-composition table supplied by the user",
       "rows": [
         { "roll": "1-3", "originalRoll": 2, "result": "Sulfur", "hab": 1, "color": "Yellow" },
-        { "roll": "4-9", "originalRoll": 3, "result": "Carbon", "hab": 1, "color": "Black" },
-        { "roll": "10-15", "originalRoll": 11, "result": "Magnesium", "hab": 1, "color": "Green" },
-        { "roll": "16-18", "originalRoll": 12, "result": "Calcium-Aluminum", "hab": 1, "color": "White" },
-        { "roll": "19-26", "originalRoll": 4, "result": "Iron", "hab": 1, "color": "Red" },
-        { "roll": "27-34", "originalRoll": 10, "result": "Water", "hab": 2, "color": "Water" },
-        { "roll": "35-100", "originalRoll": "5-9", "result": "Silicon", "hab": 3, "color": "Normal" }
+        { "roll": "4-6", "originalRoll": 3, "result": "Carbon", "hab": 1, "color": "Black" },
+        { "roll": "7-9", "originalRoll": 11, "result": "Magnesium", "hab": 1, "color": "Green" },
+        { "roll": "10-12", "originalRoll": 12, "result": "Calcium-Aluminum", "hab": 1, "color": "White" },
+        { "roll": "13-15", "originalRoll": 4, "result": "Iron", "hab": 1, "color": "Red" },
+        { "roll": "16-18", "originalRoll": 10, "result": "Water", "hab": 2, "color": "Water" },
+        { "roll": "19-100", "originalRoll": "5-9", "result": "Silicon", "hab": 3, "color": "Light brown" }
+      ]
+    },
+    {
+      "id": "surface_water_present",
+      "dice": "d100",
+      "source": "V3 custom surface-water table supplied by the user",
+      "rows": [
+        { "roll": "1-25", "result": "No" },
+        { "roll": "26-100", "result": "Yes" }
+      ]
+    },
+    {
+      "id": "gas_giant_moon",
+      "dice": "d100",
+      "source": "V3 custom gas-giant-moon table supplied by the user",
+      "rows": [
+        { "roll": "1-10", "result": "Yes" },
+        { "roll": "11-100", "result": "No" }
       ]
     },
     {

@@ -21,7 +21,7 @@ const COMPOSITION_COLORS: Record<string, string> = {
   White: "#e3e6e8",
   Red: "#bb6258",
   Water: "#3a94c8",
-  Normal: "#87a4c1",
+  "Light brown": "#c8a36d",
 };
 
 function element<K extends keyof HTMLElementTagNameMap>(tag: K, className?: string): HTMLElementTagNameMap[K] {
@@ -40,8 +40,47 @@ function sizeClass(world: InhabitedWorldV2): string {
 }
 
 function planetColor(world: InhabitedWorldV2): string {
-  const color = world.planetDetails.bulkComposition?.color;
-  return color === undefined ? "#87a4c1" : COMPOSITION_COLORS[color] ?? "#87a4c1";
+  return COMPOSITION_COLORS[world.planetDetails.bulkComposition.color] ?? "#87a4c1";
+}
+
+function darken(color: string): string {
+  const rgb = color.match(/^#([\da-f]{2})([\da-f]{2})([\da-f]{2})$/i);
+  if (rgb === null) return "#4a5969";
+  return `#${rgb.slice(1).map(component => Math.round(Number.parseInt(component, 16) * 0.52).toString(16).padStart(2, "0")).join("")}`;
+}
+
+function hasBiosphereAtLeast(world: InhabitedWorldV2, id: "native_biosphere" | "terran_biosphere"): boolean {
+  return world.attributes[id].result === "Limited"
+    || world.attributes[id].result === "Significant"
+    || world.attributes[id].result === "Engineered";
+}
+
+function planetLayer(className: string, color: string): HTMLElement {
+  const layer = element("span", `planet-layer ${className}`);
+  layer.style.backgroundColor = color;
+  return layer;
+}
+
+function decoratePlanet(planet: HTMLButtonElement, world: InhabitedWorldV2): void {
+  const bulkComposition = world.planetDetails.bulkComposition;
+  const surfaceWater = world.planetDetails.surfaceWaterPresent;
+  const baseColor = planetColor(world);
+  const nonContinent = planetLayer(
+    "planet-layer--non-continent",
+    surfaceWater.result === "Yes" ? "#2d8fca" : darken(baseColor),
+  );
+  planet.append(nonContinent);
+
+  if (bulkComposition.result !== "Water") {
+    planet.append(planetLayer("planet-layer--continent", baseColor));
+    if (hasBiosphereAtLeast(world, "terran_biosphere")) {
+      planet.append(planetLayer("planet-layer--terran-bio", "#4fae61"));
+    }
+    if (hasBiosphereAtLeast(world, "native_biosphere")) {
+      planet.append(planetLayer("planet-layer--native-bio", "#894bb0"));
+    }
+  }
+
 }
 
 function populationLevel(world: InhabitedWorldV2): number {
@@ -98,7 +137,10 @@ function worldSummary(world: InhabitedWorldV2): string {
     .join(" · ");
   const composition = world.planetDetails.bulkComposition;
   const detail = `${world.planetDetails.terrestrialSize.result}-sized (Size Hab ${world.planetDetails.terrestrialSize.hab})`
-    + `${composition === undefined ? "" : ` · ${composition.result} composition (Hab ${composition.hab})`}`;
+    + ` · ${composition.result} composition (Hab ${composition.hab})`
+    + ` · ${world.planetDetails.surfaceWaterPresent.result} surface water`
+    + ` · ${world.planetDetails.isGasGiantMoon ? "Gas-giant moon" : "Not a gas-giant moon"}`
+    + ` · ${world.planetDetails.tidallyLocked ? "Tidally locked" : "Not tidally locked"}`;
   return `${world.name}\n${world.tags.map(tag => tag.tag).join(" / ")}\n${detail} · Environmental Hab ${world.calculatedHab} · ${attributes}`;
 }
 
@@ -129,8 +171,7 @@ function renderSystem(system: StarSystemV3): HTMLElement {
       const cluster = element("div", "planet-cluster");
       const planet = element("button", `planet ${sizeClass(world)}`);
       planet.type = "button";
-      planet.style.backgroundColor = planetColor(world);
-      planet.textContent = String(world.orbitSlot);
+      decoratePlanet(planet, world);
       planet.title = worldSummary(world);
       cluster.append(planet, worldStatus(world));
       slot.append(cluster);
@@ -182,7 +223,7 @@ function createApp(root: HTMLElement): void {
     .star-column { display: grid; justify-items: center; gap: 4px; min-width: 0; } .star-symbol { color: var(--star-color); font-size: 3rem; line-height: 1; text-shadow: 0 0 13px var(--star-color); } .star-caption { font-size: .75rem; color: #b8c9dd; text-align: center; }
     .planet-slots { display: flex; align-items: center; justify-content: space-around; min-height: 72px; border-left: 1px solid #294563; border-right: 1px solid #294563; }
     .planet-slot { width: 104px; height: 64px; display: grid; place-items: center; } .planet-cluster { display: inline-flex; align-items: center; gap: 3px; }
-    .planet { border: 2px solid rgba(230,245,255,.72); border-radius: 50%; color: #06111c; font-weight: 800; box-shadow: inset -7px -6px 0 rgba(0,0,0,.24), 0 0 12px rgba(135,164,193,.32); cursor: help; } .planet--luna { width: 20px; height: 20px; font-size: 9px; } .planet--mars { width: 29px; height: 29px; font-size: 10px; } .planet--earth { width: 39px; height: 39px; font-size: 12px; } .planet--super-earth { width: 52px; height: 52px; font-size: 14px; }
+    .planet { position: relative; overflow: hidden; isolation: isolate; padding: 0; border: 2px solid rgba(230,245,255,.72); border-radius: 50%; color: #06111c; font-weight: 800; box-shadow: inset -7px -6px 0 rgba(0,0,0,.24), 0 0 12px rgba(135,164,193,.32); cursor: help; } .planet--luna { width: 20px; height: 20px; font-size: 9px; } .planet--mars { width: 29px; height: 29px; font-size: 10px; } .planet--earth { width: 39px; height: 39px; font-size: 12px; } .planet--super-earth { width: 52px; height: 52px; font-size: 14px; } .planet-layer { position: absolute; pointer-events: none; } .planet-layer--non-continent { z-index: 0; inset: 0; } .planet-layer--continent { z-index: 1; inset: 0; clip-path: polygon(7% 36%, 29% 18%, 55% 25%, 71% 11%, 91% 32%, 77% 54%, 87% 75%, 58% 90%, 35% 75%, 12% 83%, 19% 58%); } .planet-layer--terran-bio { z-index: 2; inset: 23% 18% 44% 49%; border-radius: 57% 43% 62% 38%; transform: rotate(-18deg); } .planet-layer--native-bio { z-index: 3; inset: 49% 42% 19% 19%; border-radius: 43% 57% 35% 65%; transform: rotate(20deg); }
     .world-status { display: grid; gap: 1px; min-width: 35px; padding: 2px 3px; border: 1px solid #426789; border-radius: 4px; background: #08111fdd; } .status-row { display: flex; align-items: center; min-height: 11px; color: #dce9f8; font: 9px/1 sans-serif; white-space: nowrap; } .status-row--hab { justify-content: center; } .hab-marker { width: 10px; height: 10px; border: 1px solid #000; border-radius: 50%; } .hab-marker--0 { background: transparent; } .hab-marker--1 { background: #e34c4c; } .hab-marker--2 { background: #f0cf48; } .hab-marker--3 { background: #56af65; } .icon-stack { display: inline-flex; align-items: center; padding-left: 1px; } .stacked-icon { display: inline-block; font-size: 10px; line-height: 10px; text-shadow: 0 0 1px #000; } .stacked-icon + .stacked-icon { margin-left: -5px; } .technology-icons .stacked-icon { color: #f5da5c; font-size: 10px; } .tl-plus { margin-left: 1px; color: #f5da5c; font-size: 10px; font-weight: 800; }
     .label-box h2 { margin: 0 0 8px; font-size: .95rem; color: #8fd3ff; } .world-label { display: grid; gap: 2px; margin: 5px 0; font-size: .8rem; } .world-label span { color: #9bb0c8; }
     .detail-card { position: absolute; z-index: 2; right: 16px; top: calc(100% + 4px); width: min(760px, calc(100vw - 64px)); margin: 0; padding: 14px; white-space: pre-wrap; color: #e6f4ff; background: #132942; border: 1px solid #79bce9; border-radius: 6px; box-shadow: 0 14px 34px #020810cc; font: .78rem/1.45 ui-monospace, monospace; opacity: 0; pointer-events: none; transform: translateY(-4px); transition: opacity .14s, transform .14s; }
@@ -202,7 +243,7 @@ function createApp(root: HTMLElement): void {
   const generate = element("button"); generate.type = "submit"; generate.textContent = "Generate";
   form.append(seed, generate); header.append(title, form);
   const rows = element("section"); rows.id = "system-rows"; rows.setAttribute("aria-live", "polite");
-  const legend = element("p", "legend"); legend.textContent = "Worlds are assigned the middle orbit first (slot 2), then the inner orbit (slot 1), then the outer orbit (slot 3). Empty orbit positions are not shown. Primary-world planet colors show their generated bulk composition; secondary worlds use the neutral fallback.";
+  const legend = element("p", "legend"); legend.textContent = "Worlds are arranged left to right by descending temperature value. Every world’s color and surface layers reflect its generated bulk composition, surface water, and biospheres.";
   root.replaceChildren(header, rows, legend);
 
   const generateSector = (): void => renderSector(root, generateSectorV3(seed.value || DEFAULT_SEED));

@@ -19,6 +19,7 @@ export type WorldAttributeResultV2 = {
   hab?: number;
   habRequired?: number;
   tl?: number;
+  temperatureValue?: number;
   thermalOrbits?: string[];
   alien?: true;
 };
@@ -36,6 +37,12 @@ export type BulkCompositionResultV3 = {
   color: string;
 };
 
+export type SurfaceWaterResultV3 = {
+  result: "Yes" | "No";
+  roll?: number;
+  override?: string;
+};
+
 export type InhabitedWorldV2 = {
   id: string;
   order: number;
@@ -48,7 +55,11 @@ export type InhabitedWorldV2 = {
   attributes: Record<WorldAttributeId, WorldAttributeResultV2>;
   planetDetails: {
     terrestrialSize: TerrestrialSizeResultV3;
-    bulkComposition?: BulkCompositionResultV3;
+    bulkComposition: BulkCompositionResultV3;
+    surfaceWaterPresent: SurfaceWaterResultV3;
+    isGasGiantMoon: boolean;
+    gasGiantMoonRoll: number;
+    tidallyLocked: boolean;
   };
   calculatedHab: number;
 };
@@ -105,6 +116,7 @@ type RawAttributeRow = {
   tl?: number;
   thermalOrbits?: string[];
   alien?: boolean;
+  originalRoll?: number | string;
 };
 
 type RawAttributeTable = {
@@ -128,6 +140,16 @@ type RawTerrestrialSizeRow = {
 
 type RawBulkCompositionRow = Omit<BulkCompositionResultV3, "roll"> & {
   roll: number | string;
+};
+
+type RawSurfaceWaterRow = {
+  roll: number | string;
+  result: SurfaceWaterResultV3["result"];
+};
+
+type RawGasGiantMoonRow = {
+  roll: number | string;
+  result: "Yes" | "No";
 };
 
 type Constraint = {
@@ -162,6 +184,12 @@ const terrestrialSizeTable = (rawWorldAttributes as {
 const bulkCompositionTable = (rawWorldAttributes as {
   tables: Array<{ id: string; dice: string; rows: RawBulkCompositionRow[] }>;
 }).tables.find(table => table.id === "bulk_composition");
+const surfaceWaterTable = (rawWorldAttributes as {
+  tables: Array<{ id: string; dice: string; rows: RawSurfaceWaterRow[] }>;
+}).tables.find(table => table.id === "surface_water_present");
+const gasGiantMoonTable = (rawWorldAttributes as {
+  tables: Array<{ id: string; dice: string; rows: RawGasGiantMoonRow[] }>;
+}).tables.find(table => table.id === "gas_giant_moon");
 const constraints = rawConstraints.constraints as Constraint[];
 const constraintByTag = new Map(constraints.map(constraint => [constraint.tag, constraint]));
 const completionCache = new Map<string, boolean>();
@@ -243,6 +271,76 @@ function rollBulkComposition(rng: seedrandom.PRNG): BulkCompositionResultV3 {
     throw new Error(`No bulk composition result for ${roll}`);
   }
   return { roll, result: row.result, hab: row.hab, color: row.color };
+}
+
+function rollSurfaceWater(rng: seedrandom.PRNG): SurfaceWaterResultV3 {
+  if (surfaceWaterTable === undefined) {
+    throw new Error("Missing surface_water_present table");
+  }
+  const roll = rollForDice(rng, surfaceWaterTable.dice);
+  const row = surfaceWaterTable.rows.find(candidate => matchesRoll(roll, candidate.roll));
+  if (row === undefined) {
+    throw new Error(`No surface-water result for ${roll}`);
+  }
+  return { roll, result: row.result };
+}
+
+function rollGasGiantMoon(rng: seedrandom.PRNG): { isGasGiantMoon: boolean; gasGiantMoonRoll: number } {
+  if (gasGiantMoonTable === undefined) {
+    throw new Error("Missing gas_giant_moon table");
+  }
+  const gasGiantMoonRoll = rollForDice(rng, gasGiantMoonTable.dice);
+  const row = gasGiantMoonTable.rows.find(candidate => matchesRoll(gasGiantMoonRoll, candidate.roll));
+  if (row === undefined) {
+    throw new Error(`No gas-giant-moon result for ${gasGiantMoonRoll}`);
+  }
+  return { isGasGiantMoon: row.result === "Yes", gasGiantMoonRoll };
+}
+
+function surfaceWaterOverride(
+  atmosphere: RawAttributeRow,
+  temperature: RawAttributeRow,
+  bulkComposition: BulkCompositionResultV3,
+  tags: readonly RawWorldTag[],
+): SurfaceWaterResultV3 | undefined {
+  if (temperature.result === "Cryogenic" || temperature.result === "Volcanic") {
+    return { result: "No", override: "Cryogenic or Volcanic temperature" };
+  }
+  if (atmosphere.result === "Vacuum") {
+    return { result: "No", override: "Vacuum atmosphere" };
+  }
+  if (bulkComposition.result === "Water") {
+    return { result: "Yes", override: "Water bulk composition" };
+  }
+  if (tags.some(tag => tag.tag === "Oceanic World" || tag.tag === "Seagoing Cities")) {
+    return { result: "Yes", override: "Oceanic or Seagoing tag" };
+  }
+  return undefined;
+}
+
+function isSurfaceWaterValid(world: InhabitedWorldV2): boolean {
+  const surfaceWater = world.planetDetails.surfaceWaterPresent;
+  const bulkComposition = world.planetDetails.bulkComposition;
+  if (surfaceWater === undefined || bulkComposition === undefined) {
+    return false;
+  }
+  const override = surfaceWaterOverride(
+    rowForRoll("atmosphere", world.attributes.atmosphere.roll),
+    rowForRoll("temperature", world.attributes.temperature.roll),
+    bulkComposition,
+    world.tags,
+  );
+  if (override !== undefined) {
+    return surfaceWater.result === override.result
+      && surfaceWater.override === override.override
+      && surfaceWater.roll === undefined;
+  }
+  if (surfaceWater.roll === undefined || surfaceWater.override !== undefined) {
+    return false;
+  }
+  return surfaceWaterTable?.rows.some(row =>
+    matchesRoll(surfaceWater.roll!, row.roll) && row.result === surfaceWater.result,
+  ) === true;
 }
 
 function requiredHab(row: RawAttributeRow, id: WorldAttributeId): number {
@@ -467,14 +565,25 @@ function worldCountForSystem(rng: seedrandom.PRNG): number {
   return 3;
 }
 
-const ORBIT_SLOT_ORDER = [2, 1, 3] as const;
-
-function orbitSlotForOrder(order: number): 1 | 2 | 3 {
-  const slot = ORBIT_SLOT_ORDER[order - 1];
-  if (slot === undefined) {
-    throw new Error(`No orbit slot for world order ${order}`);
-  }
-  return slot;
+function assignOrbitSlotsByTemperature(worlds: readonly InhabitedWorldV2[]): InhabitedWorldV2[] {
+  const orderedWorlds = worlds
+    .slice()
+    .sort((left, right) => {
+      const leftTemperature = left.attributes.temperature.temperatureValue;
+      const rightTemperature = right.attributes.temperature.temperatureValue;
+      if (leftTemperature === undefined || rightTemperature === undefined) {
+        throw new Error("Missing temperatureValue while assigning orbit slots");
+      }
+      return rightTemperature - leftTemperature || left.order - right.order;
+    });
+  const slotByWorldId = new Map(orderedWorlds.map((world, index) => [world.id, (index + 1) as 1 | 2 | 3]));
+  return worlds.map(world => {
+    const orbitSlot = slotByWorldId.get(world.id);
+    if (orbitSlot === undefined) {
+      throw new Error(`Missing orbit slot for ${world.id}`);
+    }
+    return { ...world, orbitSlot };
+  });
 }
 
 function selectDependentStarType(
@@ -531,6 +640,9 @@ function buildWorld(
       ...(row.hab === undefined ? {} : { hab: row.hab }),
       ...(row.habRequired === undefined ? {} : { habRequired: row.habRequired }),
       ...(row.tl === undefined ? {} : { tl: row.tl }),
+      ...(id === "temperature" && typeof row.originalRoll === "number"
+        ? { temperatureValue: row.originalRoll }
+        : {}),
       ...(row.thermalOrbits === undefined ? {} : { thermalOrbits: row.thermalOrbits }),
       ...(row.alien === true ? { alien: true as const } : {}),
     }];
@@ -546,23 +658,28 @@ function buildWorld(
     partial.tech_level!,
     rules,
   );
-  const bulkComposition = order === 1
-    ? rollCompatibleBulkComposition(
-      rng,
-      partial.atmosphere!,
-      partial.temperature!,
-      partial.terran_biosphere!,
-      partial.population!,
-      partial.tech_level!,
-      terrestrialSize,
-      rules,
-    )
-    : undefined;
+  const bulkComposition = rollCompatibleBulkComposition(
+    rng,
+    partial.atmosphere!,
+    partial.temperature!,
+    partial.terran_biosphere!,
+    partial.population!,
+    partial.tech_level!,
+    terrestrialSize,
+    rules,
+  );
+  const surfaceWaterPresent = surfaceWaterOverride(
+    partial.atmosphere!,
+    partial.temperature!,
+    bulkComposition,
+    selectedTags,
+  ) ?? rollSurfaceWater(rng);
+  const gasGiantMoon = rollGasGiantMoon(rng);
 
   return {
     id: `${systemId}-world-${String(order).padStart(2, "0")}`,
     order,
-    orbitSlot: orbitSlotForOrder(order),
+    orbitSlot: 1,
     isPrimary: order === 1,
     name: `${tagToken(selectedTags[0].tag)}_${tagToken(selectedTags[1].tag)}_${xyz}`,
     hasAliens,
@@ -574,14 +691,17 @@ function buildWorld(
     attributes,
     planetDetails: {
       terrestrialSize,
-      ...(bulkComposition === undefined ? {} : { bulkComposition }),
+      bulkComposition,
+      surfaceWaterPresent,
+      ...gasGiantMoon,
+      tidallyLocked: false,
     },
     calculatedHab: Math.min(
       requiredHab(partial.atmosphere!, "atmosphere"),
       requiredHab(partial.temperature!, "temperature"),
       requiredHab(partial.terran_biosphere!, "terran_biosphere"),
       terrestrialSize.hab,
-      ...(bulkComposition === undefined ? [] : [bulkComposition.hab]),
+      bulkComposition.hab,
     ),
   };
 }
@@ -591,11 +711,21 @@ export function isV3SystemValid(system: StarSystemV3): boolean {
   const requiredHab = Math.max(...system.worlds.map(world => world.calculatedHab));
   return system.worlds.length > 0
     && system.worlds.every(isV2WorldValid)
+    && new Set(system.worlds.map(world => world.orbitSlot)).size === system.worlds.length
+    && [...system.worlds]
+      .sort((left, right) => left.orbitSlot - right.orbitSlot)
+      .every((world, index, worlds) => index === 0
+        || (worlds[index - 1].attributes.temperature.temperatureValue ?? -1)
+          >= (world.attributes.temperature.temperatureValue ?? -1))
     && system.primaryStar.hab >= requiredHab
     && system.primaryStar.habitableSlots >= system.worlds.length
     && system.worlds.every(world => {
       const size = world.planetDetails.terrestrialSize;
       const bulkComposition = world.planetDetails.bulkComposition;
+      const surfaceWater = world.planetDetails.surfaceWaterPresent;
+      const gasGiantMoonRow = gasGiantMoonTable?.rows.find(row =>
+        matchesRoll(world.planetDetails.gasGiantMoonRoll, row.roll),
+      );
       const validSize = size.roll >= 1
         && size.roll <= 100
         && terrestrialSizeTable?.rows.some(row =>
@@ -610,7 +740,12 @@ export function isV3SystemValid(system: StarSystemV3): boolean {
             && row.hab === bulkComposition.hab
             && row.color === bulkComposition.color,
         ) === true;
-      return validSize && (world.isPrimary ? validBulkComposition : bulkComposition === undefined);
+      return validSize
+        && validBulkComposition
+        && surfaceWater !== undefined
+        && isSurfaceWaterValid(world)
+        && gasGiantMoonRow?.result === (world.planetDetails.isGasGiantMoon ? "Yes" : "No")
+        && world.planetDetails.tidallyLocked === (system.primaryStar.result === "M-type");
     })
     && starTypeForRoll(system.primaryStar.roll).result === system.primaryStar.result
     && starTypeForRoll(system.primaryStar.roll).hab === system.primaryStar.hab
@@ -634,6 +769,9 @@ export function isV2WorldValid(world: InhabitedWorldV2): boolean {
       || actual.hab !== expected.hab
       || actual.habRequired !== expected.habRequired
       || actual.tl !== expected.tl
+      || actual.temperatureValue !== (id === "temperature" && typeof expected.originalRoll === "number"
+        ? expected.originalRoll
+        : undefined)
       || JSON.stringify(actual.thermalOrbits) !== JSON.stringify(expected.thermalOrbits)
       || actual.alien !== expected.alien) {
       return false;
@@ -652,17 +790,14 @@ export function isV2WorldValid(world: InhabitedWorldV2): boolean {
       partial.population!,
       partial.tech_level!,
       rules,
-      [
-        world.planetDetails.terrestrialSize.hab,
-        ...(world.planetDetails.bulkComposition === undefined ? [] : [world.planetDetails.bulkComposition.hab]),
-      ],
+      [world.planetDetails.terrestrialSize.hab, world.planetDetails.bulkComposition.hab],
     )
     && world.calculatedHab === Math.min(
       requiredHab(partial.atmosphere!, "atmosphere"),
       requiredHab(partial.temperature!, "temperature"),
       requiredHab(partial.terran_biosphere!, "terran_biosphere"),
       world.planetDetails.terrestrialSize.hab,
-      ...(world.planetDetails.bulkComposition === undefined ? [] : [world.planetDetails.bulkComposition.hab]),
+      world.planetDetails.bulkComposition.hab,
     );
 }
 
@@ -704,7 +839,7 @@ export function generateSectorV3(seed: string, options: SectorV2Options = {}): S
   const systemsWithoutStars = plans.map((plan) => ({
     id: plan.id,
     hex: plan.hex,
-    worlds: Array.from({ length: plan.worldCount }, (_, worldIndex) => {
+    worlds: assignOrbitSlotsByTemperature(Array.from({ length: plan.worldCount }, (_, worldIndex) => {
       const order = worldIndex + 1;
       const worldId = `${plan.id}-world-${String(order).padStart(2, "0")}`;
       const selectedTags = tagsByWorldId.get(worldId);
@@ -712,17 +847,27 @@ export function generateSectorV3(seed: string, options: SectorV2Options = {}): S
         throw new Error(`Missing tags for ${worldId}`);
       }
       return buildWorld(rng, plan.id, order, hasAliens, selectedTags);
-    }),
+    })),
   }));
 
-  const systems: StarSystemV3[] = systemsWithoutStars.map(system => ({
-    ...system,
-    primaryStar: selectDependentStarType(
+  const systems: StarSystemV3[] = systemsWithoutStars.map(system => {
+    const primaryStar = selectDependentStarType(
       rng,
       Math.max(...system.worlds.map(world => world.calculatedHab)),
       system.worlds.length,
-    ),
-  }));
+    );
+    return {
+      ...system,
+      worlds: system.worlds.map(world => ({
+        ...world,
+        planetDetails: {
+          ...world.planetDetails,
+          tidallyLocked: primaryStar.result === "M-type",
+        },
+      })),
+      primaryStar,
+    };
+  });
 
   return { version: "v3", seed, starCount, systems };
 }
