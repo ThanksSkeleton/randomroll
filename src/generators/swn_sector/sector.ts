@@ -75,12 +75,6 @@ export type InhabitedWorldV2 = {
   civilizationTier: CivilizationTier;
 };
 
-export type StarSystemV2 = {
-  id: string;
-  hex: SectorHex;
-  worlds: InhabitedWorldV2[];
-};
-
 export type StarTypeResultV3 = {
   roll: number;
   result: string;
@@ -100,13 +94,6 @@ export type SectorV3 = {
   seed: string;
   starCount: number;
   systems: StarSystemV3[];
-};
-
-export type SectorV2 = {
-  version: "v2";
-  seed: string;
-  starCount: number;
-  systems: StarSystemV2[];
 };
 
 export type SectorOptions = {
