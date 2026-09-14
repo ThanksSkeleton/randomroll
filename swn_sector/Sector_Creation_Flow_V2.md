@@ -11,7 +11,7 @@ For example, a large low-tech human population on a world with hostile environme
 
 ## V2 world-tag compatibility rules
 
-The following accepted constraints define the first V2 refinement rules. Their machine-readable source is [world_tag_constraints.json](world_tag_constraints.json); the validation-only checker is [swn_sector_v2_constraints.test.ts](../src/test/swn_sector_v2_constraints.test.ts); and [sector_v2.ts](../src/generators/swn_sector/sector_v2.ts) applies them during generation. `TL2+`, `TL3+`, and `TL4+` refer to the displayed technology level or a more advanced level. `Pop` refers to the population table’s 2d6 roll. `Biosphere 6+` similarly refers to its 2d6 roll.
+The following accepted constraints define the first V2 refinement rules. Their machine-readable source is [world_tag_constraints.json](world_tag_constraints.json); the validation-only checker is [swn_sector_v2_constraints.test.ts](../src/test/swn_sector_v2_constraints.test.ts); and [sector.ts](../src/generators/swn_sector/sector.ts) applies them during generation. `TL2+`, `TL3+`, and `TL4+` refer to the displayed technology level or a more advanced level. `Pop` refers to the population table’s 2d6 roll. `Biosphere 6+` similarly refers to its 2d6 roll.
 
 `Hab` in this table refers to the calculated environmental Hab: the minimum of atmosphere, temperature, and biosphere metadata. It is not an additive score with population or tech level.
 

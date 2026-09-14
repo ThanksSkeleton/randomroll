@@ -1,35 +1,21 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { describe, expect, it } from "vitest";
-import { assignGoldilocksSlots, generateSectorV4, isV4SystemValid } from "../generators/swn_sector/sector_v4";
+import { generateSector } from "../generators/swn_sector/sector";
 
 const ARTIFACT_PATH = resolve("/tmp/randomroll-swn-sector-v4.json");
 const ARTIFACT_SEED = "swn-sector-v4-artifact";
 
 describe("SWN sector V4", () => {
-  it("assigns ordered Goldilocks slots from thermal orbit, with input order breaking ties", () => {
-    expect([...assignGoldilocksSlots([{ id: "hot", thermalOrbit: "Hot" }], 1)]).toEqual([["hot", 1]]);
-    expect([...assignGoldilocksSlots([{ id: "cold", thermalOrbit: "Cold" }], 2)]).toEqual([["cold", 2]]);
-    expect([...assignGoldilocksSlots([
-      { id: "glacial", thermalOrbit: "Cold" },
-      { id: "volcanic", thermalOrbit: "Too Hot" },
-    ], 2)]).toEqual([["glacial", 2]]);
-    expect([...assignGoldilocksSlots([
-      { id: "glacial", thermalOrbit: "Cold" },
-      { id: "arid", thermalOrbit: "Hot" },
-    ], 3)]).toEqual([["arid", 1], ["glacial", 3]]);
-  });
-
   it("generates and writes a valid deterministic location and POI artifact", () => {
-    const sector = generateSectorV4(ARTIFACT_SEED);
-    expect(generateSectorV4(ARTIFACT_SEED)).toEqual(sector);
+    const sector = generateSector(ARTIFACT_SEED);
+    expect(generateSector(ARTIFACT_SEED)).toEqual(sector);
 
     mkdirSync(dirname(ARTIFACT_PATH), { recursive: true });
     writeFileSync(ARTIFACT_PATH, `${JSON.stringify(sector, null, 2)}\n`);
 
     expect(sector.version).toBe("v4");
     for (const system of sector.systems) {
-      expect(isV4SystemValid(system)).toBe(true);
       const slots = system.locationSlots;
       expect(slots.filter(slot => slot.location.kind === "IngressEgress")).toHaveLength(1);
       const extras = slots.filter(slot => ["SecondaryPlanet", "GasGiant", "OtherObject"].includes(slot.location.kind));

@@ -20,5 +20,4 @@
     "noFallthroughCasesInSwitch": true
   },
   "include": ["src", "scripts/from_sql.ts"],
-  "exclude": ["src/generators/swn_sector/sector_v1.ts"]
 }

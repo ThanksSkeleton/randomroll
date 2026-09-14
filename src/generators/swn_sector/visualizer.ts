@@ -1,4 +1,4 @@
-import { generateSectorV4, type LocationSlotV4, type PointOfInterestV4, type PrimaryPlanetV4, type StarSystemV4, type SystemLocationV4 } from "./sector_v4";
+import { generateSector, type LocationSlotV4, type PointOfInterestV4, type PrimaryPlanetV4, type StarSystemV4, type SystemLocationV4 } from "./sector";
 
 const DEFAULT_SEED = "swn-sector-v4-artifact";
 const ZONES = ["TooHot", "Goldilocks", "TooCold_1", "IngressEgress", "TooCold_3"] as const;
@@ -68,7 +68,7 @@ function renderSystem(system: StarSystemV4): HTMLElement {
   }
   return row;
 }
-function renderSector(root: HTMLElement, seed: string): void { const sector = generateSectorV4(seed); const rows = root.querySelector<HTMLElement>("#system-rows"); if (rows !== null) rows.replaceChildren(...sector.systems.map(renderSystem)); const count = root.querySelector<HTMLElement>("#system-count"); if (count !== null) count.textContent = `${sector.starCount} systems`; }
+function renderSector(root: HTMLElement, seed: string): void { const sector = generateSector(seed); const rows = root.querySelector<HTMLElement>("#system-rows"); if (rows !== null) rows.replaceChildren(...sector.systems.map(renderSystem)); const count = root.querySelector<HTMLElement>("#system-count"); if (count !== null) count.textContent = `${sector.starCount} systems`; }
 
 function createApp(root: HTMLElement): void {
   const style = document.createElement("style"); style.textContent = `

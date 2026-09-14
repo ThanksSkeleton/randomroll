@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://randomroll.local/schemas/swn-sector-v4.schema.json",
   "title": "SWN Sector V4 output",
-  "description": "The structured SectorV4 result returned by generateSectorV4 and rendered directly by the V4 visualizer.",
+  "description": "The structured SectorV4 result returned by generateSector and rendered directly by the V4 visualizer.",
   "type": "object",
   "required": ["version", "seed", "starCount", "systems"],
   "additionalProperties": false,

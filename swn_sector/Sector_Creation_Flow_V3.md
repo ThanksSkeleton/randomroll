@@ -152,4 +152,4 @@ A V3 sector meets V2 completion conditions: every placed star has one to three i
 
 ## Change verification and artifact handoff
 
-Every V3 change to generation code, generation data, constraints, or tests must run the relevant automated test before handoff. The V3 generator test is `npx vitest run src/test/swn_sector_v2.test.ts`; it must produce and validate the deterministic artifact at `/tmp/randomroll-swn-sector-v3.json`. The handoff for each change must provide that artifact to the user. Changes to TypeScript production code must also pass `npx tsc --noEmit`.
+Every V3 change to generation code, generation data, constraints, or tests must run the relevant automated test before handoff. V3 is now an internal generation stage; its behavior is exercised through the public sector test, `npx vitest run src/test/swn_sector_v4.test.ts`. Changes to TypeScript production code must also pass `npx tsc --noEmit`.

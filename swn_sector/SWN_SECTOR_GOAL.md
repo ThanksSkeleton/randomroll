@@ -20,5 +20,5 @@ The canonical sector workspace is this `swn_sector/` directory.
 - [Sector_Creation_Flow_V3.md](Sector_Creation_Flow_V3.md) records the star and physical-world extensions.
 - [Sector_Creation_Flow_V4.md](Sector_Creation_Flow_V4.md) records orbital locations, points of interest, and the visualizer's data contract.
 - `world_tag_constraints.json` is the machine-readable source for world-tag restrictions and ALIEN-state requirements.
-- `src/generators/swn_sector/sector_v2.ts` implements constraint-aware world generation in the order Tag 1, Tag 2, atmosphere, temperature, biosphere, population, then tech level. Worlds default to `hasAliens: false`; `{ hasAliens: true }` enables ALIEN-dependent entries.
+- `src/generators/swn_sector/sector.ts` implements constraint-aware world generation in the order Tag 1, Tag 2, atmosphere, temperature, biosphere, population, then tech level. Worlds default to `hasAliens: false`; `{ hasAliens: true }` enables ALIEN-dependent entries.
 - `src/test/swn_sector_v2_constraints.test.ts` checks that every eligible first tag has a compatible second tag and a valid completion.
