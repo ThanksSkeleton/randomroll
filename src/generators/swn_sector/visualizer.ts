@@ -1,22 +1,22 @@
-import { generateSectorV4, type PointOfInterestV4, type StarSystemV4, type SystemLocationV4 } from "./sector_v4";
-import type { InhabitedWorldV2 } from "./sector_v2";
+import { generateSectorV4, type LocationSlotV4, type PointOfInterestV4, type PrimaryPlanetV4, type StarSystemV4, type SystemLocationV4 } from "./sector_v4";
 
 const DEFAULT_SEED = "swn-sector-v4-artifact";
 const ZONES = ["TooHot", "Goldilocks", "TooCold_1", "IngressEgress", "TooCold_3"] as const;
 const STAR_COLORS: Record<string, string> = { "A-type": "#b7d9ff", "F-type": "#fff2d1", "G-type": "#ffe889", "K-type": "#ffbd72", "M-type": "#ff765e", Giant: "#ff9868", "White dwarf": "#eaf4ff", "Neutron star": "#9dc9ff", "Stellar-mass black hole": "#17151d" };
 const PLACEHOLDER_COLORS: Record<string, string> = { Mercurian: "#9da1a3", "Europan / Plutonic": "#8fc6dd", Lunar: "#f2f4f5", Ioan: "#ecd34d", Titanian: "#49aca8", Martian: "#b85f48", Venusian: "#866141" };
-const CIVILIZATION_SYMBOLS: Record<InhabitedWorldV2["civilizationTier"], string> = { Primitive: "⚔️", Facility: "🏕️", Substantial: "🏙️", Brilliant: "🧠", Domineering: "👑" };
+const CIVILIZATION_SYMBOLS: Record<PrimaryPlanetV4["civilizationTier"], string> = { Primitive: "⚔️", Facility: "🏕️", Substantial: "🏙️", Brilliant: "🧠", Domineering: "👑" };
 
 function element<K extends keyof HTMLElementTagNameMap>(tag: K, className?: string): HTMLElementTagNameMap[K] { const node = document.createElement(tag); if (className !== undefined) node.className = className; return node; }
-function populationLevel(world: InhabitedWorldV2): number { const roll = world.attributes.population.roll; return roll <= 9 ? 1 : roll <= 31 ? 2 : roll <= 75 ? 3 : roll <= 94 ? 4 : 5; }
-function worldSummary(world: InhabitedWorldV2): string { const a = Object.entries(world.attributes).map(([id, value]) => `${id.replaceAll("_", " ")}: ${value.result}`).join("\n"); const p = world.planetDetails; return `${world.name}\n\n${world.civilizationTier} settlement\nTags: ${world.tags.map(tag => tag.tag).join(" · ")}\nHab: ${world.calculatedHab}  •  Population: ${populationLevel(world)}  •  TL: ${world.attributes.tech_level.tl ?? 0}\n\n${p.terrestrialSize.result}-sized; ${p.bulkComposition.result} composition\nSurface water: ${p.surfaceWaterPresent.result}\n${p.isGasGiantMoon ? "Gas-giant moon" : "Independent planet"}; ${p.tidallyLocked ? "tidally locked" : "not tidally locked"}\n\n${a}`; }
-function locationCaption(location: SystemLocationV4, world?: InhabitedWorldV2): string { const orbit = `Orbit: ${location.au.toFixed(3)} AU · ${location.orbitalPositionCategory} object ${location.orbitalOrder}`; if (world !== undefined) return `${worldSummary(world)}\n\n${orbit}`; return `${location.archetype ?? location.kind}\n\n${location.category ?? "Special location"}\n${orbit}${location.parentLocationId === undefined ? "" : "\nMoon of a host planet"}`; }
+function populationLevel(world: PrimaryPlanetV4): number { const roll = world.attributes.population.roll; return roll <= 9 ? 1 : roll <= 31 ? 2 : roll <= 75 ? 3 : roll <= 94 ? 4 : 5; }
+function worldSummary(world: PrimaryPlanetV4): string { const a = Object.entries(world.attributes).map(([id, value]) => `${id.replaceAll("_", " ")}: ${value.result}`).join("\n"); const p = world.planetDetails; return `${world.name}\n\n${world.civilizationTier} settlement\nTags: ${world.tags.map(tag => tag.tag).join(" · ")}\nHab: ${world.calculatedHab}  •  Population: ${populationLevel(world)}  •  TL: ${world.attributes.tech_level.tl ?? 0}\n\n${p.terrestrialSize.result}-sized; ${p.bulkComposition.result} composition\nSurface water: ${p.surfaceWaterPresent.result}\n${p.isGasGiantMoon ? "Gas-giant moon" : "Independent planet"}; ${p.tidallyLocked ? "tidally locked" : "not tidally locked"}\n\n${a}`; }
+function locationName(location: SystemLocationV4): string { if (location.kind === "PrimaryPlanet" || location.kind === "SecondaryPlanet") return location.name; if (location.kind === "GasGiant" || location.kind === "OtherObject") return location.archetype; return location.kind === "IndependentStation" ? "Deep space" : location.kind; }
+function locationCaption(slot: LocationSlotV4, location: SystemLocationV4): string { const orbit = `Orbit: ${slot.au.toFixed(3)} AU · ${slot.orbitalPositionCategory}`; if (location.kind === "PrimaryPlanet") return `${worldSummary(location)}\n\n${orbit}`; if (location.kind === "SecondaryPlanet") return `${location.name}\n\n${location.description}\n${orbit}`; if (location.kind === "GasGiant" || location.kind === "OtherObject") return `${location.archetype}\n\n${location.description}\n${orbit}`; return `${locationName(location)}\n\n${orbit}`; }
 
 function statusRow(label: string, value: string, className = ""): HTMLElement { const row = element("div", `status-row ${className}`); const key = element("span", "status-key"); key.textContent = label; const content = element("span", "status-value"); content.textContent = value; row.append(key, content); return row; }
-function worldStatus(world: InhabitedWorldV2, humanView = false): HTMLElement { const status = element("div", `world-status${humanView ? " world-status--human" : ""}`); const tl = world.attributes.tech_level.tl ?? 0; status.append(statusRow("H", String(world.calculatedHab), `status-row--hab status-row--hab-${world.calculatedHab}`), statusRow("P", "●".repeat(populationLevel(world))), statusRow("T", `${"★".repeat(Math.min(4, Math.floor(tl)))}${tl > 4 ? "+" : ""}`)); return status; }
+function worldStatus(world: PrimaryPlanetV4, humanView = false): HTMLElement { const status = element("div", `world-status${humanView ? " world-status--human" : ""}`); const tl = world.attributes.tech_level.tl ?? 0; status.append(statusRow("H", String(world.calculatedHab), `status-row--hab status-row--hab-${world.calculatedHab}`), statusRow("P", "●".repeat(populationLevel(world))), statusRow("T", `${"★".repeat(Math.min(4, Math.floor(tl)))}${tl > 4 ? "+" : ""}`)); return status; }
 
 function symbolFor(location: SystemLocationV4): HTMLElement {
-  const archetype = location.archetype ?? location.kind; const symbol = element("span", "object-symbol"); symbol.setAttribute("aria-hidden", "true");
+  const archetype = location.kind === "SecondaryPlanet" || location.kind === "GasGiant" || location.kind === "OtherObject" ? location.archetype : location.kind; const symbol = element("span", "object-symbol"); symbol.setAttribute("aria-hidden", "true");
   if (location.kind === "PrimaryPlanet") { symbol.classList.add("object-symbol--inhabited"); symbol.style.background = "#73af8a"; }
   else if (PLACEHOLDER_COLORS[archetype] !== undefined) { symbol.classList.add("object-symbol--terrestrial"); if (archetype === "Venusian") symbol.classList.add("object-symbol--venusian"); symbol.style.background = PLACEHOLDER_COLORS[archetype]!; }
   else if (archetype === "Jovian") symbol.classList.add("object-symbol--jovian");
@@ -26,66 +26,42 @@ function symbolFor(location: SystemLocationV4): HTMLElement {
   return symbol;
 }
 function poiSymbol(point: PointOfInterestV4): HTMLElement { const poi = element("span", "poi-symbol"); const shapes: Record<string, string> = { "Deep-space station": "square", "Ancient orbital ruin": "square", "Remote moon base": "circle", "Research base": "circle", "Asteroid belt": "triangle", "Asteroid base": "triangle", "Gas giant mine": "diamond", "Refueling station": "diamond" }; poi.classList.add(`poi-symbol--${shapes[point.point] ?? "square"}`); poi.tabIndex = 0; poi.setAttribute("aria-label", point.point); const card = element("span", "poi-tooltip"); card.textContent = point.kind === "Other" ? `${point.point}\n${point.occupant ?? ""}${point.situation === undefined ? "" : ` · ${point.situation}`}` : point.point; poi.append(card); return poi; }
-function renderLocation(location: SystemLocationV4, worlds: Map<string, InhabitedWorldV2>): HTMLElement { const world = location.worldId === undefined ? undefined : worlds.get(location.worldId); const node = element("div", `orbital-object orbital-object--${location.kind}`); node.tabIndex = 0; node.setAttribute("aria-label", location.archetype ?? location.kind); node.append(symbolFor(location)); const caption = element("span", "object-caption"); caption.textContent = world?.name ?? (location.archetype === "IndependentOrbit" ? "Deep space" : location.archetype ?? location.kind); node.append(caption); const tooltip = element("pre", "object-tooltip"); tooltip.textContent = locationCaption(location, world); node.append(tooltip); return node; }
-function renderLocationFamilies(locations: readonly SystemLocationV4[], worlds: Map<string, InhabitedWorldV2>): HTMLElement[] {
-  const ids = new Set(locations.map(location => location.id));
-  return locations.filter(location => location.parentLocationId === undefined || !ids.has(location.parentLocationId)).map(location => {
-    const moons = locations.filter(candidate => candidate.parentLocationId === location.id);
-    if (moons.length === 0) return renderLocation(location, worlds);
-    const family = element("div", "orbital-family");
-    const moonRow = element("div", "orbital-family__moons");
-    family.append(renderLocation(location, worlds));
-    moons.forEach(moon => moonRow.append(renderLocation(moon, worlds)));
-    family.append(moonRow);
-    return family;
-  });
-}
-function renderLocationSlots(locations: readonly SystemLocationV4[], worlds: Map<string, InhabitedWorldV2>, points: Map<string, PointOfInterestV4>): HTMLElement[] {
-  const ids = new Set(locations.map(location => location.id));
-  return locations.filter(location => location.parentLocationId === undefined || !ids.has(location.parentLocationId)).map(location => {
-    const members = [location, ...locations.filter(candidate => candidate.parentLocationId === location.id)];
-    const slot = element("div", "location-slot");
-    const planetary = element("div", "planetary-view");
-    renderLocationFamilies(members.filter(member => member.kind !== "IndependentOrbit"), worlds).forEach(family => planetary.append(family));
-    slot.append(planetary, renderHumanView(members, worlds, points));
-    return slot;
-  });
-}
-function renderHumanView(locations: readonly SystemLocationV4[], worlds: Map<string, InhabitedWorldV2>, points: Map<string, PointOfInterestV4>): HTMLElement { const human = element("div", "human-view"); const humanPoints = locations.flatMap(location => location.pointIds.map(id => points.get(id))).filter((point): point is PointOfInterestV4 => point?.kind === "Other"); humanPoints.forEach(point => human.append(poiSymbol(point))); locations.forEach(location => { const world = location.worldId === undefined ? undefined : worlds.get(location.worldId); if (world === undefined) return; const box = element("div", "inhabited-databox"); box.tabIndex = 0; const name = element("span", "databox-name"); name.textContent = world.name; const tier = element("span", "databox-tier"); tier.textContent = CIVILIZATION_SYMBOLS[world.civilizationTier]; tier.title = world.civilizationTier; tier.setAttribute("aria-label", world.civilizationTier); box.append(name, worldStatus(world, true), tier); const tooltip = element("pre", "object-tooltip"); tooltip.textContent = locationCaption(location, world); box.append(tooltip); human.append(box); }); return human; }
-function renderIngressEgress(location: SystemLocationV4): HTMLElement { const stack = element("div", "ingress-egress"); stack.tabIndex = 0; stack.setAttribute("aria-label", `Warp point at ${location.au.toFixed(3)} AU`); const tooltip = element("span", "transit-tooltip"); tooltip.textContent = `Warp point\n${location.au.toFixed(3)} AU`; const ingress = element("div", "ingress-egress__half ingress-egress__half--ingress"); ingress.textContent = "Ingress"; const egress = element("div", "ingress-egress__half ingress-egress__half--egress"); egress.textContent = "Egress"; stack.append(ingress, egress, tooltip); return stack; }
+function renderLocation(slot: LocationSlotV4, location = slot.location): HTMLElement { const node = element("div", `orbital-object orbital-object--${location.kind}`); node.tabIndex = 0; node.setAttribute("aria-label", locationName(location)); node.append(symbolFor(location)); const caption = element("span", "object-caption"); caption.textContent = locationName(location); node.append(caption); const tooltip = element("pre", "object-tooltip"); tooltip.textContent = locationCaption(slot, location); node.append(tooltip); return node; }
+function renderPlanetaryFamily(slot: LocationSlotV4): HTMLElement { const location = slot.location; if (location.kind !== "GasGiant" || location.satellites.length === 0) return renderLocation(slot); const family = element("div", "orbital-family"); const moons = element("div", "orbital-family__moons"); family.append(renderLocation(slot)); location.satellites.forEach(satellite => moons.append(renderLocation(slot, satellite))); family.append(moons); return family; }
+function locationPoints(location: SystemLocationV4): PointOfInterestV4[] { if (location.kind === "GasGiant") return [...location.pointsOfInterest, ...location.satellites.flatMap(locationPoints)]; return "pointsOfInterest" in location ? location.pointsOfInterest : []; }
+function primaryPlanets(location: SystemLocationV4): PrimaryPlanetV4[] { if (location.kind === "PrimaryPlanet") return [location]; return location.kind === "GasGiant" ? location.satellites.filter((satellite): satellite is PrimaryPlanetV4 => satellite.kind === "PrimaryPlanet") : []; }
+function renderSlot(slot: LocationSlotV4): HTMLElement { const container = element("div", "location-slot"); const planetary = element("div", "planetary-view"); if (slot.location.kind !== "IndependentStation") planetary.append(renderPlanetaryFamily(slot)); const human = element("div", "human-view"); locationPoints(slot.location).filter(point => point.kind === "Other").forEach(point => human.append(poiSymbol(point))); primaryPlanets(slot.location).forEach(world => { const box = element("div", "inhabited-databox"); box.tabIndex = 0; const name = element("span", "databox-name"); name.textContent = world.name; const tier = element("span", "databox-tier"); tier.textContent = CIVILIZATION_SYMBOLS[world.civilizationTier]; tier.title = world.civilizationTier; box.append(name, worldStatus(world, true), tier); const tooltip = element("pre", "object-tooltip"); tooltip.textContent = locationCaption(slot, world); box.append(tooltip); human.append(box); }); container.append(planetary, human); return container; }
+function renderIngressEgress(slot: LocationSlotV4): HTMLElement { const stack = element("div", "ingress-egress"); stack.tabIndex = 0; stack.setAttribute("aria-label", `Warp point at ${slot.au.toFixed(3)} AU`); const tooltip = element("span", "transit-tooltip"); tooltip.textContent = `Warp point\n${slot.au.toFixed(3)} AU`; const ingress = element("div", "ingress-egress__half ingress-egress__half--ingress"); ingress.textContent = "Ingress"; const egress = element("div", "ingress-egress__half ingress-egress__half--egress"); egress.textContent = "Egress"; stack.append(ingress, egress, tooltip); return stack; }
 
 function renderSystem(system: StarSystemV4): HTMLElement {
   const row = element("article", "system-row");
-  const worlds = new Map(system.worlds.map(world => [world.id, world]));
-  const points = new Map(system.pointsOfInterest.map(point => [point.id, point]));
-  const hasGoldilocks = system.locations.some(location => location.orbitalPositionCategory === "Goldilocks" && location.habitableSlot !== undefined);
+  const hasGoldilocks = system.locationSlots.some(slot => slot.orbitalPositionCategory === "Goldilocks" && slot.habitableSlot !== undefined);
   if (!hasGoldilocks) row.classList.add("system-row--no-goldilocks");
-  const star = element("div", "star-column"); const icon = element("div", "star-symbol"); const isRemnant = ["White dwarf", "Neutron star", "Stellar-mass black hole"].includes(system.primaryStar.result); icon.textContent = isRemnant ? "" : "✦"; if (system.primaryStar.result === "M-type") icon.classList.add("star-symbol--m"); if (system.primaryStar.result === "Giant") icon.classList.add("star-symbol--giant"); if (isRemnant) icon.classList.add("star-symbol--remnant"); icon.style.setProperty("--star-color", STAR_COLORS[system.primaryStar.result] ?? "#fff"); icon.title = `${system.primaryStar.result}; Hab ${system.primaryStar.hab}; ${system.primaryStar.habitableSlots} Goldilocks slots`; const title = element("span", "system-name"); title.textContent = system.id; star.append(icon, title); row.append(star);
+  const star = element("div", "star-column"); const icon = element("div", "star-symbol"); const isRemnant = ["White dwarf", "Neutron star", "Stellar-mass black hole"].includes(system.primaryStar.result); icon.textContent = isRemnant ? "" : "✦"; if (system.primaryStar.result === "M-type") icon.classList.add("star-symbol--m"); if (system.primaryStar.result === "Giant") icon.classList.add("star-symbol--giant"); if (isRemnant) icon.classList.add("star-symbol--remnant"); icon.style.setProperty("--star-color", STAR_COLORS[system.primaryStar.result] ?? "#fff"); icon.title = `${system.primaryStar.result}; Hab ${system.primaryStar.hab}; ${system.primaryStar.maxHabitableSlots} Goldilocks slots`; const title = element("span", "system-name"); title.textContent = system.id; star.append(icon, title); row.append(star);
   const zones = !hasGoldilocks
     ? ZONES.filter(zone => zone !== "Goldilocks")
     : ZONES;
   for (const zoneName of zones) {
-    const locations = system.locations.filter(location => location.orbitalPositionCategory === zoneName);
-    if (zoneName === "TooCold_3" && locations.length === 0) continue;
+    const slotsForZone = system.locationSlots.filter(slot => slot.orbitalPositionCategory === zoneName);
+    if (zoneName === "TooCold_3" && slotsForZone.length === 0) continue;
     const zone = element("section", `orbit-zone orbit-zone--${zoneName}`);
     if (zoneName === "Goldilocks") {
-      const occupiedSlots = [...new Set(locations.flatMap(location => location.habitableSlot === undefined ? [] : [location.habitableSlot]))];
+      const occupiedSlots = [...new Set(slotsForZone.flatMap(slot => slot.habitableSlot === undefined ? [] : [slot.habitableSlot]))];
       if (occupiedSlots.length === 0) continue;
       zone.style.flexGrow = String(occupiedSlots.length);
       for (const slot of occupiedSlots) {
         const slotNode = element("div", "goldilocks-slot");
-        const slotLocations = locations.filter(location => location.habitableSlot === slot || (locations.some(child => child.parentLocationId === location.id && child.habitableSlot === slot)));
-        renderLocationSlots(slotLocations, worlds, points).forEach(locationSlot => slotNode.append(locationSlot));
+        slotsForZone.filter(locationSlot => locationSlot.habitableSlot === slot).forEach(locationSlot => slotNode.append(renderSlot(locationSlot)));
         zone.append(slotNode);
       }
     } else if (zoneName === "IngressEgress") {
-      const transit = locations[0];
+      const transit = slotsForZone[0];
       if (transit !== undefined) zone.append(renderIngressEgress(transit));
     } else {
-      if (locations.length === 0) zone.classList.add("orbit-zone--empty");
+      if (slotsForZone.length === 0) zone.classList.add("orbit-zone--empty");
       else zone.classList.add("orbit-zone--populated");
       const slots = element("div", "region-slots");
-      renderLocationSlots(locations, worlds, points).forEach(locationSlot => slots.append(locationSlot));
+      slotsForZone.forEach(locationSlot => slots.append(renderSlot(locationSlot)));
       zone.append(slots);
     }
     row.append(zone);

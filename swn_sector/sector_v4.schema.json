@@ -84,13 +84,12 @@
         },
         "bulkComposition": {
           "type": "object",
-          "required": ["roll", "result", "hab", "color"],
+          "required": ["roll", "result", "hab"],
           "additionalProperties": false,
           "properties": {
             "roll": { "type": "integer", "minimum": 1, "maximum": 100 },
             "result": { "type": "string", "minLength": 1 },
-            "hab": { "type": "integer", "minimum": 1, "maximum": 3 },
-            "color": { "type": "string", "minLength": 1 }
+            "hab": { "type": "integer", "minimum": 1, "maximum": 3 }
           }
         },
         "surfaceWaterPresent": {
@@ -135,24 +134,23 @@
     },
     "primaryStar": {
       "type": "object",
-      "required": ["roll", "result", "hab", "habitableSlots"],
+      "required": ["roll", "result", "hab", "maxHabitableSlots"],
       "additionalProperties": false,
       "properties": {
         "roll": { "type": "integer", "minimum": 1, "maximum": 100 },
         "result": { "type": "string", "minLength": 1 },
         "hab": { "type": "integer", "minimum": 0, "maximum": 3 },
-        "habitableSlots": { "type": "integer", "minimum": 0, "maximum": 3 }
+        "maxHabitableSlots": { "type": "integer", "minimum": 0, "maximum": 3 }
       }
     },
     "location": {
       "type": "object",
-      "required": ["id", "kind", "orbitalPositionCategory", "orbitalOrder", "au", "pointIds"],
+      "required": ["id", "kind", "orbitalPositionCategory", "au", "pointIds"],
       "additionalProperties": false,
       "properties": {
         "id": { "type": "string", "minLength": 1 },
         "kind": { "enum": ["PrimaryPlanet", "EgressIngressRegion", "ExtraWorld", "ParentGasGiant", "IndependentOrbit"] },
         "orbitalPositionCategory": { "enum": ["TooHot", "Goldilocks", "TooCold_1", "IngressEgress", "TooCold_3"] },
-        "orbitalOrder": { "type": "integer", "minimum": 1 },
         "au": { "type": "number", "minimum": 0 },
         "archetype": { "type": "string", "minLength": 1 },
         "category": { "enum": ["TerrestrialPlanet", "GasGiant", "OtherObject"] },
@@ -177,17 +175,87 @@
         "situation": { "type": "string", "minLength": 1 }
       }
     },
+    "nestedPointOfInterest": {
+      "type": "object",
+      "required": ["id", "kind", "point"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "kind": { "enum": ["Ingress Point", "Egress Point", "Other"] },
+        "point": { "type": "string", "minLength": 1 },
+        "roll": { "type": "integer", "minimum": 1, "maximum": 100 },
+        "occupant": { "type": "string", "minLength": 1 },
+        "situation": { "type": "string", "minLength": 1 }
+      }
+    },
+    "primaryPlanet": {
+      "type": "object",
+      "required": ["kind", "id", "name", "archetype", "category", "hasAliens", "specialStates", "tags", "attributes", "planetDetails", "calculatedHab", "civilizationTier"],
+      "additionalProperties": false,
+      "properties": {
+        "kind": { "const": "PrimaryPlanet" },
+        "id": { "type": "string", "minLength": 1 },
+        "name": { "type": "string", "minLength": 1 },
+        "archetype": { "const": "PrimaryPlanet" },
+        "category": { "const": "TerrestrialPlanet" },
+        "hasAliens": { "type": "boolean" },
+        "specialStates": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+        "tags": { "type": "array", "prefixItems": [{ "$ref": "#/$defs/worldTag" }, { "$ref": "#/$defs/worldTag" }], "minItems": 2, "maxItems": 2, "items": false },
+        "attributes": { "$ref": "#/$defs/worldAttributes" },
+        "planetDetails": { "$ref": "#/$defs/planetDetails" },
+        "calculatedHab": { "type": "integer", "minimum": 0, "maximum": 3 },
+        "civilizationTier": { "enum": ["Primitive", "Facility", "Substantial", "Brilliant", "Domineering"] }
+      }
+    },
+    "secondaryPlanet": {
+      "type": "object",
+      "required": ["kind", "id", "name", "archetype", "category", "description", "pointsOfInterest"],
+      "additionalProperties": false,
+      "properties": {
+        "kind": { "const": "SecondaryPlanet" }, "id": { "type": "string", "minLength": 1 }, "name": { "type": "string", "minLength": 1 },
+        "archetype": { "type": "string", "minLength": 1 }, "category": { "const": "TerrestrialPlanet" }, "description": { "type": "string", "minLength": 1 },
+        "pointsOfInterest": { "type": "array", "items": { "$ref": "#/$defs/nestedPointOfInterest" } }
+      }
+    },
+    "gasGiant": {
+      "type": "object",
+      "required": ["kind", "id", "archetype", "category", "description", "pointsOfInterest", "satellites"],
+      "additionalProperties": false,
+      "properties": {
+        "kind": { "const": "GasGiant" }, "id": { "type": "string", "minLength": 1 }, "archetype": { "type": "string", "minLength": 1 }, "category": { "const": "GasGiant" }, "description": { "type": "string", "minLength": 1 },
+        "pointsOfInterest": { "type": "array", "items": { "$ref": "#/$defs/nestedPointOfInterest" } },
+        "satellites": { "type": "array", "items": { "oneOf": [{ "$ref": "#/$defs/primaryPlanet" }, { "$ref": "#/$defs/secondaryPlanet" }] } }
+      }
+    },
+    "otherObject": {
+      "type": "object", "required": ["kind", "id", "archetype", "category", "description", "pointsOfInterest"], "additionalProperties": false,
+      "properties": { "kind": { "const": "OtherObject" }, "id": { "type": "string", "minLength": 1 }, "archetype": { "type": "string", "minLength": 1 }, "category": { "const": "OtherObject" }, "description": { "type": "string", "minLength": 1 }, "pointsOfInterest": { "type": "array", "items": { "$ref": "#/$defs/nestedPointOfInterest" } } }
+    },
+    "independentStation": {
+      "type": "object", "required": ["kind", "id", "pointsOfInterest"], "additionalProperties": false,
+      "properties": { "kind": { "const": "IndependentStation" }, "id": { "type": "string", "minLength": 1 }, "pointsOfInterest": { "type": "array", "minItems": 1, "maxItems": 1, "items": { "$ref": "#/$defs/nestedPointOfInterest" } } }
+    },
+    "ingressEgress": {
+      "type": "object", "required": ["kind", "id", "pointsOfInterest"], "additionalProperties": false,
+      "properties": { "kind": { "const": "IngressEgress" }, "id": { "type": "string", "minLength": 1 }, "pointsOfInterest": { "type": "array", "prefixItems": [{ "$ref": "#/$defs/nestedPointOfInterest" }, { "$ref": "#/$defs/nestedPointOfInterest" }], "minItems": 2, "maxItems": 2, "items": false } }
+    },
+    "emptyLocation": { "type": "object", "required": ["kind"], "additionalProperties": false, "properties": { "kind": { "const": "Empty" } } },
+    "locationSlot": {
+      "type": "object", "required": ["id", "orbitalPositionCategory", "au", "location"], "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "minLength": 1 }, "orbitalPositionCategory": { "enum": ["TooHot", "Goldilocks", "TooCold_1", "IngressEgress", "TooCold_3"] }, "au": { "type": "number", "minimum": 0 }, "habitableSlot": { "enum": [1, 2, 3] },
+        "location": { "oneOf": [{ "$ref": "#/$defs/emptyLocation" }, { "$ref": "#/$defs/primaryPlanet" }, { "$ref": "#/$defs/secondaryPlanet" }, { "$ref": "#/$defs/gasGiant" }, { "$ref": "#/$defs/otherObject" }, { "$ref": "#/$defs/independentStation" }, { "$ref": "#/$defs/ingressEgress" }] }
+      }
+    },
     "starSystem": {
       "type": "object",
-      "required": ["id", "hex", "worlds", "primaryStar", "locations", "pointsOfInterest"],
+      "required": ["id", "hex", "primaryStar", "locationSlots"],
       "additionalProperties": false,
       "properties": {
         "id": { "type": "string", "minLength": 1 },
         "hex": { "$ref": "#/$defs/sectorHex" },
-        "worlds": { "type": "array", "minItems": 1, "maxItems": 3, "items": { "$ref": "#/$defs/world" } },
         "primaryStar": { "$ref": "#/$defs/primaryStar" },
-        "locations": { "type": "array", "minItems": 4, "items": { "$ref": "#/$defs/location" } },
-        "pointsOfInterest": { "type": "array", "minItems": 4, "maxItems": 7, "items": { "$ref": "#/$defs/pointOfInterest" } }
+        "locationSlots": { "type": "array", "minItems": 4, "items": { "$ref": "#/$defs/locationSlot" } }
       }
     }
   }

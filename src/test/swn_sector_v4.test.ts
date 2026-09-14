@@ -30,41 +30,28 @@ describe("SWN sector V4", () => {
     expect(sector.version).toBe("v4");
     for (const system of sector.systems) {
       expect(isV4SystemValid(system)).toBe(true);
-      expect(system.locations.filter(location => location.kind === "EgressIngressRegion")).toHaveLength(1);
-      expect(system.locations.filter(location => location.kind === "ExtraWorld").length).toBeGreaterThanOrEqual(2);
-      expect(system.locations.filter(location => location.kind === "ExtraWorld").length).toBeLessThanOrEqual(7);
-      expect(system.locations.filter(location => location.kind === "ExtraWorld" && location.orbitalPositionCategory === "TooHot").length).toBeGreaterThanOrEqual(1);
-      expect(system.locations.filter(location => location.kind === "ExtraWorld" && location.orbitalPositionCategory === "TooCold_1").length).toBeGreaterThanOrEqual(1);
-      expect(system.locations.filter(location => location.kind === "ExtraWorld" && location.orbitalPositionCategory === "TooCold_3").length).toBeLessThanOrEqual(1);
-      expect(system.locations.filter(location => location.kind === "ParentGasGiant" && system.locations.some(child =>
-        child.parentLocationId === location.id && child.kind === "PrimaryPlanet")).every(location => location.pointIds.length === 0)).toBe(true);
-      expect(system.locations.filter(location => location.kind === "ExtraWorld" && location.orbitalPositionCategory === "Goldilocks").every(location =>
-        location.habitableSlot !== undefined)).toBe(true);
-      for (const location of system.locations) {
-        expect(location.au).toBeGreaterThanOrEqual(0);
-        expect(location.orbitalOrder).toBeGreaterThan(0);
+      const slots = system.locationSlots;
+      expect(slots.filter(slot => slot.location.kind === "IngressEgress")).toHaveLength(1);
+      const extras = slots.filter(slot => ["SecondaryPlanet", "GasGiant", "OtherObject"].includes(slot.location.kind));
+      expect(extras.length).toBeGreaterThanOrEqual(2);
+      expect(extras.length).toBeLessThanOrEqual(7);
+      expect(slots.filter(slot => ["SecondaryPlanet", "GasGiant", "OtherObject"].includes(slot.location.kind) && slot.orbitalPositionCategory === "TooHot").length).toBeGreaterThanOrEqual(1);
+      expect(slots.filter(slot => ["SecondaryPlanet", "GasGiant", "OtherObject"].includes(slot.location.kind) && slot.orbitalPositionCategory === "TooCold_1").length).toBeGreaterThanOrEqual(1);
+      expect(slots.filter(slot => slot.location.kind === "GasGiant" && slot.location.satellites.some(planet => planet.kind === "PrimaryPlanet")).every(slot => slot.location.kind === "GasGiant" && slot.location.pointsOfInterest.length === 0)).toBe(true);
+      expect(slots.filter(slot => slot.location.kind === "SecondaryPlanet" && slot.orbitalPositionCategory === "Goldilocks").every(slot => slot.habitableSlot !== undefined)).toBe(true);
+      for (const slot of slots) {
+        expect(slot.au).toBeGreaterThanOrEqual(0);
       }
-      for (const category of ["TooHot", "Goldilocks", "TooCold_1", "IngressEgress", "TooCold_3"] as const) {
-        const locations = system.locations.filter(location => location.orbitalPositionCategory === category);
-        expect(locations.map(location => location.orbitalOrder)).toEqual(locations.map((_, index) => index + 1));
-      }
-      expect(system.pointsOfInterest.filter(point => point.kind === "Ingress Point")).toHaveLength(1);
-      expect(system.pointsOfInterest.filter(point => point.kind === "Egress Point")).toHaveLength(1);
-      const locationIds = new Set(system.locations.map(location => location.id));
-      expect(system.pointsOfInterest.every(point => locationIds.has(point.locationId))).toBe(true);
-      expect(system.locations.filter(location => location.kind === "IndependentOrbit").every(location =>
-        ["TooHot", "TooCold_1", "TooCold_3"].includes(location.orbitalPositionCategory))).toBe(true);
-      const worldsById = new Map(system.worlds.map(world => [world.id, world]));
-      for (const location of system.locations.filter(location => location.kind === "PrimaryPlanet")) {
-        const world = worldsById.get(location.worldId!);
-        const thermalOrbit = world?.attributes.temperature.thermalOrbit;
-        expect(thermalOrbit).toBeDefined();
-        expect(location.orbitalPositionCategory).toBe(
-          thermalOrbit === "Too Hot" ? "TooHot"
-            : thermalOrbit === "Too Cold" ? "TooCold_1"
-              : "Goldilocks",
-        );
-        if (location.orbitalPositionCategory === "TooHot") expect(world?.planetDetails.tidallyLocked).toBe(true);
+      expect(slots.map(slot => slot.au)).toEqual([...slots.map(slot => slot.au)].sort((left, right) => left - right));
+      const transit = slots.find(slot => slot.location.kind === "IngressEgress");
+      expect(transit?.location.kind === "IngressEgress" && transit.location.pointsOfInterest.map(point => point.kind)).toEqual(["Ingress Point", "Egress Point"]);
+      expect(slots.filter(slot => slot.location.kind === "IndependentStation").every(slot => ["TooHot", "TooCold_1", "TooCold_3"].includes(slot.orbitalPositionCategory))).toBe(true);
+      const primaries = slots.flatMap(slot => slot.location.kind === "PrimaryPlanet" ? [{ planet: slot.location, slot }] : slot.location.kind === "GasGiant" ? slot.location.satellites.filter(planet => planet.kind === "PrimaryPlanet").map(planet => ({ planet, slot })) : []);
+      for (const { planet, slot } of primaries) {
+        const thermalOrbit = planet.attributes.temperature.thermalOrbit;
+        expect(slot.orbitalPositionCategory).toBe(thermalOrbit === "Too Hot" ? "TooHot" : thermalOrbit === "Too Cold" ? "TooCold_1" : "Goldilocks");
+        if (slot.orbitalPositionCategory === "TooHot") expect(planet.planetDetails.tidallyLocked).toBe(true);
+        expect("pointsOfInterest" in planet).toBe(false);
       }
     }
   }, 15_000);
