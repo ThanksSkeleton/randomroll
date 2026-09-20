@@ -22,7 +22,11 @@
 
    Call this test **Stochastic Success**. It is not an airtight proof, but it should provide high-value validation.
 
-5. Implement the new `generate(seed)`, using the old implementation as a guide and Stochastic Success as the main validation loop. Repeat the implementation-and-test loop until it passes reliably.
+5. Implement the new `generate(seed)` according to
+   [Part 5 — Merged Generator Implementation Specification](PART_5_IMPLEMENTATION_SPEC.md).
+   Use the old implementation as a source of tables, probabilities, and
+   established rules, but construct the canonical `merged_schema.ts` model
+   directly.
 6. After implementation is complete, perform a Sol High manual inspection to find irregularities, missing behavior, or invariants that were not implemented.
 7. After that inspection is complete, perform a manual developer inspection with the same goals.
 8. Resolve the findings and declare Phase 1 complete.
