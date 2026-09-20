@@ -1,0 +1,11 @@
+,,,,,
+Star,FromStar,Extreme Hot Range,Extreme Cold Range,Normal Range,To System Edge
+A-type,0.08,5,15,3.6,4.736
+F-type,0.04,1.2,3.6,2.3,0.948
+G-type,0.02,0.8,2.4,1.2,0.564
+K-type,0.01,0.3,0.9,1,0.322
+M-type,0.002,0.02,0.06,0.58,0.1244
+Giant,0.15,6.1,18.3,4.4,3.35
+White dwarf,0.5,1.5,4.5,0,0.7
+Neutron star,0.5,1.5,4.5,0,0.7
+Stellar-mass black hole,0.5,1.5,4.5,0,0.7

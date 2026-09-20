@@ -74,8 +74,19 @@ export interface StarSystem extends SelectableEntity {
   PointsOfInterest: PointOfInterest[];
 }
 
+export type StarType =
+  | "A-type"
+  | "F-type"
+  | "G-type"
+  | "K-type"
+  | "M-type"
+  | "Giant"
+  | "White dwarf"
+  | "Neutron star"
+  | "Stellar-mass black hole";
+
 export interface Star extends SelectableEntity {
-  StarType: string;
+  StarType: StarType;
   HabitabilityRating: number;
 }
 
@@ -95,6 +106,8 @@ export interface Orbit {
 
 export interface SystemObjectBase extends SelectableEntity {
   Orbit: Orbit;
+  /** Authoritative thermal value used to constrain generated star-relative AU. */
+  Temperature: Temperature;
   Kind: "Planet" | "OtherCelestialObject";
 }
 
@@ -118,7 +131,6 @@ export interface Planet extends SystemObjectBase {
   SurfaceWaterPresent: boolean;
   TidallyLocked: boolean;
   Atmosphere: Atmosphere;
-  Temperature: Temperature;
   NativeBiosphere: NativeBiosphere;
   InhabitedInfo: InhabitedInfo | false;
 }
@@ -301,8 +313,19 @@ export interface InhabitedInfo {
   TechLevel: TechLevel;
 }
 
+/** Current generator POI table entries, retained as a closed domain vocabulary. */
+export type PointOfInterestType =
+  | "Deep-space station"
+  | "Asteroid base"
+  | "Remote moon base"
+  | "Ancient orbital ruin"
+  | "Research base"
+  | "Asteroid belt"
+  | "Gas giant mine"
+  | "Refueling station";
+
 export interface PointOfInterest extends SelectableEntity {
   /** The system object that contains this point of interest. */
   ParentObjectId: Guid;
-  POIType: string;
+  POIType: PointOfInterestType;
 }

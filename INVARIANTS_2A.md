@@ -68,7 +68,7 @@ rule, not requirements to preserve the old fields or representation.
 
 | ID | Status | Invariant | Evidence / merged interpretation |
 | --- | --- | --- | --- |
-| 2A-31 | Accepted | A system’s star must provide at least as much habitability as the most demanding inhabited planet/world in that system. | `selectDependentStarType` filters by required habitability at `sector.ts:598-617`; V3 validation checks the relationship at `sector.ts:723-736`; V4 checks it again at `sector.ts:955`. The merged form retains the relationship without star rolls or habitable-slot fields. |
+| 2A-31 | Modified | A system star's habitability contributes to each inhabited planet's derived `TotalHab`; it is not a separate requirement that must meet the planet's physical environmental Hab. | The old generator filters stars against physical environmental Hab at `sector.ts:598-617` and validates that gate at `sector.ts:723-736`. This is a legacy bug in the merged contract: calculate `TotalHab` as the minimum of star and physical Hab providers, then apply the ordinary population, technology, and Terran-biosphere requirements to that result. |
 
 ## Merged orbital, location, and POI invariants
 

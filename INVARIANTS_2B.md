@@ -36,6 +36,7 @@ and [TemperatureElaborationSpec.md](TemperatureElaborationSpec.md).
 - B18: A planet has at most two moons.
 - B19: A moon has the same temperature as its parent planet.
 - B20: A moon has the same star-relative AU as its parent planet. Moon-to-planet distance is treated as zero, while the moon retains an angle for presentation.
+- B21: An independent station directly orbits its system's star; it cannot orbit a planet, moon, or other system object.
 
 ## Stars, planets, and physical conditions
 
@@ -59,7 +60,7 @@ and [TemperatureElaborationSpec.md](TemperatureElaborationSpec.md).
 - E2: A Desert World is not primarily water-covered.
 - E6: A world tagged Heavy Industry, Major Spaceyard, or Post-Scarcity does not have primitive technology.
 - E8: An Outpost World does not have billions of inhabitants.
-- E9: A Tomb World or Abandoned Colony does not have high population. These tags describe current conditions; the exact high-population cutoff must be fixed during invariant decomposition.
+- E9: A Tomb World or Abandoned Colony has the rank-1 population category, `Fewer than 500`.
 - E10: A Trade Hub's system has at least one route connecting it to another system.
 
 ## Points of interest and other celestial objects
@@ -69,11 +70,11 @@ and [TemperatureElaborationSpec.md](TemperatureElaborationSpec.md).
 - F3: A point-of-interest parent is a system object, not a star, system, route, ship, or another point of interest.
 - F4: A point of interest is not attached directly to an inhabited planet.
 - F5: A point of interest is not attached to a gas giant that has an inhabited moon.
-- F6: A surface-based point of interest is not placed on a gas giant. This requires a point-of-interest classification and host-compatibility lookup.
-- F7: An open-air settlement is not placed on a vacuum, corrosive, cryogenic, or volcanic world. This requires a point-of-interest classification and host-compatibility lookup.
-- F9: Every point of interest has a known, nonblank type compatible with its parent object. This requires an enumerated point-of-interest taxonomy and host-compatibility lookup.
+- F9: Every point of interest has a known, nonblank type from the enumerated point-of-interest taxonomy.
 - F10: No object has more than three attached points of interest.
-- F12: Every asteroid belt, Kuiper belt, and gas cloud is within the valid distance band for its type. This requires explicit distance bands for these celestial-object types.
+- F12: Every other celestial object has a temperature compatible with its class and receives AU placement through the same star-and-temperature methodology as a planet. Asteroid belts require Volcanic through Alpine temperatures; Kuiper belts and gas clouds require Boreal through Cryogenic temperatures; independent stations permit any temperature.
+- F13: Every point of interest is attached to an object compatible with its type. A non-gas planet and a gas planet are distinguished by bulk composition, not by inhabited status.
+- F14: Every independent station hosts exactly one point of interest, of type `Deep-space station`, and hosts no other point-of-interest type.
 
 ## Routes and travel
 

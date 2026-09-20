@@ -449,8 +449,12 @@ interface StarSystem extends SelectableEntity {
   PointsOfInterest: PointOfInterest[];
 }
 
+type StarType =
+  | "A-type" | "F-type" | "G-type" | "K-type" | "M-type"
+  | "Giant" | "White dwarf" | "Neutron star" | "Stellar-mass black hole";
+
 interface Star extends SelectableEntity {
-  StarType: string;
+  StarType: StarType;
   HabitabilityRating: number; // current generator primaryStar.hab
 }
 
@@ -462,6 +466,7 @@ interface Orbit {
 
 interface SystemObjectBase extends SelectableEntity {
   Orbit: Orbit;
+  Temperature: Temperature;
   Kind: "Planet" | "OtherCelestialObject";
 }
 
@@ -487,7 +492,6 @@ interface Planet extends SystemObjectBase {
   SurfaceWaterPresent: boolean;
   TidallyLocked: boolean;
   Atmosphere: Atmosphere;
-  Temperature: Temperature;
   NativeBiosphere: NativeBiosphere;
   InhabitedInfo: InhabitedInfo | false;
 }
@@ -673,9 +677,19 @@ interface InhabitedInfo {
   TechLevel: TechLevel;
 }
 
+type PointOfInterestType =
+  | "Deep-space station"
+  | "Asteroid base"
+  | "Remote moon base"
+  | "Ancient orbital ruin"
+  | "Research base"
+  | "Asteroid belt"
+  | "Gas giant mine"
+  | "Refueling station";
+
 interface PointOfInterest extends SelectableEntity {
   ParentObjectId: Guid; // SystemObjectBase parent
-  POIType: string;      // current generator point value
+  POIType: PointOfInterestType;
 }</pre>
 
         <p class="small">
@@ -721,7 +735,7 @@ WorldTag         → MaxAtmosphere</pre>
             <tr><td>Subtropical</td><td>11</td><td>3</td></tr><tr><td>Equatorial</td><td>12</td><td>2</td></tr><tr><td>Arid</td><td>13</td><td>1</td></tr><tr><td>Infernal</td><td>14</td><td>1</td></tr><tr><td>Volcanic</td><td>15</td><td>0</td></tr>
           </tbody>
         </table>
-        <p class="small">For direct-orbit planets, star type and detailed temperature constrain a randomized AU placement roll: hotter planets around the same star must be closer, colder planets farther, and equal-temperature planets must receive distinct non-colliding distances. The selected AU remains generated and serialized data. Moons have their parent planet's temperature and star-relative AU; their retained angle is presentational and no moon-to-planet distance is modeled.</p>
+        <p class="small">For direct-orbit system objects, star type and detailed temperature constrain a randomized AU placement roll: hotter objects around the same star must be closer, colder objects farther, and equal-temperature objects must receive distinct non-colliding distances. The selected AU remains generated and serialized data. Asteroid belts require Volcanic through Alpine temperatures; Kuiper belts and gas clouds require Boreal through Cryogenic temperatures; independent stations may have any temperature. Moons have their parent planet's temperature and star-relative AU; their retained angle is presentational and no moon-to-planet distance is modeled.</p>
         <h3 style="margin-top: 1.1rem">Special cases removed or altered</h3>
         <ul>
           <li><code>Max Environment Hab</code> is removed. Environmental complications such as poison storms or radioactive dust are applied ad hoc in narrative rather than as generator constraints.</li>
