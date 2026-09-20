@@ -1,0 +1,298 @@
+/**
+ * Canonical merged SWN sector schema.
+ *
+ * This is the Phase 1 design contract from SCHEMA_COMPARISON.html. It is
+ * deliberately independent of the current V4 generator representation:
+ * generation rolls, slot wrappers, orbital-zone categories, and ingress /
+ * egress regions are implementation details and are not part of this model.
+ */
+
+export type Guid = string;
+
+export type VisibilityLevel =
+  | "NONE"
+  | "BASIC_SCAN"
+  | "CULTURE_PARTIAL"
+  | "CULTURE_FULL";
+
+export interface IntelligenceText {
+  InfoboxSummary: string;
+  BasicScan: string;
+  CulturePartial: string;
+  CultureFull: string;
+  GM: string;
+}
+
+/** Shared identity, naming, disclosure, and selection state. */
+export interface SelectableEntity {
+  Id: Guid;
+  ProceduralName: string;
+  NiceName: string;
+  VisibilityLevel: VisibilityLevel;
+  Intelligence: IntelligenceText;
+}
+
+export interface Sector {
+  SchemaVersion: "merged-v1";
+  /** Generation provenance; it is not a complete replay specification. */
+  OriginalSeed: string;
+  SectorName: string;
+  Systems: StarSystem[];
+  Routes: Route[];
+  PlayerShip: PlayerShip;
+}
+
+export interface Route extends SelectableEntity {
+  Endpoints: [RouteEndpoint, RouteEndpoint];
+}
+
+export interface RouteEndpoint {
+  SystemId: Guid;
+  /** Inclusive at 0; exclusive at 360. */
+  BoundaryAngleDegrees: number;
+}
+
+export interface PlayerShip extends SelectableEntity {
+  /** The ship's current system is derived from this selectable object ID. */
+  CurrentLocationId: Guid;
+}
+
+export interface HexLocation {
+  /** Intended sector grid bounds: integer 1 through 10. */
+  Column: number;
+  /** Intended sector grid bounds: integer 1 through 8. */
+  Row: number;
+}
+
+export interface StarSystem extends SelectableEntity {
+  HexLocation: HexLocation;
+  Star: Star;
+  Objects: SystemObject[];
+  PointsOfInterest: PointOfInterest[];
+}
+
+export interface Star extends SelectableEntity {
+  StarType: string;
+  HabitabilityRating: number;
+}
+
+export interface Orbit {
+  /** Null when a satellite has no modeled distance from its parent. */
+  AU: number | null;
+  /** Inclusive at 0; exclusive at 360. */
+  AngleDegrees: number;
+  /** Null means a direct orbit of the system's star. */
+  ParentObjectId: Guid | null;
+}
+
+export interface SystemObjectBase extends SelectableEntity {
+  Orbit: Orbit;
+  Kind: "Planet" | "OtherCelestialObject";
+}
+
+export type OtherCelestialObjectType =
+  | "AsteroidBelt"
+  | "KuiperBelt"
+  | "GasCloud"
+  | "IndependentStation";
+
+export interface OtherCelestialObject extends SystemObjectBase {
+  Kind: "OtherCelestialObject";
+  ObjectType: OtherCelestialObjectType;
+}
+
+export type SystemObject = Planet | OtherCelestialObject;
+
+export interface Planet extends SystemObjectBase {
+  Kind: "Planet";
+  Size: Size;
+  BulkComposition: BulkComposition;
+  SurfaceWaterPresent: boolean;
+  TidallyLocked: boolean;
+  Atmosphere: Atmosphere;
+  Temperature: Temperature;
+  NativeBiosphere: NativeBiosphere;
+  InhabitedInfo: InhabitedInfo | false;
+}
+
+export type WorldTag =
+  | "Abandoned Colony"
+  | "Alien Ruins"
+  | "Altered Humanity"
+  | "Anarchists"
+  | "Anthropomorphs"
+  | "Area 51"
+  | "Badlands World"
+  | "Battleground"
+  | "Beastmasters"
+  | "Bubble Cities"
+  | "Cheap Life"
+  | "Civil War"
+  | "Cold War"
+  | "Colonized Population"
+  | "Cultural Power"
+  | "Cybercommunists"
+  | "Cyborgs"
+  | "Cyclical Doom"
+  | "Desert World"
+  | "Doomed World"
+  | "Dying Race"
+  | "Eugenic Cult"
+  | "Exchange Consulate"
+  | "Fallen Hegemon"
+  | "Feral World"
+  | "Flying Cities"
+  | "Forbidden Tech"
+  | "Former Warriors"
+  | "Freak Geology"
+  | "Freak Weather"
+  | "Friendly Foe"
+  | "Gold Rush"
+  | "Great Work"
+  | "Hatred"
+  | "Heavy Industry"
+  | "Heavy Mining"
+  | "Hivemind"
+  | "Holy War"
+  | "Hostile Biosphere"
+  | "Hostile Space"
+  | "Immortals"
+  | "Local Specialty"
+  | "Local Tech"
+  | "Major Spaceyard"
+  | "Mandarinate"
+  | "Mandate Base"
+  | "Maneaters"
+  | "Megacorps"
+  | "Mercenaries"
+  | "Minimal Contact"
+  | "Misandry/Misogyny"
+  | "Night World"
+  | "Nomads"
+  | "Oceanic World"
+  | "Out of Contact"
+  | "Outpost World"
+  | "Perimeter Agency"
+  | "Pilgrimage Site"
+  | "Pleasure World"
+  | "Police State"
+  | "Post-Scarcity"
+  | "Preceptor Archive"
+  | "Pretech Cultists"
+  | "Prison Planet"
+  | "Psionics Academy"
+  | "Psionics Fear"
+  | "Psionics Worship"
+  | "Quarantined World"
+  | "Radioactive World"
+  | "Refugees"
+  | "Regional Hegemon"
+  | "Restrictive Laws"
+  | "Revanchists"
+  | "Revolutionaries"
+  | "Rigid Culture"
+  | "Rising Hegemon"
+  | "Ritual Combat"
+  | "Robots"
+  | "Seagoing Cities"
+  | "Sealed Menace"
+  | "Secret Masters"
+  | "Sectarians"
+  | "Seismic Instability"
+  | "Shackled World"
+  | "Societal Despair"
+  | "Sole Supplier"
+  | "Taboo Treasure"
+  | "Terraform Failure"
+  | "Theocracy"
+  | "Tomb World"
+  | "Trade Hub"
+  | "Tyranny"
+  | "Unbraked AI"
+  | "Urbanized Surface"
+  | "Utopia"
+  | "Warlords"
+  | "Xenophobes"
+  | "Zombies";
+
+export type Atmosphere =
+  | "Vacuum"
+  | "Corrosive"
+  | "Invasive"
+  | "Corrosive+Invasive"
+  | "Inert gas"
+  | "Breathable: Thin/Thick"
+  | "Breathable";
+
+export type Temperature =
+  | "Cryogenic"
+  | "Volcanic"
+  | "Glacial"
+  | "Polar"
+  | "Arid"
+  | "Infernal"
+  | "Subarctic"
+  | "Equatorial"
+  | "Boreal"
+  | "Alpine"
+  | "Temperate"
+  | "Mediterranean"
+  | "Subtropical";
+
+export type NativeBiosphere =
+  | "None"
+  | "Microbial"
+  | "Limited"
+  | "Significant"
+  | "Engineered";
+
+export type TerranBiosphere = NativeBiosphere;
+
+export type Population =
+  | "Fewer than 500"
+  | "Fewer than a million inhabitants"
+  | "Several million inhabitants"
+  | "Hundreds of millions of inhabitants"
+  | "Billions of inhabitants";
+
+export type TechLevel =
+  | "Neolithic-level technology"
+  | "Medieval technology"
+  | "Early Industrial Age tech"
+  | "Tech like that of present-day Earth"
+  | "Modern postech"
+  | "Postech with specialties"
+  | "Pretech with surviving infrastructure";
+
+export type Size =
+  | "Luna"
+  | "Mars"
+  | "Earth"
+  | "Super-Earth"
+  | "Neptune"
+  | "Jupiter";
+
+export type BulkComposition =
+  | "Sulfur"
+  | "Carbon"
+  | "Magnesium"
+  | "Calcium-Aluminum"
+  | "Iron"
+  | "Water"
+  | "Silicon"
+  | "Jovian Gas"
+  | "Neptunian Gas";
+
+export interface InhabitedInfo {
+  TotalHab: number;
+  WorldTags: [WorldTag, WorldTag];
+  TerranBiosphere: TerranBiosphere;
+  Population: Population;
+  TechLevel: TechLevel;
+}
+
+export interface PointOfInterest extends SelectableEntity {
+  /** The system object that contains this point of interest. */
+  ParentObjectId: Guid;
+  POIType: string;
+}

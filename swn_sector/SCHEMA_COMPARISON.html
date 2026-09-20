@@ -292,8 +292,8 @@
         <article class="card callout">
           <h3>Structural priority: no lossy UI projection</h3>
           <p>
-            Tags, attributes, planet details, habitability, civilization tier, rolls, object kinds,
-            routes, visibility, descriptions, and campaign state should all receive first-class homes
+            Tags, attributes, planet details, habitability, object kinds, routes, visibility, and
+            campaign state should all receive first-class homes
             in the merged schema. Generic display strings must not become the only copy of structured data.
           </p>
         </article>
@@ -303,7 +303,7 @@
         <h3>Warp model decision</h3>
         <p>
           Remove the <code>IngressEgress</code> region and its ingress/egress POIs. A system's warp
-          boundary is derived by multiplying the outermost direct-orbit planet's AU by a configured
+          boundary is derived by multiplying the outermost direct-orbit object’s AU by a universal
           boundary multiplier. Every route endpoint stores a fixed angle on its connected system's boundary.
         </p>
       </article>
@@ -372,16 +372,13 @@
               <tr><td><code>StarSystem</code></td><td><code>SelectableEntity</code></td><td>ID, procedural name, nice name, visibility, intelligence text</td><td>Makes a system a first-class selectable object.</td></tr>
               <tr><td><code>Star</code></td><td><code>SelectableEntity</code></td><td>ID, procedural name, nice name, visibility, intelligence text</td><td>Makes the system's star independently selectable and inspectable.</td></tr>
               <tr><td><code>PointOfInterest</code></td><td><code>SelectableEntity</code></td><td>ID, procedural name, nice name, visibility, intelligence text</td><td>Adds shared UI behavior to every POI while retaining its generated facts and parent reference.</td></tr>
-              <tr><td><code>SystemObjectBase</code></td><td><code>SelectableEntity</code></td><td>ID, procedural name, nice name, visibility, intelligence text</td><td>Adds the common orbit, world type, inhabited flag, and description used by all orbital-object variants.</td></tr>
-              <tr><td><code>PrimaryPlanet</code></td><td><code>SystemObjectBase</code></td><td>All selectable-entity fields plus orbit, world type, inhabited flag, and description</td><td>Adds the full generated inhabited-world record and narrows <code>Kind</code>, <code>Archetype</code>, <code>Category</code>, and <code>InhabitedWorld</code>.</td></tr>
-              <tr><td><code>SecondaryPlanet</code></td><td><code>SystemObjectBase</code></td><td>All selectable-entity and common orbital-object fields</td><td>Adds the secondary-planet discriminator, terrestrial category, and archetype.</td></tr>
-              <tr><td><code>GasGiant</code></td><td><code>SystemObjectBase</code></td><td>All selectable-entity and common orbital-object fields</td><td>Adds the gas-giant discriminator, category, and archetype.</td></tr>
-              <tr><td><code>OtherObject</code></td><td><code>SystemObjectBase</code></td><td>All selectable-entity and common orbital-object fields</td><td>Adds the other-object discriminator, category, and archetype.</td></tr>
-              <tr><td><code>IndependentStation</code></td><td><code>SystemObjectBase</code></td><td>All selectable-entity and common orbital-object fields</td><td>Adds the station discriminator and narrows <code>WorldType</code> to <code>"IndependentStation"</code>.</td></tr>
+              <tr><td><code>SystemObjectBase</code></td><td><code>SelectableEntity</code></td><td>ID, procedural name, nice name, visibility, intelligence text</td><td>Adds the common orbit and kind used by all orbital objects.</td></tr>
+              <tr><td><code>Planet</code></td><td><code>SystemObjectBase</code></td><td>All selectable-entity fields plus orbit and kind</td><td>Adds physical planet facts and either inhabited-world information or the explicit <code>false</code> sentinel.</td></tr>
+              <tr><td><code>OtherCelestialObject</code></td><td><code>SystemObjectBase</code></td><td>All selectable-entity fields plus orbit and kind</td><td>Represents a non-planet orbital object and retains a structured object type for rendering and domain behavior.</td></tr>
             </tbody>
           </table>
         </div>
-        <p class="small" style="margin-top: .8rem"><code>SystemObject</code> does not extend anything: it is a discriminated union of the five interfaces derived from <code>SystemObjectBase</code>. <code>Sector</code>, <code>TravelRules</code>, <code>RouteEndpoint</code>, <code>HexLocation</code>, <code>Orbit</code>, and the generated world-data interfaces are plain contained values with no inheritance.</p>
+        <p class="small" style="margin-top: .8rem"><code>SystemObject</code> does not extend anything: it is a discriminated union of <code>Planet</code> and <code>OtherCelestialObject</code>. <code>Sector</code>, <code>RouteEndpoint</code>, <code>HexLocation</code>, <code>Orbit</code>, and <code>InhabitedInfo</code> are plain contained values with no inheritance.</p>
       </article>
 
       <article class="card" style="margin-top: 1rem; border-top: 3px solid var(--green)">
@@ -413,16 +410,11 @@ interface SelectableEntity {
 
 interface Sector {
   SchemaVersion: "merged-v1";
-  OriginalSeed: string;
+  OriginalSeed: string; // provenance; not a complete replay specification
   SectorName: string;
-  TravelRules: TravelRules;
   Systems: StarSystem[];
   Routes: Route[];
   PlayerShip: PlayerShip;
-}
-
-interface TravelRules {
-  SystemBoundaryMultiplier: number; // must be greater than 1
 }
 
 interface Route extends SelectableEntity {
@@ -435,7 +427,6 @@ interface RouteEndpoint {
 }
 
 interface PlayerShip extends SelectableEntity {
-  CurrentSystemId: Guid;
   CurrentLocationId: Guid;
 }</pre>
       </article>
@@ -456,7 +447,6 @@ interface StarSystem extends SelectableEntity {
 
 interface Star extends SelectableEntity {
   StarType: string;
-  GenerationRoll: number;     // integer from 1 through 100
   HabitabilityRating: number; // current generator primaryStar.hab
 }
 
@@ -468,126 +458,262 @@ interface Orbit {
 
 interface SystemObjectBase extends SelectableEntity {
   Orbit: Orbit;
-  WorldType: string;
-  InhabitedWorld: boolean;
-  Description: string | null;
+  Kind: "Planet" | "OtherCelestialObject";
 }
+
+type OtherCelestialObjectType =
+  | "AsteroidBelt"
+  | "KuiperBelt"
+  | "GasCloud"
+  | "IndependentStation";
 
 type SystemObject =
-  | PrimaryPlanet
-  | SecondaryPlanet
-  | GasGiant
-  | OtherObject
-  | IndependentStation;
+  | Planet
+  | OtherCelestialObject;
 
-interface PrimaryPlanet extends SystemObjectBase {
-  Kind: "PrimaryPlanet";
-  Archetype: "PrimaryPlanet";
-  Category: "TerrestrialPlanet";
-  InhabitedWorld: true;
-  HasAliens: boolean;
-  SpecialStates: string[];
-  Tags: [WorldTag, WorldTag];
-  Attributes: WorldAttributes;
-  PlanetDetails: PlanetDetails;
-  CalculatedHab: number;
-  CivilizationTier: CivilizationTier;
+interface OtherCelestialObject extends SystemObjectBase {
+  Kind: "OtherCelestialObject";
+  ObjectType: OtherCelestialObjectType;
 }
 
-interface SecondaryPlanet extends SystemObjectBase {
-  Kind: "SecondaryPlanet";
-  Category: "TerrestrialPlanet";
-  Archetype: string;
+interface Planet extends SystemObjectBase {
+  Kind: "Planet";
+  Size: Size;
+  BulkComposition: BulkComposition;
+  SurfaceWaterPresent: boolean;
+  TidallyLocked: boolean;
+  Atmosphere: Atmosphere;
+  Temperature: Temperature;
+  NativeBiosphere: NativeBiosphere;
+  InhabitedInfo: InhabitedInfo | false;
 }
-
-interface GasGiant extends SystemObjectBase {
-  Kind: "GasGiant";
-  Category: "GasGiant";
-  Archetype: string;
-}
-
-interface OtherObject extends SystemObjectBase {
-  Kind: "OtherObject";
-  Category: "OtherObject";
-  Archetype: string;
-}
-
-interface IndependentStation extends SystemObjectBase {
-  Kind: "IndependentStation";
-  WorldType: "IndependentStation";
-}</pre>
+ </pre>
       </article>
 
       <article class="card" style="margin-top: 1rem; border-top: 3px solid var(--green)">
         <h3>Proposed canonical schema · generated world facts and POIs</h3>
-        <pre class="tree">interface WorldTag {
-  Roll: number;
-  Tag: string;
-}
+        <pre class="tree">type WorldTag =
+  | "Abandoned Colony"
+  | "Alien Ruins"
+  | "Altered Humanity"
+  | "Anarchists"
+  | "Anthropomorphs"
+  | "Area 51"
+  | "Badlands World"
+  | "Battleground"
+  | "Beastmasters"
+  | "Bubble Cities"
+  | "Cheap Life"
+  | "Civil War"
+  | "Cold War"
+  | "Colonized Population"
+  | "Cultural Power"
+  | "Cybercommunists"
+  | "Cyborgs"
+  | "Cyclical Doom"
+  | "Desert World"
+  | "Doomed World"
+  | "Dying Race"
+  | "Eugenic Cult"
+  | "Exchange Consulate"
+  | "Fallen Hegemon"
+  | "Feral World"
+  | "Flying Cities"
+  | "Forbidden Tech"
+  | "Former Warriors"
+  | "Freak Geology"
+  | "Freak Weather"
+  | "Friendly Foe"
+  | "Gold Rush"
+  | "Great Work"
+  | "Hatred"
+  | "Heavy Industry"
+  | "Heavy Mining"
+  | "Hivemind"
+  | "Holy War"
+  | "Hostile Biosphere"
+  | "Hostile Space"
+  | "Immortals"
+  | "Local Specialty"
+  | "Local Tech"
+  | "Major Spaceyard"
+  | "Mandarinate"
+  | "Mandate Base"
+  | "Maneaters"
+  | "Megacorps"
+  | "Mercenaries"
+  | "Minimal Contact"
+  | "Misandry/Misogyny"
+  | "Night World"
+  | "Nomads"
+  | "Oceanic World"
+  | "Out of Contact"
+  | "Outpost World"
+  | "Perimeter Agency"
+  | "Pilgrimage Site"
+  | "Pleasure World"
+  | "Police State"
+  | "Post-Scarcity"
+  | "Preceptor Archive"
+  | "Pretech Cultists"
+  | "Prison Planet"
+  | "Psionics Academy"
+  | "Psionics Fear"
+  | "Psionics Worship"
+  | "Quarantined World"
+  | "Radioactive World"
+  | "Refugees"
+  | "Regional Hegemon"
+  | "Restrictive Laws"
+  | "Revanchists"
+  | "Revolutionaries"
+  | "Rigid Culture"
+  | "Rising Hegemon"
+  | "Ritual Combat"
+  | "Robots"
+  | "Seagoing Cities"
+  | "Sealed Menace"
+  | "Secret Masters"
+  | "Sectarians"
+  | "Seismic Instability"
+  | "Shackled World"
+  | "Societal Despair"
+  | "Sole Supplier"
+  | "Taboo Treasure"
+  | "Terraform Failure"
+  | "Theocracy"
+  | "Tomb World"
+  | "Trade Hub"
+  | "Tyranny"
+  | "Unbraked AI"
+  | "Urbanized Surface"
+  | "Utopia"
+  | "Warlords"
+  | "Xenophobes"
+  | "Zombies";
 
-interface WorldAttributeResult {
-  Roll: number;
-  Result: string;
-  Hab?: number;
-  HabRequired?: number;
-  TechLevel?: number;
-  PopulationMin?: number;
-  PopulationMax?: number;
-  OptionalDescription?: string;
-  OrbitalOrder?: number;
-  ThermalOrbit?: "Too Hot" | "Hot" | "Temperate" | "Cold" | "Too Cold";
-  Alien?: true;
-}
+type Atmosphere =
+  | "Vacuum"
+  | "Corrosive"
+  | "Invasive"
+  | "Corrosive+Invasive"
+  | "Inert gas"
+  | "Breathable: Thin/Thick"
+  | "Breathable";
 
-interface WorldAttributes {
-  Atmosphere: WorldAttributeResult;
-  Temperature: WorldAttributeResult;
-  NativeBiosphere: WorldAttributeResult;
-  TerranBiosphere: WorldAttributeResult;
-  Population: WorldAttributeResult;
-  TechLevel: WorldAttributeResult;
-}
+type Temperature =
+  | "Cryogenic"
+  | "Volcanic"
+  | "Glacial"
+  | "Polar"
+  | "Arid"
+  | "Infernal"
+  | "Subarctic"
+  | "Equatorial"
+  | "Boreal"
+  | "Alpine"
+  | "Temperate"
+  | "Mediterranean"
+  | "Subtropical";
 
-interface PlanetDetails {
-  TerrestrialSize: {
-    Roll: number;
-    Result: "Luna" | "Mars" | "Earth" | "Super-Earth";
-    Hab: number;
-  };
-  BulkComposition: {
-    Roll: number;
-    Result: string;
-    Hab: number;
-  };
-  SurfaceWaterPresent: {
-    Result: "Yes" | "No";
-    Roll?: number;
-    Override?: string;
-  };
-  GasGiantMoonRoll: number;
-  TidallyLocked: boolean;
-}
+type NativeBiosphere =
+  | "None"
+  | "Microbial"
+  | "Limited"
+  | "Significant"
+  | "Engineered";
 
-type CivilizationTier =
-  | "Primitive"
-  | "Facility"
-  | "Substantial"
-  | "Brilliant"
-  | "Domineering";
+type TerranBiosphere =
+  | "None"
+  | "Microbial"
+  | "Limited"
+  | "Significant"
+  | "Engineered";
+
+type Population =
+  | "Fewer than 500"
+  | "Fewer than a million inhabitants"
+  | "Several million inhabitants"
+  | "Hundreds of millions of inhabitants"
+  | "Billions of inhabitants";
+
+type TechLevel =
+  | "Neolithic-level technology"
+  | "Medieval technology"
+  | "Early Industrial Age tech"
+  | "Tech like that of present-day Earth"
+  | "Modern postech"
+  | "Postech with specialties"
+  | "Pretech with surviving infrastructure";
+
+type Size = "Luna" | "Mars" | "Earth" | "Super-Earth" | "Neptune" | "Jupiter";
+
+type BulkComposition =
+  | "Sulfur"
+  | "Carbon"
+  | "Magnesium"
+  | "Calcium-Aluminum"
+  | "Iron"
+  | "Water"
+  | "Silicon"
+  | "Jovian Gas"
+  | "Neptunian Gas";
+
+interface InhabitedInfo {
+  TotalHab: number;
+  WorldTags: [WorldTag, WorldTag];
+  TerranBiosphere: TerranBiosphere;
+  Population: Population;
+  TechLevel: TechLevel;
+}
 
 interface PointOfInterest extends SelectableEntity {
-  ParentObjectId: Guid; // system, star, or SystemObject in the same system
+  ParentObjectId: Guid; // SystemObjectBase parent
   POIType: string;      // current generator point value
-  GenerationRoll?: number;
-  Occupant?: string;
-  Situation?: string;
 }</pre>
 
         <p class="small">
           Deliberately absent from the canonical schema: <code>orbitalPositionCategory</code>,
           <code>habitableSlot</code>, <code>maxHabitableSlots</code>, slot wrappers, empty slots,
-          <code>IngressEgress</code>, and ingress/egress POI kinds.
+          <code>IngressEgress</code>, ingress/egress POI kinds, generation rolls, object
+          descriptions, alien-generation flags, serialized civilization tiers, archetypes,
+          world types, special states, thermal-orbit values, categories, and the old
+          primary/secondary-planet distinction.
         </p>
+      </article>
+
+      <article class="card" style="margin-top: 1rem; border-top: 3px solid var(--amber)">
+        <h3>Derived Fields Calculation Addendum</h3>
+        <p class="small">These are static lookup relationships used while building an object. They are not serialized schema fields; the selected values and final derived values are the only data retained on the object.</p>
+        <pre class="tree">StarType         → HabProvided
+WorldTag         → HabRequired
+
+Size             → HabProvided
+Atmosphere       → HabProvided
+Temperature      → HabProvided
+BulkComposition  → HabProvided
+
+TerranBiosphere  → HabRequired
+TerranBiosphere  → HabProvided
+
+Population       → HabRequired
+TechLevel        → HabRequired
+
+WorldTag         → TLRequired
+WorldTag         → MinPop
+WorldTag         → MaxPop
+WorldTag         → NativeBioSphereRequired
+WorldTag         → MaxAtmosphere</pre>
+        <p class="small">Additional static maps will be required for presentation or supporting calculations, but are intentionally not listed here. Examples include tech-level labels such as <code>TLn</code>, size-to-display-radius mappings, temperature-to-AU mappings, and population-to-disjoint-number-range mappings.</p>
+        <h3 style="margin-top: 1.1rem">Special cases removed or altered</h3>
+        <ul>
+          <li><code>Max Environment Hab</code> is removed. Environmental complications such as poison storms or radioactive dust are applied ad hoc in narrative rather than as generator constraints.</li>
+          <li><code>Flying Cities</code> no longer creates or requires the <code>NONTERRESTRIAL</code> state.</li>
+          <li><code>Primitive Aliens</code> and <code>Xenophiles</code> are removed because they require generating a sapient alien race.</li>
+          <li>The world-tag table is reduced to 98 entries and must be reindexed to a contiguous 1–98 range; removing the current entries alone would otherwise leave gaps at rolls 64 and 98.</li>
+          <li>Planet archetypes become generator-only templates. For example, Venusian, Jovian, and Neptunian templates are expanded and varied into complete uninhabited <code>Planet</code> records before serialization; the canonical model and UI receive the resulting physical facts, not an archetype marker or a lesser planet shape.</li>
+          <li>Jovian and Neptunian planets use <code>Size: "Jupiter"</code> or <code>Size: "Neptune"</code> with the matching <code>"Jovian Gas"</code> or <code>"Neptunian Gas"</code> bulk composition. Their remaining planet fields are populated by the template, including <code>InhabitedInfo: false</code> and <code>SurfaceWaterPresent: false</code>.</li>
+        </ul>
       </article>
     </section>
 
@@ -605,11 +731,11 @@ interface PointOfInterest extends SelectableEntity {
             </tr>
             <tr>
               <td><code>seed: string</code></td><td><code>OriginalSeed: string</code></td><td><span class="status exact">retain once</span></td>
-              <td>One seed field; choose consistent casing.</td>
+              <td>One seed field; choose consistent casing. It records generation provenance, but does not promise that regenerating from the seed will reproduce a sector after generator changes or user edits.</td>
             </tr>
             <tr>
               <td><code>starCount: 21..30</code></td><td>—</td><td><span class="status choice">derive or retain</span></td>
-              <td><code>systems.length</code> carries the same fact. Prefer deriving it unless the original roll/result must be audited.</td>
+              <td><code>systems.length</code> carries the same fact. Prefer deriving it; do not preserve the generation roll as schema data.</td>
             </tr>
             <tr>
               <td><code>systems: StarSystemV4[]</code></td><td><code>Systems: StarSystem[]</code></td><td><span class="status adapt">merge types</span></td>
@@ -624,16 +750,16 @@ interface PointOfInterest extends SelectableEntity {
               <td>Replace two bare system IDs with two route endpoints. Each endpoint stores its system ID and fixed angle on that system's boundary.</td>
             </tr>
             <tr class="row-gap">
-              <td>—</td><td>—</td><td><span class="status gap">new travel rule</span></td>
-              <td>Add <code>TravelRules.SystemBoundaryMultiplier</code>. Boundary AU is derived from the outermost direct-orbit planet rather than represented by an ingress/egress region.</td>
+              <td>—</td><td>—</td><td><span class="status choice">universal rule</span></td>
+              <td>Boundary AU is derived from the outermost direct-orbit object with one universal multiplier, rather than represented by an ingress/egress region or serialized sector configuration.</td>
             </tr>
             <tr class="row-gap">
               <td>—</td><td><code>PlayerShip: PlayerShip</code></td><td><span class="status exact">retain from UI</span></td>
-              <td>Keep as mutable campaign state within the combined project, clearly separated from procedural facts.</td>
+              <td>Keep as mutable campaign state within the combined project, clearly separated from procedural facts. Derive its current system from <code>CurrentLocationId</code>.</td>
             </tr>
             <tr class="row-gap">
               <td>Names and descriptions on some objects</td><td><code>DetailsAndVisibility[]</code></td><td><span class="status adapt">merge information</span></td>
-              <td>Retain generated names/descriptions, editable names, visibility, summaries, and tiered intelligence. Embedding versus side-table storage remains a structural choice.</td>
+              <td>Retain generated and editable names, visibility, summaries, and tiered intelligence. Narrative text belongs in the UI intelligence fields, not a redundant object description.</td>
             </tr>
           </tbody>
         </table>
@@ -652,7 +778,7 @@ interface PointOfInterest extends SelectableEntity {
             <tr><td><code>hex.column</code><br><code>hex.row</code></td><td><code>HexLocation.X</code><br><code>HexLocation.Y</code></td><td><span class="status exact">retain once</span></td><td>Standardize on the intended 10-column × 8-row bounds when the generator transpose is fixed.</td></tr>
             <tr><td><code>primaryStar.result</code></td><td><code>Star.StarType</code></td><td><span class="status exact">retain once</span></td><td>One star-type field; choose domain naming rather than preserving duplicate casing.</td></tr>
             <tr class="row-gap"><td>—</td><td><code>Star.Id</code></td><td><span class="status exact">retain from UI</span></td><td>Add star identity to generator construction so stars remain selectable and referenceable without post-processing.</td></tr>
-            <tr><td><code>primaryStar.roll</code><br><code>hab</code></td><td>—</td><td><span class="status exact">retain from generator</span></td><td>Keep as structured star-generation facts. Do not reduce them to display text.</td></tr>
+            <tr><td><code>primaryStar.roll</code><br><code>hab</code></td><td>—</td><td><span class="status adapt">retain hab; retire roll</span></td><td>Keep the habitability rating as structured data. The generation roll is bookkeeping and is absent from the canonical schema.</td></tr>
             <tr><td><code>primaryStar.maxHabitableSlots</code></td><td>—</td><td><span class="status retire">retire</span></td><td>Remove with the habitable-slot mechanic and simplify the generator rules that depend on it.</td></tr>
             <tr><td><code>locationSlots[]</code></td><td><code>Worlds[]</code> + <code>POIs[]</code></td><td><span class="status adapt">replace both</span></td><td>Use a rich discriminated system-object collection. Preserve every meaningful object kind without requiring a slot wrapper or pretending all objects are worlds.</td></tr>
             <tr><td><code>slot.au</code></td><td><code>World.AU</code></td><td><span class="status exact">retain</span></td><td>Move AU onto the orbiting object. Child satellites may keep <code>null</code> unless a satellite-distance model is later added.</td></tr>
@@ -674,23 +800,23 @@ interface PointOfInterest extends SelectableEntity {
           <tbody>
             <tr>
               <td><code>PrimaryPlanet</code></td><td><code>World</code> approximates it</td><td><span class="status adapt">enrich</span></td>
-              <td>Keep its distinct kind plus name, tags, all six attribute results, planet details, alien/special states, calculated habitability, civilization tier, AU/parent, angle, and display state.</td>
+              <td>Map it to <code>Planet</code>; retain its physical facts and put its inhabited-only facts in <code>InhabitedInfo</code>.</td>
             </tr>
             <tr>
               <td><code>SecondaryPlanet</code></td><td><code>World</code> approximates it</td><td><span class="status adapt">enrich</span></td>
-              <td>Keep its distinct kind, name, archetype, category, description, POIs, orbit/parent data, angle, and display state.</td>
+              <td>Replace it with a fully populated <code>Planet</code> whose <code>InhabitedInfo</code> is <code>false</code>. The generator expands and varies an internal archetype template into the required physical facts before emitting the object. Existing lesser-shape secondary-planet data is obsolete rather than losslessly migrated.</td>
             </tr>
             <tr>
               <td><code>GasGiant</code></td><td>Would be forced into <code>World</code></td><td><span class="status adapt">first-class kind</span></td>
-              <td>Keep ID, archetype, category, description, satellites/child references, POIs, AU, angle, and display state without collapsing it into a string world type.</td>
+              <td>Map it to a fully populated <code>Planet</code> with <code>InhabitedInfo: false</code>. Jovian and Neptunian generator templates emit the appropriate size, gas bulk composition, remaining physical facts, orbit/parent data, POIs, and display state.</td>
             </tr>
             <tr>
               <td><code>OtherObject</code></td><td>No honest equivalent</td><td><span class="status exact">retain kind</span></td>
-              <td>Make asteroid belts and other objects first-class selectable system objects with their own archetype, category, description, POIs, AU, angle, and display state.</td>
+              <td>Map it to <code>OtherCelestialObject</code>; retain identity, orbit/parent data, POIs, display state, and a structured belt or gas-cloud <code>ObjectType</code>.</td>
             </tr>
             <tr>
               <td><code>IndependentStation</code></td><td>No honest equivalent</td><td><span class="status exact">retain kind</span></td>
-              <td>Keep it as a selectable orbital object with its ID, AU, angle, POI, name/detail/visibility state, and no fabricated world parent.</td>
+              <td>Map it to <code>OtherCelestialObject</code> with <code>ObjectType: "IndependentStation"</code>, its ID, orbit, POI, and name/detail/visibility state.</td>
             </tr>
             <tr>
               <td><code>IngressEgress</code></td><td>No equivalent needed</td><td><span class="status retire">retire</span></td>
@@ -707,34 +833,31 @@ interface PointOfInterest extends SelectableEntity {
       <div class="grid" style="margin-top: 1rem">
         <article class="card">
           <h3>Points of interest</h3>
-          <p>Keep <code>id</code>, <code>point</code>, <code>roll</code>, <code>occupant</code>, and <code>situation</code>, then add the UI's explicit <code>ParentObjectId</code> and display/detail/visibility state.</p>
+          <p>Keep <code>id</code> and <code>point</code>, then add the UI's explicit <code>ParentObjectId</code> and display/detail/visibility state. Occupant and situation narrative is covered by <code>IntelligenceText</code>; generation rolls are bookkeeping and are not retained.</p>
           <p class="small">The current generator's <code>kind</code> discriminator only distinguishes ingress, egress, and other. Once warp-point POIs are removed, it carries no useful information; <code>point</code> becomes the canonical <code>POIType</code>.</p>
         </article>
         <article class="card">
           <h3>Parent/child representation</h3>
-          <p>A generated <code>PrimaryPlanet</code> can orbit a gas giant. <code>Orbit.ParentObjectId</code> supports that relationship without restricting it to the prototype's narrow <code>World → World</code> relationship.</p>
-          <p class="small"><code>isGasGiantMoon</code> and a gas giant's satellite list are derived from this relationship rather than serialized as duplicate facts. The original <code>gasGiantMoonRoll</code> remains in <code>PlanetDetails</code>.</p>
+          <p>A <code>Planet</code> can orbit any other system object. <code>Orbit.ParentObjectId</code> supports that relationship without restricting it to the prototype's narrow <code>World → World</code> relationship.</p>
+          <p class="small">Parent/child relationships are derived from this reference rather than duplicated as serialized satellite lists. The gas-giant-moon generation roll is bookkeeping and is not retained.</p>
         </article>
       </div>
       <article class="card callout decision" style="margin-top: 1rem">
         <h3>Replacement warp-boundary rule</h3>
-        <pre class="tree">directOrbitPlanets = system.Objects.filter(object =&gt;
-  object.Orbit.ParentObjectId === null &amp;&amp;
-  (object.Kind === "PrimaryPlanet" ||
-   object.Kind === "SecondaryPlanet" ||
-   object.Kind === "GasGiant")
+        <pre class="tree">directOrbitObjects = system.Objects.filter(object =&gt;
+  object.Orbit.ParentObjectId === null
 );
 
-outermostPlanetAU = max(directOrbitPlanets.map(object =&gt; object.Orbit.AU));
+outermostObjectAU = max(directOrbitObjects.map(object =&gt; object.Orbit.AU));
 
 systemBoundaryAU =
-  outermostPlanetAU * sector.TravelRules.SystemBoundaryMultiplier;
+  outermostObjectAU * UNIVERSAL_SYSTEM_BOUNDARY_MULTIPLIER;
 
 routeMarkerPosition = polarPoint(
   systemBoundaryAU,
   routeEndpoint.BoundaryAngleDegrees
 );</pre>
-        <p class="small">Other objects, stations, and satellites do not set the boundary. A route stores one endpoint angle for each connected system, so the same route can meet the two system boundaries at different fixed angles.</p>
+        <p class="small">Only direct-orbit objects set the boundary; child objects do not. A route stores one endpoint angle for each connected system, so the same route can meet the two system boundaries at different fixed angles.</p>
       </article>
     </section>
 
@@ -753,7 +876,7 @@ routeMarkerPosition = polarPoint(
         </article>
         <article class="card">
           <h3>Routes and player ship</h3>
-          <p><code>Route</code> links two systems. <code>PlayerShip</code> points to a current system and selectable location. Retain both in the combined project, while distinguishing generated sector facts from mutable campaign state.</p>
+          <p><code>Route</code> links two systems. <code>PlayerShip</code> points only to its current selectable location; its current system is derived from that location. Retain both in the combined project, while distinguishing generated sector facts from mutable campaign state.</p>
           <p class="small">Each route endpoint gains a fixed boundary angle. Route creation, endpoint-angle assignment, and initial ship placement become explicit generation/initialization responsibilities.</p>
         </article>
       </div>
@@ -781,7 +904,7 @@ routeMarkerPosition = polarPoint(
             <tr><td>Root cardinality</td><td><code>starCount</code> and <code>systems</code> are each constrained to 21–30.</td><td>No system-count bound.</td><td>Keep the 21–30 generation rule. If <code>starCount</code> remains serialized, enforce equality with <code>systems.length</code>.</td></tr>
             <tr><td>Coordinates</td><td>Incorrectly transposed 8 × 10 bounds.</td><td>No model bounds; renderer uses the intended 10 × 8 grid.</td><td>Later minor fix: make 10 × 8 authoritative in schema, generator, validation, fixtures, and renderer.</td></tr>
             <tr><td>References</td><td>Mostly nesting; JSON Schema does not enforce global ID uniqueness or cross-object references.</td><td>Runtime checks global selectable-ID uniqueness, parents, routes, ship location, and detail coverage.</td><td>Adopt the UI's graph-integrity checks and expand parent validation to all merged system-object kinds.</td></tr>
-            <tr><td>Domain rules</td><td>Generator code checks primary worlds, transit points, extra-world counts, POI counts, AU ordering, and habitable slots.</td><td>Validator checks application graph invariants but not rich SWN generation rules.</td><td>Combine the useful rule sets. Delete transit-region, ingress/egress POI, orbital-position-category, and habitable-slot rules; add boundary multiplier and route-endpoint-angle validation.</td></tr>
+            <tr><td>Domain rules</td><td>Generator code checks primary worlds, transit points, extra-world counts, POI counts, AU ordering, and habitable slots.</td><td>Validator checks application graph invariants but not rich SWN generation rules.</td><td>Combine the useful rule sets. Delete transit-region, ingress/egress POI, orbital-position-category, and habitable-slot rules; validate route-endpoint angles against the universal boundary rule.</td></tr>
             <tr><td>Unknown fields</td><td>Rejected throughout the reachable JSON schema.</td><td>TypeScript excess-property checks are compile-time and contextual, not a serialization guarantee.</td><td>Preserve strict decoding for persistence/import while allowing controlled schema evolution through versioning.</td></tr>
             <tr><td>Legacy definitions</td><td><code>world</code>, <code>location</code>, and <code>pointOfInterest</code> are defined in the JSON Schema but unreachable from the root.</td><td>—</td><td>Remove or replace them while establishing the new canonical schema; they are not current V4 output.</td></tr>
           </tbody>
@@ -794,7 +917,7 @@ routeMarkerPosition = polarPoint(
       <div class="flow" aria-label="Recommended schema convergence">
         <article class="card node">
           <h3>Generator information</h3>
-          <p>Procedural facts, rich worlds, object kinds, generated descriptions, rolls, AU, and POIs.</p>
+          <p>Procedural facts, rich worlds, object kinds, AU, and POIs.</p>
         </article>
         <div class="arrow" aria-hidden="true">→</div>
         <article class="card node">
@@ -812,9 +935,9 @@ routeMarkerPosition = polarPoint(
         <article class="card">
           <h3>Suggested implementation sequence</h3>
           <ol class="numbered">
-            <li><b>Design the canonical entity model.</b> Start with the information cross-product and a first-class discriminated system-object union.</li>
+            <li><b>Design the canonical entity model.</b> Start with a first-class <code>Planet</code>/<code>OtherCelestialObject</code> discriminated union.</li>
             <li><b>Mark intentional deletions.</b> Remove orbital-position category, habitable slot, maximum habitable slots, empty slots, ingress/egress regions, warp-point POIs, and dependent rules.</li>
-            <li><b>Move the generator onto the new model.</b> Generate final IDs, object relationships, display angles, names/details defaults, and route inputs directly.</li>
+            <li><b>Move the generator onto the new model.</b> Expand internal planet archetype templates into complete planet records, then generate final IDs, object relationships, structured non-planet object types, display angles, names/details defaults, and route inputs directly.</li>
             <li><b>Move the UI onto the new model.</b> Render every system-object kind and update selection, containment, editing, deletion, visibility, and ship movement.</li>
             <li><b>Unify schema and validation.</b> Cover generation rules and graph integrity in one contract/test suite; then remove both obsolete models.</li>
           </ol>
@@ -822,11 +945,11 @@ routeMarkerPosition = polarPoint(
         <article class="card">
           <h3>Structural recommendations</h3>
           <ul>
-            <li>Use a discriminated union for planets, gas giants, other objects, and independent stations.</li>
+            <li>Use a discriminated union for <code>Planet</code> and <code>OtherCelestialObject</code>. Jovian and Neptunian bodies are planets; structured <code>ObjectType</code> values distinguish the remaining non-planets such as belts, clouds, and stations.</li>
             <li>Use a general parent-object relationship so satellites and POIs can reference any permitted object kind.</li>
             <li>Represent warp travel entirely through routes: each endpoint names a system and a fixed boundary angle.</li>
             <li>Keep generator facts structured; display/intelligence text augments rather than replaces them.</li>
-            <li>Separate generated sector content from mutable campaign state such as visibility and ship location.</li>
+            <li>Treat the persisted <code>Sector</code> as a mutable snapshot: generated facts and campaign state share the snapshot, while <code>OriginalSeed</code> records provenance rather than promising deterministic reconstruction.</li>
             <li>Add an explicit schema version and, if sectors need stable archive identity, a sector ID distinct from seed.</li>
             <li>Generate stable IDs at object creation time so generation and UI share identity without a conversion phase.</li>
             <li>Fix the 10 × 8 coordinate bounds independently; it need not block structural design.</li>
@@ -839,11 +962,11 @@ routeMarkerPosition = polarPoint(
         <div>
           <ul>
             <li><b>Sector:</b> schema version, seed, name, systems, routes, and archive identity if needed.</li>
-            <li><b>System/star:</b> IDs, 10 × 8 hex, star type, roll, habitability rating, names/details, and visibility.</li>
-            <li><b>Primary worlds:</b> every tag, attribute, planet-detail field, state, habitability result, civilization tier, identity, orbit/parent, and UI state.</li>
-            <li><b>Other system objects:</b> exact kind, archetype, category, description, satellites/parent, POIs, AU, angle, and UI state.</li>
-            <li><b>POIs:</b> ID, POI type, roll, occupant, situation, parent object, names/details, and visibility.</li>
-            <li><b>Campaign/UI:</b> route endpoint systems and angles, boundary multiplier, ship location, procedural/editable names, summary and intelligence tiers, visibility, and selectable identity.</li>
+            <li><b>System/star:</b> IDs, 10 × 8 hex, star type, habitability rating, names/details, and visibility.</li>
+            <li><b>Planets:</b> terrestrial, Jovian, and Neptunian physical facts, atmospheric data, identity, orbit/parent, and UI state; inhabited-only data lives in <code>InhabitedInfo</code>.</li>
+            <li><b>Other celestial objects:</b> identity, structured object type, orbit/parent, POIs, and UI state.</li>
+            <li><b>POIs:</b> ID, POI type, a system-object parent, names/details, and visibility.</li>
+            <li><b>Campaign/UI:</b> route endpoint systems and angles, ship location, procedural/editable names, summary and intelligence tiers, visibility, and selectable identity.</li>
           </ul>
           <p class="small"><b>Intentionally not retained:</b> <code>orbitalPositionCategory</code>, <code>habitableSlot</code>, <code>maxHabitableSlots</code>, empty slot records, <code>IngressEgress</code> locations, and ingress/egress POIs. A slot ID is unnecessary if it identifies only a removed wrapper.</p>
         </div>
