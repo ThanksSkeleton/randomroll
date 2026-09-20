@@ -39,21 +39,24 @@ export interface Sector {
   SectorName: string;
   Systems: StarSystem[];
   Routes: Route[];
+  RoutePortals: RoutePortal[];
   PlayerShip: PlayerShip;
 }
 
 export interface Route extends SelectableEntity {
-  Endpoints: [RouteEndpoint, RouteEndpoint];
+  PortalIds: [Guid, Guid];
 }
 
-export interface RouteEndpoint {
+/** One end of a route, located on its system's derived boundary. */
+export interface RoutePortal extends SelectableEntity {
+  RouteId: Guid;
   SystemId: Guid;
   /** Inclusive at 0; exclusive at 360. */
   BoundaryAngleDegrees: number;
 }
 
 export interface PlayerShip extends SelectableEntity {
-  /** The ship's current system is derived from this selectable object ID. */
+  /** A system-contained location, route portal, or route; never this ship. */
   CurrentLocationId: Guid;
 }
 
@@ -77,8 +80,13 @@ export interface Star extends SelectableEntity {
 }
 
 export interface Orbit {
-  /** Null when a satellite has no modeled distance from its parent. */
-  AU: number | null;
+  /**
+   * Generated star-relative distance. For direct orbits, a randomized
+   * temperature- and star-constrained placement roll selects this value.
+   * A moon inherits its parent planet's value; no separate moon-to-planet
+   * distance is modeled.
+   */
+  AU: number;
   /** Inclusive at 0; exclusive at 360. */
   AngleDegrees: number;
   /** Null means a direct orbit of the system's star. */
@@ -226,18 +234,20 @@ export type Atmosphere =
 
 export type Temperature =
   | "Cryogenic"
-  | "Volcanic"
   | "Glacial"
   | "Polar"
-  | "Arid"
-  | "Infernal"
   | "Subarctic"
-  | "Equatorial"
   | "Boreal"
   | "Alpine"
+  | "Temperate (chilly)"
   | "Temperate"
+  | "Temperate (warm)"
   | "Mediterranean"
-  | "Subtropical";
+  | "Subtropical"
+  | "Equatorial"
+  | "Arid"
+  | "Infernal"
+  | "Volcanic";
 
 export type NativeBiosphere =
   | "None"

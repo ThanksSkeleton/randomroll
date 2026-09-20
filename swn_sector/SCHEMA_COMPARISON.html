@@ -304,7 +304,7 @@
         <p>
           Remove the <code>IngressEgress</code> region and its ingress/egress POIs. A system's warp
           boundary is derived by multiplying the outermost direct-orbit object’s AU by a universal
-          boundary multiplier. Every route endpoint stores a fixed angle on its connected system's boundary.
+          boundary multiplier. Every route portal stores a fixed angle on its connected system's boundary.
         </p>
       </article>
 
@@ -368,6 +368,7 @@
             </thead>
             <tbody>
               <tr><td><code>Route</code></td><td><code>SelectableEntity</code></td><td>ID, procedural name, nice name, visibility, intelligence text</td><td>Makes each route selectable, nameable, revealable, and inspectable.</td></tr>
+              <tr><td><code>RoutePortal</code></td><td><code>SelectableEntity</code></td><td>ID, procedural name, nice name, visibility, intelligence text</td><td>Makes each route end a selectable, inspectable system-boundary entity rather than a value embedded in a route.</td></tr>
               <tr><td><code>PlayerShip</code></td><td><code>SelectableEntity</code></td><td>ID, procedural name, nice name, visibility, intelligence text</td><td>Gives the ship the same selection and disclosure behavior as other UI objects.</td></tr>
               <tr><td><code>StarSystem</code></td><td><code>SelectableEntity</code></td><td>ID, procedural name, nice name, visibility, intelligence text</td><td>Makes a system a first-class selectable object.</td></tr>
               <tr><td><code>Star</code></td><td><code>SelectableEntity</code></td><td>ID, procedural name, nice name, visibility, intelligence text</td><td>Makes the system's star independently selectable and inspectable.</td></tr>
@@ -378,7 +379,7 @@
             </tbody>
           </table>
         </div>
-        <p class="small" style="margin-top: .8rem"><code>SystemObject</code> does not extend anything: it is a discriminated union of <code>Planet</code> and <code>OtherCelestialObject</code>. <code>Sector</code>, <code>RouteEndpoint</code>, <code>HexLocation</code>, <code>Orbit</code>, and <code>InhabitedInfo</code> are plain contained values with no inheritance.</p>
+        <p class="small" style="margin-top: .8rem"><code>SystemObject</code> does not extend anything: it is a discriminated union of <code>Planet</code> and <code>OtherCelestialObject</code>. <code>Sector</code>, <code>HexLocation</code>, <code>Orbit</code>, and <code>InhabitedInfo</code> are plain contained values with no inheritance.</p>
       </article>
 
       <article class="card" style="margin-top: 1rem; border-top: 3px solid var(--green)">
@@ -414,21 +415,24 @@ interface Sector {
   SectorName: string;
   Systems: StarSystem[];
   Routes: Route[];
+  RoutePortals: RoutePortal[];
   PlayerShip: PlayerShip;
 }
 
 interface Route extends SelectableEntity {
-  Endpoints: [RouteEndpoint, RouteEndpoint];
+  PortalIds: [Guid, Guid];
 }
 
-interface RouteEndpoint {
+interface RoutePortal extends SelectableEntity {
+  RouteId: Guid;
   SystemId: Guid;
   BoundaryAngleDegrees: number; // 0 inclusive, 360 exclusive
 }
 
 interface PlayerShip extends SelectableEntity {
-  CurrentLocationId: Guid;
+  CurrentLocationId: Guid; // system-contained location, route portal, or route
 }</pre>
+        <p class="small">Every route references exactly two distinct portals. Each portal exists, references that same route, belongs to a different existing system, and belongs to no other route. Portal angles are valid boundary angles. A ship location must resolve to an allowed location and may not refer to the ship itself.</p>
       </article>
 
       <article class="card" style="margin-top: 1rem; border-top: 3px solid var(--green)">
@@ -451,7 +455,7 @@ interface Star extends SelectableEntity {
 }
 
 interface Orbit {
-  AU: number | null;          // null for a satellite without distance data
+  AU: number;                 // generated star-relative distance; moons inherit parent AU
   AngleDegrees: number;       // 0 inclusive, 360 exclusive
   ParentObjectId: Guid | null;// null means a direct orbit of the star
 }
@@ -603,18 +607,20 @@ type Atmosphere =
 
 type Temperature =
   | "Cryogenic"
-  | "Volcanic"
   | "Glacial"
   | "Polar"
-  | "Arid"
-  | "Infernal"
   | "Subarctic"
-  | "Equatorial"
   | "Boreal"
   | "Alpine"
+  | "Temperate (chilly)"
   | "Temperate"
+  | "Temperate (warm)"
   | "Mediterranean"
-  | "Subtropical";
+  | "Subtropical"
+  | "Equatorial"
+  | "Arid"
+  | "Infernal"
+  | "Volcanic";
 
 type NativeBiosphere =
   | "None"
@@ -677,7 +683,7 @@ interface PointOfInterest extends SelectableEntity {
           <code>habitableSlot</code>, <code>maxHabitableSlots</code>, slot wrappers, empty slots,
           <code>IngressEgress</code>, ingress/egress POI kinds, generation rolls, object
           descriptions, alien-generation flags, serialized civilization tiers, archetypes,
-          world types, special states, thermal-orbit values, categories, and the old
+          world types, special states, thermal-orbit values, temperature rank, and the old
           primary/secondary-planet distinction.
         </p>
       </article>
@@ -704,7 +710,18 @@ WorldTag         → MinPop
 WorldTag         → MaxPop
 WorldTag         → NativeBioSphereRequired
 WorldTag         → MaxAtmosphere</pre>
-        <p class="small">Additional static maps will be required for presentation or supporting calculations, but are intentionally not listed here. Examples include tech-level labels such as <code>TLn</code>, size-to-display-radius mappings, temperature-to-AU mappings, and population-to-disjoint-number-range mappings.</p>
+        <p class="small">Additional static maps will be required for presentation or supporting calculations, but are intentionally not listed here. Examples include tech-level labels such as <code>TLn</code>, size-to-display-radius mappings, temperature-rank and temperature-habitability maps, and population-to-disjoint-number-range mappings.</p>
+        <h3 style="margin-top: 1.1rem">Detailed temperature and AU placement</h3>
+        <p>Temperature is the one authoritative thermal value. Temperature rank and the temperature contribution to habitability are derived from it; neither is generated, serialized, nor independently edited. Higher rank means hotter.</p>
+        <table>
+          <thead><tr><th>Temperature</th><th>Rank</th><th>Hab provided</th></tr></thead>
+          <tbody>
+            <tr><td>Cryogenic</td><td>1</td><td>0</td></tr><tr><td>Glacial</td><td>2</td><td>1</td></tr><tr><td>Polar</td><td>3</td><td>1</td></tr><tr><td>Subarctic</td><td>4</td><td>2</td></tr><tr><td>Boreal</td><td>5</td><td>3</td></tr>
+            <tr><td>Alpine</td><td>6</td><td>3</td></tr><tr><td>Temperate (chilly)</td><td>7</td><td>3</td></tr><tr><td>Temperate</td><td>8</td><td>3</td></tr><tr><td>Temperate (warm)</td><td>9</td><td>3</td></tr><tr><td>Mediterranean</td><td>10</td><td>3</td></tr>
+            <tr><td>Subtropical</td><td>11</td><td>3</td></tr><tr><td>Equatorial</td><td>12</td><td>2</td></tr><tr><td>Arid</td><td>13</td><td>1</td></tr><tr><td>Infernal</td><td>14</td><td>1</td></tr><tr><td>Volcanic</td><td>15</td><td>0</td></tr>
+          </tbody>
+        </table>
+        <p class="small">For direct-orbit planets, star type and detailed temperature constrain a randomized AU placement roll: hotter planets around the same star must be closer, colder planets farther, and equal-temperature planets must receive distinct non-colliding distances. The selected AU remains generated and serialized data. Moons have their parent planet's temperature and star-relative AU; their retained angle is presentational and no moon-to-planet distance is modeled.</p>
         <h3 style="margin-top: 1.1rem">Special cases removed or altered</h3>
         <ul>
           <li><code>Max Environment Hab</code> is removed. Environmental complications such as poison storms or radioactive dust are applied ad hoc in narrative rather than as generator constraints.</li>
@@ -747,7 +764,7 @@ WorldTag         → MaxAtmosphere</pre>
             </tr>
             <tr class="row-gap">
               <td>—</td><td><code>Routes: Route[]</code></td><td><span class="status exact">retain from UI</span></td>
-              <td>Replace two bare system IDs with two route endpoints. Each endpoint stores its system ID and fixed angle on that system's boundary.</td>
+              <td>Represent each route end as a first-class <code>RoutePortal</code>. A route references its two portal IDs; each portal identifies its route, containing system, and fixed boundary angle.</td>
             </tr>
             <tr class="row-gap">
               <td>—</td><td>—</td><td><span class="status choice">universal rule</span></td>
@@ -781,7 +798,7 @@ WorldTag         → MaxAtmosphere</pre>
             <tr><td><code>primaryStar.roll</code><br><code>hab</code></td><td>—</td><td><span class="status adapt">retain hab; retire roll</span></td><td>Keep the habitability rating as structured data. The generation roll is bookkeeping and is absent from the canonical schema.</td></tr>
             <tr><td><code>primaryStar.maxHabitableSlots</code></td><td>—</td><td><span class="status retire">retire</span></td><td>Remove with the habitable-slot mechanic and simplify the generator rules that depend on it.</td></tr>
             <tr><td><code>locationSlots[]</code></td><td><code>Worlds[]</code> + <code>POIs[]</code></td><td><span class="status adapt">replace both</span></td><td>Use a rich discriminated system-object collection. Preserve every meaningful object kind without requiring a slot wrapper or pretending all objects are worlds.</td></tr>
-            <tr><td><code>slot.au</code></td><td><code>World.AU</code></td><td><span class="status exact">retain</span></td><td>Move AU onto the orbiting object. Child satellites may keep <code>null</code> unless a satellite-distance model is later added.</td></tr>
+            <tr><td><code>slot.au</code></td><td><code>Orbit.AU</code></td><td><span class="status exact">retain</span></td><td>Move generated star-relative AU onto every orbiting object. A moon inherits its parent planet's AU; moon-to-planet distance is outside the model.</td></tr>
             <tr><td><code>slot.orbitalPositionCategory</code><br><code>slot.habitableSlot</code></td><td>—</td><td><span class="status retire">retire</span></td><td>Deliberately absent from the merged model and removed from generation/validation logic.</td></tr>
             <tr><td><code>slot.id</code></td><td>—</td><td><span class="status choice">likely remove</span></td><td>If the slot wrapper disappears, its implementation-only ID can disappear too; object IDs remain authoritative.</td></tr>
             <tr class="row-gap"><td>—</td><td><code>World.Angle</code></td><td><span class="status exact">retain from UI</span></td><td>Keep deterministic orbital display geometry as a first-class value or a reproducible derived value.</td></tr>
@@ -820,7 +837,7 @@ WorldTag         → MaxAtmosphere</pre>
             </tr>
             <tr>
               <td><code>IngressEgress</code></td><td>No equivalent needed</td><td><span class="status retire">retire</span></td>
-              <td>Remove the region and its ingress/egress POIs. Routes intersect a derived system boundary at the fixed angle stored on each route endpoint.</td>
+              <td>Remove the region and its ingress/egress POIs. Route portals intersect a derived system boundary at their fixed boundary angles.</td>
             </tr>
             <tr>
               <td><code>Empty</code></td><td>Omitted</td><td><span class="status retire">remove with slots</span></td>
@@ -855,9 +872,9 @@ systemBoundaryAU =
 
 routeMarkerPosition = polarPoint(
   systemBoundaryAU,
-  routeEndpoint.BoundaryAngleDegrees
+  routePortal.BoundaryAngleDegrees
 );</pre>
-        <p class="small">Only direct-orbit objects set the boundary; child objects do not. A route stores one endpoint angle for each connected system, so the same route can meet the two system boundaries at different fixed angles.</p>
+        <p class="small">Only direct-orbit objects set the boundary; child objects do not. Each route owns two top-level portals, one at each connected system; their fixed angles can differ.</p>
       </article>
     </section>
 
@@ -876,8 +893,8 @@ routeMarkerPosition = polarPoint(
         </article>
         <article class="card">
           <h3>Routes and player ship</h3>
-          <p><code>Route</code> links two systems. <code>PlayerShip</code> points only to its current selectable location; its current system is derived from that location. Retain both in the combined project, while distinguishing generated sector facts from mutable campaign state.</p>
-          <p class="small">Each route endpoint gains a fixed boundary angle. Route creation, endpoint-angle assignment, and initial ship placement become explicit generation/initialization responsibilities.</p>
+          <p>A <code>Route</code> links two top-level <code>RoutePortal</code> entities, each on a different system boundary. A portal is selectable but not a point of interest. <code>PlayerShip.CurrentLocationId</code> may name a system-contained location, a portal, or a route; only a route location has no current system. Retain this mutable campaign state separately from procedural facts.</p>
+          <p class="small">Route creation, portal creation and angle assignment, and initial ship placement become explicit generation/initialization responsibilities.</p>
         </article>
       </div>
 
@@ -886,7 +903,7 @@ routeMarkerPosition = polarPoint(
         <p>
           The UI validator requires the IDs in <code>DetailsAndVisibility</code> to match the complete
           selectable-ID set exactly. In the merged model, extend that concept to every first-class
-          system object—not just worlds—plus systems, stars, POIs, routes, and the player ship. Whether
+          system object—not just worlds—plus systems, stars, POIs, routes, route portals, and the player ship. Whether
           the detail state stays in a side table or moves onto each entity is a structural choice.
         </p>
       </div>
@@ -903,8 +920,8 @@ routeMarkerPosition = polarPoint(
             <tr><td>Serialized contract</td><td>JSON Schema Draft 2020-12; required properties, enums, bounds, tuples, and <code>additionalProperties: false</code>.</td><td>TypeScript interfaces only; no JSON Schema or runtime decoder.</td><td>Create one runtime-validated canonical schema and derive/share TypeScript types from that contract where practical.</td></tr>
             <tr><td>Root cardinality</td><td><code>starCount</code> and <code>systems</code> are each constrained to 21–30.</td><td>No system-count bound.</td><td>Keep the 21–30 generation rule. If <code>starCount</code> remains serialized, enforce equality with <code>systems.length</code>.</td></tr>
             <tr><td>Coordinates</td><td>Incorrectly transposed 8 × 10 bounds.</td><td>No model bounds; renderer uses the intended 10 × 8 grid.</td><td>Later minor fix: make 10 × 8 authoritative in schema, generator, validation, fixtures, and renderer.</td></tr>
-            <tr><td>References</td><td>Mostly nesting; JSON Schema does not enforce global ID uniqueness or cross-object references.</td><td>Runtime checks global selectable-ID uniqueness, parents, routes, ship location, and detail coverage.</td><td>Adopt the UI's graph-integrity checks and expand parent validation to all merged system-object kinds.</td></tr>
-            <tr><td>Domain rules</td><td>Generator code checks primary worlds, transit points, extra-world counts, POI counts, AU ordering, and habitable slots.</td><td>Validator checks application graph invariants but not rich SWN generation rules.</td><td>Combine the useful rule sets. Delete transit-region, ingress/egress POI, orbital-position-category, and habitable-slot rules; validate route-endpoint angles against the universal boundary rule.</td></tr>
+            <tr><td>References</td><td>Mostly nesting; JSON Schema does not enforce global ID uniqueness or cross-object references.</td><td>Runtime checks global selectable-ID uniqueness, parents, routes, ship location, and detail coverage.</td><td>Adopt the UI's graph-integrity checks and expand parent validation to all merged system-object kinds, route portals, and allowed ship locations.</td></tr>
+            <tr><td>Domain rules</td><td>Generator code checks primary worlds, transit points, extra-world counts, POI counts, AU ordering, and habitable slots.</td><td>Validator checks application graph invariants but not rich SWN generation rules.</td><td>Combine the useful rule sets. Delete transit-region, ingress/egress POI, orbital-position-category, and habitable-slot rules; validate route/portal relationships, portal angles, detailed-temperature mappings, and temperature-constrained randomized AU placement.</td></tr>
             <tr><td>Unknown fields</td><td>Rejected throughout the reachable JSON schema.</td><td>TypeScript excess-property checks are compile-time and contextual, not a serialization guarantee.</td><td>Preserve strict decoding for persistence/import while allowing controlled schema evolution through versioning.</td></tr>
             <tr><td>Legacy definitions</td><td><code>world</code>, <code>location</code>, and <code>pointOfInterest</code> are defined in the JSON Schema but unreachable from the root.</td><td>—</td><td>Remove or replace them while establishing the new canonical schema; they are not current V4 output.</td></tr>
           </tbody>
@@ -947,7 +964,7 @@ routeMarkerPosition = polarPoint(
           <ul>
             <li>Use a discriminated union for <code>Planet</code> and <code>OtherCelestialObject</code>. Jovian and Neptunian bodies are planets; structured <code>ObjectType</code> values distinguish the remaining non-planets such as belts, clouds, and stations.</li>
             <li>Use a general parent-object relationship so satellites and POIs can reference any permitted object kind.</li>
-            <li>Represent warp travel entirely through routes: each endpoint names a system and a fixed boundary angle.</li>
+            <li>Represent warp travel through routes and first-class route portals: every route names exactly two portals, and every portal names its route, system, and fixed boundary angle.</li>
             <li>Keep generator facts structured; display/intelligence text augments rather than replaces them.</li>
             <li>Treat the persisted <code>Sector</code> as a mutable snapshot: generated facts and campaign state share the snapshot, while <code>OriginalSeed</code> records provenance rather than promising deterministic reconstruction.</li>
             <li>Add an explicit schema version and, if sectors need stable archive identity, a sector ID distinct from seed.</li>
@@ -966,7 +983,7 @@ routeMarkerPosition = polarPoint(
             <li><b>Planets:</b> terrestrial, Jovian, and Neptunian physical facts, atmospheric data, identity, orbit/parent, and UI state; inhabited-only data lives in <code>InhabitedInfo</code>.</li>
             <li><b>Other celestial objects:</b> identity, structured object type, orbit/parent, POIs, and UI state.</li>
             <li><b>POIs:</b> ID, POI type, a system-object parent, names/details, and visibility.</li>
-            <li><b>Campaign/UI:</b> route endpoint systems and angles, ship location, procedural/editable names, summary and intelligence tiers, visibility, and selectable identity.</li>
+            <li><b>Campaign/UI:</b> route portals with route/system references and angles, ship location, procedural/editable names, summary and intelligence tiers, visibility, and selectable identity.</li>
           </ul>
           <p class="small"><b>Intentionally not retained:</b> <code>orbitalPositionCategory</code>, <code>habitableSlot</code>, <code>maxHabitableSlots</code>, empty slot records, <code>IngressEgress</code> locations, and ingress/egress POIs. A slot ID is unnecessary if it identifies only a removed wrapper.</p>
         </div>
