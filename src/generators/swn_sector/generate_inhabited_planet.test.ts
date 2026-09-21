@@ -32,6 +32,7 @@ test('filters compact-remnant worlds to usable direct-orbit temperatures', () =>
     starType: 'White dwarf',
     starHabitability: 0,
     orbit: { AU: 1, AngleDegrees: 0, ParentObjectId: null },
+    forcedTags: ['Tomb World', 'Outpost World'],
   });
   expect(directOrbitTemperatures('White dwarf')).toContain(planet.Temperature);
   expect(planet.Temperature).not.toBe('Temperate');

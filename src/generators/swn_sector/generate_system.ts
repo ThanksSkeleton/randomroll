@@ -24,9 +24,11 @@ import {
 } from './generation_rules';
 import { generateInhabitedPlanet } from './generate_inhabited_planet';
 import {
+  generateTemplateOtherCelestialObject,
   generateTemplatePlanet,
   templateHasUsableTemperature,
   type ExtraPlanetTemplate,
+  type OtherCelestialObjectTemplate,
 } from './planet_templates';
 
 /** Assign distinct open-interval AU values without changing any physical fact. */
@@ -85,10 +87,21 @@ const EXTRA_TEMPLATES: readonly ExtraPlanetTemplate[] = [
   'Jovian',
   'Neptunian',
 ];
+type ExtraObjectCategory = 'Planet' | OtherCelestialObjectTemplate;
+export const EXTRA_OBJECT_TYPE_WEIGHTS: readonly { Value: ExtraObjectCategory; Weight: number }[] =
+  [
+    { Value: 'Planet', Weight: 60 },
+    { Value: 'AsteroidBelt', Weight: 20 },
+    { Value: 'GasCloud', Weight: 10 },
+    { Value: 'KuiperBelt', Weight: 10 },
+  ];
+const ONE_INHABITED_WORLD_MAX_ROLL = 85;
+const TWO_INHABITED_WORLDS_MAX_ROLL = 95;
+const GAS_GIANT_MOON_MAX_ROLL = 10;
 
 function inhabitedCount(seed: string, path: string): number {
   const roll = rollDie(randomFor(seed, `${path}:inhabited-count`), 100);
-  return roll <= 85 ? 1 : roll <= 95 ? 2 : 3;
+  return roll <= ONE_INHABITED_WORLD_MAX_ROLL ? 1 : roll <= TWO_INHABITED_WORLDS_MAX_ROLL ? 2 : 3;
 }
 
 /** Builds physical system objects only; POIs are added by the next construction slice. */
@@ -99,7 +112,8 @@ export function generateSystem(options: GenerateSystemOptions): StarSystem {
   const count = inhabitedCount(options.seed, options.entityPath);
   for (let index = 0; index < count; index += 1) {
     const worldPath = `${options.entityPath}:inhabited:${String(index + 1).padStart(2, '0')}`;
-    const isMoon = rollDie(randomFor(options.seed, `${worldPath}:moon`), 100) <= 10;
+    const isMoon =
+      rollDie(randomFor(options.seed, `${worldPath}:moon`), 100) <= GAS_GIANT_MOON_MAX_ROLL;
     if (!isMoon) {
       objects.push(
         generateInhabitedPlanet({
@@ -151,26 +165,44 @@ export function generateSystem(options: GenerateSystemOptions): StarSystem {
   while (objects.length - count < extraTarget) {
     const index = objects.length + 1;
     const path = `${options.entityPath}:extra:${String(index).padStart(2, '0')}`;
-    const templates = EXTRA_TEMPLATES.filter((template) =>
-      templateHasUsableTemperature(template, options.starType),
-    );
-    objects.push(
-      generateTemplatePlanet({
-        seed: options.seed,
-        entityPath: path,
-        starType: options.starType,
-        template: choose(
-          randomFor(options.seed, `${path}:template`),
-          templates,
-          'extra-world templates',
-        ),
-        orbit: {
-          AU: 0,
-          AngleDegrees: randomFor(options.seed, `${path}:angle`)() * 360,
-          ParentObjectId: null,
-        },
-      }),
-    );
+    const category = chooseWeighted(
+      randomFor(options.seed, `${path}:category`),
+      EXTRA_OBJECT_TYPE_WEIGHTS,
+      'extra-object categories',
+    ).Value;
+    const orbit = {
+      AU: 0,
+      AngleDegrees: randomFor(options.seed, `${path}:angle`)() * 360,
+      ParentObjectId: null,
+    };
+    if (category === 'Planet') {
+      const templates = EXTRA_TEMPLATES.filter((template) =>
+        templateHasUsableTemperature(template, options.starType),
+      );
+      objects.push(
+        generateTemplatePlanet({
+          seed: options.seed,
+          entityPath: path,
+          starType: options.starType,
+          template: choose(
+            randomFor(options.seed, `${path}:template`),
+            templates,
+            'extra-world templates',
+          ),
+          orbit,
+        }),
+      );
+    } else {
+      objects.push(
+        generateTemplateOtherCelestialObject({
+          seed: options.seed,
+          entityPath: path,
+          starType: options.starType,
+          template: category,
+          orbit,
+        }),
+      );
+    }
   }
   const directPlaced = assignDirectOrbitAus(options.seed, options.entityPath, options.starType, [
     ...objects,

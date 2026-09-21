@@ -2,6 +2,7 @@ import type { Route, RoutePortal, StarSystem } from './merged_schema';
 import { deterministicId, randomFor } from './generation_random';
 
 type Edge = { left: StarSystem; right: StarSystem; distance: number; tie: number };
+const PORTAL_BEARING_OFFSET_DEGREES = 5;
 
 function edges(systems: readonly StarSystem[], seed: string): Edge[] {
   return systems
@@ -82,7 +83,10 @@ export function generateRoutes(
       [edge.left, edge.right, portalIds[0]],
       [edge.right, edge.left, portalIds[1]],
     ] as const) {
-      let angle = bearing(side, other) + randomFor(seed, `${path}:${side.Id}:angle`)() * 10 - 5;
+      let angle =
+        bearing(side, other) +
+        randomFor(seed, `${path}:${side.Id}:angle`)() * PORTAL_BEARING_OFFSET_DEGREES * 2 -
+        PORTAL_BEARING_OFFSET_DEGREES;
       angle = (angle + 360) % 360;
       const used = occupiedAngles.get(side.Id) ?? new Set<number>();
       while (used.has(angle)) angle = (angle + 0.001) % 360;

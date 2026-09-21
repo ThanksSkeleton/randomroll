@@ -51,6 +51,8 @@ export type InhabitedPlanetOptions = {
 };
 
 const completionCache = new Map<string, boolean>();
+/** A d100-style roll succeeds for surface water on 75% of unconstrained worlds. */
+const SURFACE_WATER_PRESENT_MINIMUM_ROLL = 0.25;
 
 function tagsRequire(tags: readonly WorldTag[], tag: WorldTag): boolean {
   return tags.includes(tag);
@@ -404,7 +406,8 @@ export function generateInhabitedPlanet(options: InhabitedPlanetOptions): Planet
   const profile = partial as PhysicalProfile;
   const forcedWater = waterState(profile, tags);
   const surfaceWater =
-    forcedWater ?? randomFor(options.seed, `${options.entityPath}:water`)() >= 0.25;
+    forcedWater ??
+    randomFor(options.seed, `${options.entityPath}:water`)() >= SURFACE_WATER_PRESENT_MINIMUM_ROLL;
   const totalHab = Math.min(
     options.starHabitability,
     ATMOSPHERE_HAB[profile.Atmosphere],
