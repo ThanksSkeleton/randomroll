@@ -53,15 +53,14 @@ seed. It makes at most five retries (six attempts total), then throws.
   common, revisit a compact constraint-intersection solver.
 - Tune the bounded profile-roll budget if real failure logs show it is needed.
 
-## Low-priority POI follow-up
+## WONTFIX: POI host exhaustion
 
 POI placement can occasionally exhaust its legal hosts. This occurs when the
 system has reached its seven-extra-object cap (so it cannot add another
 independent station), while all compatible existing hosts are either inhabited,
 reserved as inhabited-moon parents, incompatible object types, or already at
 their three-POI capacity. The whole-system retry currently recovers this case.
-Consider a future POI-placement strategy that reserves host capacity or reduces
-the POI target instead of retrying the system.
+This is accepted as WONTFIX for now.
 
 ## Non-goals
 

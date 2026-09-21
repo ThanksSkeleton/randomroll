@@ -193,7 +193,10 @@ function generateSystemOnce(options: GenerateSystemOptions): StarSystem {
     2,
     rollDie(randomFor(options.seed, `${options.entityPath}:extra-count`), 6),
   );
-  while (objects.length - count < extraTarget) {
+  // A gas-giant parent of an inhabited moon is itself an extra object. Moons
+  // live outside `objects` until final assembly, so include them here to keep
+  // the final extra-object total within the invariant's two-through-seven cap.
+  while (objects.length + moons.length - count < extraTarget) {
     const index = objects.length + 1;
     const path = `${options.entityPath}:extra:${String(index).padStart(2, '0')}`;
     const category = chooseWeighted(
