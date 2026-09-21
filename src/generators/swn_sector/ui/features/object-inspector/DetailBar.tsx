@@ -1,5 +1,5 @@
-import { VisibilityLevel, visibilityRank } from '../../domain/sector/model';
-import type { SelectableEntity, Sector } from '../../domain/sector/model';
+import { VisibilityLevel, visibilityRank } from '../../domain/sector/visibility';
+import type { SelectableEntity, Sector } from '../../../merged_schema';
 import { findDetails, findObject, objectKindLabel } from '../../domain/sector/selectors';
 import type { EditDraft, Preview, EditableDetailField } from '../../application/appState';
 

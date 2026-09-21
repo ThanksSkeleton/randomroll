@@ -311,3 +311,32 @@ export interface PointOfInterest extends SelectableEntity {
   ParentObjectId: Guid;
   POIType: PointOfInterestType;
 }
+
+/** Every entity that may be selected, inspected, or given visibility. */
+export type SelectableObject =
+  | StarSystem
+  | Star
+  | Planet
+  | OtherCelestialObject
+  | PointOfInterest
+  | RoutePortal
+  | Route
+  | PlayerShip;
+
+export type SelectableObjectKind =
+  | 'System'
+  | 'Star'
+  | 'Planet'
+  | 'OtherCelestialObject'
+  | 'PointOfInterest'
+  | 'RoutePortal'
+  | 'Route'
+  | 'PlayerShip';
+
+/** Runtime values for the serialized VisibilityLevel union. */
+export const VisibilityLevel = {
+  NONE: 'NONE',
+  BASIC_SCAN: 'BASIC_SCAN',
+  CULTURE_PARTIAL: 'CULTURE_PARTIAL',
+  CULTURE_FULL: 'CULTURE_FULL',
+} as const;

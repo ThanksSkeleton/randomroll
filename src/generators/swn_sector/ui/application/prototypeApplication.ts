@@ -1,6 +1,6 @@
 import { createInitialSectors } from '../data';
 import { generate } from '../../generate';
-import type { Sector } from '../domain/sector/model';
+import type { Sector } from '../../merged_schema';
 
 export type LocalSession = { role: 'gm' };
 

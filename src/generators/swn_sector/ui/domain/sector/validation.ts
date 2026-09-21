@@ -1,5 +1,5 @@
-import { VisibilityLevel } from './model';
-import type { Sector } from './model';
+import { VisibilityLevel } from './visibility';
+import type { Sector } from '../../../merged_schema';
 import { containingSystem, getAllSelectableIds, routePortals } from './selectors';
 
 export function validateSector(sector: Sector): string[] {

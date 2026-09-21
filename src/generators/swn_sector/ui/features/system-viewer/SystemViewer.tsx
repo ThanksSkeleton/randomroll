@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import type { Preview } from '../../application/appState';
-import type { Sector, StarSystem } from '../../domain/sector/model';
+import type { Sector, StarSystem } from '../../../merged_schema';
 
 export function SystemViewer({
   system,

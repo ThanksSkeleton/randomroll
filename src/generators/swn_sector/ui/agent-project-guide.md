@@ -119,7 +119,7 @@ The archive is memory-only. Refreshing the browser recreates the two initial sec
 
 | Change | Primary location | Keep in mind |
 | --- | --- | --- |
-| Add or alter a sector field | `domain/sector/model.ts` | Preserve serialized names and update validation/tests. |
+| Add or alter a sector field | `../merged_schema.ts` | Preserve serialized names and update validation/tests. UI-only selectors/helpers belong under `domain/sector`. |
 | Add a sector query | `domain/sector/selectors.ts` | Keep it pure and reusable from UI. |
 | Add a sector mutation/invariant | `domain/sector/operations.ts` | Return a new sector or typed failure; test prohibited cases. |
 | Change navigation/selection semantics | `application/appState.ts` | Add or adjust a named transition and reducer test. |

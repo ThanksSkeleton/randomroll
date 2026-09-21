@@ -10,8 +10,8 @@ import { HexMap as FeatureHexMap } from './features/sector-map/HexMap';
 import { SystemViewer } from './features/system-viewer/SystemViewer';
 import { SymbolicSystem as FeatureSymbolicSystem } from './features/system-viewer/SymbolicSystem';
 import { TopDown as FeatureTopDown } from './features/system-viewer/TopDown';
-import { VisibilityLevel, visibilityRank } from './domain/sector/model';
-import type { SelectableEntity, Sector } from './domain/sector/model';
+import { VisibilityLevel, visibilityRank } from './domain/sector/visibility';
+import type { SelectableEntity, Sector } from '../merged_schema';
 import { applySectorEdits } from './domain/sector/operations';
 import {
   findContainingSystem,

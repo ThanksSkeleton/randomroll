@@ -1,5 +1,5 @@
-import { VisibilityLevel, visibilityRank } from '../../domain/sector/model';
-import type { Sector } from '../../domain/sector/model';
+import { VisibilityLevel, visibilityRank } from '../../domain/sector/visibility';
+import type { Sector } from '../../../merged_schema';
 import type { Preview } from '../../application/appState';
 import { findContainingSystem, findDetails, isVisibleToPlayer, routeSystems } from '../../domain/sector/selectors';
 

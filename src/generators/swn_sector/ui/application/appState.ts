@@ -1,4 +1,4 @@
-import type { Sector } from '../domain/sector/model';
+import type { Sector } from '../../merged_schema';
 
 export type View = 'hex' | 'system' | 'all' | 'sectors';
 export type Preview = 'gm' | 'player';

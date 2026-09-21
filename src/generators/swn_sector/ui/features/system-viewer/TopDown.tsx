@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import type { Preview } from '../../application/appState';
-import type { Sector, StarSystem } from '../../domain/sector/model';
-import { VisibilityLevel, visibilityRank } from '../../domain/sector/model';
+import type { Sector, StarSystem } from '../../../merged_schema';
+import { VisibilityLevel, visibilityRank } from '../../domain/sector/visibility';
 import { areAdjacentHexes, findDetails, isVisibleToPlayer } from '../../domain/sector/selectors';
 
 const TOP_DOWN_BOUNDARY_FILL = 0.88;

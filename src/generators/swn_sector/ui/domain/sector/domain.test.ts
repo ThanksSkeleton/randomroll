@@ -8,7 +8,7 @@ import {
 } from './operations';
 import { findDetails, findObject, resolveTravelDestination } from './selectors';
 import { validateSector } from './validation';
-import { VisibilityLevel } from './model';
+import { VisibilityLevel } from './visibility';
 
 describe('sector domain', () => {
   it('updates visibility immutably and reports unknown objects explicitly', () => {

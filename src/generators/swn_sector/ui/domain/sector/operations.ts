@@ -1,4 +1,5 @@
-import { VisibilityLevel, type Guid, type Sector } from './model';
+import { VisibilityLevel } from './visibility';
+import type { Guid, Sector } from '../../../merged_schema';
 import { containingSystem, findObject, getAllSelectableIds, routePortals } from './selectors';
 
 export type SectorOperationFailure =

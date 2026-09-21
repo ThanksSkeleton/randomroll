@@ -1,7 +1,7 @@
 import { Fragment, useState } from 'react';
 import type { Preview } from '../../application/appState';
-import type { Planet, Sector, StarSystem } from '../../domain/sector/model';
-import { VisibilityLevel, visibilityRank } from '../../domain/sector/model';
+import type { Planet, Sector, StarSystem } from '../../../merged_schema';
+import { VisibilityLevel, visibilityRank } from '../../domain/sector/visibility';
 import { findDetails, isVisibleToPlayer, planets, routeSystems } from '../../domain/sector/selectors';
 
 function visible(id: string, sector: Sector, preview: Preview) {
@@ -308,7 +308,7 @@ export function SymbolicSystem({
                         className={`symbolic-info-column ${memberIndex > 0 ? 'family-member' : ''}`}
                         key={world.Id}
                       >
-                        {worldD && <SurveyCard summary={worldD.InfoboxSummary} />}
+                        {worldD && <SurveyCard summary={worldD.Intelligence.InfoboxSummary} />}
                       </div>
                     );
                   })}
@@ -321,7 +321,7 @@ export function SymbolicSystem({
                 <div className="symbolic-info-column route-info-column">
                   {details(routes[0].Id, sector) && (
                     <SurveyCard
-                      summary={details(routes[0].Id, sector)!.InfoboxSummary}
+                      summary={details(routes[0].Id, sector)!.Intelligence.InfoboxSummary}
                       className="route-intelligence-card"
                     />
                   )}

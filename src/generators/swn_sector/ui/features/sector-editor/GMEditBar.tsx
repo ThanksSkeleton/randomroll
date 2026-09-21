@@ -1,5 +1,5 @@
-import { VisibilityLevel } from '../../domain/sector/model';
-import type { Sector } from '../../domain/sector/model';
+import { VisibilityLevel } from '../../../merged_schema';
+import type { Sector } from '../../../merged_schema';
 import {
   deleteSectorObject,
   relocatePlayerShip,

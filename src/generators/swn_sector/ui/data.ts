@@ -1,6 +1,6 @@
 import { generate } from '../generate';
 import { cloneSectorWithFreshIds } from './domain/sector/operations';
-import type { Sector } from './domain/sector/model';
+import type { Sector } from '../merged_schema';
 
 export {
   areAdjacentHexes,
@@ -9,7 +9,7 @@ export {
   getAllSelectableIds,
 } from './domain/sector/selectors';
 export { validateSector } from './domain/sector/validation';
-export type { Sector } from './domain/sector/model';
+export type { Sector } from '../merged_schema';
 
 export function createInitialSectors(): Sector[] {
   return [generate('sector-one-seed'), generate('sector-two-seed')];

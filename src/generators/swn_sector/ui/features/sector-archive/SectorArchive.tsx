@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import type { Sector } from '../../domain/sector/model';
+import type { Sector } from '../../../merged_schema';
 
 export function SectorArchive({
   sectors,

@@ -1,15 +1,28 @@
-import { VisibilityLevel } from './model';
+import { VisibilityLevel } from './visibility';
 import type {
-  FoundObject,
   Guid,
   HexLocation,
+  OtherCelestialObject,
   Planet,
+  PointOfInterest,
+  PlayerShip,
   Route,
   RoutePortal,
   Sector,
+  Star,
   StarSystem,
   SystemObject,
-} from './model';
+} from '../../../merged_schema';
+
+export type FoundObject =
+  | { object: StarSystem; kind: 'System'; containingSystem?: StarSystem }
+  | { object: Star; kind: 'Star'; containingSystem?: StarSystem }
+  | { object: Planet; kind: 'Planet'; containingSystem?: StarSystem }
+  | { object: OtherCelestialObject; kind: 'OtherCelestialObject'; containingSystem?: StarSystem }
+  | { object: PointOfInterest; kind: 'PointOfInterest'; containingSystem?: StarSystem }
+  | { object: RoutePortal; kind: 'RoutePortal'; containingSystem?: StarSystem }
+  | { object: Route; kind: 'Route'; containingSystem?: StarSystem }
+  | { object: PlayerShip; kind: 'PlayerShip'; containingSystem?: StarSystem };
 
 export function areAdjacentHexes(a: HexLocation, b: HexLocation): boolean {
   const dx = Math.abs(a.Column - b.Column);
@@ -59,8 +72,10 @@ export function objectEntries(sector: Sector): FoundObject[] {
   for (const system of sector.Systems) {
     entries.push({ object: system, kind: 'System', containingSystem: system });
     entries.push({ object: system.Star, kind: 'Star', containingSystem: system });
-    for (const object of system.Objects)
-      entries.push({ object, kind: object.Kind === 'Planet' ? 'Planet' : 'OtherCelestialObject', containingSystem: system });
+    for (const object of system.Objects) {
+      if (object.Kind === 'Planet') entries.push({ object, kind: 'Planet', containingSystem: system });
+      else entries.push({ object, kind: 'OtherCelestialObject', containingSystem: system });
+    }
     for (const poi of system.PointsOfInterest)
       entries.push({ object: poi, kind: 'PointOfInterest', containingSystem: system });
   }
