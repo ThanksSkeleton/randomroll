@@ -2,7 +2,7 @@ import type { HexLocation, OtherCelestialObject, PointOfInterest, PointOfInteres
 import { choose, chooseWeighted, deterministicId, randomFor, rollDie, shuffled } from "./generation_random";
 import { directOrbitAuBand, directOrbitTemperatures, isPoiHostCompatible, POI_TABLE } from "./generation_rules";
 import { generateInhabitedPlanet } from "./generate_inhabited_planet";
-import { generateTemplatePlanet, type ExtraPlanetTemplate } from "./planet_templates";
+import { generateTemplatePlanet, templateHasUsableTemperature, type ExtraPlanetTemplate } from "./planet_templates";
 
 /** Assign distinct open-interval AU values without changing any physical fact. */
 export function assignDirectOrbitAus(seed: string, entityPath: string, starType: StarType, objects: readonly SystemObject[]): SystemObject[] {
@@ -67,7 +67,8 @@ export function generateSystem(options: GenerateSystemOptions): StarSystem {
   while (objects.length - count < extraTarget) {
     const index = objects.length + 1;
     const path = `${options.entityPath}:extra:${String(index).padStart(2, "0")}`;
-    objects.push(generateTemplatePlanet({ seed: options.seed, entityPath: path, starType: options.starType, template: choose(randomFor(options.seed, `${path}:template`), EXTRA_TEMPLATES), orbit: { AU: 0, AngleDegrees: randomFor(options.seed, `${path}:angle`)() * 360, ParentObjectId: null } }));
+    const templates = EXTRA_TEMPLATES.filter(template => templateHasUsableTemperature(template, options.starType));
+    objects.push(generateTemplatePlanet({ seed: options.seed, entityPath: path, starType: options.starType, template: choose(randomFor(options.seed, `${path}:template`), templates, "extra-world templates"), orbit: { AU: 0, AngleDegrees: randomFor(options.seed, `${path}:angle`)() * 360, ParentObjectId: null } }));
   }
   const directPlaced = assignDirectOrbitAus(options.seed, options.entityPath, options.starType, [...objects, ...moons]);
   const directById = new Map(directPlaced.map(object => [object.Id, object]));

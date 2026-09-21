@@ -18,7 +18,7 @@ type TemplateFacts = Pick<Planet, "Size" | "BulkComposition" | "SurfaceWaterPres
 
 const TEMPLATE_FACTS: Readonly<Record<ExtraPlanetTemplate, TemplateFacts>> = {
   Mercurian: { Size: "Mars", BulkComposition: "Iron", SurfaceWaterPresent: false, Atmosphere: "Vacuum", NativeBiosphere: "None", temperatures: ["Infernal", "Arid", "Equatorial", "Volcanic"] },
-  "Europan / Plutonic": { Size: "Mars", BulkComposition: "Water", SurfaceWaterPresent: true, Atmosphere: "Inert gas", NativeBiosphere: "None", temperatures: ["Cryogenic", "Glacial", "Polar"] },
+  "Europan / Plutonic": { Size: "Mars", BulkComposition: "Water", SurfaceWaterPresent: true, Atmosphere: "Inert gas", NativeBiosphere: "None", temperatures: ["Glacial", "Polar"] },
   Lunar: { Size: "Luna", BulkComposition: "Silicon", SurfaceWaterPresent: false, Atmosphere: "Vacuum", NativeBiosphere: "None", temperatures: ["Cryogenic", "Glacial", "Polar", "Subarctic", "Boreal", "Alpine", "Arid", "Infernal", "Volcanic"] },
   Ioan: { Size: "Mars", BulkComposition: "Sulfur", SurfaceWaterPresent: false, Atmosphere: "Corrosive", NativeBiosphere: "None", temperatures: ["Volcanic"] },
   Titanian: { Size: "Mars", BulkComposition: "Carbon", SurfaceWaterPresent: false, Atmosphere: "Inert gas", NativeBiosphere: "Microbial", temperatures: ["Cryogenic", "Glacial", "Polar"] },
@@ -27,6 +27,10 @@ const TEMPLATE_FACTS: Readonly<Record<ExtraPlanetTemplate, TemplateFacts>> = {
   Jovian: { Size: "Jupiter", BulkComposition: "Jovian Gas", SurfaceWaterPresent: false, Atmosphere: "Inert gas", NativeBiosphere: "None", temperatures: ["Cryogenic", "Glacial", "Polar", "Subarctic", "Boreal", "Alpine", "Temperate", "Arid", "Infernal"] },
   Neptunian: { Size: "Neptune", BulkComposition: "Neptunian Gas", SurfaceWaterPresent: false, Atmosphere: "Inert gas", NativeBiosphere: "None", temperatures: ["Cryogenic", "Glacial", "Polar", "Subarctic", "Boreal", "Alpine", "Temperate"] },
 };
+
+export function templateHasUsableTemperature(template: ExtraPlanetTemplate, starType: StarType): boolean {
+  return TEMPLATE_FACTS[template].temperatures.some(temperature => directOrbitTemperatures(starType).includes(temperature));
+}
 
 export function generateTemplatePlanet(options: TemplatePlanetOptions): Planet {
   const facts = TEMPLATE_FACTS[options.template];

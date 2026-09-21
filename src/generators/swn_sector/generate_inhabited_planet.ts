@@ -142,7 +142,7 @@ function chooseFeasible<T extends string>(
  * be checked before selecting any physical attribute. The later completion
  * check still proves a concrete profile exists for every chosen value.
  */
-function tagPairHasIntersection(tags: readonly WorldTag[]): boolean {
+function tagPairHasIntersection(tags: readonly WorldTag[], starHabitability?: number): boolean {
   if ((tagsRequire(tags, "Desert World")) && (tagsRequire(tags, "Oceanic World") || tagsRequire(tags, "Seagoing Cities"))) return false;
   let populationMinimum = 1;
   let populationMaximum = 100;
@@ -152,16 +152,17 @@ function tagPairHasIntersection(tags: readonly WorldTag[]): boolean {
     populationMaximum = Math.min(populationMaximum, constraint?.maxPopulationPercentile ?? 100);
   }
   if (tagsRequire(tags, "Tomb World") || tagsRequire(tags, "Abandoned Colony") || tagsRequire(tags, "Outpost World")) populationMaximum = Math.min(populationMaximum, 9);
+  if (starHabitability === 0) populationMaximum = Math.min(populationMaximum, 9);
   return populationMinimum <= populationMaximum;
 }
 
 function selectTags(seed: string, path: string, starHabitability: number, allowedTemperatures: readonly Planet["Temperature"][], forcedTags?: readonly [WorldTag, WorldTag]): [WorldTag, WorldTag] {
   if (forcedTags !== undefined) {
-    if (forcedTags[0] === forcedTags[1] || !tagPairHasIntersection(forcedTags) || !hasCompletion(forcedTags, starHabitability, allowedTemperatures, {})) throw new Error(`No feasible forced tag pair for ${seed}:${path}`);
+    if (forcedTags[0] === forcedTags[1] || !tagPairHasIntersection(forcedTags, starHabitability) || !hasCompletion(forcedTags, starHabitability, allowedTemperatures, {})) throw new Error(`No feasible forced tag pair for ${seed}:${path}`);
     return [forcedTags[0], forcedTags[1]];
   }
   const pairs = WORLD_TAG_TABLE.flatMap(first => WORLD_TAG_TABLE
-    .filter(second => first.Value !== second.Value && tagPairHasIntersection([first.Value, second.Value]) && hasCompletion([first.Value, second.Value], starHabitability, allowedTemperatures, {}))
+    .filter(second => first.Value !== second.Value && tagPairHasIntersection([first.Value, second.Value], starHabitability) && (starHabitability >= 2 || hasCompletion([first.Value, second.Value], starHabitability, allowedTemperatures, {})))
     .map(second => ({ Value: [first.Value, second.Value] as [WorldTag, WorldTag], Weight: first.Weight * second.Weight })));
   if (pairs.length === 0) throw new Error(`No feasible world-tag pairs for ${seed}:${path}`);
   return chooseWeighted(randomFor(seed, `${path}:tags`), pairs, "world-tag pairs").Value;
