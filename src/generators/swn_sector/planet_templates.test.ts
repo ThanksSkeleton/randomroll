@@ -1,5 +1,11 @@
-import { expect, test } from 'vitest';
-import { assignDirectOrbitAus, generateSystem, populatePointsOfInterest } from './generate_system';
+import { expect, test, vi } from 'vitest';
+import {
+  assignDirectOrbitAus,
+  generateSystem,
+  MAX_SYSTEM_GENERATION_RETRIES,
+  populatePointsOfInterest,
+  retrySystemGeneration,
+} from './generate_system';
 import { directOrbitAuBand, isPoiHostCompatible } from './generation_rules';
 import { generateTemplatePlanet } from './planet_templates';
 
@@ -98,5 +104,44 @@ test('POIs are assigned only to compatible hosts with bounded capacity', () => {
       expect(
         system.PointsOfInterest.filter((poi) => poi.ParentObjectId === object.Id).length,
       ).toBeLessThanOrEqual(3);
+  }
+});
+
+test('failed system generation is logged and retried with deterministic attempt seeds', () => {
+  const warning = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+  const attempts: string[] = [];
+  try {
+    const result = retrySystemGeneration('retry-seed', 'system:01', (attemptSeed) => {
+      attempts.push(attemptSeed);
+      if (attempts.length < 3) throw new Error('incompatible random tag pair');
+      return 'generated';
+    });
+
+    expect(result).toBe('generated');
+    expect(attempts).toEqual([
+      'retry-seed',
+      'retry-seed:system:01:generation-retry:1',
+      'retry-seed:system:01:generation-retry:2',
+    ]);
+    expect(warning).toHaveBeenCalledTimes(2);
+    expect(warning).toHaveBeenLastCalledWith(
+      expect.stringContaining('attempt 2/' + String(MAX_SYSTEM_GENERATION_RETRIES + 1)),
+    );
+  } finally {
+    warning.mockRestore();
+  }
+});
+
+test('system generation throws after its retry limit', () => {
+  const warning = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+  try {
+    expect(() =>
+      retrySystemGeneration('failed-seed', 'system:01', () => {
+        throw new Error('no valid planet');
+      }),
+    ).toThrow(`after ${MAX_SYSTEM_GENERATION_RETRIES + 1} attempts: no valid planet`);
+    expect(warning).toHaveBeenCalledTimes(MAX_SYSTEM_GENERATION_RETRIES);
+  } finally {
+    warning.mockRestore();
   }
 });

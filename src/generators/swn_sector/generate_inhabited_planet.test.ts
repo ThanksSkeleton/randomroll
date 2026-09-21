@@ -46,7 +46,7 @@ test('constructively enforces tag semantics', () => {
   expect(info).not.toBe(false);
   if (info === false) throw new Error('Expected inhabited information');
   expect(info.Population).toBe('Fewer than 500');
-  expect(info.TechLevel).toMatch(/postech|Pretech/);
+  expect(info.TechLevel).toMatch(/[Pp]ostech|Pretech/);
 
   const industrial = world('industry-world', ['Heavy Industry', 'Major Spaceyard']);
   if (industrial.InhabitedInfo === false) throw new Error('Expected inhabited information');

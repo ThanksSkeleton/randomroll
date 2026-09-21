@@ -2,7 +2,7 @@ import type { Sector, StarType } from './merged_schema';
 import { chooseWeighted, deterministicId, randomFor, rollDie, shuffled } from './generation_random';
 import { STAR_TABLE } from './generation_rules';
 import { generateRoutes } from './generate_routes';
-import { generateSystem, populatePointsOfInterest } from './generate_system';
+import { generateCompleteSystem } from './generate_system';
 
 export function generate(seed: string): Sector {
   const count = rollDie(randomFor(seed, 'sector:system-count'), 10) + 20;
@@ -16,17 +16,13 @@ export function generate(seed: string): Sector {
   const Systems = cells.slice(0, count).map((hexLocation, index) => {
     const path = `system:${String(index + 1).padStart(2, '0')}`;
     const star = chooseWeighted(randomFor(seed, `${path}:star`), STAR_TABLE, 'star candidates');
-    return populatePointsOfInterest(
+    return generateCompleteSystem({
       seed,
-      path,
-      generateSystem({
-        seed,
-        entityPath: path,
-        hexLocation,
-        starType: star.Value as StarType,
-        starHabitability: star.Hab ?? 0,
-      }),
-    );
+      entityPath: path,
+      hexLocation,
+      starType: star.Value as StarType,
+      starHabitability: star.Hab ?? 0,
+    });
   });
   const { Routes, RoutePortals } = generateRoutes(seed, Systems);
   const shipName = 'Player ship';

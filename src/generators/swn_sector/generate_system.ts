@@ -98,14 +98,45 @@ export const EXTRA_OBJECT_TYPE_WEIGHTS: readonly { Value: ExtraObjectCategory; W
 const ONE_INHABITED_WORLD_MAX_ROLL = 85;
 const TWO_INHABITED_WORLDS_MAX_ROLL = 95;
 const GAS_GIANT_MOON_MAX_ROLL = 10;
+export const MAX_SYSTEM_GENERATION_RETRIES = 5;
 
 function inhabitedCount(seed: string, path: string): number {
   const roll = rollDie(randomFor(seed, `${path}:inhabited-count`), 100);
   return roll <= ONE_INHABITED_WORLD_MAX_ROLL ? 1 : roll <= TWO_INHABITED_WORLDS_MAX_ROLL ? 2 : 3;
 }
 
+/**
+ * Runs a system-generation action once plus up to five retries. Each retry has
+ * its own deterministic random stream, so a seed remains reproducible.
+ */
+export function retrySystemGeneration<T>(
+  seed: string,
+  entityPath: string,
+  generateAttempt: (attemptSeed: string) => T,
+): T {
+  let lastError: unknown;
+  for (let attempt = 0; attempt <= MAX_SYSTEM_GENERATION_RETRIES; attempt += 1) {
+    const attemptSeed =
+      attempt === 0 ? seed : `${seed}:${entityPath}:generation-retry:${String(attempt)}`;
+    try {
+      return generateAttempt(attemptSeed);
+    } catch (error) {
+      lastError = error;
+      if (attempt === MAX_SYSTEM_GENERATION_RETRIES) break;
+      const message = error instanceof Error ? error.message : String(error);
+      console.warn(
+        `System generation failed for ${seed}:${entityPath} (attempt ${attempt + 1}/${MAX_SYSTEM_GENERATION_RETRIES + 1}): ${message}. Retrying.`,
+      );
+    }
+  }
+  const message = lastError instanceof Error ? lastError.message : String(lastError);
+  throw new Error(
+    `Unable to generate system ${seed}:${entityPath} after ${MAX_SYSTEM_GENERATION_RETRIES + 1} attempts: ${message}`,
+  );
+}
+
 /** Builds physical system objects only; POIs are added by the next construction slice. */
-export function generateSystem(options: GenerateSystemOptions): StarSystem {
+function generateSystemOnce(options: GenerateSystemOptions): StarSystem {
   const name = `System ${options.entityPath}`;
   const objects: SystemObject[] = [];
   const moons: Planet[] = [];
@@ -261,6 +292,25 @@ export function generateSystem(options: GenerateSystemOptions): StarSystem {
   };
 }
 
+/** Builds a system, retrying failed random draws with bounded deterministic attempts. */
+export function generateSystem(options: GenerateSystemOptions): StarSystem {
+  return retrySystemGeneration(options.seed, options.entityPath, (attemptSeed) =>
+    generateSystemOnce({ ...options, seed: attemptSeed }),
+  );
+}
+
+/** Builds the complete system output, including POIs, under one retry budget. */
+export function generateCompleteSystem(options: GenerateSystemOptions): StarSystem {
+  return retrySystemGeneration(options.seed, options.entityPath, (attemptSeed) => {
+    const attemptOptions = { ...options, seed: attemptSeed };
+    return populatePointsOfInterest(
+      attemptSeed,
+      options.entityPath,
+      generateSystemOnce(attemptOptions),
+    );
+  });
+}
+
 function inhabitedObjectCount(objects: readonly SystemObject[]): number {
   return objects.filter(
     (object): object is Planet => object.Kind === 'Planet' && object.InhabitedInfo !== false,
@@ -326,8 +376,17 @@ export function populatePointsOfInterest(
           { Value: { type: 'Deep-space station' as const, host: undefined }, Weight: 1 },
         ]
       : eligible;
-    if (candidates.length === 0)
-      throw new Error(`No feasible POI candidates for ${seed}:${entityPath}:${index}`);
+    if (candidates.length === 0) {
+      const hostSummary = objects
+        .map(
+          (object) =>
+            `${object.Kind === 'Planet' ? (object.InhabitedInfo === false ? 'uninhabited planet' : 'inhabited planet') : object.ObjectType}:${capacity.get(object.Id) ?? 0}`,
+        )
+        .join(', ');
+      throw new Error(
+        `No feasible POI candidates for ${seed}:${entityPath}:${index}; extraObjects=${extraCount}; eligible=${eligible.length}; hosts=[${hostSummary}]`,
+      );
+    }
     const selected = chooseWeighted(
       randomFor(seed, `${entityPath}:poi:${index}`),
       candidates,

@@ -50,12 +50,24 @@ export type InhabitedPlanetOptions = {
   allowedTemperatures?: readonly Planet['Temperature'][];
 };
 
-const completionCache = new Map<string, boolean>();
 /** A d100-style roll succeeds for surface water on 75% of unconstrained worlds. */
 const SURFACE_WATER_PRESENT_MINIMUM_ROLL = 0.25;
+const MAX_PROFILE_ROLLS = 100;
 
 function tagsRequire(tags: readonly WorldTag[], tag: WorldTag): boolean {
   return tags.includes(tag);
+}
+
+function chooseWithinHab<T extends string>(
+  seed: string,
+  path: string,
+  rows: readonly { Value: T; Weight: number }[],
+  habRequired: Readonly<Record<T, number>>,
+  currentHab: number,
+  context: string,
+): T {
+  const candidates = rows.filter((row) => habRequired[row.Value] <= currentHab);
+  return chooseWeighted(randomFor(seed, path), candidates, context).Value;
 }
 
 function waterState(
@@ -77,11 +89,11 @@ function waterState(
   return undefined;
 }
 
-function profileIsValid(
+function profileInvalidReason(
   profile: PhysicalProfile,
   tags: readonly WorldTag[],
   starHabitability: number,
-): boolean {
+): string | undefined {
   const environmentalHab = Math.min(
     ATMOSPHERE_HAB[profile.Atmosphere],
     TEMPERATURE_HAB[profile.Temperature],
@@ -95,7 +107,7 @@ function profileIsValid(
     totalHab < TECH_HAB_REQUIRED[profile.TechLevel] ||
     totalHab < TERRAN_BIOSPHERE_HAB_REQUIRED[profile.TerranBiosphere]
   )
-    return false;
+    return 'habitability is below the rolled population, technology, or Terran-biosphere requirement';
   if (
     waterState(profile, tags) === undefined &&
     (tagsRequire(tags, 'Desert World') ||
@@ -106,21 +118,21 @@ function profileIsValid(
       profile.Temperature === 'Volcanic' ||
       profile.Atmosphere === 'Vacuum')
   )
-    return false;
+    return 'the rolled temperature/atmosphere requires dry conditions while the tags or composition require water';
   if (
     (tagsRequire(tags, 'Tomb World') || tagsRequire(tags, 'Abandoned Colony')) &&
     profile.Population !== 'Fewer than 500'
   )
-    return false;
+    return 'Tomb World or Abandoned Colony requires fewer than 500 inhabitants';
   if (tagsRequire(tags, 'Outpost World') && profile.Population === 'Billions of inhabitants')
-    return false;
+    return 'Outpost World cannot have billions of inhabitants';
   if (
     (tagsRequire(tags, 'Heavy Industry') ||
       tagsRequire(tags, 'Major Spaceyard') ||
       tagsRequire(tags, 'Post-Scarcity')) &&
     TECH_LEVEL[profile.TechLevel] < 3
   )
-    return false;
+    return 'industry/spaceyard/post-scarcity requires technology level 3 or higher';
 
   for (const tag of tags) {
     const constraint = WORLD_TAG_CONSTRAINTS.get(tag);
@@ -130,133 +142,52 @@ function profileIsValid(
       constraint.maxEnvironmentalHab !== undefined &&
       environmentalHab > constraint.maxEnvironmentalHab
     )
-      return false;
+      return `${tag} caps environmental habitability`;
     if (
       constraint.maxAtmospherePercentile !== undefined &&
       ATMOSPHERE_MAX_PERCENTILE[profile.Atmosphere] > constraint.maxAtmospherePercentile
     )
-      return false;
+      return `${tag} requires a lower atmosphere percentile`;
     if (
       constraint.minNativeBiospherePercentile !== undefined &&
       NATIVE_BIOSPHERE_MIN_PERCENTILE[profile.NativeBiosphere] <
         constraint.minNativeBiospherePercentile
     )
-      return false;
+      return `${tag} requires a higher native-biosphere percentile`;
     if (
       constraint.minPopulationPercentile !== undefined &&
       populationMinimum < constraint.minPopulationPercentile
     )
-      return false;
+      return `${tag} requires a higher population percentile`;
     if (
       constraint.maxPopulationPercentile !== undefined &&
       populationMaximum > constraint.maxPopulationPercentile
     )
-      return false;
+      return `${tag} caps the population percentile`;
     if (
       constraint.minTechLevel !== undefined &&
       TECH_LEVEL[profile.TechLevel] < constraint.minTechLevel
     )
-      return false;
+      return `${tag} requires a higher technology level`;
   }
-  return true;
+  return undefined;
 }
 
-function hasCompletion(
+/** Reject contradictions that are apparent from tags and available temperatures alone. */
+function tagPairHasIntersection(
   tags: readonly WorldTag[],
-  starHabitability: number,
-  allowedTemperatures: readonly Planet['Temperature'][],
-  partial: Partial<PhysicalProfile>,
+  starHabitability?: number,
+  allowedTemperatures?: readonly Planet['Temperature'][],
 ): boolean {
-  const key = JSON.stringify([tags.slice().sort(), starHabitability, allowedTemperatures, partial]);
-  const cached = completionCache.get(key);
-  if (cached !== undefined) return cached;
-  const atmospheres =
-    partial.Atmosphere === undefined
-      ? ATMOSPHERE_TABLE.map((row) => row.Value)
-      : [partial.Atmosphere];
-  const temperatures =
-    partial.Temperature === undefined ? allowedTemperatures : [partial.Temperature];
-  const nativeBiospheres =
-    partial.NativeBiosphere === undefined
-      ? NATIVE_BIOSPHERE_TABLE.map((row) => row.Value)
-      : [partial.NativeBiosphere];
-  const terranBiospheres =
-    partial.TerranBiosphere === undefined
-      ? TERRAN_BIOSPHERE_TABLE.map((row) => row.Value)
-      : [partial.TerranBiosphere];
-  const sizes =
-    partial.Size === undefined ? TERRESTRIAL_SIZE_TABLE.map((row) => row.Value) : [partial.Size];
-  const compositions =
-    partial.BulkComposition === undefined
-      ? BULK_COMPOSITION_TABLE.map((row) => row.Value)
-      : [partial.BulkComposition];
-  const populations =
-    partial.Population === undefined
-      ? POPULATION_TABLE.map((row) => row.Value)
-      : [partial.Population];
-  const techLevels =
-    partial.TechLevel === undefined
-      ? TECH_LEVEL_TABLE.map((row) => row.Value)
-      : [partial.TechLevel];
-
-  for (const Atmosphere of atmospheres)
-    for (const Temperature of temperatures)
-      for (const NativeBiosphere of nativeBiospheres)
-        for (const TerranBiosphere of terranBiospheres)
-          for (const Size of sizes)
-            for (const BulkComposition of compositions)
-              for (const Population of populations)
-                for (const TechLevel of techLevels) {
-                  if (
-                    profileIsValid(
-                      {
-                        Atmosphere,
-                        Temperature,
-                        NativeBiosphere,
-                        TerranBiosphere,
-                        Size,
-                        BulkComposition,
-                        Population,
-                        TechLevel,
-                      },
-                      tags,
-                      starHabitability,
-                    )
-                  ) {
-                    completionCache.set(key, true);
-                    return true;
-                  }
-                }
-  completionCache.set(key, false);
-  return false;
-}
-
-function chooseFeasible<T extends string>(
-  seed: string,
-  path: string,
-  rows: readonly { Value: T; Weight: number }[],
-  tags: readonly WorldTag[],
-  starHabitability: number,
-  allowedTemperatures: readonly Planet['Temperature'][],
-  partial: Partial<PhysicalProfile>,
-  field: keyof PhysicalProfile,
-): T {
-  const candidates = rows.filter((row) =>
-    hasCompletion(tags, starHabitability, allowedTemperatures, { ...partial, [field]: row.Value }),
-  );
-  if (candidates.length === 0)
-    throw new Error(`No feasible ${field} candidates for ${seed}:${path}`);
-  return chooseWeighted(randomFor(seed, path), candidates, `${path} candidates`).Value;
-}
-
-/**
- * Tag constraints impose only upper/lower bounds, so their intersection can
- * be checked before selecting any physical attribute. The later completion
- * check still proves a concrete profile exists for every chosen value.
- */
-function tagPairHasIntersection(tags: readonly WorldTag[], starHabitability?: number): boolean {
   if (
     tagsRequire(tags, 'Desert World') &&
+    (tagsRequire(tags, 'Oceanic World') || tagsRequire(tags, 'Seagoing Cities'))
+  )
+    return false;
+  if (
+    allowedTemperatures?.every(
+      (temperature) => temperature === 'Cryogenic' || temperature === 'Volcanic',
+    ) &&
     (tagsRequire(tags, 'Oceanic World') || tagsRequire(tags, 'Seagoing Cities'))
   )
     return false;
@@ -287,8 +218,7 @@ function selectTags(
   if (forcedTags !== undefined) {
     if (
       forcedTags[0] === forcedTags[1] ||
-      !tagPairHasIntersection(forcedTags, starHabitability) ||
-      !hasCompletion(forcedTags, starHabitability, allowedTemperatures, {})
+      !tagPairHasIntersection(forcedTags, starHabitability, allowedTemperatures)
     )
       throw new Error(`No feasible forced tag pair for ${seed}:${path}`);
     return [forcedTags[0], forcedTags[1]];
@@ -297,9 +227,7 @@ function selectTags(
     WORLD_TAG_TABLE.filter(
       (second) =>
         first.Value !== second.Value &&
-        tagPairHasIntersection([first.Value, second.Value], starHabitability) &&
-        (starHabitability >= 2 ||
-          hasCompletion([first.Value, second.Value], starHabitability, allowedTemperatures, {})),
+        tagPairHasIntersection([first.Value, second.Value], starHabitability, allowedTemperatures),
     ).map((second) => ({
       Value: [first.Value, second.Value] as [WorldTag, WorldTag],
       Weight: first.Weight * second.Weight,
@@ -322,92 +250,95 @@ export function generateInhabitedPlanet(options: InhabitedPlanetOptions): Planet
     allowedTemperatures,
     options.forcedTags,
   );
-  const partial: Partial<PhysicalProfile> = {};
-  partial.Atmosphere = chooseFeasible(
-    options.seed,
-    `${options.entityPath}:atmosphere`,
-    ATMOSPHERE_TABLE,
-    tags,
-    options.starHabitability,
-    allowedTemperatures,
-    partial,
-    'Atmosphere',
-  );
-  partial.Temperature = chooseFeasible(
-    options.seed,
-    `${options.entityPath}:temperature`,
-    TEMPERATURE_TABLE.filter((row) => allowedTemperatures.includes(row.Value)),
-    tags,
-    options.starHabitability,
-    allowedTemperatures,
-    partial,
-    'Temperature',
-  );
-  partial.NativeBiosphere = chooseFeasible(
-    options.seed,
-    `${options.entityPath}:native-biosphere`,
-    NATIVE_BIOSPHERE_TABLE,
-    tags,
-    options.starHabitability,
-    allowedTemperatures,
-    partial,
-    'NativeBiosphere',
-  );
-  partial.TerranBiosphere = chooseFeasible(
-    options.seed,
-    `${options.entityPath}:terran-biosphere`,
-    TERRAN_BIOSPHERE_TABLE,
-    tags,
-    options.starHabitability,
-    allowedTemperatures,
-    partial,
-    'TerranBiosphere',
-  );
-  partial.Size = chooseFeasible(
-    options.seed,
-    `${options.entityPath}:size`,
-    TERRESTRIAL_SIZE_TABLE,
-    tags,
-    options.starHabitability,
-    allowedTemperatures,
-    partial,
-    'Size',
-  );
-  partial.BulkComposition = chooseFeasible(
-    options.seed,
-    `${options.entityPath}:composition`,
-    BULK_COMPOSITION_TABLE,
-    tags,
-    options.starHabitability,
-    allowedTemperatures,
-    partial,
-    'BulkComposition',
-  );
-  partial.Population = chooseFeasible(
-    options.seed,
-    `${options.entityPath}:population`,
-    POPULATION_TABLE,
-    tags,
-    options.starHabitability,
-    allowedTemperatures,
-    partial,
-    'Population',
-  );
-  partial.TechLevel = chooseFeasible(
-    options.seed,
-    `${options.entityPath}:technology`,
-    TECH_LEVEL_TABLE,
-    tags,
-    options.starHabitability,
-    allowedTemperatures,
-    partial,
-    'TechLevel',
-  );
-  const profile = partial as PhysicalProfile;
+  let profile: PhysicalProfile | undefined;
+  let profilePath: string | undefined;
+  let lastProfile: PhysicalProfile | undefined;
+  const rejectionCounts = new Map<string, number>();
+  for (let attempt = 0; attempt < MAX_PROFILE_ROLLS; attempt += 1) {
+    const path = `${options.entityPath}:profile:${attempt}`;
+    const Atmosphere = chooseWeighted(
+      randomFor(options.seed, `${path}:atmosphere`),
+      ATMOSPHERE_TABLE,
+      'atmospheres',
+    ).Value;
+    const Temperature = chooseWeighted(
+      randomFor(options.seed, `${path}:temperature`),
+      TEMPERATURE_TABLE.filter((row) => allowedTemperatures.includes(row.Value)),
+      'temperatures',
+    ).Value;
+    let currentHab = Math.min(
+      options.starHabitability,
+      ATMOSPHERE_HAB[Atmosphere],
+      TEMPERATURE_HAB[Temperature],
+    );
+    const NativeBiosphere = chooseWeighted(
+      randomFor(options.seed, `${path}:native-biosphere`),
+      NATIVE_BIOSPHERE_TABLE,
+      'native biospheres',
+    ).Value;
+    const TerranBiosphere = chooseWithinHab(
+      options.seed,
+      `${path}:terran-biosphere`,
+      TERRAN_BIOSPHERE_TABLE,
+      TERRAN_BIOSPHERE_HAB_REQUIRED,
+      currentHab,
+      'Terran biospheres',
+    );
+    currentHab = Math.min(currentHab, TERRAN_BIOSPHERE_HAB[TerranBiosphere]);
+    const Size = chooseWeighted(
+      randomFor(options.seed, `${path}:size`),
+      TERRESTRIAL_SIZE_TABLE,
+      'sizes',
+    ).Value;
+    currentHab = Math.min(currentHab, SIZE_HAB[Size]);
+    const BulkComposition = chooseWeighted(
+      randomFor(options.seed, `${path}:composition`),
+      BULK_COMPOSITION_TABLE,
+      'bulk compositions',
+    ).Value;
+    currentHab = Math.min(currentHab, BULK_COMPOSITION_HAB[BulkComposition]);
+    const candidate: PhysicalProfile = {
+      Atmosphere,
+      Temperature,
+      NativeBiosphere,
+      TerranBiosphere,
+      Size,
+      BulkComposition,
+      Population: chooseWithinHab(
+        options.seed,
+        `${path}:population`,
+        POPULATION_TABLE,
+        POPULATION_HAB_REQUIRED,
+        currentHab,
+        'populations',
+      ),
+      TechLevel: chooseWeighted(
+        randomFor(options.seed, `${path}:technology`),
+        TECH_LEVEL_TABLE,
+        'technology levels',
+      ).Value,
+    };
+    const rejectionReason = profileInvalidReason(candidate, tags, options.starHabitability);
+    if (rejectionReason === undefined) {
+      profile = candidate;
+      profilePath = path;
+      break;
+    }
+    lastProfile = candidate;
+    rejectionCounts.set(rejectionReason, (rejectionCounts.get(rejectionReason) ?? 0) + 1);
+  }
+  if (profile === undefined || profilePath === undefined) {
+    const rejections = Array.from(rejectionCounts, ([reason, count]) => `${count} ${reason}`).join(
+      '; ',
+    );
+    throw new Error(
+      `No valid inhabited profile after ${MAX_PROFILE_ROLLS} rolls for ${options.seed}:${options.entityPath}; tags=${JSON.stringify(tags)}; lastProfile=${JSON.stringify(lastProfile)}; rejections=${rejections}`,
+    );
+  }
   const forcedWater = waterState(profile, tags);
   const surfaceWater =
     forcedWater ??
-    randomFor(options.seed, `${options.entityPath}:water`)() >= SURFACE_WATER_PRESENT_MINIMUM_ROLL;
+    randomFor(options.seed, `${profilePath}:water`)() >= SURFACE_WATER_PRESENT_MINIMUM_ROLL;
   const totalHab = Math.min(
     options.starHabitability,
     ATMOSPHERE_HAB[profile.Atmosphere],
