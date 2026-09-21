@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import type { Preview } from '../../application/appState';
 import type { Sector, StarSystem } from '../../../merged_schema';
 import { VisibilityLevel, visibilityRank } from '../../domain/sector/visibility';
-import { areAdjacentHexes, findDetails, isVisibleToPlayer } from '../../domain/sector/selectors';
+import { areAdjacentHexes, findDetails, isVisibleToPlayer, planets, routeSystems } from '../../domain/sector/selectors';
 
 const TOP_DOWN_BOUNDARY_FILL = 0.88;
 const BAKED_TOP_DOWN = {
@@ -106,10 +106,10 @@ export function TopDown({
   select: (id: string) => void;
   preview: Preview;
 }) {
-  const planets = system.Worlds.filter((w) => !w.MoonOf && visible(w.Id, sector, preview));
+  const visiblePlanets = planets(system).filter((w) => !w.Orbit.ParentObjectId && visible(w.Id, sector, preview));
   const furthestPlanetAu = Math.max(
     0,
-    ...system.Worlds.filter((w) => !w.MoonOf).map((p) => p.AU ?? 0),
+    ...planets(system).filter((w) => !w.Orbit.ParentObjectId).map((p) => p.Orbit.AU),
   );
   const shellRef = useRef<HTMLDivElement>(null);
   const [mapSize, setMapSize] = useState(320);
@@ -138,17 +138,10 @@ export function TopDown({
   const orbitDashArray = `${(orbitDashPeriod * BAKED_TOP_DOWN.orbitDutyCycle) / 100} ${(orbitDashPeriod * (100 - BAKED_TOP_DOWN.orbitDutyCycle)) / 100}`;
   const routes = sector.Routes.flatMap((route) => {
     if (!visible(route.Id, sector, preview)) return [];
-    const otherSystemId =
-      route.SystemId1 === system.Id
-        ? route.SystemId2
-        : route.SystemId2 === system.Id
-          ? route.SystemId1
-          : null;
-    if (!otherSystemId) return [];
-    const destination = sector.Systems.find((candidate) => candidate.Id === otherSystemId);
+    const destination = routeSystems(sector, route)?.find((candidate) => candidate.Id !== system.Id);
     if (!destination || !visible(destination.Id, sector, preview)) return [];
-    const from = hexMapPosition(system.HexLocation.X, system.HexLocation.Y);
-    const to = hexMapPosition(destination.HexLocation.X, destination.HexLocation.Y);
+    const from = hexMapPosition(system.HexLocation.Column, system.HexLocation.Row);
+    const to = hexMapPosition(destination.HexLocation.Column, destination.HexLocation.Row);
     return [
       {
         route,
@@ -160,8 +153,8 @@ export function TopDown({
   const adjacentHexes = [-1, 0, 1]
     .flatMap((xOffset) =>
       [-1, 0, 1].map((yOffset) => ({
-        X: system.HexLocation.X + xOffset,
-        Y: system.HexLocation.Y + yOffset,
+        Column: system.HexLocation.Column + xOffset,
+        Row: system.HexLocation.Row + yOffset,
       })),
     )
     .filter((hex) => areAdjacentHexes(system.HexLocation, hex));
@@ -171,9 +164,9 @@ export function TopDown({
       visible(candidate.Id, sector, preview) &&
       areAdjacentHexes(system.HexLocation, candidate.HexLocation),
   );
-  const neighboringHexPosition = (hex: { X: number; Y: number }) => {
-    const center = hexMapPosition(system.HexLocation.X, system.HexLocation.Y);
-    const target = hexMapPosition(hex.X, hex.Y);
+  const neighboringHexPosition = (hex: { Column: number; Row: number }) => {
+    const center = hexMapPosition(system.HexLocation.Column, system.HexLocation.Row);
+    const target = hexMapPosition(hex.Column, hex.Row);
     return {
       left: c + ((target.left - center.left) * hexWidth) / 112,
       top: c + ((target.top - center.top) * hexWidth) / 112,
@@ -184,7 +177,7 @@ export function TopDown({
     const halfHeight = hexHeight / 2;
     return `${point.left - halfWidth / 2},${point.top - halfHeight} ${point.left + halfWidth / 2},${point.top - halfHeight} ${point.left + halfWidth},${point.top} ${point.left + halfWidth / 2},${point.top + halfHeight} ${point.left - halfWidth / 2},${point.top + halfHeight} ${point.left - halfWidth},${point.top}`;
   };
-  const boundaryLabel = (candidate: { HexLocation: { X: number; Y: number } }) => {
+  const boundaryLabel = (candidate: { HexLocation: { Column: number; Row: number } }) => {
     const point = neighboringHexPosition(candidate.HexLocation);
     const dx = point.left - c;
     const dy = point.top - c;
@@ -213,7 +206,7 @@ export function TopDown({
     };
   };
   const objectPois = (parentId: string) =>
-    system.POIs.filter(
+    system.PointsOfInterest.filter(
       (poi) => poi.ParentObjectId === parentId && visible(poi.Id, sector, preview),
     );
   useEffect(() => {
@@ -237,10 +230,10 @@ export function TopDown({
           <svg className="system-hex-grid" aria-hidden="true" viewBox={`0 0 ${mapSize} ${mapSize}`}>
             {[system.HexLocation, ...adjacentHexes].map((hex) => {
               const point =
-                hex.X === system.HexLocation.X && hex.Y === system.HexLocation.Y
+                hex.Column === system.HexLocation.Column && hex.Row === system.HexLocation.Row
                   ? { left: c, top: c }
                   : neighboringHexPosition(hex);
-              return <polygon key={`${hex.X}-${hex.Y}`} points={hexPoints(point)} />;
+              return <polygon key={`${hex.Column}-${hex.Row}`} points={hexPoints(point)} />;
             })}
             {adjacentSystems.map((candidate) => {
               const name = displayName(details(candidate.Id, sector), preview) ?? 'System';
@@ -299,8 +292,8 @@ export function TopDown({
               </div>
             );
           })}
-          {planets.map((p) => {
-            const orbitRadius = (p.AU ?? 0) * pixelsPerAu;
+          {visiblePlanets.map((p) => {
+            const orbitRadius = p.Orbit.AU * pixelsPerAu;
             return (
               <svg
                 key={`orbit-${p.Id}`}
@@ -379,10 +372,10 @@ export function TopDown({
               />
             );
           })}
-          {planets.map((p) => {
-            const pp = pos(p.Angle, (p.AU ?? 0) * pixelsPerAu);
-            const moons = system.Worlds.filter(
-              (m) => m.MoonOf === p.Id && visible(m.Id, sector, preview),
+          {visiblePlanets.map((p) => {
+            const pp = pos(p.Orbit.AngleDegrees, p.Orbit.AU * pixelsPerAu);
+            const moons = planets(system).filter(
+              (m) => m.Orbit.ParentObjectId === p.Id && visible(m.Id, sector, preview),
             );
             return (
               <div key={p.Id}>
@@ -439,8 +432,8 @@ export function TopDown({
                 </div>
                 {moons.map((m, mi) => {
                   const mp = {
-                    left: pp.left + Math.cos((m.Angle * Math.PI) / 180) * (30 + mi * 12),
-                    top: pp.top + Math.sin((m.Angle * Math.PI) / 180) * (30 + mi * 12),
+                    left: pp.left + Math.cos((m.Orbit.AngleDegrees * Math.PI) / 180) * (30 + mi * 12),
+                    top: pp.top + Math.sin((m.Orbit.AngleDegrees * Math.PI) / 180) * (30 + mi * 12),
                   };
                   return (
                     <div className="td-object td-moon" style={mp} key={m.Id}>

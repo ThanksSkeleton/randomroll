@@ -27,7 +27,7 @@ describe('prototype application workflows', () => {
     renderApp();
 
     expect(screen.getByRole('button', { name: 'GM VIEW' }).className).toContain('button-active');
-    expect(screen.getAllByRole('button', { name: /^System / })).toHaveLength(20);
+    expect(screen.getAllByRole('button', { name: /^System / }).length).toBeGreaterThanOrEqual(20);
     expect(screen.getByRole('heading', { name: 'NO TARGET' })).toBeTruthy();
     expect(
       (screen.getByRole('button', { name: '⌫ DELETE TARGET' }) as HTMLButtonElement).disabled,
@@ -115,7 +115,7 @@ describe('prototype application workflows', () => {
     });
     fireEvent.click(screen.getByRole('button', { name: /GENERATE SECTOR/ }));
     expect(archive.querySelectorAll('option')).toHaveLength(3);
-    expect(archive.textContent).toContain('Generated-3-CHARACTERIZATION');
+    expect(archive.textContent).toContain('Sector CHARACTERIZATION');
 
     fireEvent.change(archive, { target: { value: '2' } });
     fireEvent.change(screen.getByRole('textbox', { name: 'RENAME SECTOR' }), {

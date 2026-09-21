@@ -26,7 +26,7 @@ export class PrototypeApplication {
   }
 
   generateSector(seed: string): Sector {
-    const generated = generate(seed);
+    const generated = copy(generate(seed));
     this.sectors = [...this.sectors, generated];
     return copy(generated);
   }

@@ -107,7 +107,7 @@ Important feature responsibilities:
 
 ## Data and behavior notes
 
-`src/data.ts` creates two deterministic fixtures and provides clone-based generated sectors. Generated sectors inherit the second available sector as a template, receive fresh IDs, preserve the requested seed, and are named `Generated-{index}-{seed}`. This is prototype fixture logic, not the future production generator.
+`ui/data.ts` creates two deterministic generator-backed initial sectors. Archive generation calls the real SWN generator directly, preserves its canonical `merged-v1` payload, and uses the generator's `Sector ${seed}` name. The archive remains prototype-local and in-memory.
 
 The sector contract requires globally unique selectable IDs and exactly one detail/visibility record per selectable object. `validateSector` checks these and related parent, route, and player-ship invariants.
 

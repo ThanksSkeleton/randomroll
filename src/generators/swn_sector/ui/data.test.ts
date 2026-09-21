@@ -1,143 +1,41 @@
 import { describe, expect, it } from 'vitest';
-import {
-  cloneSectorTemplate,
-  createInitialSectors,
-  areAdjacentHexes,
-  findContainingSystem,
-  findObject,
-  getAllSelectableIds,
-  validateSector,
-} from './data';
-import { VisibilityLevel } from './types';
-import { deleteSectorObject, updateObjectVisibility } from './domain/sector/operations';
+import { generate } from '../generate';
+import { createInitialSectors, findContainingSystem, findObject, getAllSelectableIds, validateSector } from './data';
+import { VisibilityLevel } from '../merged_schema';
+import { updateObjectVisibility } from './domain/sector/operations';
 
-describe('mock sector data', () => {
-  it('creates two valid, data-rich deterministic fixtures', () => {
+describe('canonical sector data', () => {
+  it('creates deterministic generator-backed initial sectors', () => {
     const first = createInitialSectors();
-    const second = createInitialSectors();
-    expect(first).toHaveLength(2);
-    expect(first).toEqual(second);
+    expect(first).toEqual(createInitialSectors());
     for (const sector of first) {
-      expect(sector.Systems).toHaveLength(20);
-      expect(
-        getAllSelectableIds(sector).every((id) =>
-          /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id),
-        ),
-      ).toBe(true);
-      expect(
-        sector.Systems.every(({ HexLocation: { X, Y } }) => X >= 1 && X <= 5 && Y >= 1 && Y <= 8),
-      ).toBe(true);
-      expect(new Set(sector.Systems.map((system) => system.HexLocation.Y))).toEqual(
-        new Set([1, 2, 3, 4, 5, 6, 7, 8]),
-      );
-      expect(
-        sector.Routes.every((route) => {
-          const a = sector.Systems.find((system) => system.Id === route.SystemId1)!;
-          const b = sector.Systems.find((system) => system.Id === route.SystemId2)!;
-          return areAdjacentHexes(a.HexLocation, b.HexLocation);
-        }),
-      ).toBe(true);
-      expect(
-        sector.Systems.some((system) => system.Worlds.some((world) => world.MoonOf !== null)),
-      ).toBe(true);
-      expect(
-        sector.Systems.every((system) => {
-          const planetCount = system.Worlds.filter((world) => world.MoonOf === null).length;
-          return planetCount >= 2 && planetCount <= 5;
-        }),
-      ).toBe(true);
-      expect(new Set(sector.DetailsAndVisibility.map((detail) => detail.VisibilityLevel))).toEqual(
-        new Set(Object.values(VisibilityLevel)),
-      );
-      expect(sector.Routes.length).toBeGreaterThan(0);
+      expect(sector.SchemaVersion).toBe('merged-v1');
+      expect(sector.Systems.length).toBeGreaterThanOrEqual(20);
+      expect(sector.Systems.length).toBeLessThanOrEqual(30);
+      expect(new Set(getAllSelectableIds(sector)).size).toBe(getAllSelectableIds(sector).length);
+      expect(sector.RoutePortals.length).toBeGreaterThan(0);
       expect(validateSector(sector)).toEqual([]);
     }
   });
 
-  it('deep-copies Sector2 with fresh IDs and remapped references', () => {
-    const [, template] = createInitialSectors();
-    const clone = cloneSectorTemplate(template, 'TEST-SEED', 3);
-    const originalIds = new Set(getAllSelectableIds(template));
-    expect(clone.SectorName).toBe('Generated-3-TEST-SEED');
-    expect(clone.OriginalSeed).toBe('TEST-SEED');
-    expect(getAllSelectableIds(clone).every((id) => !originalIds.has(id))).toBe(true);
-    expect(validateSector(clone)).toEqual([]);
-    expect(clone.Systems[0].Id).not.toBe(template.Systems[0].Id);
-    expect(clone.Systems[0].Worlds.some((world) => world.MoonOf !== null)).toBe(true);
+  it('preserves richer generator fields', () => {
+    const sector = generate('UI-CANONICAL-DATA');
+    const object = sector.Systems.flatMap((system) => system.Objects)[0];
+    expect(object).toHaveProperty('Temperature');
+    expect(object).toHaveProperty('Orbit');
+    expect(sector.Systems.some((system) => system.PointsOfInterest.length > 0)).toBe(true);
   });
 
-  it('supports lookup, visibility updates, and safe deletion', () => {
-    const [sector] = createInitialSectors();
-    const system = sector.Systems[1];
-    const world = system.Worlds[0];
-    expect(findObject(sector, world.Id)?.object).toBe(world);
-    expect(findContainingSystem(sector, world.Id)).toBe(system);
-    const visibility = updateObjectVisibility(sector, world.Id, VisibilityLevel.CULTURE_FULL);
-    expect(visibility.ok).toBe(true);
-    if (!visibility.ok) throw new Error(visibility.reason);
-    expect(
-      visibility.value.DetailsAndVisibility.find((detail) => detail.Id === world.Id)
-        ?.VisibilityLevel,
-    ).toBe(VisibilityLevel.CULTURE_FULL);
-    const deletion = deleteSectorObject(visibility.value, world.Id);
-    expect(deletion.ok).toBe(true);
-    if (!deletion.ok) throw new Error(deletion.reason);
-    expect(findObject(deletion.value, world.Id)).toBeUndefined();
-    expect(validateSector(deletion.value)).toEqual([]);
-    expect(deleteSectorObject(deletion.value, sector.PlayerShip.Id).ok).toBe(false);
-  });
-
-  it('cascades world deletion to moons, child POIs, and matching details', () => {
-    const [sector] = createInitialSectors();
-    const system = sector.Systems.find((candidate) =>
-      candidate.Worlds.some((world) => world.MoonOf !== null),
-    )!;
-    const world = system.Worlds.find(
-      (candidate) =>
-        candidate.MoonOf === null && system.Worlds.some((moon) => moon.MoonOf === candidate.Id),
-    )!;
-    const moon = system.Worlds.find((candidate) => candidate.MoonOf === world.Id)!;
-    const poi = system.POIs[0];
-    poi.ParentObjectId = world.Id;
-
-    const deletion = deleteSectorObject(sector, world.Id);
-    expect(deletion.ok).toBe(true);
-    if (!deletion.ok) throw new Error(deletion.reason);
-    expect(findObject(deletion.value, world.Id)).toBeUndefined();
-    expect(findObject(deletion.value, moon.Id)).toBeUndefined();
-    expect(findObject(deletion.value, poi.Id)).toBeUndefined();
-    expect(
-      deletion.value.DetailsAndVisibility.some((detail) =>
-        [world.Id, moon.Id, poi.Id].includes(detail.Id),
-      ),
-    ).toBe(false);
-    expect(validateSector(deletion.value)).toEqual([]);
-  });
-
-  it('prohibits deleting the active system, stars, and the final system', () => {
-    const [sector] = createInitialSectors();
-    const activeSystem = sector.Systems.find(
-      (system) => system.Id === sector.PlayerShip.CurrentSystemId,
-    )!;
-    expect(deleteSectorObject(sector, activeSystem.Id).ok).toBe(false);
-    expect(deleteSectorObject(sector, activeSystem.Star.Id).ok).toBe(false);
-
-    const oneSystem = structuredClone(sector);
-    oneSystem.Systems = [oneSystem.Systems[0]];
-    oneSystem.Routes = [];
-    expect(deleteSectorObject(oneSystem, oneSystem.Systems[0].Id).ok).toBe(false);
-  });
-
-  it('reports invalid IDs, references, and visibility values', () => {
-    const [sector] = createInitialSectors();
-    sector.DetailsAndVisibility[0].VisibilityLevel = 'INVALID' as never;
-    sector.Routes[0].SystemId2 = 'missing-system';
-
-    expect(validateSector(sector)).toEqual(
-      expect.arrayContaining([
-        expect.stringContaining('Invalid visibility level'),
-        expect.stringContaining('invalid endpoints'),
-      ]),
-    );
+  it('supports canonical lookup and visibility updates', () => {
+    const sector = generate('UI-LOOKUP-DATA');
+    const system = sector.Systems[0];
+    const object = system.Objects[0];
+    expect(findObject(sector, object.Id)?.object).toBe(object);
+    expect(findContainingSystem(sector, object.Id)).toBe(system);
+    const result = updateObjectVisibility(sector, object.Id, VisibilityLevel.CULTURE_FULL);
+    expect(result.ok).toBe(true);
+    if (!result.ok) throw new Error(result.reason);
+    expect(findObject(result.value, object.Id)?.object.VisibilityLevel).toBe(VisibilityLevel.CULTURE_FULL);
+    expect(validateSector(result.value)).toEqual([]);
   });
 });

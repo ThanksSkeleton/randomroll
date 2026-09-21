@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { validateSector } from '../domain/sector/validation';
 import { createInitialSectors } from '../data';
+import { generate } from '../../generate';
 import { PrototypeApplication } from './prototypeApplication';
 
 describe('PrototypeApplication', () => {
@@ -8,8 +9,8 @@ describe('PrototypeApplication', () => {
     const application = new PrototypeApplication(createInitialSectors());
 
     expect(application.listSectors().map((sector) => sector.SectorName)).toEqual([
-      'Sector1',
-      'Sector2',
+      'Sector sector-one-seed',
+      'Sector sector-two-seed',
     ]);
     expect(application.getCurrentSession()).toEqual({ role: 'gm' });
   });
@@ -19,7 +20,10 @@ describe('PrototypeApplication', () => {
 
     const generated = application.generateSector('DELTA-7734');
 
+    expect(generated).toEqual(generate('DELTA-7734'));
     expect(generated.OriginalSeed).toBe('DELTA-7734');
+    expect(generated.Systems[0].Objects[0].Temperature).toBeDefined();
+    expect(generated.RoutePortals.length).toBeGreaterThan(0);
     expect(validateSector(generated)).toEqual([]);
     expect(application.listSectors()).toHaveLength(3);
   });
@@ -28,11 +32,11 @@ describe('PrototypeApplication', () => {
     const application = new PrototypeApplication(createInitialSectors());
     const loaded = application.loadSector(0)!;
     loaded.SectorName = 'Changed outside the application';
-    loaded.Systems[0].Worlds[0].WorldType = 'Changed outside the application';
+    loaded.Systems[0].Objects[0].ProceduralName = 'Changed outside the application';
 
     const stored = application.loadSector(0)!;
-    expect(stored.SectorName).toBe('Sector1');
-    expect(stored.Systems[0].Worlds[0].WorldType).not.toBe('Changed outside the application');
+    expect(stored.SectorName).toBe('Sector sector-one-seed');
+    expect(stored.Systems[0].Objects[0].ProceduralName).not.toBe('Changed outside the application');
   });
 
   it('preserves archive operations and chooses a valid index after deletion', () => {
@@ -41,7 +45,7 @@ describe('PrototypeApplication', () => {
     expect(application.renameSector(0, '  Renamed Sector  ')?.[0].SectorName).toBe(
       'Renamed Sector',
     );
-    expect(application.loadSector(1)?.SectorName).toBe('Sector2');
+    expect(application.loadSector(1)?.SectorName).toBe('Sector sector-two-seed');
 
     const result = application.deleteSector(1);
     expect(result).toEqual(expect.objectContaining({ ok: true, nextIndex: 0 }));

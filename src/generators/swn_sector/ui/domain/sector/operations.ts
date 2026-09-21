@@ -1,6 +1,6 @@
 import { VisibilityLevel } from './visibility';
 import type { Guid, Sector } from '../../../merged_schema';
-import { containingSystem, findObject, getAllSelectableIds, routePortals } from './selectors';
+import { containingSystem, findObject, routePortals } from './selectors';
 
 export type SectorOperationFailure =
   | 'object-not-found'
@@ -107,39 +107,5 @@ export function applySectorEdits(sector: Sector, edits: SectorEdits): Sector {
       else entity.Intelligence[field] = value;
     }
   }
-  return next;
-}
-
-export function cloneSectorWithFreshIds(sector: Sector, seed: string, index: number, createId: () => Guid): Sector {
-  const next = copySector(sector);
-  const idMap = new Map<Guid, Guid>();
-  for (const id of getAllSelectableIds(next)) idMap.set(id, createId());
-  const remap = (id: Guid): Guid => idMap.get(id) ?? id;
-  next.SectorName = `Generated-${index}-${seed || 'sector'}`;
-  next.OriginalSeed = seed;
-  for (const system of next.Systems) {
-    system.Id = remap(system.Id);
-    system.Star.Id = remap(system.Star.Id);
-    for (const object of system.Objects) {
-      const parent = object.Orbit.ParentObjectId;
-      object.Id = remap(object.Id);
-      object.Orbit.ParentObjectId = parent === null ? null : remap(parent);
-    }
-    for (const poi of system.PointsOfInterest) {
-      poi.Id = remap(poi.Id);
-      poi.ParentObjectId = remap(poi.ParentObjectId);
-    }
-  }
-  for (const portal of next.RoutePortals) {
-    portal.Id = remap(portal.Id);
-    portal.RouteId = remap(portal.RouteId);
-    portal.SystemId = remap(portal.SystemId);
-  }
-  for (const route of next.Routes) {
-    route.Id = remap(route.Id);
-    route.PortalIds = [remap(route.PortalIds[0]), remap(route.PortalIds[1])];
-  }
-  next.PlayerShip.Id = remap(next.PlayerShip.Id);
-  next.PlayerShip.CurrentLocationId = remap(next.PlayerShip.CurrentLocationId);
   return next;
 }
