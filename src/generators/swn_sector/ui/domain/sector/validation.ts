@@ -1,4 +1,5 @@
-import { Sector, VisibilityLevel } from './model';
+import { VisibilityLevel } from './model';
+import type { Sector } from './model';
 import { findContainingSystem, getAllSelectableIds } from './selectors';
 
 export function validateSector(sector: Sector): string[] {

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useReducer, useState } from 'react';
 import { appReducer, createAppState } from './application/appState';
-import type { EditDraft, Preview, SystemMode, View } from './application/appState';
+import type { EditDraft, Preview, View } from './application/appState';
 import { AppChrome, StageNav } from './features/navigation/AppChrome';
 import type { StageMode } from './features/navigation/AppChrome';
 import { SectorArchive } from './features/sector-archive/SectorArchive';
@@ -37,13 +37,6 @@ function displayName(info: DetailsAndVisibility | undefined, preview: Preview): 
     visibilityRank(info.VisibilityLevel) < visibilityRank(VisibilityLevel.CULTURE_PARTIAL)
     ? info.ProceduralName
     : info.NiceName;
-}
-
-function showProceduralName(info: DetailsAndVisibility, preview: Preview): boolean {
-  return (
-    preview === 'gm' ||
-    visibilityRank(info.VisibilityLevel) >= visibilityRank(VisibilityLevel.CULTURE_PARTIAL)
-  );
 }
 
 function EditableText({

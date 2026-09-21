@@ -1,12 +1,11 @@
-import {
+import { VisibilityLevel, visibilityRank } from './model';
+import type {
   DetailsAndVisibility,
   FoundObject,
   Guid,
   HexLocation,
   Sector,
   StarSystem,
-  VisibilityLevel,
-  visibilityRank,
   World,
 } from './model';
 

@@ -1,4 +1,5 @@
-import { Guid, Sector, VisibilityLevel } from './model';
+import { VisibilityLevel } from './model';
+import type { Guid, Sector } from './model';
 import { findContainingSystem, findObject, getAllSelectableIds } from './selectors';
 
 export type SectorOperationFailure =

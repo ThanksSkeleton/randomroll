@@ -1,11 +1,8 @@
 /** Deterministic prototype fixtures; reusable rules live in src/domain/sector. */
-import {
-  cloneSectorWithFreshIds,
-  deleteSectorObject,
-  updateObjectVisibility,
-} from './domain/sector/operations';
+import { cloneSectorWithFreshIds } from './domain/sector/operations';
 import { areAdjacentHexes } from './domain/sector/selectors';
-import {
+import { VisibilityLevel } from './domain/sector/model';
+import type {
   DetailsAndVisibility,
   Guid,
   PlayerShip,
@@ -13,7 +10,6 @@ import {
   Sector,
   Star,
   StarSystem,
-  VisibilityLevel,
   World,
 } from './domain/sector/model';
 

@@ -2,15 +2,14 @@ import { describe, expect, it } from 'vitest';
 import {
   cloneSectorTemplate,
   createInitialSectors,
-  deleteSelectedObject,
   areAdjacentHexes,
   findContainingSystem,
   findObject,
   getAllSelectableIds,
-  updateSelectedVisibility,
   validateSector,
 } from './data';
 import { VisibilityLevel } from './types';
+import { deleteSectorObject, updateObjectVisibility } from './domain/sector/operations';
 
 describe('mock sector data', () => {
   it('creates two valid, data-rich deterministic fixtures', () => {
@@ -73,14 +72,19 @@ describe('mock sector data', () => {
     const world = system.Worlds[0];
     expect(findObject(sector, world.Id)?.object).toBe(world);
     expect(findContainingSystem(sector, world.Id)).toBe(system);
-    expect(updateSelectedVisibility(sector, world.Id, VisibilityLevel.CULTURE_FULL)).toBe(true);
+    const visibility = updateObjectVisibility(sector, world.Id, VisibilityLevel.CULTURE_FULL);
+    expect(visibility.ok).toBe(true);
+    if (!visibility.ok) throw new Error(visibility.reason);
     expect(
-      sector.DetailsAndVisibility.find((detail) => detail.Id === world.Id)?.VisibilityLevel,
+      visibility.value.DetailsAndVisibility.find((detail) => detail.Id === world.Id)
+        ?.VisibilityLevel,
     ).toBe(VisibilityLevel.CULTURE_FULL);
-    expect(deleteSelectedObject(sector, world.Id)).toBe(true);
-    expect(findObject(sector, world.Id)).toBeUndefined();
-    expect(validateSector(sector)).toEqual([]);
-    expect(deleteSelectedObject(sector, sector.PlayerShip.Id)).toBe(false);
+    const deletion = deleteSectorObject(visibility.value, world.Id);
+    expect(deletion.ok).toBe(true);
+    if (!deletion.ok) throw new Error(deletion.reason);
+    expect(findObject(deletion.value, world.Id)).toBeUndefined();
+    expect(validateSector(deletion.value)).toEqual([]);
+    expect(deleteSectorObject(deletion.value, sector.PlayerShip.Id).ok).toBe(false);
   });
 
   it('cascades world deletion to moons, child POIs, and matching details', () => {
@@ -96,14 +100,18 @@ describe('mock sector data', () => {
     const poi = system.POIs[0];
     poi.ParentObjectId = world.Id;
 
-    expect(deleteSelectedObject(sector, world.Id)).toBe(true);
-    expect(findObject(sector, world.Id)).toBeUndefined();
-    expect(findObject(sector, moon.Id)).toBeUndefined();
-    expect(findObject(sector, poi.Id)).toBeUndefined();
+    const deletion = deleteSectorObject(sector, world.Id);
+    expect(deletion.ok).toBe(true);
+    if (!deletion.ok) throw new Error(deletion.reason);
+    expect(findObject(deletion.value, world.Id)).toBeUndefined();
+    expect(findObject(deletion.value, moon.Id)).toBeUndefined();
+    expect(findObject(deletion.value, poi.Id)).toBeUndefined();
     expect(
-      sector.DetailsAndVisibility.some((detail) => [world.Id, moon.Id, poi.Id].includes(detail.Id)),
+      deletion.value.DetailsAndVisibility.some((detail) =>
+        [world.Id, moon.Id, poi.Id].includes(detail.Id),
+      ),
     ).toBe(false);
-    expect(validateSector(sector)).toEqual([]);
+    expect(validateSector(deletion.value)).toEqual([]);
   });
 
   it('prohibits deleting the active system, stars, and the final system', () => {
@@ -111,13 +119,13 @@ describe('mock sector data', () => {
     const activeSystem = sector.Systems.find(
       (system) => system.Id === sector.PlayerShip.CurrentSystemId,
     )!;
-    expect(deleteSelectedObject(sector, activeSystem.Id)).toBe(false);
-    expect(deleteSelectedObject(sector, activeSystem.Star.Id)).toBe(false);
+    expect(deleteSectorObject(sector, activeSystem.Id).ok).toBe(false);
+    expect(deleteSectorObject(sector, activeSystem.Star.Id).ok).toBe(false);
 
     const oneSystem = structuredClone(sector);
     oneSystem.Systems = [oneSystem.Systems[0]];
     oneSystem.Routes = [];
-    expect(deleteSelectedObject(oneSystem, oneSystem.Systems[0].Id)).toBe(false);
+    expect(deleteSectorObject(oneSystem, oneSystem.Systems[0].Id).ok).toBe(false);
   });
 
   it('reports invalid IDs, references, and visibility values', () => {
