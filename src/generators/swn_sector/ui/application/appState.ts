@@ -5,10 +5,10 @@ export type Preview = 'gm' | 'player';
 export type SystemMode = 'symbolic' | 'topdown';
 export type EditableDetailField =
   | 'NiceName'
-  | 'Details_Basic_Scan'
-  | 'Details_Culture_Partial'
-  | 'Details_Culture_Full'
-  | 'Details_GM';
+  | 'BasicScan'
+  | 'CulturePartial'
+  | 'CultureFull'
+  | 'GM';
 export type EditDraft = {
   sectorName: string;
   details: Record<string, Partial<Record<EditableDetailField, string>>>;

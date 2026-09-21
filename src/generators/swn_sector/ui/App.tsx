@@ -11,7 +11,7 @@ import { SystemViewer } from './features/system-viewer/SystemViewer';
 import { SymbolicSystem as FeatureSymbolicSystem } from './features/system-viewer/SymbolicSystem';
 import { TopDown as FeatureTopDown } from './features/system-viewer/TopDown';
 import { VisibilityLevel, visibilityRank } from './domain/sector/model';
-import type { DetailsAndVisibility, Sector } from './domain/sector/model';
+import type { SelectableEntity, Sector } from './domain/sector/model';
 import { applySectorEdits } from './domain/sector/operations';
 import {
   findContainingSystem,
@@ -31,7 +31,7 @@ function details(id: string, sector: Sector) {
   return findDetails(sector, id);
 }
 
-function displayName(info: DetailsAndVisibility | undefined, preview: Preview): string | undefined {
+function displayName(info: SelectableEntity | undefined, preview: Preview): string | undefined {
   if (!info) return undefined;
   return preview === 'player' &&
     visibilityRank(info.VisibilityLevel) < visibilityRank(VisibilityLevel.CULTURE_PARTIAL)
@@ -124,7 +124,7 @@ export default function App() {
     if (kind === 'SYSTEM') return sector.Systems.find((system) => system.Id === selected) ?? null;
     if (kind === 'PLAYER SHIP')
       return (
-        sector.Systems.find((system) => system.Id === sector.PlayerShip.CurrentSystemId) ?? null
+        findContainingSystem(sector, sector.PlayerShip.CurrentLocationId) ?? null
       );
     if (kind === 'ROUTE') return null;
     return findContainingSystem(sector, selected) ?? null;

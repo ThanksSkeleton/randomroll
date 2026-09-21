@@ -1,8 +1,8 @@
 import { Fragment, useState } from 'react';
 import type { Preview } from '../../application/appState';
-import type { Sector, StarSystem, SurveySummary, World } from '../../domain/sector/model';
+import type { Planet, Sector, StarSystem } from '../../domain/sector/model';
 import { VisibilityLevel, visibilityRank } from '../../domain/sector/model';
-import { findDetails, isVisibleToPlayer } from '../../domain/sector/selectors';
+import { findDetails, isVisibleToPlayer, planets, routeSystems } from '../../domain/sector/selectors';
 
 function visible(id: string, sector: Sector, preview: Preview) {
   return preview === 'gm' || isVisibleToPlayer(sector, id);
@@ -23,8 +23,8 @@ function showProceduralName(info: NonNullable<ReturnType<typeof findDetails>>, p
     visibilityRank(info.VisibilityLevel) >= visibilityRank(VisibilityLevel.CULTURE_PARTIAL)
   );
 }
-function ContentText({ content }: { content: { Text: string } }) {
-  return <>{content.Text}</>;
+function ContentText({ content }: { content: string }) {
+  return <>{content}</>;
 }
 function Selectable({
   id,
@@ -77,7 +77,7 @@ function WorldSymbol({
   select,
   preview,
 }: {
-  world: World;
+  world: Planet;
   system: StarSystem;
   sector: Sector;
   selected: string | null;
@@ -85,12 +85,12 @@ function WorldSymbol({
   preview: Preview;
 }) {
   const d = details(world.Id, sector);
-  const pois = system.POIs.filter(
+  const pois = system.PointsOfInterest.filter(
     (p) => p.ParentObjectId === world.Id && visible(p.Id, sector, preview),
   );
-  const scale = world.MoonOf ? 0.55 : (worldScale[world.WorldType.toLowerCase()] ?? 1);
+  const scale = world.Orbit.ParentObjectId ? 0.55 : (worldScale[world.Size.toLowerCase()] ?? 1);
   return (
-    <div className={`world-unit ${world.MoonOf ? 'moon-unit' : ''}`}>
+    <div className={`world-unit ${world.Orbit.ParentObjectId ? 'moon-unit' : ''}`}>
       <div className="orbital-tick" />
       <Selectable
         id={world.Id}
@@ -101,7 +101,7 @@ function WorldSymbol({
       >
         <span
           style={{ '--scale': scale } as React.CSSProperties}
-          className={`orb type-${world.WorldType.toLowerCase()}`}
+          className={`orb type-${world.Size.toLowerCase()}`}
         />
       </Selectable>
       {sector.PlayerShip.CurrentLocationId === world.Id &&
@@ -122,9 +122,9 @@ function WorldSymbol({
       )}
       <div
         className="summary-icons world-summary-icons"
-        title={world.inhabitedWorld ? 'Atmosphere / population / technology' : undefined}
+        title={world.InhabitedInfo !== false ? 'Atmosphere / population / technology' : undefined}
       >
-        {world.inhabitedWorld && (
+        {world.InhabitedInfo !== false && (
           <>
             <span className="summary-icon summary-icon-atmosphere">◉</span>
             <span className="summary-icon summary-icon-population">♟</span>
@@ -149,7 +149,7 @@ function WorldSymbol({
     </div>
   );
 }
-function SurveyCard({ summary, className = '' }: { summary: SurveySummary; className?: string }) {
+function SurveyCard({ summary, className = '' }: { summary: string; className?: string }) {
   return (
     <section className={`intelligence-card ${className}`}>
       <p className="intelligence-description">
@@ -179,19 +179,15 @@ export function SymbolicSystem({
   showHeader?: boolean;
 }) {
   const [open, setOpen] = useState(defaultOpen);
-  const planets = system.Worlds.filter((w) => !w.MoonOf).sort((a, b) => (a.AU ?? 0) - (b.AU ?? 0));
-  const families = planets
+  const worldPlanets = planets(system).filter((w) => !w.Orbit.ParentObjectId).sort((a, b) => a.Orbit.AU - b.Orbit.AU);
+  const families = worldPlanets
     .map((planet) =>
-      [planet, ...system.Worlds.filter((moon) => moon.MoonOf === planet.Id)].filter((world) =>
+      [planet, ...planets(system).filter((moon) => moon.Orbit.ParentObjectId === planet.Id)].filter((world) =>
         visible(world.Id, sector, preview),
       ),
     )
     .filter((family) => family.length > 0);
-  const routes = sector.Routes.filter(
-    (route) =>
-      (route.SystemId1 === system.Id || route.SystemId2 === system.Id) &&
-      visible(route.Id, sector, preview),
-  );
+  const routes = sector.Routes.filter((route) => routeSystems(sector, route)?.some((candidate) => candidate.Id === system.Id) && visible(route.Id, sector, preview));
   const systemD = details(system.Id, sector);
   const shipAtSystem =
     sector.PlayerShip.CurrentLocationId === system.Star.Id &&
@@ -255,9 +251,8 @@ export function SymbolicSystem({
               <div className="symbolic-column route-column">
                 <div className="route-unit">
                   {routes.map((route) => {
-                    const otherId =
-                      route.SystemId1 === system.Id ? route.SystemId2 : route.SystemId1;
-                    const other = sector.Systems.find((s) => s.Id === otherId);
+                    const other = routeSystems(sector, route)?.find((candidate) => candidate.Id !== system.Id);
+                    const otherId = other?.Id ?? '';
                     const otherName =
                       displayName(details(otherId, sector), preview) ?? other?.Id ?? 'System';
                     return (

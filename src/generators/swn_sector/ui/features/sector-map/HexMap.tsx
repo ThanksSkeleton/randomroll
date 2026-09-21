@@ -1,7 +1,7 @@
 import { VisibilityLevel, visibilityRank } from '../../domain/sector/model';
 import type { Sector } from '../../domain/sector/model';
 import type { Preview } from '../../application/appState';
-import { findDetails, isVisibleToPlayer } from '../../domain/sector/selectors';
+import { findContainingSystem, findDetails, isVisibleToPlayer, routeSystems } from '../../domain/sector/selectors';
 
 function visible(id: string, sector: Sector, preview: Preview) {
   return preview === 'gm' || isVisibleToPlayer(sector, id);
@@ -64,12 +64,12 @@ export function HexMap({
       <div className="hex-map" role="group" aria-label="Sector map">
         <svg className="routes" viewBox="0 0 1000 850" preserveAspectRatio="none">
           {sector.Routes.filter((r) => visible(r.Id, sector, preview)).map((route) => {
-            const a = sector.Systems.find((s) => s.Id === route.SystemId1),
-              b = sector.Systems.find((s) => s.Id === route.SystemId2);
+            const endpoints = routeSystems(sector, route);
+            const a = endpoints?.[0], b = endpoints?.[1];
             if (!a || !b || !visible(a.Id, sector, preview) || !visible(b.Id, sector, preview))
               return null;
-            const p1 = position(a.HexLocation.X, a.HexLocation.Y),
-              p2 = position(b.HexLocation.X, b.HexLocation.Y);
+            const p1 = position(a.HexLocation.Column, a.HexLocation.Row),
+              p2 = position(b.HexLocation.Column, b.HexLocation.Row);
             return (
               <line
                 key={route.Id}
@@ -92,10 +92,10 @@ export function HexMap({
           return <div key={i} className="hex-cell" style={position(x, y)} />;
         })}
         {sector.Systems.filter((s) => visible(s.Id, sector, preview)).map((system) => {
-          const p = position(system.HexLocation.X, system.HexLocation.Y);
+          const p = position(system.HexLocation.Column, system.HexLocation.Row);
           const label = name(system.Id, sector, preview) ?? 'System';
           const shipHere =
-            sector.PlayerShip.CurrentSystemId === system.Id &&
+            findContainingSystem(sector, sector.PlayerShip.CurrentLocationId)?.Id === system.Id &&
             visible(sector.PlayerShip.Id, sector, preview);
           return (
             <div className="system-pin" key={system.Id} style={p}>

@@ -1,16 +1,16 @@
 import { VisibilityLevel, visibilityRank } from '../../domain/sector/model';
-import type { DetailsAndVisibility, Sector } from '../../domain/sector/model';
+import type { SelectableEntity, Sector } from '../../domain/sector/model';
 import { findDetails, findObject, objectKindLabel } from '../../domain/sector/selectors';
 import type { EditDraft, Preview, EditableDetailField } from '../../application/appState';
 
-function displayName(info: DetailsAndVisibility | undefined, preview: Preview) {
+function displayName(info: SelectableEntity | undefined, preview: Preview) {
   if (!info) return undefined;
   return preview === 'player' &&
     visibilityRank(info.VisibilityLevel) < visibilityRank(VisibilityLevel.CULTURE_PARTIAL)
     ? info.ProceduralName
     : info.NiceName;
 }
-function showProceduralName(info: DetailsAndVisibility, preview: Preview) {
+function showProceduralName(info: SelectableEntity, preview: Preview) {
   return (
     preview === 'gm' ||
     visibilityRank(info.VisibilityLevel) >= visibilityRank(VisibilityLevel.CULTURE_PARTIAL)
@@ -18,15 +18,15 @@ function showProceduralName(info: DetailsAndVisibility, preview: Preview) {
 }
 function draftValue(
   draft: EditDraft | null,
-  info: DetailsAndVisibility,
+  info: SelectableEntity,
   field: EditableDetailField,
 ) {
   return (
-    draft?.details[info.Id]?.[field] ?? (field === 'NiceName' ? info.NiceName : info[field].Text)
+    draft?.details[info.Id]?.[field] ?? (field === 'NiceName' ? info.NiceName : info.Intelligence[field])
   );
 }
-function ContentText({ content }: { content: { Text: string } }) {
-  return <>{content.Text}</>;
+function ContentText({ content }: { content: string }) {
+  return <>{content}</>;
 }
 function EditableText({
   value,
@@ -132,7 +132,7 @@ function DetailBox({
   draft,
   setDraft,
 }: {
-  info: DetailsAndVisibility;
+  info: SelectableEntity;
   preview: Preview;
   locked: boolean;
   draft: EditDraft | null;
@@ -160,12 +160,12 @@ function DetailBox({
             <EditableText
               className="detail-editable"
               multiline
-              value={draftValue(draft, info, 'Details_Basic_Scan')}
-              onChange={edit('Details_Basic_Scan')}
+              value={draftValue(draft, info, 'BasicScan')}
+              onChange={edit('BasicScan')}
             />
           ) : (
             <p className="detail-section-description">
-              <ContentText content={info.Details_Basic_Scan} />
+              <ContentText content={info.Intelligence.BasicScan} />
             </p>
           )}
         </section>
@@ -176,12 +176,12 @@ function DetailBox({
             <EditableText
               className="detail-editable"
               multiline
-              value={draftValue(draft, info, 'Details_Culture_Partial')}
-              onChange={edit('Details_Culture_Partial')}
+              value={draftValue(draft, info, 'CulturePartial')}
+              onChange={edit('CulturePartial')}
             />
           ) : (
             <p className="detail-section-description">
-              <ContentText content={info.Details_Culture_Partial} />
+              <ContentText content={info.Intelligence.CulturePartial} />
             </p>
           )}
         </section>
@@ -192,12 +192,12 @@ function DetailBox({
             <EditableText
               className="detail-editable"
               multiline
-              value={draftValue(draft, info, 'Details_Culture_Full')}
-              onChange={edit('Details_Culture_Full')}
+              value={draftValue(draft, info, 'CultureFull')}
+              onChange={edit('CultureFull')}
             />
           ) : (
             <p className="detail-section-description">
-              <ContentText content={info.Details_Culture_Full} />
+              <ContentText content={info.Intelligence.CultureFull} />
             </p>
           )}
         </section>
@@ -208,12 +208,12 @@ function DetailBox({
             <EditableText
               className="detail-editable"
               multiline
-              value={draftValue(draft, info, 'Details_GM')}
-              onChange={edit('Details_GM')}
+              value={draftValue(draft, info, 'GM')}
+              onChange={edit('GM')}
             />
           ) : (
             <p className="detail-section-description">
-              <ContentText content={info.Details_GM} />
+              <ContentText content={info.Intelligence.GM} />
             </p>
           )}
         </section>

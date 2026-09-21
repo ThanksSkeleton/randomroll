@@ -1,4 +1,5 @@
-import { cloneSectorTemplate, createInitialSectors } from '../data';
+import { createInitialSectors } from '../data';
+import { generate } from '../../generate';
 import type { Sector } from '../domain/sector/model';
 
 export type LocalSession = { role: 'gm' };
@@ -25,8 +26,7 @@ export class PrototypeApplication {
   }
 
   generateSector(seed: string): Sector {
-    const template = this.sectors[1] ?? this.sectors[0];
-    const generated = cloneSectorTemplate(template, seed, this.sectors.length + 1);
+    const generated = generate(seed);
     this.sectors = [...this.sectors, generated];
     return copy(generated);
   }
