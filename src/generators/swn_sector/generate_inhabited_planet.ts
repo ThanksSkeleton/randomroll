@@ -53,6 +53,8 @@ export type InhabitedPlanetOptions = {
 /** A d100-style roll succeeds for surface water on 75% of unconstrained worlds. */
 const SURFACE_WATER_PRESENT_MINIMUM_ROLL = 0.25;
 const MAX_PROFILE_ROLLS = 100;
+const TOMB_WORLD_MAX_ENVIRONMENTAL_HAB = 1;
+const TOMB_WORLD_MIN_TECH_LEVEL = 4;
 
 function tagsRequire(tags: readonly WorldTag[], tag: WorldTag): boolean {
   return tags.includes(tag);
@@ -204,7 +206,12 @@ function tagPairHasIntersection(
     tagsRequire(tags, 'Outpost World')
   )
     populationMaximum = Math.min(populationMaximum, 9);
-  if (starHabitability === 0) populationMaximum = Math.min(populationMaximum, 9);
+  if (starHabitability !== undefined) {
+    const maximumSupportedPopulationPercentile = POPULATION_TABLE.filter(
+      (row) => POPULATION_HAB_REQUIRED[row.Value] <= starHabitability,
+    ).reduce((maximum, row) => Math.max(maximum, POPULATION_RANGE[row.Value][1]), 0);
+    populationMaximum = Math.min(populationMaximum, maximumSupportedPopulationPercentile);
+  }
   return populationMinimum <= populationMaximum;
 }
 
@@ -250,6 +257,7 @@ export function generateInhabitedPlanet(options: InhabitedPlanetOptions): Planet
     allowedTemperatures,
     options.forcedTags,
   );
+  const isTombWorld = tagsRequire(tags, 'Tomb World');
   let profile: PhysicalProfile | undefined;
   let profilePath: string | undefined;
   let lastProfile: PhysicalProfile | undefined;
@@ -291,12 +299,30 @@ export function generateInhabitedPlanet(options: InhabitedPlanetOptions): Planet
       'sizes',
     ).Value;
     currentHab = Math.min(currentHab, SIZE_HAB[Size]);
+    const environmentalHabBeforeComposition = Math.min(
+      ATMOSPHERE_HAB[Atmosphere],
+      TEMPERATURE_HAB[Temperature],
+      TERRAN_BIOSPHERE_HAB[TerranBiosphere],
+      SIZE_HAB[Size],
+    );
+    const compositionRows =
+      isTombWorld && environmentalHabBeforeComposition > TOMB_WORLD_MAX_ENVIRONMENTAL_HAB
+        ? BULK_COMPOSITION_TABLE.filter(
+            (row) => BULK_COMPOSITION_HAB[row.Value] <= TOMB_WORLD_MAX_ENVIRONMENTAL_HAB,
+          )
+        : BULK_COMPOSITION_TABLE;
     const BulkComposition = chooseWeighted(
       randomFor(options.seed, `${path}:composition`),
-      BULK_COMPOSITION_TABLE,
+      compositionRows,
       'bulk compositions',
     ).Value;
     currentHab = Math.min(currentHab, BULK_COMPOSITION_HAB[BulkComposition]);
+    const populationRows = isTombWorld
+      ? POPULATION_TABLE.filter((row) => row.Value === 'Fewer than 500')
+      : POPULATION_TABLE;
+    const technologyRows = isTombWorld
+      ? TECH_LEVEL_TABLE.filter((row) => TECH_LEVEL[row.Value] >= TOMB_WORLD_MIN_TECH_LEVEL)
+      : TECH_LEVEL_TABLE;
     const candidate: PhysicalProfile = {
       Atmosphere,
       Temperature,
@@ -307,16 +333,25 @@ export function generateInhabitedPlanet(options: InhabitedPlanetOptions): Planet
       Population: chooseWithinHab(
         options.seed,
         `${path}:population`,
-        POPULATION_TABLE,
+        populationRows,
         POPULATION_HAB_REQUIRED,
         currentHab,
         'populations',
       ),
-      TechLevel: chooseWeighted(
-        randomFor(options.seed, `${path}:technology`),
-        TECH_LEVEL_TABLE,
-        'technology levels',
-      ).Value,
+      TechLevel: isTombWorld
+        ? chooseWithinHab(
+            options.seed,
+            `${path}:technology`,
+            technologyRows,
+            TECH_HAB_REQUIRED,
+            currentHab,
+            'Tomb World technology levels',
+          )
+        : chooseWeighted(
+            randomFor(options.seed, `${path}:technology`),
+            technologyRows,
+            'technology levels',
+          ).Value,
     };
     const rejectionReason = profileInvalidReason(candidate, tags, options.starHabitability);
     if (rejectionReason === undefined) {

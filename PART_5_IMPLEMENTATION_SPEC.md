@@ -111,20 +111,26 @@ from earlier stages, but they may not rewrite those facts to make them valid.
      whether it is a gas-giant moon using the reviewed moon table; if so, create
      its complete uninhabited gas-planet parent immediately.
 3. **Extra objects and points of interest**
-   - Roll the POI target (`1d4 + 1`) and the legacy extra-object target
-     (`max(2, 1d6)`) before filling either collection.
+   - Roll the legacy extra-object target (`max(2, 1d6)`) before filling extras,
+     and roll the POI target (`1d4 + 1`) before filling POIs.
    - Gas-planet parents already created for inhabited moons count as extra
-     objects. Raise the target, when necessary, to leave enough legal POI-host
-     capacity; never exceed seven total non-inhabited objects.
+     objects. Never exceed seven total non-inhabited objects.
    - Expand extra-world templates into complete planets or other celestial
-     objects. Ensure at least two ordinary POI-capable hosts when the POI count
-     requires them. Existing gas giants with inhabited moons do not provide
-     POI capacity.
+     objects. Existing gas giants with inhabited moons do not provide POI
+     capacity. If random construction exhausts all legal POI hosts, bounded
+     whole-system retry is the accepted fallback.
    - Generate each POI only from the currently feasible `(POI type, host)`
      pairs. Enforce the three-POI-per-object cap during selection. A
      `Deep-space station` instead creates one direct-orbit
-     `IndependentStation`, consumes one remaining extra-object slot, and is its
-     sole POI. If no object slot remains, that POI row is not a feasible choice.
+     `IndependentStation` and is its sole POI. A station may raise the final
+     extra count above the original roll but may not exceed the hard cap of
+     seven. Reserving station slots inside the original target is deferred in
+     `PHASE_1_FOLLOWUPS.md`.
+   - Use the approved extra-object category weights: planet 60%, asteroid belt
+     20%, gas cloud 10%, and Kuiper belt 10%. Choose uniformly among the nine
+     planet templates after selecting the planet category. For POIs, each
+     feasible `(POI type, host)` pair is one weighted outcome; a type with more
+     compatible hosts therefore has more selection outcomes.
 4. **Orbits**
    - Choose direct-object temperatures only from values allowed for that object
      class and having a nonempty AU band for the selected star.
@@ -142,17 +148,18 @@ from earlier stages, but they may not rewrite those facts to make them valid.
    - Serialize `Objects` in nondecreasing star-relative AU, with a stable
      parent-before-child tie break.
 5. **Routes and portals**
-   - Build a connected route backbone over all systems, favoring short hex-map
-     distances with a seeded tie-breaker. Add a modest number of unique extra
-     short links (default: `ceil(systemCount / 4)`) so the result is not only a
-     minimally passing tree.
+   - Build a connected route backbone over all systems, favoring short
+     Euclidean column/row distances with a seeded tie-breaker. Add a modest
+     number of unique extra short links (default: `ceil(systemCount / 4)`) so
+     the result is not only a minimally passing tree.
    - Create exactly two top-level portals per route. Each portal reciprocally
      names its route and one endpoint system; no route connects a system to
      itself and no system pair is repeated.
-   - Derive an initial portal bearing from the direction to the other endpoint,
-     add a small seeded offset, normalize it to `[0, 360)`, and use a
-     deterministic probe if that system already has the angle. Portal boundary
-     AU is derived by the future UI and is not serialized.
+   - Derive an initial portal bearing with `atan2` over the raw column/row delta
+     to the other endpoint, add a small seeded offset, normalize it to
+     `[0, 360)`, and use a deterministic probe if that system already has the
+     angle. Hex-layout-specific bearing correction is intentionally deferred.
+     Portal boundary AU is derived by the future UI and is not serialized.
 6. **Player ship and root assembly**
    - Create one player ship and initially place it at the first system's star.
      This is a valid system-contained selectable location and avoids inventing
@@ -180,6 +187,10 @@ completion remains.
    are at most `TotalHab` and which satisfy both tags. Enforce the explicit
    Desert World, industry, Outpost World, Tomb World, and Abandoned Colony
    semantics as part of candidate feasibility, not afterward.
+   Tomb World is handled constructively: restrict the completed environmental
+   Hab to at most 1, population to `Fewer than 500`, and technology to modern
+   postech or better. This prevents a feasible Tomb World request from failing
+   merely because repeated unrestricted rolls miss its narrow intersection.
 6. Resolve surface water in this precedence order: cryogenic/volcanic or vacuum
    forces false; otherwise water composition or an Oceanic/Seagoing tag forces
    true; otherwise roll the reviewed surface-water table. A tag pair or physical
@@ -196,19 +207,18 @@ simultaneously.
 
 ## Complete uninhabited objects
 
-Legacy archetypes are internal templates, not output kinds. Encode each as a
-typed set of allowed canonical facts and then make a weighted choice within the
-set. At minimum, the mapping must preserve these anchors:
+Legacy archetypes are internal templates, not output kinds. Encode each as one
+complete canonical fact template. The approved mappings are:
 
 | Legacy template | Canonical expansion anchor |
 | --- | --- |
-| Mercurian | Luna/Mars-sized, metal-rich, airless terrestrial planet |
-| Europan / Plutonic | Luna/Mars-sized, water-rich planet |
+| Mercurian | Luna-sized, iron-rich, airless terrestrial planet |
+| Europan / Plutonic | Luna-sized, water-rich planet with inert gas atmosphere |
 | Lunar | Luna-sized rocky, airless planet |
-| Ioan | Luna/Mars-sized sulfur-rich planet |
-| Titanian | Small carbon/volatile-rich planet with non-breathable atmosphere |
-| Martian | Mars-sized rocky planet with vacuum or thin/thick atmosphere |
-| Venusian | Earth/Super-Earth rocky planet with hostile atmosphere |
+| Ioan | Mars-sized sulfur-rich planet with corrosive atmosphere |
+| Titanian | Mars-sized carbon-rich planet with inert gas atmosphere |
+| Martian | Mars-sized rocky planet with thin/thick breathable atmosphere |
+| Venusian | Earth-sized rocky planet with corrosive atmosphere |
 | Jovian | Jupiter size plus Jovian Gas composition |
 | Neptunian | Neptune size plus Neptunian Gas composition |
 | AsteroidBelt | `OtherCelestialObject` with `ObjectType: "AsteroidBelt"` |
@@ -219,24 +229,25 @@ Every planet template must populate size, composition, surface water,
 atmosphere, detailed temperature, native biosphere, tidal lock, orbit, and
 `InhabitedInfo: false`. Jupiter and Neptune sizes always receive their matching
 gas composition and no surface water. Other-object temperature domains must
-match F12. An uninhabited terrestrial extra may become a gas-planet moon only
-when it is smaller than the parent, the parent has fewer than two moons, and it
-can inherit the parent's temperature.
+match F12. Uninhabited terrestrial extras currently orbit the star directly;
+generating some of them as gas-planet moons is a low-priority follow-up recorded
+in `PHASE_1_FOLLOWUPS.md`.
 
 ## Selectable metadata
 
 All systems, stars, system objects, POIs, routes, portals, and the player ship
-must be created through one selectable-entity factory so none omit shared
-fields. During Phase 1:
+must populate the shared selectable fields. A shared construction factory is
+optional. During Phase 1:
 
 - use deterministic, nonblank procedural names and initialize `NiceName` to the
   same value;
 - default `VisibilityLevel` to `NONE`;
-- populate `InfoboxSummary` and `BasicScan` with concise factual text derived
-  from structured fields;
-- use the selected world-tag descriptions/prompts for inhabited-world culture
-  and GM text where applicable;
-- leave a tier empty only when there is genuinely no source fact for it.
+- populate `InfoboxSummary` and `BasicScan` with deterministic Phase 1
+  placeholders; these strings are not authoritative derived data and may be
+  replaced by the UI track;
+- `CulturePartial` may contain the selected world-tag names. Rich
+  descriptions/prompts and the remaining culture/GM tiers are deferred to the
+  UI track and may remain empty during Phase 1.
 
 This is baseline data, not a second lore generator. Rich naming and editorial
 presentation can be improved in the UI phase without changing physical facts.
@@ -287,11 +298,12 @@ they should be confirmed at the Part 5 review gate:
 1. Routes form one connected, distance-favoring backbone plus
    `ceil(systemCount / 4)` extra links. The current contract only requires every
    system to have a route; it does not define topology or density.
-2. The uninhabited-planet template anchors above are the approved physical
-   interpretation of the old descriptive archetypes. The old data does not
-   provide complete canonical planet facts.
-3. Phase 1 names and intelligence text are deterministic and factual. A richer
-   naming or lore-generation system is deferred to Phase 2.
+2. The fixed uninhabited-planet templates above are the approved physical
+   interpretation of the old descriptive archetypes. Template variants are not
+   required.
+3. Phase 1 names and intelligence text are deterministic placeholders. Richer
+   naming, authoritative summaries, and lore generation are deferred to Phase
+   2.
 
 ## Verification and completion gate
 
