@@ -24,26 +24,22 @@ export type TemplatePlanetOptions = {
 type TemplateFacts = Pick<
   Planet,
   'Size' | 'BulkComposition' | 'SurfaceWaterPresent' | 'Atmosphere' | 'NativeBiosphere'
-> & {
-  temperatures: readonly Planet['Temperature'][];
-};
+>;
 
 const TEMPLATE_FACTS: Readonly<Record<ExtraPlanetTemplate, TemplateFacts>> = {
   Mercurian: {
-    Size: 'Mars',
+    Size: 'Luna',
     BulkComposition: 'Iron',
     SurfaceWaterPresent: false,
     Atmosphere: 'Vacuum',
     NativeBiosphere: 'None',
-    temperatures: ['Infernal', 'Arid', 'Equatorial', 'Volcanic'],
   },
   'Europan / Plutonic': {
-    Size: 'Mars',
+    Size: 'Luna',
     BulkComposition: 'Water',
     SurfaceWaterPresent: true,
     Atmosphere: 'Inert gas',
     NativeBiosphere: 'None',
-    temperatures: ['Glacial', 'Polar'],
   },
   Lunar: {
     Size: 'Luna',
@@ -51,17 +47,6 @@ const TEMPLATE_FACTS: Readonly<Record<ExtraPlanetTemplate, TemplateFacts>> = {
     SurfaceWaterPresent: false,
     Atmosphere: 'Vacuum',
     NativeBiosphere: 'None',
-    temperatures: [
-      'Cryogenic',
-      'Glacial',
-      'Polar',
-      'Subarctic',
-      'Boreal',
-      'Alpine',
-      'Arid',
-      'Infernal',
-      'Volcanic',
-    ],
   },
   Ioan: {
     Size: 'Mars',
@@ -69,7 +54,6 @@ const TEMPLATE_FACTS: Readonly<Record<ExtraPlanetTemplate, TemplateFacts>> = {
     SurfaceWaterPresent: false,
     Atmosphere: 'Corrosive',
     NativeBiosphere: 'None',
-    temperatures: ['Volcanic'],
   },
   Titanian: {
     Size: 'Mars',
@@ -77,7 +61,6 @@ const TEMPLATE_FACTS: Readonly<Record<ExtraPlanetTemplate, TemplateFacts>> = {
     SurfaceWaterPresent: false,
     Atmosphere: 'Inert gas',
     NativeBiosphere: 'Microbial',
-    temperatures: ['Cryogenic', 'Glacial', 'Polar'],
   },
   Martian: {
     Size: 'Mars',
@@ -85,7 +68,6 @@ const TEMPLATE_FACTS: Readonly<Record<ExtraPlanetTemplate, TemplateFacts>> = {
     SurfaceWaterPresent: false,
     Atmosphere: 'Breathable: Thin/Thick',
     NativeBiosphere: 'None',
-    temperatures: ['Glacial', 'Polar', 'Subarctic', 'Boreal', 'Alpine', 'Arid'],
   },
   Venusian: {
     Size: 'Earth',
@@ -93,7 +75,6 @@ const TEMPLATE_FACTS: Readonly<Record<ExtraPlanetTemplate, TemplateFacts>> = {
     SurfaceWaterPresent: false,
     Atmosphere: 'Corrosive',
     NativeBiosphere: 'None',
-    temperatures: ['Equatorial', 'Arid', 'Infernal'],
   },
   Jovian: {
     Size: 'Jupiter',
@@ -101,17 +82,6 @@ const TEMPLATE_FACTS: Readonly<Record<ExtraPlanetTemplate, TemplateFacts>> = {
     SurfaceWaterPresent: false,
     Atmosphere: 'Inert gas',
     NativeBiosphere: 'None',
-    temperatures: [
-      'Cryogenic',
-      'Glacial',
-      'Polar',
-      'Subarctic',
-      'Boreal',
-      'Alpine',
-      'Temperate',
-      'Arid',
-      'Infernal',
-    ],
   },
   Neptunian: {
     Size: 'Neptune',
@@ -119,7 +89,6 @@ const TEMPLATE_FACTS: Readonly<Record<ExtraPlanetTemplate, TemplateFacts>> = {
     SurfaceWaterPresent: false,
     Atmosphere: 'Inert gas',
     NativeBiosphere: 'None',
-    temperatures: ['Cryogenic', 'Glacial', 'Polar', 'Subarctic', 'Boreal', 'Alpine', 'Temperate'],
   },
 };
 
@@ -127,16 +96,12 @@ export function templateHasUsableTemperature(
   template: ExtraPlanetTemplate,
   starType: StarType,
 ): boolean {
-  return TEMPLATE_FACTS[template].temperatures.some((temperature) =>
-    directOrbitTemperatures(starType).includes(temperature),
-  );
+  return directOrbitTemperatures(starType).length > 0;
 }
 
 export function generateTemplatePlanet(options: TemplatePlanetOptions): Planet {
   const facts = TEMPLATE_FACTS[options.template];
-  const usableTemperatures = facts.temperatures.filter((temperature) =>
-    directOrbitTemperatures(options.starType).includes(temperature),
-  );
+  const usableTemperatures = directOrbitTemperatures(options.starType);
   if (usableTemperatures.length === 0)
     throw new Error(
       `No usable temperature for ${options.template} at ${options.seed}:${options.entityPath}`,
@@ -146,6 +111,11 @@ export function generateTemplatePlanet(options: TemplatePlanetOptions): Planet {
     usableTemperatures,
     `${options.template} temperatures`,
   );
+  const surfaceWaterPresent =
+    facts.SurfaceWaterPresent &&
+    temperature !== 'Cryogenic' &&
+    temperature !== 'Volcanic' &&
+    facts.Atmosphere !== 'Vacuum';
   const name = `${options.template} ${options.entityPath}`;
   return {
     Id: deterministicId(options.seed, options.entityPath),
@@ -164,7 +134,7 @@ export function generateTemplatePlanet(options: TemplatePlanetOptions): Planet {
     Kind: 'Planet',
     Size: facts.Size,
     BulkComposition: facts.BulkComposition,
-    SurfaceWaterPresent: facts.SurfaceWaterPresent,
+    SurfaceWaterPresent: surfaceWaterPresent,
     TidallyLocked: options.orbit.ParentObjectId === null && options.starType === 'M-type',
     Atmosphere: facts.Atmosphere,
     NativeBiosphere: facts.NativeBiosphere,

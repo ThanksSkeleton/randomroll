@@ -203,12 +203,12 @@ set. At minimum, the mapping must preserve these anchors:
 | Legacy template | Canonical expansion anchor |
 | --- | --- |
 | Mercurian | Luna/Mars-sized, metal-rich, airless terrestrial planet |
-| Europan / Plutonic | Luna/Mars-sized, water-rich cold planet |
+| Europan / Plutonic | Luna/Mars-sized, water-rich planet |
 | Lunar | Luna-sized rocky, airless planet |
-| Ioan | Luna/Mars-sized sulfur-rich volcanic planet |
-| Titanian | Small carbon/volatile-rich cold planet with non-breathable atmosphere |
+| Ioan | Luna/Mars-sized sulfur-rich planet |
+| Titanian | Small carbon/volatile-rich planet with non-breathable atmosphere |
 | Martian | Mars-sized rocky planet with vacuum or thin/thick atmosphere |
-| Venusian | Earth/Super-Earth rocky hot planet with hostile atmosphere |
+| Venusian | Earth/Super-Earth rocky planet with hostile atmosphere |
 | Jovian | Jupiter size plus Jovian Gas composition |
 | Neptunian | Neptune size plus Neptunian Gas composition |
 | AsteroidBelt | `OtherCelestialObject` with `ObjectType: "AsteroidBelt"` |
