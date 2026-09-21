@@ -1,28 +1,160 @@
 {
   "Unarmored": { "acBonus": 0, "checkPenalty": 0, "speedPenalty": 0, "fumbleDie": 4, "cost": "0" },
-  "Sexy Leather": { "acBonus": 1, "checkPenalty": 0, "speedPenalty": 0, "fumbleDie": 4, "cost": "200" },
-  "Armored Jacket": { "acBonus": 1, "checkPenalty": 1, "speedPenalty": 0, "fumbleDie": 6, "cost": "40" },
+  "Sexy Leather": {
+    "acBonus": 1,
+    "checkPenalty": 0,
+    "speedPenalty": 0,
+    "fumbleDie": 4,
+    "cost": "200"
+  },
+  "Armored Jacket": {
+    "acBonus": 1,
+    "checkPenalty": 1,
+    "speedPenalty": 0,
+    "fumbleDie": 6,
+    "cost": "40"
+  },
   "Leather": { "acBonus": 2, "checkPenalty": 1, "speedPenalty": 0, "fumbleDie": 8, "cost": "60" },
-  "Halfling Leather": { "acBonus": 2, "checkPenalty": 0, "speedPenalty": 0, "fumbleDie": 6, "cost": "200/600" },
-  "Micromesh Clothing": { "acBonus": 2, "checkPenalty": 1, "speedPenalty": 0, "fumbleDie": 6, "cost": "200/600" },
-  "Composite Sport, Light": { "acBonus": 3, "checkPenalty": 1, "speedPenalty": 0, "fumbleDie": 8, "cost": "30" },
+  "Halfling Leather": {
+    "acBonus": 2,
+    "checkPenalty": 0,
+    "speedPenalty": 0,
+    "fumbleDie": 6,
+    "cost": "200/600"
+  },
+  "Micromesh Clothing": {
+    "acBonus": 2,
+    "checkPenalty": 1,
+    "speedPenalty": 0,
+    "fumbleDie": 6,
+    "cost": "200/600"
+  },
+  "Composite Sport, Light": {
+    "acBonus": 3,
+    "checkPenalty": 1,
+    "speedPenalty": 0,
+    "fumbleDie": 8,
+    "cost": "30"
+  },
   "Hide": { "acBonus": 3, "checkPenalty": 4, "speedPenalty": 10, "fumbleDie": 12, "cost": "20" },
-  "Micromesh": { "acBonus": 3, "checkPenalty": 3, "speedPenalty": 0, "fumbleDie": 8, "cost": "850" },
-  "Sexy Chainmail": { "acBonus": 3, "checkPenalty": 2, "speedPenalty": 0, "fumbleDie": 8, "cost": "1000" },
-  "MiniLynx, Light": { "acBonus": 4, "checkPenalty": 2, "speedPenalty": 0, "fumbleDie": 8, "cost": "750" },
-  "Chainmail Shirt": { "acBonus": 4, "checkPenalty": 2, "speedPenalty": 0, "fumbleDie": 10, "cost": "100" },
-  "Composite Sport, Heavy": { "acBonus": 5, "checkPenalty": 4, "speedPenalty": 10, "fumbleDie": 12, "cost": "300" },
-  "Chainmail": { "acBonus": 5, "checkPenalty": 5, "speedPenalty": 5, "fumbleDie": 12, "cost": "250" },
-  "Titanium Chainmail": { "acBonus": 5, "checkPenalty": 4, "speedPenalty": 0, "fumbleDie": 10, "cost": "750" },
-  "Breastplate": { "acBonus": 5, "checkPenalty": 4, "speedPenalty": 10, "fumbleDie": 12, "cost": "400" },
-  "Titanium Breastplate": { "acBonus": 5, "checkPenalty": 3, "speedPenalty": 10, "fumbleDie": 10, "cost": "1200" },
-  "Sexy Half Plate": { "acBonus": 5, "checkPenalty": 5, "speedPenalty": 10, "fumbleDie": 12, "cost": "800" },
-  "Elfmake Chainmail": { "acBonus": 5, "checkPenalty": 3, "speedPenalty": 0, "fumbleDie": 8, "cost": "Special" },
-  "Banded Mail": { "acBonus": 6, "checkPenalty": 6, "speedPenalty": 5, "fumbleDie": 12, "cost": "300" },
-  "MiniLynx": { "acBonus": 6, "checkPenalty": 3, "speedPenalty": 5, "fumbleDie": 10, "cost": "1300" },
-  "Half Plate": { "acBonus": 7, "checkPenalty": 7, "speedPenalty": 10, "fumbleDie": 14, "cost": "600" },
-  "Dwarvish Plate": { "acBonus": 8, "checkPenalty": 5, "speedPenalty": 10, "fumbleDie": 12, "cost": "5000" },
-  "Plate Mail": { "acBonus": 8, "checkPenalty": 8, "speedPenalty": 10, "fumbleDie": 16, "cost": "2225" },
-  "Titanium Plate Mail": { "acBonus": 8, "checkPenalty": 6, "speedPenalty": 10, "fumbleDie": 14, "cost": "7000" },
+  "Micromesh": {
+    "acBonus": 3,
+    "checkPenalty": 3,
+    "speedPenalty": 0,
+    "fumbleDie": 8,
+    "cost": "850"
+  },
+  "Sexy Chainmail": {
+    "acBonus": 3,
+    "checkPenalty": 2,
+    "speedPenalty": 0,
+    "fumbleDie": 8,
+    "cost": "1000"
+  },
+  "MiniLynx, Light": {
+    "acBonus": 4,
+    "checkPenalty": 2,
+    "speedPenalty": 0,
+    "fumbleDie": 8,
+    "cost": "750"
+  },
+  "Chainmail Shirt": {
+    "acBonus": 4,
+    "checkPenalty": 2,
+    "speedPenalty": 0,
+    "fumbleDie": 10,
+    "cost": "100"
+  },
+  "Composite Sport, Heavy": {
+    "acBonus": 5,
+    "checkPenalty": 4,
+    "speedPenalty": 10,
+    "fumbleDie": 12,
+    "cost": "300"
+  },
+  "Chainmail": {
+    "acBonus": 5,
+    "checkPenalty": 5,
+    "speedPenalty": 5,
+    "fumbleDie": 12,
+    "cost": "250"
+  },
+  "Titanium Chainmail": {
+    "acBonus": 5,
+    "checkPenalty": 4,
+    "speedPenalty": 0,
+    "fumbleDie": 10,
+    "cost": "750"
+  },
+  "Breastplate": {
+    "acBonus": 5,
+    "checkPenalty": 4,
+    "speedPenalty": 10,
+    "fumbleDie": 12,
+    "cost": "400"
+  },
+  "Titanium Breastplate": {
+    "acBonus": 5,
+    "checkPenalty": 3,
+    "speedPenalty": 10,
+    "fumbleDie": 10,
+    "cost": "1200"
+  },
+  "Sexy Half Plate": {
+    "acBonus": 5,
+    "checkPenalty": 5,
+    "speedPenalty": 10,
+    "fumbleDie": 12,
+    "cost": "800"
+  },
+  "Elfmake Chainmail": {
+    "acBonus": 5,
+    "checkPenalty": 3,
+    "speedPenalty": 0,
+    "fumbleDie": 8,
+    "cost": "Special"
+  },
+  "Banded Mail": {
+    "acBonus": 6,
+    "checkPenalty": 6,
+    "speedPenalty": 5,
+    "fumbleDie": 12,
+    "cost": "300"
+  },
+  "MiniLynx": {
+    "acBonus": 6,
+    "checkPenalty": 3,
+    "speedPenalty": 5,
+    "fumbleDie": 10,
+    "cost": "1300"
+  },
+  "Half Plate": {
+    "acBonus": 7,
+    "checkPenalty": 7,
+    "speedPenalty": 10,
+    "fumbleDie": 14,
+    "cost": "600"
+  },
+  "Dwarvish Plate": {
+    "acBonus": 8,
+    "checkPenalty": 5,
+    "speedPenalty": 10,
+    "fumbleDie": 12,
+    "cost": "5000"
+  },
+  "Plate Mail": {
+    "acBonus": 8,
+    "checkPenalty": 8,
+    "speedPenalty": 10,
+    "fumbleDie": 16,
+    "cost": "2225"
+  },
+  "Titanium Plate Mail": {
+    "acBonus": 8,
+    "checkPenalty": 6,
+    "speedPenalty": 10,
+    "fumbleDie": 14,
+    "cost": "7000"
+  },
   "Shield": { "acBonus": 1, "checkPenalty": 1, "speedPenalty": 0, "fumbleDie": 0, "cost": "30" }
 }

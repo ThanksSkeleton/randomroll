@@ -33,7 +33,12 @@
     { "tag": "Post-Scarcity", "minTechLevel": 4 },
     { "tag": "Preceptor Archive", "minTechLevel": 3 },
     { "tag": "Pretech Cultists", "minTechLevel": 4 },
-    { "tag": "Primitive Aliens", "minNativeBiospherePercentile": 60, "requiresAliens": true, "specialStates": ["ALIEN"] },
+    {
+      "tag": "Primitive Aliens",
+      "minNativeBiospherePercentile": 60,
+      "requiresAliens": true,
+      "specialStates": ["ALIEN"]
+    },
     { "tag": "Psionics Academy", "minTechLevel": 4, "minPopulationPercentile": 10 },
     { "tag": "Psionics Worship", "minPopulationPercentile": 10 },
     { "tag": "Radioactive World", "maxEnvironmentalHab": 2 },

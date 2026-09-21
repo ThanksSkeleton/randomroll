@@ -1,49 +1,39 @@
-import {
-  ensureSeedInUrl,
-  randomSeed,
-  setSeedInUrl,
-} from "../../framework";
-import { buildXccSheet } from "./populate_xcc_template";
-import { captureXccSheet } from "./webgl/capture_xcc_sheet";
-import { createDefaultXccShaderSettings } from "./webgl/shader_settings";
-import {
-  WebGlSheetRenderer,
-  WebGlUnavailableError,
-} from "./webgl/webgl_sheet_renderer";
-import { default_build } from "./xcc_impl";
+import { ensureSeedInUrl, randomSeed, setSeedInUrl } from '../../framework';
+import { buildXccSheet } from './populate_xcc_template';
+import { captureXccSheet } from './webgl/capture_xcc_sheet';
+import { createDefaultXccShaderSettings } from './webgl/shader_settings';
+import { WebGlSheetRenderer, WebGlUnavailableError } from './webgl/webgl_sheet_renderer';
+import { default_build } from './xcc_impl';
 
-const sourceHost = requiredElement<HTMLElement>("source-host");
-const outputHost = requiredElement<HTMLElement>("output-host");
-const outputCanvas = requiredElement<HTMLCanvasElement>("shader-output");
-const didYouKnowOverlay = requiredElement<HTMLElement>("did-you-know-overlay");
-const nextButton = requiredElement<HTMLButtonElement>("next-character");
-const status = requiredElement<HTMLElement>("render-status");
+const sourceHost = requiredElement<HTMLElement>('source-host');
+const outputHost = requiredElement<HTMLElement>('output-host');
+const outputCanvas = requiredElement<HTMLCanvasElement>('shader-output');
+const didYouKnowOverlay = requiredElement<HTMLElement>('did-you-know-overlay');
+const nextButton = requiredElement<HTMLButtonElement>('next-character');
+const status = requiredElement<HTMLElement>('render-status');
 
 let renderer: WebGlSheetRenderer | null = null;
 let currentSheet: HTMLElement | null = null;
 let renderVersion = 0;
 
 try {
-  renderer = new WebGlSheetRenderer(
-    outputCanvas,
-    createDefaultXccShaderSettings(),
-  );
+  renderer = new WebGlSheetRenderer(outputCanvas, createDefaultXccShaderSettings());
 } catch (error) {
   if (!(error instanceof WebGlUnavailableError)) {
     throw error;
   }
 }
 
-nextButton.addEventListener("click", () => {
+nextButton.addEventListener('click', () => {
   setSeedInUrl(randomSeed());
   void renderCharacter();
 });
 
-window.addEventListener("popstate", () => {
+window.addEventListener('popstate', () => {
   void renderCharacter();
 });
 
-window.addEventListener("beforeunload", () => {
+window.addEventListener('beforeunload', () => {
   renderer?.destroy();
 });
 
@@ -58,7 +48,7 @@ async function renderCharacter(): Promise<void> {
   updateDidYouKnowOverlay(sheet);
   sourceHost.replaceChildren(sheet);
   setLoading(true);
-  setStatus("Rendering character…");
+  setStatus('Rendering character…');
 
   try {
     const capture = await captureXccSheet(sheet);
@@ -74,9 +64,9 @@ async function renderCharacter(): Promise<void> {
     }
 
     setLoading(false);
-    setStatus("Character ready.");
+    setStatus('Character ready.');
   } catch (error) {
-    console.error("XCC character rendering failed", error);
+    console.error('XCC character rendering failed', error);
     setStatus(`Character rendering failed: ${describeError(error)}`);
   } finally {
     if (version === renderVersion) {
@@ -86,23 +76,20 @@ async function renderCharacter(): Promise<void> {
 }
 
 function updateDidYouKnowOverlay(sheet: HTMLElement): void {
-  const bubble = sheet.querySelector<HTMLElement>("[data-field=\"didYouKnow\"]");
+  const bubble = sheet.querySelector<HTMLElement>('[data-field="didYouKnow"]');
   if (!bubble) {
-    throw new Error("XCC template is missing the Did You Know bubble.");
+    throw new Error('XCC template is missing the Did You Know bubble.');
   }
 
   const overlayBubble = bubble.cloneNode(true) as HTMLElement;
-  overlayBubble.removeAttribute("data-field");
-  overlayBubble.removeAttribute("data-html2canvas-ignore");
+  overlayBubble.removeAttribute('data-field');
+  overlayBubble.removeAttribute('data-html2canvas-ignore');
   didYouKnowOverlay.replaceChildren(overlayBubble);
 }
 
 function showFallback(capture: HTMLCanvasElement): void {
-  capture.className = "fallback-capture";
-  capture.setAttribute(
-    "aria-label",
-    "Rendering of a randomly generated XCC character sheet",
-  );
+  capture.className = 'fallback-capture';
+  capture.setAttribute('aria-label', 'Rendering of a randomly generated XCC character sheet');
   outputHost.replaceChildren(capture);
 }
 

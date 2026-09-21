@@ -1,33 +1,31 @@
-import seedrandom from "seedrandom";
-import { autoflatten, random_multi, type ExportFormat } from "../../framework";
-import { full_name } from "../../names_framework";
+import seedrandom from 'seedrandom';
+import { autoflatten, random_multi, type ExportFormat } from '../../framework';
+import { full_name } from '../../names_framework';
 import {
   buildDccCoreCharacter,
   type DccCoreCharacter,
   type DccCoreLuckySign,
-} from "../dcc_core/dcc_core";
+} from '../dcc_core/dcc_core';
 
-import { luckyRowToNice, type LuckyNice, type LuckyRow } from "../../table_data/Lucky";
-import rawLucky from "../../table_data/Lucky.json";
+import { luckyRowToNice, type LuckyNice, type LuckyRow } from '../../table_data/Lucky';
+import rawLucky from '../../table_data/Lucky.json';
 const lucky: LuckyRow[] = rawLucky;
 // The shared table also contains XCC-only signs. Keep the student roll table—and
 // therefore existing seeded results—restricted to its original DCC entries.
-const luckyNice = lucky.map(luckyRowToNice).filter(sign => sign.inDCC);
+const luckyNice = lucky.map(luckyRowToNice).filter((sign) => sign.inDCC);
 
-import { type ItemsNice, type ItemsRow, toItemsNice } from "../../table_data/Items";
-import rawItems from "../../table_data/Items.json";
+import { type ItemsNice, type ItemsRow, toItemsNice } from '../../table_data/Items';
+import rawItems from '../../table_data/Items.json';
 const items: ItemsRow[] = rawItems;
 const itemsNice = items.map(toItemsNice);
 
-import { type ProfessionsRow } from "../../table_data/Professions";
-import rawProfessions from "../../table_data/Professions.json";
+import { type ProfessionsRow } from '../../table_data/Professions';
+import rawProfessions from '../../table_data/Professions.json';
 const professions: ProfessionsRow[] = rawProfessions;
-const studentProfessions = professions.filter(
-  profession => profession.Source === "USSTUDENTS",
-);
+const studentProfessions = professions.filter((profession) => profession.Source === 'USSTUDENTS');
 
-import { toWeaponsNice, type WeaponsNice, type WeaponsRow } from "../../table_data/Weapons";
-import rawWeapons from "../../table_data/Weapons.json";
+import { toWeaponsNice, type WeaponsNice, type WeaponsRow } from '../../table_data/Weapons';
+import rawWeapons from '../../table_data/Weapons.json';
 const weapons: WeaponsRow[] = rawWeapons;
 const weaponsNice = weapons.map(toWeaponsNice);
 
@@ -55,18 +53,18 @@ export type StudentCharacter = DccCoreCharacter & {
   expiry_string: string;
 };
 
-const MALE_FEMALE = ["Male", "Female"];
-const US_STYLE = "US";
+const MALE_FEMALE = ['Male', 'Female'];
+const US_STYLE = 'US';
 const DEFAULT_SCHOOL = "St. Cuthbert's Prepatory Academy";
-const DEFAULT_PORTRAIT = "Default Portrait";
-const DEFAULT_LUCKYSIGN_IMAGE = "DEFAULT";
+const DEFAULT_PORTRAIT = 'Default Portrait';
+const DEFAULT_LUCKYSIGN_IMAGE = 'DEFAULT';
 const DEFAULT_AGE = 18;
-const STUDENT_RACE = "Human";
-const STUDENT_RACIAL_TRAITS = "";
-const STUDENT_LANGUAGES = "English";
-const STUDENT_ARMOR = "None";
+const STUDENT_RACE = 'Human';
+const STUDENT_RACIAL_TRAITS = '';
+const STUDENT_LANGUAGES = 'English';
+const STUDENT_ARMOR = 'None';
 const STUDENT_ARMOR_AC = 10;
-const STUDENT_ALIGNMENT = "Neutral";
+const STUDENT_ALIGNMENT = 'Neutral';
 
 export function default_build(seed: string): ExportFormat<StudentCharacter> {
   const rng: seedrandom.PRNG = seedrandom(seed);
@@ -76,13 +74,10 @@ export function default_build(seed: string): ExportFormat<StudentCharacter> {
     characters.push(buildDccStudent(rng, US_STYLE));
   }
 
-  return autoflatten("Student DCC Characters", seed, characters);
+  return autoflatten('Student DCC Characters', seed, characters);
 }
 
-function buildDccStudent(
-  rng: seedrandom.PRNG,
-  nationality: string,
-): StudentCharacter {
+function buildDccStudent(rng: seedrandom.PRNG, nationality: string): StudentCharacter {
   const gender = maleFemale(rng);
   const name = full_name(rng, gender, nationality);
   const profession = professionInfo(rng, gender);
@@ -210,43 +205,47 @@ type ProfessionInfo = {
 
 function professionInfo(rng: seedrandom.PRNG, gender: string): ProfessionInfo {
   const genderProfessions = studentProfessions.filter(
-    profession => profession.Genderlock === "" || profession.Genderlock === gender,
+    (profession) => profession.Genderlock === '' || profession.Genderlock === gender,
   );
   const profession = random_multi(rng, genderProfessions);
 
-  const weapon = profession.Weapon !== ""
-    ? weaponsNice.filter(candidate => candidate.Weapon === profession.Weapon)[0]
-    : random_multi(
-        rng,
-        weaponsNice.filter(
-          candidate =>
-            candidate.Source === "USSTUDENTS"
-            && candidate.RandomPool
-            && (candidate.Genderlock === "" || candidate.Genderlock === gender),
-        ),
-      );
+  const weapon =
+    profession.Weapon !== ''
+      ? weaponsNice.filter((candidate) => candidate.Weapon === profession.Weapon)[0]
+      : random_multi(
+          rng,
+          weaponsNice.filter(
+            (candidate) =>
+              candidate.Source === 'USSTUDENTS' &&
+              candidate.RandomPool &&
+              (candidate.Genderlock === '' || candidate.Genderlock === gender),
+          ),
+        );
 
-  const tradeGood = itemsNice.filter(item => item.Item === profession.TradeGood)[0];
+  const tradeGood = itemsNice.filter((item) => item.Item === profession.TradeGood)[0];
   if (tradeGood == null) {
     throw new Error(`Trade Good ${profession.TradeGood} not found`);
   }
 
   const rollableItems = itemsNice
-    .filter(item => item.Random)
-    .filter(item => item.Genderlock === "" || item.Genderlock === gender)
-    .filter(item => item.Item !== tradeGood.Item);
+    .filter((item) => item.Random)
+    .filter((item) => item.Genderlock === '' || item.Genderlock === gender)
+    .filter((item) => item.Item !== tradeGood.Item);
   const rollCategory = (category: string): ItemsNice =>
-    random_multi(rng, rollableItems.filter(item => item.Category === category));
+    random_multi(
+      rng,
+      rollableItems.filter((item) => item.Category === category),
+    );
 
-  const tool = rollCategory("Tool");
-  const wallet = rollCategory("Wallet");
-  const bag = rollCategory("Bag");
-  const foodContainer = rollCategory("FoodContainer");
-  const foodMain = rollCategory("FoodMain");
-  const foodSide1 = rollCategory("FoodSide");
-  const foodSide2 = rollCategory("FoodSide");
-  const foodDrink = rollCategory("FoodDrink");
-  const culturalItem = rollCategory("Cultural Goods");
+  const tool = rollCategory('Tool');
+  const wallet = rollCategory('Wallet');
+  const bag = rollCategory('Bag');
+  const foodContainer = rollCategory('FoodContainer');
+  const foodMain = rollCategory('FoodMain');
+  const foodSide1 = rollCategory('FoodSide');
+  const foodSide2 = rollCategory('FoodSide');
+  const foodDrink = rollCategory('FoodDrink');
+  const culturalItem = rollCategory('Cultural Goods');
 
   return {
     professionTitle: profession,
@@ -289,10 +288,10 @@ function randomDateInYear(rng: seedrandom.PRNG, year: number): string {
   const end = Date.UTC(year + 1, 0, 1);
   const timestamp = start + Math.floor(rng() * (end - start));
 
-  return new Intl.DateTimeFormat("en-US", {
-    timeZone: "UTC",
-    month: "2-digit",
-    day: "2-digit",
-    year: "numeric",
+  return new Intl.DateTimeFormat('en-US', {
+    timeZone: 'UTC',
+    month: '2-digit',
+    day: '2-digit',
+    year: 'numeric',
   }).format(new Date(timestamp));
 }

@@ -7,7 +7,10 @@ describe('PrototypeApplication', () => {
   it('starts with the two local sectors and reports a GM session', () => {
     const application = new PrototypeApplication(createInitialSectors());
 
-    expect(application.listSectors().map(sector => sector.SectorName)).toEqual(['Sector1', 'Sector2']);
+    expect(application.listSectors().map((sector) => sector.SectorName)).toEqual([
+      'Sector1',
+      'Sector2',
+    ]);
     expect(application.getCurrentSession()).toEqual({ role: 'gm' });
   });
 
@@ -35,7 +38,9 @@ describe('PrototypeApplication', () => {
   it('preserves archive operations and chooses a valid index after deletion', () => {
     const application = new PrototypeApplication(createInitialSectors());
 
-    expect(application.renameSector(0, '  Renamed Sector  ' )?.[0].SectorName).toBe('Renamed Sector');
+    expect(application.renameSector(0, '  Renamed Sector  ')?.[0].SectorName).toBe(
+      'Renamed Sector',
+    );
     expect(application.loadSector(1)?.SectorName).toBe('Sector2');
 
     const result = application.deleteSector(1);

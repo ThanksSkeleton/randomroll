@@ -130,98 +130,47 @@
   --xcc-portrait-frame-d1-far-color: #0b17c1;
   --xcc-portrait-frame-d1-transition: 0.66;
   --xcc-portrait-frame-d1-near-hold: 4;
-  --xcc-condensed: "Arial Narrow", "Liberation Sans Narrow", "Ubuntu Sans", Arial, sans-serif;
-  --xcc-heavy: "Arial Black", "Lato Heavy", "Arial Narrow", "Liberation Sans Narrow", Arial, sans-serif;
+  --xcc-condensed: 'Arial Narrow', 'Liberation Sans Narrow', 'Ubuntu Sans', Arial, sans-serif;
+  --xcc-heavy:
+    'Arial Black', 'Lato Heavy', 'Arial Narrow', 'Liberation Sans Narrow', Arial, sans-serif;
   --xcc-logo-face-color: #ffffff;
   --xcc-logo-text-shadow:
-    -1.75px 0 0 #000000,
-    1.75px 0 0 #000000,
-    0 -1.75px 0 #000000,
-    0 1.75px 0 #000000,
-    -1.75px -1.75px 0 #000000,
-    1.75px -1.75px 0 #000000,
-    -1.75px 1.75px 0 #000000,
-    1.75px 1.75px 0 #000000,
-    0.25px 0.7px 0 rgb(146, 147, 152),
-    0.5px 1.4px 0 rgb(134, 135, 147),
-    0.75px 2.1px 0 rgb(123, 124, 141),
-    1px 2.8px 0 rgb(111, 113, 136),
-    1.25px 3.5px 0 rgb(99, 101, 130),
-    1.5px 4.2px 0 rgb(87, 90, 124),
-    1.75px 4.9px 0 rgb(76, 79, 119),
-    2px 5.6px 0 rgb(64, 68, 113),
-    2.25px 6.3px 0 rgb(52, 56, 107),
-    2.5px 7px 0 rgb(40, 45, 102),
-    2.75px 7.7px 0 rgb(29, 34, 96),
-    3px 8.4px 0 rgb(17, 22, 91),
+    -1.75px 0 0 #000000, 1.75px 0 0 #000000, 0 -1.75px 0 #000000, 0 1.75px 0 #000000,
+    -1.75px -1.75px 0 #000000, 1.75px -1.75px 0 #000000, -1.75px 1.75px 0 #000000,
+    1.75px 1.75px 0 #000000, 0.25px 0.7px 0 rgb(146, 147, 152), 0.5px 1.4px 0 rgb(134, 135, 147),
+    0.75px 2.1px 0 rgb(123, 124, 141), 1px 2.8px 0 rgb(111, 113, 136),
+    1.25px 3.5px 0 rgb(99, 101, 130), 1.5px 4.2px 0 rgb(87, 90, 124),
+    1.75px 4.9px 0 rgb(76, 79, 119), 2px 5.6px 0 rgb(64, 68, 113), 2.25px 6.3px 0 rgb(52, 56, 107),
+    2.5px 7px 0 rgb(40, 45, 102), 2.75px 7.7px 0 rgb(29, 34, 96), 3px 8.4px 0 rgb(17, 22, 91),
     3.25px 9.1px 0 rgb(5, 11, 85);
   --xcc-yellow-face-color: #ffe72e;
   --xcc-yellow-text-shadow:
-    -1px 0 0 #000000,
-    1px 0 0 #000000,
-    0 -1px 0 #000000,
-    0 1px 0 #000000,
-    -1px -1px 0 #000000,
-    1px -1px 0 #000000,
-    -1px 1px 0 #000000,
-    1px 1px 0 #000000,
-    0.35px 0.45px 0 rgb(184, 55, 0),
-    0.7px 0.9px 0 rgb(178, 53, 0),
-    1.05px 1.35px 0 rgb(163, 49, 0),
-    1.4px 1.8px 0 rgb(142, 42, 0),
-    1.75px 2.25px 0 rgb(114, 34, 0),
-    2.1px 2.7px 0 rgb(81, 24, 0),
-    2.45px 3.15px 0 rgb(43, 13, 0),
+    -1px 0 0 #000000, 1px 0 0 #000000, 0 -1px 0 #000000, 0 1px 0 #000000, -1px -1px 0 #000000,
+    1px -1px 0 #000000, -1px 1px 0 #000000, 1px 1px 0 #000000, 0.35px 0.45px 0 rgb(184, 55, 0),
+    0.7px 0.9px 0 rgb(178, 53, 0), 1.05px 1.35px 0 rgb(163, 49, 0), 1.4px 1.8px 0 rgb(142, 42, 0),
+    1.75px 2.25px 0 rgb(114, 34, 0), 2.1px 2.7px 0 rgb(81, 24, 0), 2.45px 3.15px 0 rgb(43, 13, 0),
     2.8px 3.6px 0 rgb(0, 0, 0);
   --xcc-white-face-color: #ffffff;
   --xcc-white-text-shadow:
-    -1px 0 0 #000000,
-    1px 0 0 #000000,
-    0 -1px 0 #000000,
-    0 1px 0 #000000,
-    -1px -1px 0 #000000,
-    1px -1px 0 #000000,
-    -1px 1px 0 #000000,
-    1px 1px 0 #000000,
-    0.7px 0.5px 0 rgb(104, 107, 134),
-    1.4px 1px 0 rgb(88, 91, 126),
-    2.1px 1.5px 0 rgb(74, 78, 119),
-    2.8px 2px 0 rgb(62, 66, 113),
-    3.5px 2.5px 0 rgb(50, 54, 107),
-    4.2px 3px 0 rgb(38, 43, 101),
-    4.9px 3.5px 0 rgb(27, 32, 96),
-    5.6px 4px 0 rgb(16, 22, 90),
-    6.3px 4.5px 0 rgb(5, 11, 85);
+    -1px 0 0 #000000, 1px 0 0 #000000, 0 -1px 0 #000000, 0 1px 0 #000000, -1px -1px 0 #000000,
+    1px -1px 0 #000000, -1px 1px 0 #000000, 1px 1px 0 #000000, 0.7px 0.5px 0 rgb(104, 107, 134),
+    1.4px 1px 0 rgb(88, 91, 126), 2.1px 1.5px 0 rgb(74, 78, 119), 2.8px 2px 0 rgb(62, 66, 113),
+    3.5px 2.5px 0 rgb(50, 54, 107), 4.2px 3px 0 rgb(38, 43, 101), 4.9px 3.5px 0 rgb(27, 32, 96),
+    5.6px 4px 0 rgb(16, 22, 90), 6.3px 4.5px 0 rgb(5, 11, 85);
   --xcc-nonhuman-stripe-face-color: #ffffff;
   --xcc-nonhuman-stripe-text-shadow:
-    -1px 0 0 #000000,
-    1px 0 0 #000000,
-    0 -1px 0 #000000,
-    0 1px 0 #000000,
-    -1px -1px 0 #000000,
-    1px -1px 0 #000000,
-    -1px 1px 0 #000000,
-    1px 1px 0 #000000;
+    -1px 0 0 #000000, 1px 0 0 #000000, 0 -1px 0 #000000, 0 1px 0 #000000, -1px -1px 0 #000000,
+    1px -1px 0 #000000, -1px 1px 0 #000000, 1px 1px 0 #000000;
   --xcc-noble-stripe-face-color: #ffffff;
   --xcc-noble-stripe-text-shadow:
-    -1px 0 0 #000000,
-    1px 0 0 #000000,
-    0 -1px 0 #000000,
-    0 1px 0 #000000,
-    -1px -1px 0 #000000,
-    1px -1px 0 #000000,
-    -1px 1px 0 #000000,
-    1px 1px 0 #000000;
+    -1px 0 0 #000000, 1px 0 0 #000000, 0 -1px 0 #000000, 0 1px 0 #000000, -1px -1px 0 #000000,
+    1px -1px 0 #000000, -1px 1px 0 #000000, 1px 1px 0 #000000;
   --xcc-portrait-border-color: var(--xcc-yellow);
   --xcc-portrait-frame-box-shadow:
-    0.5px 1.25px 0 0 rgb(189, 159, 50),
-    1px 2.5px 0 0 rgb(189, 159, 50),
-    1.5px 3.75px 0 0 rgb(189, 159, 50),
-    2px 5px 0 0 rgb(189, 159, 50),
-    2.5px 6.25px 0 0 rgb(171, 146, 64),
-    3px 7.5px 0 0 rgb(133, 116, 95),
-    3.5px 8.75px 0 0 rgb(79, 75, 138),
-    4px 10px 0 0 rgb(11, 23, 193);
+    0.5px 1.25px 0 0 rgb(189, 159, 50), 1px 2.5px 0 0 rgb(189, 159, 50),
+    1.5px 3.75px 0 0 rgb(189, 159, 50), 2px 5px 0 0 rgb(189, 159, 50),
+    2.5px 6.25px 0 0 rgb(171, 146, 64), 3px 7.5px 0 0 rgb(133, 116, 95),
+    3.5px 8.75px 0 0 rgb(79, 75, 138), 4px 10px 0 0 rgb(11, 23, 193);
 
   position: relative;
   display: grid;
@@ -232,11 +181,8 @@
   min-width: 960px;
   min-height: 720px;
   margin-inline: auto;
-  padding:
-    var(--xcc-sheet-padding-top)
-    var(--xcc-sheet-padding-right)
-    var(--xcc-sheet-padding-bottom)
-    var(--xcc-sheet-padding-left);
+  padding: var(--xcc-sheet-padding-top) var(--xcc-sheet-padding-right)
+    var(--xcc-sheet-padding-bottom) var(--xcc-sheet-padding-left);
   box-sizing: border-box;
   overflow: hidden;
   color: var(--xcc-yellow);
@@ -262,7 +208,9 @@
   color: #123247;
   background: #cceeff;
   box-shadow: 0 0.3rem 0.8rem rgb(0 0 0 / 0.3);
-  font: 500 0.9rem/1.35 system-ui, sans-serif;
+  font:
+    500 0.9rem/1.35 system-ui,
+    sans-serif;
   letter-spacing: normal;
   text-align: left;
   text-transform: none;
@@ -548,12 +496,24 @@
   align-items: var(--xcc-stats-row-vertical-alignment);
 }
 
-.base-stats .stat-line > span:nth-child(1) { text-align: left; }
-.base-stats .stat-line > span:nth-child(2) { text-align: center; }
-.base-stats .stat-line > span:nth-child(3) { text-align: right; }
-.base-stats .stat-line.wide-value > span:nth-child(2) { text-align: right; }
-.secondary-stats .stat-line > span:nth-child(1) { text-align: left; }
-.secondary-stats .stat-line > span:nth-child(2) { text-align: right; }
+.base-stats .stat-line > span:nth-child(1) {
+  text-align: left;
+}
+.base-stats .stat-line > span:nth-child(2) {
+  text-align: center;
+}
+.base-stats .stat-line > span:nth-child(3) {
+  text-align: right;
+}
+.base-stats .stat-line.wide-value > span:nth-child(2) {
+  text-align: right;
+}
+.secondary-stats .stat-line > span:nth-child(1) {
+  text-align: left;
+}
+.secondary-stats .stat-line > span:nth-child(2) {
+  text-align: right;
+}
 
 .stat-line.blank {
   visibility: hidden;
@@ -631,18 +591,32 @@
   display: none;
 }
 
-.identity-stripe[data-stripe-kind="Dwarf"] { background: var(--stripe-dwarf); }
-.identity-stripe[data-stripe-kind="Elf"] { background: var(--stripe-elf); }
-.identity-stripe[data-stripe-kind="Gnome"] { background: var(--stripe-gnome); }
-.identity-stripe[data-stripe-kind="Half-Elf"] { background: var(--stripe-half-elf); }
-.identity-stripe[data-stripe-kind="Half-Orc"] { background: var(--stripe-half-orc); }
-.identity-stripe[data-stripe-kind="Halfling"] { background: var(--stripe-halfling); }
-.identity-stripe[data-stripe-kind="Noble"] { background: var(--stripe-noble); }
-.identity-stripe[data-stripe-kind="Half-Orc"],
-.identity-stripe[data-stripe-kind="Halfling"] {
+.identity-stripe[data-stripe-kind='Dwarf'] {
+  background: var(--stripe-dwarf);
+}
+.identity-stripe[data-stripe-kind='Elf'] {
+  background: var(--stripe-elf);
+}
+.identity-stripe[data-stripe-kind='Gnome'] {
+  background: var(--stripe-gnome);
+}
+.identity-stripe[data-stripe-kind='Half-Elf'] {
+  background: var(--stripe-half-elf);
+}
+.identity-stripe[data-stripe-kind='Half-Orc'] {
+  background: var(--stripe-half-orc);
+}
+.identity-stripe[data-stripe-kind='Halfling'] {
+  background: var(--stripe-halfling);
+}
+.identity-stripe[data-stripe-kind='Noble'] {
+  background: var(--stripe-noble);
+}
+.identity-stripe[data-stripe-kind='Half-Orc'],
+.identity-stripe[data-stripe-kind='Halfling'] {
   font-size: var(--identity-stripe-long-label-font-size);
 }
-.identity-stripe[data-stripe-kind="Noble"] {
+.identity-stripe[data-stripe-kind='Noble'] {
   color: var(--xcc-noble-stripe-face-color);
   text-shadow: var(--xcc-noble-stripe-text-shadow);
 }

@@ -41,14 +41,18 @@ export class PrototypeApplication {
 
   saveSector(index: number, sector: Sector): Sector[] | undefined {
     if (index < 0 || index >= this.sectors.length) return undefined;
-    this.sectors = this.sectors.map((current, currentIndex) => currentIndex === index ? copy(sector) : current);
+    this.sectors = this.sectors.map((current, currentIndex) =>
+      currentIndex === index ? copy(sector) : current,
+    );
     return this.listSectors();
   }
 
   renameSector(index: number, name: string): Sector[] | undefined {
     const trimmedName = name.trim();
     if (!trimmedName || index < 0 || index >= this.sectors.length) return undefined;
-    this.sectors = this.sectors.map((sector, currentIndex) => currentIndex === index ? { ...sector, SectorName: trimmedName } : sector);
+    this.sectors = this.sectors.map((sector, currentIndex) =>
+      currentIndex === index ? { ...sector, SectorName: trimmedName } : sector,
+    );
     return this.listSectors();
   }
 

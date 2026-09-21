@@ -1,641 +1,729 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="icon" type="image/svg+xml" href="/randomroll/favicon.svg" />
-  <title>DCC Students</title>
-  <style>
-    :root {
-      /* Page and presentation surface */
-      --page-bg: #d9d4c9;
-      --stage-surface: #eee9df;
-      --stage-shadow: rgba(0, 0, 0, 0.22);
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/randomroll/favicon.svg" />
+    <title>DCC Students</title>
+    <style>
+      :root {
+        /* Page and presentation surface */
+        --page-bg: #d9d4c9;
+        --stage-surface: #eee9df;
+        --stage-shadow: rgba(0, 0, 0, 0.22);
 
-      /* Shared ink and utility colors */
-      --ink: #15120e;
-      --admin-ink: #201914;
-      --white: #ffffff;
-      --transparent: transparent;
+        /* Shared ink and utility colors */
+        --ink: #15120e;
+        --admin-ink: #201914;
+        --white: #ffffff;
+        --transparent: transparent;
 
-      /* Student ID paper and rules */
-      --id-paper: #ead7b8;
-      --id-paper-dark: #d6bb91;
-      --id-red: #982f21;
-      --id-rule-red: rgba(152, 47, 33, 0.72);
-      --id-drop-shadow: rgba(38, 24, 12, 0.34);
-      --portrait-inset-highlight: rgba(255, 255, 255, 0.25);
-      --portrait-inset-shadow: rgba(0, 0, 0, 0.12);
-      --vital-red: #d11901;
-      --vital-blue: #1c00bb;
-      --stat-mod-low: #a83224;
-      --stat-mod-high: #247c3f;
+        /* Student ID paper and rules */
+        --id-paper: #ead7b8;
+        --id-paper-dark: #d6bb91;
+        --id-red: #982f21;
+        --id-rule-red: rgba(152, 47, 33, 0.72);
+        --id-drop-shadow: rgba(38, 24, 12, 0.34);
+        --portrait-inset-highlight: rgba(255, 255, 255, 0.25);
+        --portrait-inset-shadow: rgba(0, 0, 0, 0.12);
+        --vital-red: #d11901;
+        --vital-blue: #1c00bb;
+        --stat-mod-low: #a83224;
+        --stat-mod-high: #247c3f;
 
-      /* Sticker */
-      --sticker: #0c0050;
-      --sticker-border-highlight: rgb(255, 255, 255);
-      --sticker-bottom-border: rgba(98, 66, 17, 0.55);
-      --sticker-inset-highlight: rgba(255, 255, 255, 0.34);
-      --sticker-drop-shadow: rgba(0, 0, 0, 0.34);
-      --sticker-name-ink: #ffd900;
-      --sticker-effect-ink: #ffd900;
-      --sticker-effect-rule: #ffd900;
+        /* Sticker */
+        --sticker: #0c0050;
+        --sticker-border-highlight: rgb(255, 255, 255);
+        --sticker-bottom-border: rgba(98, 66, 17, 0.55);
+        --sticker-inset-highlight: rgba(255, 255, 255, 0.34);
+        --sticker-drop-shadow: rgba(0, 0, 0, 0.34);
+        --sticker-name-ink: #ffd900;
+        --sticker-effect-ink: #ffd900;
+        --sticker-effect-rule: #ffd900;
 
-      /* Notebook paper */
-      --notebook: #f4eedf;
-      --notebook-blue: rgba(58, 108, 161, 0.42);
-      --notebook-red: rgba(165, 48, 53, 0.48);
-      --hand-ink: #24366f;
-      --notebook-drop-shadow: rgba(0, 0, 0, 0.18);
-      --notebook-inset-shadow: rgba(82, 58, 38, 0.12);
-      --notebook-hole-paper: #d7cfbd;
-      --notebook-hole-ring: #a99f8e;
+        /* Notebook paper */
+        --notebook: #f4eedf;
+        --notebook-blue: rgba(58, 108, 161, 0.42);
+        --notebook-red: rgba(165, 48, 53, 0.48);
+        --hand-ink: #24366f;
+        --notebook-drop-shadow: rgba(0, 0, 0, 0.18);
+        --notebook-inset-shadow: rgba(82, 58, 38, 0.12);
+        --notebook-hole-paper: #d7cfbd;
+        --notebook-hole-ring: #a99f8e;
 
-      /* Replaceable asset placeholders */
-      --placeholder-pink: #ff00ff;
-      --placeholder-pink-dark: #b000b0;
+        /* Replaceable asset placeholders */
+        --placeholder-pink: #ff00ff;
+        --placeholder-pink-dark: #b000b0;
 
-      --font-id-printed: "Courier New", Courier, monospace;
-      --font-student-hand: "Segoe Print", "Bradley Hand", "Comic Sans MS", cursive;
-      --font-logo-text: "Arial Rounded MT Bold", "Trebuchet MS", Arial, Helvetica, sans-serif;
-    }
-    * {
-      box-sizing: border-box;
-    }
+        --font-id-printed: 'Courier New', Courier, monospace;
+        --font-student-hand: 'Segoe Print', 'Bradley Hand', 'Comic Sans MS', cursive;
+        --font-logo-text: 'Arial Rounded MT Bold', 'Trebuchet MS', Arial, Helvetica, sans-serif;
+      }
+      * {
+        box-sizing: border-box;
+      }
 
-    html,
-    body {
-      min-height: 100%;
-      margin: 0;
-      background: var(--page-bg);
-      color: var(--ink);
-    }
-
-    body {
-      display: grid;
-      place-items: center;
-      padding: 0.4in;
-      font-family: var(--font-id-printed);
-    }
-
-    .dcc-sheet {
-      position: relative;
-      width: 5.25in;
-      height: 4in;
-      isolation: isolate;
-    }
-
-    /* -----------------------------
-       Top object: 1980s student ID
-       ----------------------------- */
-
-    .student-id {
-      position: relative;
-      z-index: 2;
-      width: 100%;
-      height: 2.9in;
-      padding: 0.11in 0.13in 0.12in;
-      display: grid;
-      grid-template-rows: 0.36in 1.52in 0.71in;
-      row-gap: 0.07in;
-      overflow: visible;
-      background: var(--id-paper);
-      border: 0.018in solid var(--id-paper-dark);
-      border-radius: 0.09in;
-      box-shadow: 0 0.04in 0.08in var(--id-drop-shadow);
-    }
-
-    .student-id::before {
-      content: "";
-      position: absolute;
-      left: 0.08in;
-      right: 0.08in;
-      top: 0.03in;
-      height: 0.08in;
-      border-radius: 0.06in 0.06in 0 0;
-      background: var(--id-red);
-      opacity: 0.96;
-      pointer-events: none;
-    }
-
-    .id-header {
-      position: relative;
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) 1.25in;
-      align-items: end;
-      gap: 0.08in;
-      padding-bottom: 0.045in;
-      border-bottom: 0.014in solid var(--id-red);
-      line-height: 1;
-    }
-
-    .student-name {
-      min-width: 0;
-      font-size: 0.18in;
-      font-weight: 800;
-      letter-spacing: -0.01in;
-      white-space: nowrap;
-    }
-
-    .profession-title {
-      font-family: var(--font-student-hand);
-      font-size: 0.14in;
-      font-weight: 700;
-    }
-
-    .school-logo {
-      width: 1.25in;
-      height: 0.32in;
-      justify-self: end;
-      display: block;
-      overflow: hidden;
-      border-radius: 0.025in;
-      font-size: 0;
-      line-height: 0;
-      transform: none;
-
-      background-image: url("../src/assets/ST_CUTHBERTS.png");
-      background-size: contain;
-      background-repeat: no-repeat;
-      background-position: center;
-    }
-
-    .id-main {
-      display: grid;
-      grid-template-columns: 1.52in 1.35in 1.72in;
-      gap: 0.13in;
-      min-height: 0;
-    }
-
-    .portrait-frame {
-      position: relative;
-      overflow: hidden;
-      border: 0.012in solid var(--admin-ink);
-      border-radius: 0.03in;
-      background-size: contain;
-      background-repeat: no-repeat;
-      background-position: center;
-      box-shadow:
-        0 0 0 0.012in var(--portrait-inset-highlight) inset,
-        0 0.02in 0.04in var(--portrait-inset-shadow) inset;
-    }
-
-    .stats-panel,
-    .saves-panel {
-      font-weight: 700;
-      font-size: 0.17in;
-      line-height: 1;
-    }
-
-    .stats-panel {
-      padding-top: 0.03in;
-    }
-
-    .stat-row {
-      display: grid;
-      grid-template-columns: 0.44in 0.36in 0.30in;
-      align-items: flex-end;
-      min-height: 0.235in;
-      border-bottom: 0.006in solid var(--id-rule-red);
-    }
-
-    .stat-name {
-      font-size: 0.155in;
-      letter-spacing: 0.006in;
-    }
-
-    .stat-score,
-    .stat-mod,
-    .save-value {
-      text-align: right;
-    }
-
-    .stat-mod.mod-low {
-      color: var(--stat-mod-low);
-    }
-
-    .stat-mod.mod-high {
-      color: var(--stat-mod-high);
-    }
-
-    .saves-panel {
-      padding: 0.03in 0 0 0.14in;
-      border-left: 0.008in solid var(--id-rule-red);
-    }
-
-    .save-row {
-      display: grid;
-      grid-template-columns: 0.95in 0.38in;
-      align-items: flex-end;
-      min-height: 0.235in;
-      border-bottom: 0.006in solid var(--id-rule-red);
-    }
-
-    .save-row.blank {
-      color: var(--transparent);
-    }
-
-    .id-footer {
-      display: grid;
-      grid-template-columns: 1.52in 1fr;
-      gap: 0.13in;
-      border-top: 0.018in solid var(--id-red);
-      padding-top: 0.055in;
-      min-height: 0;
-    }
-
-    .vitals {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.10in;
-      align-items: center;
-      justify-items: center;
-      padding-right: 0.04in;
-      border-right: 0.008in solid var(--id-rule-red);
-    }
-
-    .vital-icon {
-      position: relative;
-      width: 0.52in;
-      height: 0.52in;
-      display: grid;
-      place-items: center;
-      color: var(--id-red);
-      font-family: var(--font-logo-text);
-      font-weight: 900;
-      text-align: center;
-      line-height: 0.82;
-    }
-
-    .vital-icon.heart {
-        color: var(--vital-red)
-    }
-
-    .vital-icon.shield {
-        color: var(--vital-blue)
-    }
-
-    .vital-icon svg {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      fill: var(--transparent);
-      stroke: currentColor;
-      stroke-width: 7;
-    }
-
-    .vital-label {
-      display: block;
-      font-size: 0.09in;
-      letter-spacing: 0.007in;
-    }
-
-    .vital-number {
-      display: block;
-      font-size: 0.14in;
-    }
-
-    .weapon-admin {
-      position: relative;
-      min-width: 0;
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) 1.6in;
-      min-height: 0.59in;
-      font-weight: 700;
-      font-size: 0.1in;
-      line-height: 1;
-    }
-
-    .weapon-panel,
-    .junk-panel {
-      min-width: 0.11;
-    }
-
-    .weapon-panel {
-      padding-right: 0.11in;
-    }
-
-    .junk-panel {
-      padding-left: 0.11in;
-      border-left: 0.008in solid var(--id-rule-red);
-      color: var(--admin-ink);
-    }
-
-    .weapon-row,
-    .junk-row {
-      display: grid;
-      align-items: flex-end;
-      min-height: 0.19in;
-      border-bottom: 0.006in solid var(--id-rule-red);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      column-gap: 0.06in;
-    }
-
-    .weapon-row {
-      grid-template-columns: 0.43in minmax(0, 1fr);
-    }
-
-    .junk-row {
-      grid-template-columns: 0.68in minmax(0, 1fr);
-    }
-
-    .weapon-label,
-    .junk-label {
-      margin-right: 0.5in;
-      text-transform: uppercase;
-      letter-spacing: 0.004in;
-      font-size: 0.112in;
-    }
-
-    .weapon-value,
-    .junk-value {
-      min-width: 0.1;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      text-align: left;
-      font-size: 0.112in;
-    }
-
-    /* The sticker deliberately ignores the card grid. */
-    .lucky-sticker {
-      position: absolute;
-      z-index: 10;
-      right: -0.1in;
-      bottom: 0.15in;
-      width: 2in;
-      height: 0.72in;
-      padding: 0.06in 0.08in;
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) 1.45in;
-      grid-template-rows: auto auto;
-      column-gap: 0.045in;
-      align-content: center;
-      align-items: center;
-      background: var(--sticker);
-      border: 0.012in solid var(--sticker-border-highlight);
-      border-bottom-color: var(--sticker-bottom-border);
-      border-radius: 0.07in;
-      box-shadow:
-        0 0.016in 0.025in var(--sticker-inset-highlight) inset,
-        0 0.045in 0.08in var(--sticker-drop-shadow);
-      transform: rotate(-12deg) translate(0.02in, 0.02in) scale(.71);
-      transform-origin: 58% 50%;
-    }
-
-    .lucky-sticker::before,
-    .lucky-sticker::after {
-      display: none;
-      content: none;
-    }
-
-    .sticker-sign-name {
-      grid-column: 2;
-      min-width: 0;
-      color: var(--sticker-name-ink);
-      font-family: var(--font-student-hand);
-      font-size: 0.15in;
-      font-weight: 900;
-      line-height: 0.96;
-      letter-spacing: 0.002in;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .sticker-effect {
-      grid-column: 2;
-      min-width: 0;
-      color: var(--sticker-effect-ink);
-      font-family: var(--font-student-hand);
-      font-size: 0.115in;
-      font-weight: 700;
-      line-height: 0.98;
-      padding-top: 0.018in;
-      border-top: 0.008in solid var(--sticker-effect-rule);
-      transform: rotate(-1deg);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .lucky-sign-mark {
-      grid-column: 1;
-      grid-row: 1 / span 2;
-
-      width: 0.29in;
-      height: 0.29in;
-      align-self: center;
-      justify-self: start;
-
-      background-image: url("../src/assets/horseshoe_transparent_gold.png");
-      background-size: contain;
-      background-repeat: no-repeat;
-      background-position: center;
-
-      border: none;
-      border-radius: 0;
-    }
-
-    /* ---------------------------------
-       Bottom object: separate notebook
-       --------------------------------- */
-
-    .notebook-paper {
-      position: absolute;
-      z-index: 1;
-      left: 0.05in;
-      right: 0.02in;
-      top: 3.0in;
-      height: 1.34in;
-      padding: 0.15in 0.18in 0.12in 0.78in;
-      overflow: hidden;
-      color: var(--hand-ink);
-      font-family: var(--font-student-hand);
-      font-size: 0.132in;
-      line-height: 0.185in;
-      /* Layout aid: red notebook margin line over repeated blue ruled-paper lines. */
-      background:
-        linear-gradient(90deg, var(--transparent) 0 0.36in, var(--notebook-red) 0.365in 0.373in, var(--transparent) 0.38in),
-        repeating-linear-gradient(
-          to bottom,
-          var(--notebook) 0,
-          var(--notebook) 0.179in,
-          var(--notebook-blue) 0.181in,
-          var(--notebook) 0.188in
-        );
-      /* Shadows separate the notebook sheet from the ID. */
-      box-shadow:
-        0 0.03in 0.04in var(--notebook-drop-shadow),
-        0 0.02in 0.04in var(--notebook-inset-shadow) inset;
-      transform: rotate(-0.45deg);
-    }
-
-    .notebook-paper::before {
-      content: "";
-      position: absolute;
-      left: 0.08in;
-      top: 0.17in;
-      bottom: 0.05in;
-      width: 0.17in;
-      /* Layout aid: repeated circles for spiral notebook punch holes. */
-      background:
-        radial-gradient(circle, var(--notebook-hole-paper) 0 0.039in, var(--notebook-hole-ring) 0.041in 0.047in, var(--transparent) 0.049in) center top / 0.17in 0.235in repeat-y;
-      opacity: 0.96;
-    }
-
-    .paper-title {
-      position: absolute;
-      top: 0.025in;
-      left: 1.78in;
-      font-size: 0.165in;
-      line-height: 1;
-      letter-spacing: 0.012in;
-      transform: rotate(1deg);
-    }
-
-    .inventory-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      column-gap: 0.36in;
-      height: 100%;
-      align-items: start;
-    }
-
-    .hand-list {
-      margin: 0;
-      padding: 0;
-      list-style: none;
-    }
-
-    .hand-list li {
-      min-height: 0.185in;
-    }
-
-    .lunch-label {
-      display: inline-block;
-      margin-bottom: 0.in;
-      font-size: 0.14in;
-      transform: rotate(-1deg);
-    }
-
-    @media print {
-      @page {
-        size: letter landscape;
-        margin: 0.25in;
+      html,
+      body {
+        min-height: 100%;
+        margin: 0;
+        background: var(--page-bg);
+        color: var(--ink);
       }
 
       body {
-        padding: 0;
-        background: var(--white);
+        display: grid;
+        place-items: center;
+        padding: 0.4in;
+        font-family: var(--font-id-printed);
       }
 
-      .prototype-stage {
-        padding: 0;
-        background: var(--transparent);
-        box-shadow: none;
+      .dcc-sheet {
+        position: relative;
+        width: 5.25in;
+        height: 4in;
+        isolation: isolate;
       }
-    }
-  </style>
-</head>
-<body>
-  <template id="dcc-student-sheet-template">
-    <article class="dcc-sheet">
-      <section class="student-id" aria-label="Student ID card">
-        <header class="id-header">
-          <div class="student-name"><span class="last-name" data-field="lastName">Moreno</span>, <span class="first-name" data-field="firstName">Lisa</span>: <span class="profession-title" data-field="professionTitle">Arcade Kid</span></div>
-          <div class="school-logo" data-field="schoolLogo" aria-label="school logo placeholder"></div>
-        </header>
 
-        <div class="id-main">
-          <div class="portrait-frame" data-field="portrait" aria-label="student portrait placeholder"></div>
+      /* -----------------------------
+       Top object: 1980s student ID
+       ----------------------------- */
 
-          <div class="stats-panel" aria-label="ability scores">
-            <div class="stat-row"><span class="stat-name">STR</span><span class="stat-score" data-field="strengthScore">10</span><span class="stat-mod" data-field="strengthMod">+0</span></div>
-            <div class="stat-row"><span class="stat-name">AGI</span><span class="stat-score" data-field="agilityScore">14</span><span class="stat-mod" data-field="agilityMod">+1</span></div>
-            <div class="stat-row"><span class="stat-name">STA</span><span class="stat-score" data-field="staminaScore">12</span><span class="stat-mod" data-field="staminaMod">+0</span></div>
-            <div class="stat-row"><span class="stat-name">PER</span><span class="stat-score" data-field="personalityScore">13</span><span class="stat-mod" data-field="personalityMod">+1</span></div>
-            <div class="stat-row"><span class="stat-name">INT</span><span class="stat-score" data-field="intelligenceScore">16</span><span class="stat-mod mod-high" data-field="intelligenceMod">+2</span></div>
-            <div class="stat-row"><span class="stat-name">LCK</span><span class="stat-score" data-field="luckScore">5</span><span class="stat-mod mod-low" data-field="luckMod">-2</span></div>
+      .student-id {
+        position: relative;
+        z-index: 2;
+        width: 100%;
+        height: 2.9in;
+        padding: 0.11in 0.13in 0.12in;
+        display: grid;
+        grid-template-rows: 0.36in 1.52in 0.71in;
+        row-gap: 0.07in;
+        overflow: visible;
+        background: var(--id-paper);
+        border: 0.018in solid var(--id-paper-dark);
+        border-radius: 0.09in;
+        box-shadow: 0 0.04in 0.08in var(--id-drop-shadow);
+      }
+
+      .student-id::before {
+        content: '';
+        position: absolute;
+        left: 0.08in;
+        right: 0.08in;
+        top: 0.03in;
+        height: 0.08in;
+        border-radius: 0.06in 0.06in 0 0;
+        background: var(--id-red);
+        opacity: 0.96;
+        pointer-events: none;
+      }
+
+      .id-header {
+        position: relative;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 1.25in;
+        align-items: end;
+        gap: 0.08in;
+        padding-bottom: 0.045in;
+        border-bottom: 0.014in solid var(--id-red);
+        line-height: 1;
+      }
+
+      .student-name {
+        min-width: 0;
+        font-size: 0.18in;
+        font-weight: 800;
+        letter-spacing: -0.01in;
+        white-space: nowrap;
+      }
+
+      .profession-title {
+        font-family: var(--font-student-hand);
+        font-size: 0.14in;
+        font-weight: 700;
+      }
+
+      .school-logo {
+        width: 1.25in;
+        height: 0.32in;
+        justify-self: end;
+        display: block;
+        overflow: hidden;
+        border-radius: 0.025in;
+        font-size: 0;
+        line-height: 0;
+        transform: none;
+
+        background-image: url('../src/assets/ST_CUTHBERTS.png');
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+      }
+
+      .id-main {
+        display: grid;
+        grid-template-columns: 1.52in 1.35in 1.72in;
+        gap: 0.13in;
+        min-height: 0;
+      }
+
+      .portrait-frame {
+        position: relative;
+        overflow: hidden;
+        border: 0.012in solid var(--admin-ink);
+        border-radius: 0.03in;
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+        box-shadow:
+          0 0 0 0.012in var(--portrait-inset-highlight) inset,
+          0 0.02in 0.04in var(--portrait-inset-shadow) inset;
+      }
+
+      .stats-panel,
+      .saves-panel {
+        font-weight: 700;
+        font-size: 0.17in;
+        line-height: 1;
+      }
+
+      .stats-panel {
+        padding-top: 0.03in;
+      }
+
+      .stat-row {
+        display: grid;
+        grid-template-columns: 0.44in 0.36in 0.3in;
+        align-items: flex-end;
+        min-height: 0.235in;
+        border-bottom: 0.006in solid var(--id-rule-red);
+      }
+
+      .stat-name {
+        font-size: 0.155in;
+        letter-spacing: 0.006in;
+      }
+
+      .stat-score,
+      .stat-mod,
+      .save-value {
+        text-align: right;
+      }
+
+      .stat-mod.mod-low {
+        color: var(--stat-mod-low);
+      }
+
+      .stat-mod.mod-high {
+        color: var(--stat-mod-high);
+      }
+
+      .saves-panel {
+        padding: 0.03in 0 0 0.14in;
+        border-left: 0.008in solid var(--id-rule-red);
+      }
+
+      .save-row {
+        display: grid;
+        grid-template-columns: 0.95in 0.38in;
+        align-items: flex-end;
+        min-height: 0.235in;
+        border-bottom: 0.006in solid var(--id-rule-red);
+      }
+
+      .save-row.blank {
+        color: var(--transparent);
+      }
+
+      .id-footer {
+        display: grid;
+        grid-template-columns: 1.52in 1fr;
+        gap: 0.13in;
+        border-top: 0.018in solid var(--id-red);
+        padding-top: 0.055in;
+        min-height: 0;
+      }
+
+      .vitals {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.1in;
+        align-items: center;
+        justify-items: center;
+        padding-right: 0.04in;
+        border-right: 0.008in solid var(--id-rule-red);
+      }
+
+      .vital-icon {
+        position: relative;
+        width: 0.52in;
+        height: 0.52in;
+        display: grid;
+        place-items: center;
+        color: var(--id-red);
+        font-family: var(--font-logo-text);
+        font-weight: 900;
+        text-align: center;
+        line-height: 0.82;
+      }
+
+      .vital-icon.heart {
+        color: var(--vital-red);
+      }
+
+      .vital-icon.shield {
+        color: var(--vital-blue);
+      }
+
+      .vital-icon svg {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        fill: var(--transparent);
+        stroke: currentColor;
+        stroke-width: 7;
+      }
+
+      .vital-label {
+        display: block;
+        font-size: 0.09in;
+        letter-spacing: 0.007in;
+      }
+
+      .vital-number {
+        display: block;
+        font-size: 0.14in;
+      }
+
+      .weapon-admin {
+        position: relative;
+        min-width: 0;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 1.6in;
+        min-height: 0.59in;
+        font-weight: 700;
+        font-size: 0.1in;
+        line-height: 1;
+      }
+
+      .weapon-panel,
+      .junk-panel {
+        min-width: 0.11;
+      }
+
+      .weapon-panel {
+        padding-right: 0.11in;
+      }
+
+      .junk-panel {
+        padding-left: 0.11in;
+        border-left: 0.008in solid var(--id-rule-red);
+        color: var(--admin-ink);
+      }
+
+      .weapon-row,
+      .junk-row {
+        display: grid;
+        align-items: flex-end;
+        min-height: 0.19in;
+        border-bottom: 0.006in solid var(--id-rule-red);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        column-gap: 0.06in;
+      }
+
+      .weapon-row {
+        grid-template-columns: 0.43in minmax(0, 1fr);
+      }
+
+      .junk-row {
+        grid-template-columns: 0.68in minmax(0, 1fr);
+      }
+
+      .weapon-label,
+      .junk-label {
+        margin-right: 0.5in;
+        text-transform: uppercase;
+        letter-spacing: 0.004in;
+        font-size: 0.112in;
+      }
+
+      .weapon-value,
+      .junk-value {
+        min-width: 0.1;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        text-align: left;
+        font-size: 0.112in;
+      }
+
+      /* The sticker deliberately ignores the card grid. */
+      .lucky-sticker {
+        position: absolute;
+        z-index: 10;
+        right: -0.1in;
+        bottom: 0.15in;
+        width: 2in;
+        height: 0.72in;
+        padding: 0.06in 0.08in;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 1.45in;
+        grid-template-rows: auto auto;
+        column-gap: 0.045in;
+        align-content: center;
+        align-items: center;
+        background: var(--sticker);
+        border: 0.012in solid var(--sticker-border-highlight);
+        border-bottom-color: var(--sticker-bottom-border);
+        border-radius: 0.07in;
+        box-shadow:
+          0 0.016in 0.025in var(--sticker-inset-highlight) inset,
+          0 0.045in 0.08in var(--sticker-drop-shadow);
+        transform: rotate(-12deg) translate(0.02in, 0.02in) scale(0.71);
+        transform-origin: 58% 50%;
+      }
+
+      .lucky-sticker::before,
+      .lucky-sticker::after {
+        display: none;
+        content: none;
+      }
+
+      .sticker-sign-name {
+        grid-column: 2;
+        min-width: 0;
+        color: var(--sticker-name-ink);
+        font-family: var(--font-student-hand);
+        font-size: 0.15in;
+        font-weight: 900;
+        line-height: 0.96;
+        letter-spacing: 0.002in;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .sticker-effect {
+        grid-column: 2;
+        min-width: 0;
+        color: var(--sticker-effect-ink);
+        font-family: var(--font-student-hand);
+        font-size: 0.115in;
+        font-weight: 700;
+        line-height: 0.98;
+        padding-top: 0.018in;
+        border-top: 0.008in solid var(--sticker-effect-rule);
+        transform: rotate(-1deg);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .lucky-sign-mark {
+        grid-column: 1;
+        grid-row: 1 / span 2;
+
+        width: 0.29in;
+        height: 0.29in;
+        align-self: center;
+        justify-self: start;
+
+        background-image: url('../src/assets/horseshoe_transparent_gold.png');
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+
+        border: none;
+        border-radius: 0;
+      }
+
+      /* ---------------------------------
+       Bottom object: separate notebook
+       --------------------------------- */
+
+      .notebook-paper {
+        position: absolute;
+        z-index: 1;
+        left: 0.05in;
+        right: 0.02in;
+        top: 3in;
+        height: 1.34in;
+        padding: 0.15in 0.18in 0.12in 0.78in;
+        overflow: hidden;
+        color: var(--hand-ink);
+        font-family: var(--font-student-hand);
+        font-size: 0.132in;
+        line-height: 0.185in;
+        /* Layout aid: red notebook margin line over repeated blue ruled-paper lines. */
+        background:
+          linear-gradient(
+            90deg,
+            var(--transparent) 0 0.36in,
+            var(--notebook-red) 0.365in 0.373in,
+            var(--transparent) 0.38in
+          ),
+          repeating-linear-gradient(
+            to bottom,
+            var(--notebook) 0,
+            var(--notebook) 0.179in,
+            var(--notebook-blue) 0.181in,
+            var(--notebook) 0.188in
+          );
+        /* Shadows separate the notebook sheet from the ID. */
+        box-shadow:
+          0 0.03in 0.04in var(--notebook-drop-shadow),
+          0 0.02in 0.04in var(--notebook-inset-shadow) inset;
+        transform: rotate(-0.45deg);
+      }
+
+      .notebook-paper::before {
+        content: '';
+        position: absolute;
+        left: 0.08in;
+        top: 0.17in;
+        bottom: 0.05in;
+        width: 0.17in;
+        /* Layout aid: repeated circles for spiral notebook punch holes. */
+        background: radial-gradient(
+            circle,
+            var(--notebook-hole-paper) 0 0.039in,
+            var(--notebook-hole-ring) 0.041in 0.047in,
+            var(--transparent) 0.049in
+          )
+          center top / 0.17in 0.235in repeat-y;
+        opacity: 0.96;
+      }
+
+      .paper-title {
+        position: absolute;
+        top: 0.025in;
+        left: 1.78in;
+        font-size: 0.165in;
+        line-height: 1;
+        letter-spacing: 0.012in;
+        transform: rotate(1deg);
+      }
+
+      .inventory-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        column-gap: 0.36in;
+        height: 100%;
+        align-items: start;
+      }
+
+      .hand-list {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .hand-list li {
+        min-height: 0.185in;
+      }
+
+      .lunch-label {
+        display: inline-block;
+        margin-bottom: 0in;
+        font-size: 0.14in;
+        transform: rotate(-1deg);
+      }
+
+      @media print {
+        @page {
+          size: letter landscape;
+          margin: 0.25in;
+        }
+
+        body {
+          padding: 0;
+          background: var(--white);
+        }
+
+        .prototype-stage {
+          padding: 0;
+          background: var(--transparent);
+          box-shadow: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <template id="dcc-student-sheet-template">
+      <article class="dcc-sheet">
+        <section class="student-id" aria-label="Student ID card">
+          <header class="id-header">
+            <div class="student-name">
+              <span class="last-name" data-field="lastName">Moreno</span>,
+              <span class="first-name" data-field="firstName">Lisa</span>:
+              <span class="profession-title" data-field="professionTitle">Arcade Kid</span>
+            </div>
+            <div
+              class="school-logo"
+              data-field="schoolLogo"
+              aria-label="school logo placeholder"
+            ></div>
+          </header>
+
+          <div class="id-main">
+            <div
+              class="portrait-frame"
+              data-field="portrait"
+              aria-label="student portrait placeholder"
+            ></div>
+
+            <div class="stats-panel" aria-label="ability scores">
+              <div class="stat-row">
+                <span class="stat-name">STR</span
+                ><span class="stat-score" data-field="strengthScore">10</span
+                ><span class="stat-mod" data-field="strengthMod">+0</span>
+              </div>
+              <div class="stat-row">
+                <span class="stat-name">AGI</span
+                ><span class="stat-score" data-field="agilityScore">14</span
+                ><span class="stat-mod" data-field="agilityMod">+1</span>
+              </div>
+              <div class="stat-row">
+                <span class="stat-name">STA</span
+                ><span class="stat-score" data-field="staminaScore">12</span
+                ><span class="stat-mod" data-field="staminaMod">+0</span>
+              </div>
+              <div class="stat-row">
+                <span class="stat-name">PER</span
+                ><span class="stat-score" data-field="personalityScore">13</span
+                ><span class="stat-mod" data-field="personalityMod">+1</span>
+              </div>
+              <div class="stat-row">
+                <span class="stat-name">INT</span
+                ><span class="stat-score" data-field="intelligenceScore">16</span
+                ><span class="stat-mod mod-high" data-field="intelligenceMod">+2</span>
+              </div>
+              <div class="stat-row">
+                <span class="stat-name">LCK</span
+                ><span class="stat-score" data-field="luckScore">5</span
+                ><span class="stat-mod mod-low" data-field="luckMod">-2</span>
+              </div>
+            </div>
+
+            <div class="saves-panel" aria-label="saving throws and secondary stats">
+              <div class="save-row">
+                <span>Fortitude</span><span class="save-value" data-field="fortitudeSave">+1</span>
+              </div>
+              <div class="save-row">
+                <span>Reflex</span><span class="save-value" data-field="reflexSave">+1</span>
+              </div>
+              <div class="save-row">
+                <span>Will</span><span class="save-value" data-field="willSave">+0</span>
+              </div>
+              <div class="save-row blank" aria-hidden="true">
+                <span>&nbsp;</span><span class="save-value">&nbsp;</span>
+              </div>
+              <div class="save-row">
+                <span>Init</span><span class="save-value" data-field="initiative">+1</span>
+              </div>
+              <div class="save-row">
+                <span>Speed</span><span class="save-value" data-field="speed">30</span>
+              </div>
+            </div>
           </div>
 
-          <div class="saves-panel" aria-label="saving throws and secondary stats">
-            <div class="save-row"><span>Fortitude</span><span class="save-value" data-field="fortitudeSave">+1</span></div>
-            <div class="save-row"><span>Reflex</span><span class="save-value" data-field="reflexSave">+1</span></div>
-            <div class="save-row"><span>Will</span><span class="save-value" data-field="willSave">+0</span></div>
-            <div class="save-row blank" aria-hidden="true"><span>&nbsp;</span><span class="save-value">&nbsp;</span></div>
-            <div class="save-row"><span>Init</span><span class="save-value" data-field="initiative">+1</span></div>
-            <div class="save-row"><span>Speed</span><span class="save-value" data-field="speed">30</span></div>
-          </div>
-        </div>
-
-        <footer class="id-footer">
-          <div class="vitals" aria-label="armor class and hit points">
-            <div class="vital-icon shield">
-              <svg viewBox="0 0 100 100" aria-hidden="true">
-                <path d="M50 8 L85 22 V47 C85 68 71 84 50 93 C29 84 15 68 15 47 V22 Z" />
-              </svg>
-              <span><span class="vital-label">AC</span><span class="vital-number" data-field="armorClass">11</span></span>
-            </div>
-            <div class="vital-icon heart">
-              <svg viewBox="0 0 100 100" aria-hidden="true">
-                <path d="M50 87 C26 65 12 49 12 31 C12 19 21 11 33 11 C42 11 47 16 50 22 C53 16 58 11 67 11 C79 11 88 19 88 31 C88 49 74 65 50 87 Z" />
-              </svg>
-              <span><span class="vital-label">HP</span><span class="vital-number" data-field="hitPoints">4</span></span>
-            </div>
-          </div>
-
-          <div class="weapon-admin" aria-label="weapon and administrative ID information">
-            <div class="weapon-panel" aria-label="weapon information">
-              <div class="weapon-row"><span class="weapon-label">Weapon</span><span class="weapon-value" data-field="trueWeaponName">Pocketknife</span></div>
-              <div class="weapon-row"><span class="weapon-label">Attack</span><span class="weapon-value" data-field="attackBonus">+1</span></div>
-              <div class="weapon-row"><span class="weapon-label">Damage</span><span class="weapon-value" data-field="damage">1d4</span></div>
+          <footer class="id-footer">
+            <div class="vitals" aria-label="armor class and hit points">
+              <div class="vital-icon shield">
+                <svg viewBox="0 0 100 100" aria-hidden="true">
+                  <path d="M50 8 L85 22 V47 C85 68 71 84 50 93 C29 84 15 68 15 47 V22 Z" />
+                </svg>
+                <span
+                  ><span class="vital-label">AC</span
+                  ><span class="vital-number" data-field="armorClass">11</span></span
+                >
+              </div>
+              <div class="vital-icon heart">
+                <svg viewBox="0 0 100 100" aria-hidden="true">
+                  <path
+                    d="M50 87 C26 65 12 49 12 31 C12 19 21 11 33 11 C42 11 47 16 50 22 C53 16 58 11 67 11 C79 11 88 19 88 31 C88 49 74 65 50 87 Z"
+                  />
+                </svg>
+                <span
+                  ><span class="vital-label">HP</span
+                  ><span class="vital-number" data-field="hitPoints">4</span></span
+                >
+              </div>
             </div>
 
-            <div class="junk-panel" aria-label="administrative ID information">
-              <div class="junk-row"><span class="junk-label">Student ID</span><span class="junk-value" data-field="studentId">284</span></div>
-              <div class="junk-row"><span class="junk-label">DOB</span><span class="junk-value" data-field="dob">07/19/1969</span></div>
-              <div class="junk-row"><span class="junk-label">Expires On</span><span class="junk-value" data-field="expiresOn">06/15/1987</span></div>
+            <div class="weapon-admin" aria-label="weapon and administrative ID information">
+              <div class="weapon-panel" aria-label="weapon information">
+                <div class="weapon-row">
+                  <span class="weapon-label">Weapon</span
+                  ><span class="weapon-value" data-field="trueWeaponName">Pocketknife</span>
+                </div>
+                <div class="weapon-row">
+                  <span class="weapon-label">Attack</span
+                  ><span class="weapon-value" data-field="attackBonus">+1</span>
+                </div>
+                <div class="weapon-row">
+                  <span class="weapon-label">Damage</span
+                  ><span class="weapon-value" data-field="damage">1d4</span>
+                </div>
+              </div>
+
+              <div class="junk-panel" aria-label="administrative ID information">
+                <div class="junk-row">
+                  <span class="junk-label">Student ID</span
+                  ><span class="junk-value" data-field="studentId">284</span>
+                </div>
+                <div class="junk-row">
+                  <span class="junk-label">DOB</span
+                  ><span class="junk-value" data-field="dob">07/19/1969</span>
+                </div>
+                <div class="junk-row">
+                  <span class="junk-label">Expires On</span
+                  ><span class="junk-value" data-field="expiresOn">06/15/1987</span>
+                </div>
+              </div>
             </div>
-          </div>
-        </footer>
+          </footer>
 
-        <aside class="lucky-sticker" aria-label="Lucky Sign sticker">
-          <div class="lucky-sign-mark" data-field="luckySignMark" aria-hidden="true"></div>
-          <div class="sticker-sign-name"><span data-field="luckySignName">Survived a spider bite</span></div>
-          <div class="sticker-effect"><span class="lucky-bonus" data-field="luckySignBonus">+0</span> 
-            <span data-field="luckySignEffect">Saving throws against poison</span></div></div>
-        </aside>
-      </section>
+          <aside class="lucky-sticker" aria-label="Lucky Sign sticker">
+            <div class="lucky-sign-mark" data-field="luckySignMark" aria-hidden="true"></div>
+            <div class="sticker-sign-name">
+              <span data-field="luckySignName">Survived a spider bite</span>
+            </div>
+            <div class="sticker-effect">
+              <span class="lucky-bonus" data-field="luckySignBonus">+0</span>
+              <span data-field="luckySignEffect">Saving throws against poison</span>
+            </div>
+          </aside>
+        </section>
 
-      <section class="notebook-paper" aria-label="handwritten inventory note">
-        <div class="paper-title">My stuff</div>
-        <div class="inventory-grid">
-          <ul class="hand-list">
-            <li data-field="inventoryItem1">backpack</li>
-            <li data-field="inventoryItem2">roll of quarters</li>
-            <li data-field="inventoryItem3">pencil case</li>
-            <li data-field="inventoryItem4">flashlight</li>
-            <li data-field="inventoryItem5"></li>
-          </ul>
-
-          <div>
-            <div class="lunch-label">Lunch:</div>
+        <section class="notebook-paper" aria-label="handwritten inventory note">
+          <div class="paper-title">My stuff</div>
+          <div class="inventory-grid">
             <ul class="hand-list">
-              <li data-field="lunchContainer">paper bag</li>
-              <li data-field="lunchMain">bologna sandwich</li>
-              <li data-field="lunchSide1">carrot sticks</li>
-              <li data-field="lunchSide2">cookie</li>
-              <li data-field="lunchDrink">grape soda</li>
+              <li data-field="inventoryItem1">backpack</li>
+              <li data-field="inventoryItem2">roll of quarters</li>
+              <li data-field="inventoryItem3">pencil case</li>
+              <li data-field="inventoryItem4">flashlight</li>
+              <li data-field="inventoryItem5"></li>
             </ul>
+
+            <div>
+              <div class="lunch-label">Lunch:</div>
+              <ul class="hand-list">
+                <li data-field="lunchContainer">paper bag</li>
+                <li data-field="lunchMain">bologna sandwich</li>
+                <li data-field="lunchSide1">carrot sticks</li>
+                <li data-field="lunchSide2">cookie</li>
+                <li data-field="lunchDrink">grape soda</li>
+              </ul>
+            </div>
           </div>
-        </div>
-      </section>
-    </article>
-  </template>
-  <div id="app"></div>
-  <script type="module" src="/src/generators/dcc_students/dcc_students.ts"></script>
-</body>
+        </section>
+      </article>
+    </template>
+    <div id="app"></div>
+    <script type="module" src="/src/generators/dcc_students/dcc_students.ts"></script>
+  </body>
 </html>

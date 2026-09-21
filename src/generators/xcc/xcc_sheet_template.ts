@@ -110,12 +110,12 @@ const XCC_SHEET_MARKUP = `
 `;
 
 export function createXccSheetElement(): HTMLElement {
-  const template = document.createElement("template");
+  const template = document.createElement('template');
   template.innerHTML = XCC_SHEET_MARKUP.trim();
   const sheet = template.content.firstElementChild;
 
-  if (!(sheet instanceof HTMLElement) || !sheet.classList.contains("xcc-sheet")) {
-    throw new Error("Shared XCC sheet markup must have an .xcc-sheet root.");
+  if (!(sheet instanceof HTMLElement) || !sheet.classList.contains('xcc-sheet')) {
+    throw new Error('Shared XCC sheet markup must have an .xcc-sheet root.');
   }
 
   return sheet;

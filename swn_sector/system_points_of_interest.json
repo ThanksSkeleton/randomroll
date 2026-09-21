@@ -7,7 +7,13 @@
     "extractedOn": "2026-09-12"
   },
   "v4": {
-    "orbitalPositionCategories": ["TooHot", "Goldilocks", "TooCold_1", "IngressEgress", "TooCold_3"],
+    "orbitalPositionCategories": [
+      "TooHot",
+      "Goldilocks",
+      "TooCold_1",
+      "IngressEgress",
+      "TooCold_3"
+    ],
     "requiredLocations": [
       { "kind": "EgressIngressRegion", "orbitalPositionCategory": "IngressEgress" }
     ],
@@ -21,7 +27,20 @@
         "TooCold_3": 1
       },
       "goldilocksOpenSlotExtraChance": 0.5,
-      "eligibleArchetypes": ["Mercurian", "Europan / Plutonic", "Lunar", "Ioan", "Titanian", "Martian", "Venusian", "Jovian", "Neptunian", "KupierBelt", "AsteroidBelt", "GasCloud"],
+      "eligibleArchetypes": [
+        "Mercurian",
+        "Europan / Plutonic",
+        "Lunar",
+        "Ioan",
+        "Titanian",
+        "Martian",
+        "Venusian",
+        "Jovian",
+        "Neptunian",
+        "KupierBelt",
+        "AsteroidBelt",
+        "GasCloud"
+      ],
       "allowedOrbitalPositionCategories": {
         "TerrestrialPlanet": ["TooHot", "TooCold_1", "TooCold_3"],
         "GasGiant": ["TooHot", "TooCold_1", "TooCold_3"],

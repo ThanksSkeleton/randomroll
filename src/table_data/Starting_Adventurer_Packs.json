@@ -3,7 +3,13 @@
     "otherEquipment": ["Backpack", "20’ Rope", "sports bottle", "ration bar", "flashlight"]
   },
   "Pack B": {
-    "otherEquipment": ["Backpack", "50’ Rope", "grappling hook", "1 day’s iron rations", "battery lantern"]
+    "otherEquipment": [
+      "Backpack",
+      "50’ Rope",
+      "grappling hook",
+      "1 day’s iron rations",
+      "battery lantern"
+    ]
   },
   "Pack C": {
     "otherEquipment": ["Backpack", "crowbar", "expandable 10’ pole", "flashlight"]
@@ -12,6 +18,15 @@
     "otherEquipment": ["Backpack", "Shield", "3 Spikes", "Mallet", "Handaxe"]
   },
   "Pack E": {
-    "otherEquipment": ["Waterproof Backpack", "Alchemist Charge", "Smoke Bomb", "Holy Water", "Holy Symbol", "Bento Box Lunch", "Mineral Water", "Spellphone"]
+    "otherEquipment": [
+      "Waterproof Backpack",
+      "Alchemist Charge",
+      "Smoke Bomb",
+      "Holy Water",
+      "Holy Symbol",
+      "Bento Box Lunch",
+      "Mineral Water",
+      "Spellphone"
+    ]
   }
 }

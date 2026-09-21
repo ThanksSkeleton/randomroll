@@ -1,8 +1,8 @@
 // scripts/dump_sqlite_table_to_object_json.ts
 
-import fs from "node:fs";
-import path from "node:path";
-import Database from "better-sqlite3";
+import fs from 'node:fs';
+import path from 'node:path';
+import Database from 'better-sqlite3';
 
 type JsonPrimitive = string;
 type StrongNamedRow = Record<string, JsonPrimitive>;
@@ -28,7 +28,7 @@ function main(): void {
   const [sqliteDbPath, tableNameRaw, outFolder] = args;
 
   const tableName = tableNameRaw.trim();
-  assertValidIdentifier("table name", tableName);
+  assertValidIdentifier('table name', tableName);
 
   if (!fs.existsSync(sqliteDbPath)) {
     throw new Error(`SQLite database does not exist: ${sqliteDbPath}`);
@@ -41,8 +41,8 @@ function main(): void {
   const rows = dumpTableToStrongNamedObjects(sqliteDbPath, tableName);
 
   fs.writeFileSync(outPath, JSON.stringify(rows, null, 2), {
-    encoding: "utf8",
-    flag: "w",
+    encoding: 'utf8',
+    flag: 'w',
   });
 
   console.log(`Dumped table: ${tableName}`);
@@ -52,7 +52,7 @@ function main(): void {
 
 function dumpTableToStrongNamedObjects(
   sqliteDbPath: string,
-  requestedTableName: string
+  requestedTableName: string,
 ): StrongNamedRow[] {
   const db = new Database(sqliteDbPath, {
     readonly: true,
@@ -68,23 +68,21 @@ function dumpTableToStrongNamedObjects(
         WHERE type = 'table'
           AND lower(name) = lower(?)
         LIMIT 1
-        `
+        `,
       )
       .get(requestedTableName) as { name: string } | undefined;
 
     if (!existingTable) {
-      throw new Error(
-        `SQLite table does not exist: ${requestedTableName} in ${sqliteDbPath}`
-      );
+      throw new Error(`SQLite table does not exist: ${requestedTableName} in ${sqliteDbPath}`);
     }
 
     const actualTableName = existingTable.name;
-    assertValidIdentifier("table name from SQLite", actualTableName);
+    assertValidIdentifier('table name from SQLite', actualTableName);
 
     const columns = readAndValidateColumns(db, actualTableName);
 
     const sql = `
-      SELECT ${columns.map(quoteSqlIdentifier).join(", ")}
+      SELECT ${columns.map(quoteSqlIdentifier).join(', ')}
       FROM ${quoteSqlIdentifier(actualTableName)}
     `;
 
@@ -97,18 +95,18 @@ function dumpTableToStrongNamedObjects(
         const value = rawRow[column];
 
         if (value === null || value === undefined) {
-          outRow[column] = "";
+          outRow[column] = '';
           continue;
         }
 
         if (
-          typeof value !== "string" &&
-          typeof value !== "number" &&
-          typeof value !== "boolean" &&
-          typeof value !== "bigint"
+          typeof value !== 'string' &&
+          typeof value !== 'number' &&
+          typeof value !== 'boolean' &&
+          typeof value !== 'bigint'
         ) {
           throw new Error(
-            `Unsupported value in row ${rowIndex + 1}, column "${column}": ${String(value)}`
+            `Unsupported value in row ${rowIndex + 1}, column "${column}": ${String(value)}`,
           );
         }
 
@@ -122,10 +120,7 @@ function dumpTableToStrongNamedObjects(
   }
 }
 
-function readAndValidateColumns(
-  db: Database.Database,
-  tableName: string
-): string[] {
+function readAndValidateColumns(db: Database.Database, tableName: string): string[] {
   const tableInfoRows = db
     .prepare(`PRAGMA table_info(${quoteSqlIdentifier(tableName)})`)
     .all() as SqliteTableInfoRow[];
@@ -143,11 +138,11 @@ function readAndValidateColumns(
 
 function validateColumnNames(columns: string[]): void {
   if (columns.length === 0) {
-    throw new Error("Table has no columns.");
+    throw new Error('Table has no columns.');
   }
 
   for (const column of columns) {
-    assertValidIdentifier("column name", column);
+    assertValidIdentifier('column name', column);
   }
 
   assertNoDuplicateColumns(columns);
@@ -157,7 +152,7 @@ function assertValidIdentifier(label: string, value: string): void {
   if (!IDENTIFIER_REGEX.test(value)) {
     throw new Error(
       `Invalid ${label}: "${value}". ` +
-        "Names must start with a letter or underscore and contain only letters, numbers, and underscores."
+        'Names must start with a letter or underscore and contain only letters, numbers, and underscores.',
     );
   }
 }
@@ -170,7 +165,7 @@ function assertNoDuplicateColumns(columns: string[]): void {
 
     if (seen.has(normalized)) {
       throw new Error(
-        `Duplicate column name after case-normalization: "${column}". SQLite identifiers are case-insensitive.`
+        `Duplicate column name after case-normalization: "${column}". SQLite identifiers are case-insensitive.`,
       );
     }
 

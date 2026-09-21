@@ -9,11 +9,7 @@
 
 export type Guid = string;
 
-export type VisibilityLevel =
-  | "NONE"
-  | "BASIC_SCAN"
-  | "CULTURE_PARTIAL"
-  | "CULTURE_FULL";
+export type VisibilityLevel = 'NONE' | 'BASIC_SCAN' | 'CULTURE_PARTIAL' | 'CULTURE_FULL';
 
 export interface IntelligenceText {
   InfoboxSummary: string;
@@ -33,7 +29,7 @@ export interface SelectableEntity {
 }
 
 export interface Sector {
-  SchemaVersion: "merged-v1";
+  SchemaVersion: 'merged-v1';
   /** Generation provenance; it is not a complete replay specification. */
   OriginalSeed: string;
   SectorName: string;
@@ -75,15 +71,15 @@ export interface StarSystem extends SelectableEntity {
 }
 
 export type StarType =
-  | "A-type"
-  | "F-type"
-  | "G-type"
-  | "K-type"
-  | "M-type"
-  | "Giant"
-  | "White dwarf"
-  | "Neutron star"
-  | "Stellar-mass black hole";
+  | 'A-type'
+  | 'F-type'
+  | 'G-type'
+  | 'K-type'
+  | 'M-type'
+  | 'Giant'
+  | 'White dwarf'
+  | 'Neutron star'
+  | 'Stellar-mass black hole';
 
 export interface Star extends SelectableEntity {
   StarType: StarType;
@@ -108,24 +104,21 @@ export interface SystemObjectBase extends SelectableEntity {
   Orbit: Orbit;
   /** Authoritative thermal value used to constrain generated star-relative AU. */
   Temperature: Temperature;
-  Kind: "Planet" | "OtherCelestialObject";
+  Kind: 'Planet' | 'OtherCelestialObject';
 }
 
 export type OtherCelestialObjectType =
-  | "AsteroidBelt"
-  | "KuiperBelt"
-  | "GasCloud"
-  | "IndependentStation";
+  'AsteroidBelt' | 'KuiperBelt' | 'GasCloud' | 'IndependentStation';
 
 export interface OtherCelestialObject extends SystemObjectBase {
-  Kind: "OtherCelestialObject";
+  Kind: 'OtherCelestialObject';
   ObjectType: OtherCelestialObjectType;
 }
 
 export type SystemObject = Planet | OtherCelestialObject;
 
 export interface Planet extends SystemObjectBase {
-  Kind: "Planet";
+  Kind: 'Planet';
   Size: Size;
   BulkComposition: BulkComposition;
   SurfaceWaterPresent: boolean;
@@ -136,174 +129,163 @@ export interface Planet extends SystemObjectBase {
 }
 
 export type WorldTag =
-  | "Abandoned Colony"
-  | "Alien Ruins"
-  | "Altered Humanity"
-  | "Anarchists"
-  | "Anthropomorphs"
-  | "Area 51"
-  | "Badlands World"
-  | "Battleground"
-  | "Beastmasters"
-  | "Bubble Cities"
-  | "Cheap Life"
-  | "Civil War"
-  | "Cold War"
-  | "Colonized Population"
-  | "Cultural Power"
-  | "Cybercommunists"
-  | "Cyborgs"
-  | "Cyclical Doom"
-  | "Desert World"
-  | "Doomed World"
-  | "Dying Race"
-  | "Eugenic Cult"
-  | "Exchange Consulate"
-  | "Fallen Hegemon"
-  | "Feral World"
-  | "Flying Cities"
-  | "Forbidden Tech"
-  | "Former Warriors"
-  | "Freak Geology"
-  | "Freak Weather"
-  | "Friendly Foe"
-  | "Gold Rush"
-  | "Great Work"
-  | "Hatred"
-  | "Heavy Industry"
-  | "Heavy Mining"
-  | "Hivemind"
-  | "Holy War"
-  | "Hostile Biosphere"
-  | "Hostile Space"
-  | "Immortals"
-  | "Local Specialty"
-  | "Local Tech"
-  | "Major Spaceyard"
-  | "Mandarinate"
-  | "Mandate Base"
-  | "Maneaters"
-  | "Megacorps"
-  | "Mercenaries"
-  | "Minimal Contact"
-  | "Misandry/Misogyny"
-  | "Night World"
-  | "Nomads"
-  | "Oceanic World"
-  | "Out of Contact"
-  | "Outpost World"
-  | "Perimeter Agency"
-  | "Pilgrimage Site"
-  | "Pleasure World"
-  | "Police State"
-  | "Post-Scarcity"
-  | "Preceptor Archive"
-  | "Pretech Cultists"
-  | "Prison Planet"
-  | "Psionics Academy"
-  | "Psionics Fear"
-  | "Psionics Worship"
-  | "Quarantined World"
-  | "Radioactive World"
-  | "Refugees"
-  | "Regional Hegemon"
-  | "Restrictive Laws"
-  | "Revanchists"
-  | "Revolutionaries"
-  | "Rigid Culture"
-  | "Rising Hegemon"
-  | "Ritual Combat"
-  | "Robots"
-  | "Seagoing Cities"
-  | "Sealed Menace"
-  | "Secret Masters"
-  | "Sectarians"
-  | "Seismic Instability"
-  | "Shackled World"
-  | "Societal Despair"
-  | "Sole Supplier"
-  | "Taboo Treasure"
-  | "Terraform Failure"
-  | "Theocracy"
-  | "Tomb World"
-  | "Trade Hub"
-  | "Tyranny"
-  | "Unbraked AI"
-  | "Urbanized Surface"
-  | "Utopia"
-  | "Warlords"
-  | "Xenophobes"
-  | "Zombies";
+  | 'Abandoned Colony'
+  | 'Alien Ruins'
+  | 'Altered Humanity'
+  | 'Anarchists'
+  | 'Anthropomorphs'
+  | 'Area 51'
+  | 'Badlands World'
+  | 'Battleground'
+  | 'Beastmasters'
+  | 'Bubble Cities'
+  | 'Cheap Life'
+  | 'Civil War'
+  | 'Cold War'
+  | 'Colonized Population'
+  | 'Cultural Power'
+  | 'Cybercommunists'
+  | 'Cyborgs'
+  | 'Cyclical Doom'
+  | 'Desert World'
+  | 'Doomed World'
+  | 'Dying Race'
+  | 'Eugenic Cult'
+  | 'Exchange Consulate'
+  | 'Fallen Hegemon'
+  | 'Feral World'
+  | 'Flying Cities'
+  | 'Forbidden Tech'
+  | 'Former Warriors'
+  | 'Freak Geology'
+  | 'Freak Weather'
+  | 'Friendly Foe'
+  | 'Gold Rush'
+  | 'Great Work'
+  | 'Hatred'
+  | 'Heavy Industry'
+  | 'Heavy Mining'
+  | 'Hivemind'
+  | 'Holy War'
+  | 'Hostile Biosphere'
+  | 'Hostile Space'
+  | 'Immortals'
+  | 'Local Specialty'
+  | 'Local Tech'
+  | 'Major Spaceyard'
+  | 'Mandarinate'
+  | 'Mandate Base'
+  | 'Maneaters'
+  | 'Megacorps'
+  | 'Mercenaries'
+  | 'Minimal Contact'
+  | 'Misandry/Misogyny'
+  | 'Night World'
+  | 'Nomads'
+  | 'Oceanic World'
+  | 'Out of Contact'
+  | 'Outpost World'
+  | 'Perimeter Agency'
+  | 'Pilgrimage Site'
+  | 'Pleasure World'
+  | 'Police State'
+  | 'Post-Scarcity'
+  | 'Preceptor Archive'
+  | 'Pretech Cultists'
+  | 'Prison Planet'
+  | 'Psionics Academy'
+  | 'Psionics Fear'
+  | 'Psionics Worship'
+  | 'Quarantined World'
+  | 'Radioactive World'
+  | 'Refugees'
+  | 'Regional Hegemon'
+  | 'Restrictive Laws'
+  | 'Revanchists'
+  | 'Revolutionaries'
+  | 'Rigid Culture'
+  | 'Rising Hegemon'
+  | 'Ritual Combat'
+  | 'Robots'
+  | 'Seagoing Cities'
+  | 'Sealed Menace'
+  | 'Secret Masters'
+  | 'Sectarians'
+  | 'Seismic Instability'
+  | 'Shackled World'
+  | 'Societal Despair'
+  | 'Sole Supplier'
+  | 'Taboo Treasure'
+  | 'Terraform Failure'
+  | 'Theocracy'
+  | 'Tomb World'
+  | 'Trade Hub'
+  | 'Tyranny'
+  | 'Unbraked AI'
+  | 'Urbanized Surface'
+  | 'Utopia'
+  | 'Warlords'
+  | 'Xenophobes'
+  | 'Zombies';
 
 export type Atmosphere =
-  | "Vacuum"
-  | "Corrosive"
-  | "Invasive"
-  | "Corrosive+Invasive"
-  | "Inert gas"
-  | "Breathable: Thin/Thick"
-  | "Breathable";
+  | 'Vacuum'
+  | 'Corrosive'
+  | 'Invasive'
+  | 'Corrosive+Invasive'
+  | 'Inert gas'
+  | 'Breathable: Thin/Thick'
+  | 'Breathable';
 
 export type Temperature =
-  | "Cryogenic"
-  | "Glacial"
-  | "Polar"
-  | "Subarctic"
-  | "Boreal"
-  | "Alpine"
-  | "Temperate (chilly)"
-  | "Temperate"
-  | "Temperate (warm)"
-  | "Mediterranean"
-  | "Subtropical"
-  | "Equatorial"
-  | "Arid"
-  | "Infernal"
-  | "Volcanic";
+  | 'Cryogenic'
+  | 'Glacial'
+  | 'Polar'
+  | 'Subarctic'
+  | 'Boreal'
+  | 'Alpine'
+  | 'Temperate (chilly)'
+  | 'Temperate'
+  | 'Temperate (warm)'
+  | 'Mediterranean'
+  | 'Subtropical'
+  | 'Equatorial'
+  | 'Arid'
+  | 'Infernal'
+  | 'Volcanic';
 
-export type NativeBiosphere =
-  | "None"
-  | "Microbial"
-  | "Limited"
-  | "Significant"
-  | "Engineered";
+export type NativeBiosphere = 'None' | 'Microbial' | 'Limited' | 'Significant' | 'Engineered';
 
 export type TerranBiosphere = NativeBiosphere;
 
 export type Population =
-  | "Fewer than 500"
-  | "Fewer than a million inhabitants"
-  | "Several million inhabitants"
-  | "Hundreds of millions of inhabitants"
-  | "Billions of inhabitants";
+  | 'Fewer than 500'
+  | 'Fewer than a million inhabitants'
+  | 'Several million inhabitants'
+  | 'Hundreds of millions of inhabitants'
+  | 'Billions of inhabitants';
 
 export type TechLevel =
-  | "Neolithic-level technology"
-  | "Medieval technology"
-  | "Early Industrial Age tech"
-  | "Tech like that of present-day Earth"
-  | "Modern postech"
-  | "Postech with specialties"
-  | "Pretech with surviving infrastructure";
+  | 'Neolithic-level technology'
+  | 'Medieval technology'
+  | 'Early Industrial Age tech'
+  | 'Tech like that of present-day Earth'
+  | 'Modern postech'
+  | 'Postech with specialties'
+  | 'Pretech with surviving infrastructure';
 
-export type Size =
-  | "Luna"
-  | "Mars"
-  | "Earth"
-  | "Super-Earth"
-  | "Neptune"
-  | "Jupiter";
+export type Size = 'Luna' | 'Mars' | 'Earth' | 'Super-Earth' | 'Neptune' | 'Jupiter';
 
 export type BulkComposition =
-  | "Sulfur"
-  | "Carbon"
-  | "Magnesium"
-  | "Calcium-Aluminum"
-  | "Iron"
-  | "Water"
-  | "Silicon"
-  | "Jovian Gas"
-  | "Neptunian Gas";
+  | 'Sulfur'
+  | 'Carbon'
+  | 'Magnesium'
+  | 'Calcium-Aluminum'
+  | 'Iron'
+  | 'Water'
+  | 'Silicon'
+  | 'Jovian Gas'
+  | 'Neptunian Gas';
 
 export interface InhabitedInfo {
   TotalHab: number;
@@ -315,14 +297,14 @@ export interface InhabitedInfo {
 
 /** Current generator POI table entries, retained as a closed domain vocabulary. */
 export type PointOfInterestType =
-  | "Deep-space station"
-  | "Asteroid base"
-  | "Remote moon base"
-  | "Ancient orbital ruin"
-  | "Research base"
-  | "Asteroid belt"
-  | "Gas giant mine"
-  | "Refueling station";
+  | 'Deep-space station'
+  | 'Asteroid base'
+  | 'Remote moon base'
+  | 'Ancient orbital ruin'
+  | 'Research base'
+  | 'Asteroid belt'
+  | 'Gas giant mine'
+  | 'Refueling station';
 
 export interface PointOfInterest extends SelectableEntity {
   /** The system object that contains this point of interest. */

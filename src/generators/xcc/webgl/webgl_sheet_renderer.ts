@@ -2,7 +2,7 @@ import {
   XCC_SHADER_CONTROLS,
   type XccShaderSettingName,
   type XccShaderSettings,
-} from "./shader_settings";
+} from './shader_settings';
 
 const VERTEX_SHADER = `#version 300 es
 out vec2 vUv;
@@ -176,7 +176,7 @@ void main() {
 const FRAME_INTERVAL_MS = 1000 / 60;
 
 export class WebGlUnavailableError extends Error {
-  override name = "WebGlUnavailableError";
+  override name = 'WebGlUnavailableError';
 }
 
 export class WebGlSheetRenderer {
@@ -202,7 +202,7 @@ export class WebGlSheetRenderer {
 
   constructor(canvas: HTMLCanvasElement, initialSettings: XccShaderSettings) {
     this.canvas = canvas;
-    const gl = canvas.getContext("webgl2", {
+    const gl = canvas.getContext('webgl2', {
       alpha: false,
       antialias: false,
       depth: false,
@@ -212,7 +212,7 @@ export class WebGlSheetRenderer {
     });
 
     if (!gl) {
-      throw new WebGlUnavailableError("WebGL2 is unavailable in this browser.");
+      throw new WebGlUnavailableError('WebGL2 is unavailable in this browser.');
     }
 
     this.gl = gl;
@@ -220,12 +220,12 @@ export class WebGlSheetRenderer {
 
     const texture = gl.createTexture();
     const vertexArray = gl.createVertexArray();
-    const timeUniform = gl.getUniformLocation(this.program, "uTime");
-    const resolutionUniform = gl.getUniformLocation(this.program, "uResolution");
-    const loadingUniform = gl.getUniformLocation(this.program, "uLoading");
+    const timeUniform = gl.getUniformLocation(this.program, 'uTime');
+    const resolutionUniform = gl.getUniformLocation(this.program, 'uResolution');
+    const loadingUniform = gl.getUniformLocation(this.program, 'uLoading');
 
     if (!texture || !vertexArray || !timeUniform || !resolutionUniform || !loadingUniform) {
-      throw new Error("WebGL could not allocate the shader renderer resources.");
+      throw new Error('WebGL could not allocate the shader renderer resources.');
     }
 
     this.texture = texture;
@@ -247,17 +247,17 @@ export class WebGlSheetRenderer {
 
     gl.bindVertexArray(this.vertexArray);
     gl.useProgram(this.program);
-    gl.uniform1i(gl.getUniformLocation(this.program, "uSheet"), 0);
+    gl.uniform1i(gl.getUniformLocation(this.program, 'uSheet'), 0);
     gl.bindTexture(gl.TEXTURE_2D, this.texture);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
 
-    canvas.dataset.webglReady = "true";
-    canvas.dataset.textureUploads = "0";
-    canvas.dataset.framesDrawn = "0";
-    canvas.dataset.signal = "sheet";
+    canvas.dataset.webglReady = 'true';
+    canvas.dataset.textureUploads = '0';
+    canvas.dataset.framesDrawn = '0';
+    canvas.dataset.signal = 'sheet';
   }
 
   updateTexture(source: HTMLCanvasElement): void {
@@ -304,7 +304,7 @@ export class WebGlSheetRenderer {
   setLoading(loading: boolean): void {
     this.assertActive();
     this.loading = loading;
-    this.canvas.dataset.signal = loading ? "static" : "sheet";
+    this.canvas.dataset.signal = loading ? 'static' : 'sheet';
 
     if (loading) {
       this.start();
@@ -323,7 +323,7 @@ export class WebGlSheetRenderer {
 
     // Animation is the core output of this page. Do not suppress it based on
     // the operating system's reduced-motion preference.
-    this.canvas.dataset.motion = "animated";
+    this.canvas.dataset.motion = 'animated';
     this.animationFrame = requestAnimationFrame(this.frame);
   }
 
@@ -340,7 +340,7 @@ export class WebGlSheetRenderer {
     this.gl.deleteTexture(this.texture);
     this.gl.deleteVertexArray(this.vertexArray);
     this.gl.deleteProgram(this.program);
-    this.canvas.dataset.webglReady = "false";
+    this.canvas.dataset.webglReady = 'false';
     this.destroyed = true;
   }
 
@@ -379,7 +379,7 @@ export class WebGlSheetRenderer {
 
   private assertActive(): void {
     if (this.destroyed) {
-      throw new Error("Cannot use a destroyed WebGL sheet renderer.");
+      throw new Error('Cannot use a destroyed WebGL sheet renderer.');
     }
   }
 }
@@ -394,7 +394,7 @@ function createProgram(
   const program = gl.createProgram();
 
   if (!program) {
-    throw new Error("WebGL could not create a shader program.");
+    throw new Error('WebGL could not create a shader program.');
   }
 
   gl.attachShader(program, vertexShader);
@@ -404,28 +404,26 @@ function createProgram(
   gl.deleteShader(fragmentShader);
 
   if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-    throw new Error(`WebGL program link failed: ${gl.getProgramInfoLog(program) ?? "unknown error"}`);
+    throw new Error(
+      `WebGL program link failed: ${gl.getProgramInfoLog(program) ?? 'unknown error'}`,
+    );
   }
 
   return program;
 }
 
-function compileShader(
-  gl: WebGL2RenderingContext,
-  type: number,
-  source: string,
-): WebGLShader {
+function compileShader(gl: WebGL2RenderingContext, type: number, source: string): WebGLShader {
   const shader = gl.createShader(type);
 
   if (!shader) {
-    throw new Error("WebGL could not create a shader.");
+    throw new Error('WebGL could not create a shader.');
   }
 
   gl.shaderSource(shader, source);
   gl.compileShader(shader);
 
   if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-    const message = gl.getShaderInfoLog(shader) ?? "unknown error";
+    const message = gl.getShaderInfoLog(shader) ?? 'unknown error';
     gl.deleteShader(shader);
     throw new Error(`WebGL shader compilation failed: ${message}`);
   }

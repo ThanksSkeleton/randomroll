@@ -1,4 +1,4 @@
-import type seedrandom from "seedrandom";
+import type seedrandom from 'seedrandom';
 
 export type DccCoreWeapon = {
   displayName: string;
@@ -103,7 +103,7 @@ export type BuildDccCoreCharacterOptions = {
   baseSpeed?: number;
 };
 
-const MELEE = "Melee";
+const MELEE = 'Melee';
 
 export function buildDccCoreCharacter(
   rng: seedrandom.PRNG,
@@ -128,9 +128,7 @@ export function buildDccCoreCharacter(
   const baseHitPoints = rollDie(rng, 4);
   const baseSpeed = options.baseSpeed ?? 30;
   const isMelee = options.weapon.weaponType === MELEE;
-  const usesAgility =
-    !isMelee
-    || options.weapon.specialProperties.split(",").includes("Agility");
+  const usesAgility = !isMelee || options.weapon.specialProperties.split(',').includes('Agility');
 
   return {
     professionTitle: options.professionTitle,
@@ -157,10 +155,7 @@ export function buildDccCoreCharacter(
     armorName: options.armorName,
     armorAC: options.armorAC,
     AC: options.armorAC + agilityMod + luckySign.armorClass * luckMod,
-    hitPoints: Math.max(
-      baseHitPoints + staminaMod + luckySign.hitPoints * luckMod,
-      1,
-    ),
+    hitPoints: Math.max(baseHitPoints + staminaMod + luckySign.hitPoints * luckMod, 1),
     speed: baseSpeed + luckySign.speed * luckMod,
     initiative: agilityMod + luckySign.initiative * luckMod,
     saveReflex: agilityMod + luckySign.reflexSave * luckMod,
@@ -174,11 +169,11 @@ export function buildDccCoreCharacter(
     weaponRange: options.weapon.range,
     weaponSpecialProperties: options.weapon.specialProperties,
     attackMod:
-      (usesAgility ? agilityMod : strengthMod)
-      + (isMelee ? luckySign.meleeAttack : luckySign.rangedAttack) * luckMod,
+      (usesAgility ? agilityMod : strengthMod) +
+      (isMelee ? luckySign.meleeAttack : luckySign.rangedAttack) * luckMod,
     attackDamageMod:
-      (usesAgility ? agilityMod : strengthMod)
-      + (isMelee ? luckySign.meleeDamage : luckySign.rangedDamage) * luckMod,
+      (usesAgility ? agilityMod : strengthMod) +
+      (isMelee ? luckySign.meleeDamage : luckySign.rangedDamage) * luckMod,
 
     luckySignName: luckySign.name,
     luckySignDescription: luckySign.description,
@@ -192,13 +187,13 @@ export function buildDccCoreCharacter(
 
 export function buildBlankDccCoreCharacter(): BlankDccCoreCharacter {
   return {
-    professionTitle: "",
-    gender: "",
+    professionTitle: '',
+    gender: '',
 
-    race: "",
-    racialTraits: "",
-    languages: "",
-    alignment: "",
+    race: '',
+    racialTraits: '',
+    languages: '',
+    alignment: '',
 
     strengthScore: null,
     strengthMod: null,
@@ -213,7 +208,7 @@ export function buildBlankDccCoreCharacter(): BlankDccCoreCharacter {
     luckScore: null,
     luckMod: null,
 
-    armorName: "",
+    armorName: '',
     armorAC: null,
     AC: null,
     hitPoints: null,
@@ -223,21 +218,21 @@ export function buildBlankDccCoreCharacter(): BlankDccCoreCharacter {
     saveFort: null,
     saveWill: null,
 
-    weaponDisplay: "",
-    weaponUnderlying: "",
-    weaponDamageBase: "",
-    weaponType: "",
-    weaponRange: "",
-    weaponSpecialProperties: "",
+    weaponDisplay: '',
+    weaponUnderlying: '',
+    weaponDamageBase: '',
+    weaponType: '',
+    weaponRange: '',
+    weaponSpecialProperties: '',
     attackMod: null,
     attackDamageMod: null,
 
-    luckySignName: "",
-    luckySignDescription: "",
+    luckySignName: '',
+    luckySignDescription: '',
 
-    equipment: "",
-    equipment2: "",
-    equipment3: "",
+    equipment: '',
+    equipment2: '',
+    equipment3: '',
     startingFunds: null,
   };
 }

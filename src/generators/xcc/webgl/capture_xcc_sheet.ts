@@ -1,8 +1,6 @@
-import html2canvas from "html2canvas";
+import html2canvas from 'html2canvas';
 
-export async function captureXccSheet(
-  sheet: HTMLElement,
-): Promise<HTMLCanvasElement> {
+export async function captureXccSheet(sheet: HTMLElement): Promise<HTMLCanvasElement> {
   await waitForSheetAssets(sheet);
 
   const capture = await html2canvas(sheet, {
@@ -15,13 +13,13 @@ export async function captureXccSheet(
 
   // A readback is an explicit origin-clean assertion. If a future asset
   // reintroduces a cross-origin problem, fail here rather than later at WebGL.
-  const probe = document.createElement("canvas");
+  const probe = document.createElement('canvas');
   probe.width = capture.width;
   probe.height = capture.height;
-  const context = probe.getContext("2d", { willReadFrequently: true });
+  const context = probe.getContext('2d', { willReadFrequently: true });
 
   if (!context) {
-    throw new Error("The browser did not provide a 2D canvas context.");
+    throw new Error('The browser did not provide a 2D canvas context.');
   }
 
   context.drawImage(capture, 0, 0);
@@ -35,10 +33,8 @@ async function waitForSheetAssets(sheet: HTMLElement): Promise<void> {
     await document.fonts.ready;
   }
 
-  const portraitUrls = Array.from(
-    sheet.querySelectorAll<HTMLElement>("[data-portrait]"),
-  )
-    .map(element => element.dataset.portrait)
+  const portraitUrls = Array.from(sheet.querySelectorAll<HTMLElement>('[data-portrait]'))
+    .map((element) => element.dataset.portrait)
     .filter((url): url is string => Boolean(url));
 
   await Promise.all(portraitUrls.map(loadImage));
@@ -58,5 +54,5 @@ async function loadImage(url: string): Promise<void> {
 }
 
 function nextAnimationFrame(): Promise<void> {
-  return new Promise(resolve => requestAnimationFrame(() => resolve()));
+  return new Promise((resolve) => requestAnimationFrame(() => resolve()));
 }
