@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { generate } from '../generate';
 import { createInitialSectors, findContainingSystem, findObject, getAllSelectableIds, validateSector } from './data';
+import { objectEntries, routePortals } from './domain/sector/selectors';
 import { VisibilityLevel } from '../merged_schema';
 import { updateObjectVisibility } from './domain/sector/operations';
 
@@ -37,5 +38,20 @@ describe('canonical sector data', () => {
     if (!result.ok) throw new Error(result.reason);
     expect(findObject(result.value, object.Id)?.object.VisibilityLevel).toBe(VisibilityLevel.CULTURE_FULL);
     expect(validateSector(result.value)).toEqual([]);
+  });
+
+  it('indexes systems, stars, objects, POIs, route portals, routes, and the ship', () => {
+    const sector = generate('UI-SELECTABLE-GRAPH');
+    const entries = objectEntries(sector);
+    expect(entries).toEqual(expect.arrayContaining([
+      expect.objectContaining({ kind: 'System' }),
+      expect.objectContaining({ kind: 'Star' }),
+      expect.objectContaining({ kind: 'RoutePortal' }),
+      expect.objectContaining({ kind: 'Route' }),
+      expect.objectContaining({ kind: 'PlayerShip' }),
+    ]));
+    for (const portal of sector.RoutePortals)
+      expect(findContainingSystem(sector, portal.Id)?.Id).toBe(portal.SystemId);
+    for (const route of sector.Routes) expect(routePortals(sector, route)).toBeDefined();
   });
 });

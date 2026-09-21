@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { generate } from '../../../generate';
 import { VisibilityLevel } from '../../../merged_schema';
 import { deleteSectorObject, relocatePlayerShip, updateObjectVisibility } from './operations';
-import { findContainingSystem, findDetails, findObject, routeSystems } from './selectors';
+import { findContainingSystem, findDetails, findObject, routePortals, routeSystems } from './selectors';
 import { validateSector } from './validation';
 
 describe('canonical sector domain', () => {
@@ -31,6 +31,25 @@ describe('canonical sector domain', () => {
     const systems = routeSystems(sector, sector.Routes[0]);
     expect(systems).toBeDefined();
     expect(systems?.[0].Id).not.toBe(systems?.[1].Id);
+  });
+
+  it('deletes a route and its portals while preserving the sector', () => {
+    const sector = generate('DOMAIN-ROUTE-DELETION');
+    const route = sector.Routes[0];
+    const portals = routePortals(sector, route)!;
+    const result = deleteSectorObject(sector, route.Id);
+    expect(result.ok).toBe(true);
+    if (!result.ok) throw new Error(result.reason);
+    expect(findObject(result.value, route.Id)).toBeUndefined();
+    expect(findObject(result.value, portals[0].Id)).toBeUndefined();
+    expect(findObject(result.value, portals[1].Id)).toBeUndefined();
+    expect(validateSector(result.value)).toEqual([]);
+  });
+
+  it('does not allow movement to a route or route portal', () => {
+    const sector = generate('DOMAIN-MOVEMENT-RESTRICTIONS');
+    expect(relocatePlayerShip(sector, sector.Routes[0].Id).ok).toBe(false);
+    expect(relocatePlayerShip(sector, sector.RoutePortals[0].Id).ok).toBe(false);
   });
 
   it('deletes an object and hosted POIs without invalidating the sector', () => {
