@@ -7,141 +7,44 @@
  */
 import type {
   OtherCelestialObject,
-  InhabitedInfo,
-  PointOfInterestType,
   Planet,
   Sector,
   SelectableEntity,
-  StarType,
   StarSystem,
   SystemObject,
 } from "./merged_schema";
-import rawWorldTagConstraints from "../../../swn_sector/world_tag_constraints.json";
+import {
+  directOrbitAuBand,
+  isGasPlanet,
+  isPoiHostCompatible,
+  POI_TYPES,
+  WORLD_TAG_CONSTRAINTS,
+} from "./generation_rules";
+import {
+  ATMOSPHERE_HAB,
+  ATMOSPHERE_MAX_PERCENTILE,
+  BULK_COMPOSITION_HAB,
+  GAS_COMPOSITION_BY_SIZE,
+  NATIVE_BIOSPHERE_MIN_PERCENTILE,
+  POPULATION_HAB_REQUIRED,
+  POPULATION_RANGE,
+  SIZE_HAB,
+  SIZE_RANK,
+  TECH_HAB_REQUIRED,
+  TECH_LEVEL,
+  TEMPERATURE_HAB,
+  TEMPERATURE_RANK,
+  TERRAN_BIOSPHERE_HAB,
+  TERRAN_BIOSPHERE_HAB_REQUIRED,
+} from "./tables";
 
 export interface InvariantViolation {
   RuleId: string;
   Message: string;
 }
 
-const TEMPERATURE_RANK: Readonly<Record<Planet["Temperature"], number>> = {
-  Cryogenic: 1,
-  Glacial: 2,
-  Polar: 3,
-  Subarctic: 4,
-  Boreal: 5,
-  Alpine: 6,
-  "Temperate (chilly)": 7,
-  Temperate: 8,
-  "Temperate (warm)": 9,
-  Mediterranean: 10,
-  Subtropical: 11,
-  Equatorial: 12,
-  Arid: 13,
-  Infernal: 14,
-  Volcanic: 15,
-};
-
-const SIZE_RANK: Readonly<Record<Planet["Size"], number>> = {
-  Luna: 1,
-  Mars: 2,
-  Earth: 3,
-  "Super-Earth": 4,
-  Neptune: 5,
-  Jupiter: 6,
-};
-
-const GAS_COMPOSITION_BY_SIZE: Readonly<Partial<Record<Planet["Size"], Planet["BulkComposition"]>>> = {
-  Neptune: "Neptunian Gas",
-  Jupiter: "Jovian Gas",
-};
-
-const POPULATION_HAB_REQUIRED: Readonly<Record<InhabitedInfo["Population"], number>> = {
-  "Fewer than 500": 0,
-  "Fewer than a million inhabitants": 0,
-  "Several million inhabitants": 2,
-  "Hundreds of millions of inhabitants": 2,
-  "Billions of inhabitants": 3,
-};
-
-const TECH_HAB_REQUIRED: Readonly<Record<InhabitedInfo["TechLevel"], number>> = {
-  "Neolithic-level technology": 3,
-  "Medieval technology": 3,
-  "Early Industrial Age tech": 3,
-  "Tech like that of present-day Earth": 2,
-  "Modern postech": 0,
-  "Postech with specialties": 0,
-  "Pretech with surviving infrastructure": 0,
-};
-
-const TECH_LEVEL: Readonly<Record<InhabitedInfo["TechLevel"], number>> = {
-  "Neolithic-level technology": 0,
-  "Medieval technology": 1,
-  "Early Industrial Age tech": 2,
-  "Tech like that of present-day Earth": 3,
-  "Modern postech": 4,
-  "Postech with specialties": 4.1,
-  "Pretech with surviving infrastructure": 5,
-};
-
-const TERRAN_BIOSPHERE_HAB_REQUIRED: Readonly<Record<InhabitedInfo["TerranBiosphere"], number>> = {
-  None: 0,
-  Microbial: 1,
-  Limited: 1,
-  Significant: 2,
-  Engineered: 1,
-};
-
-const ATMOSPHERE_MAX_PERCENTILE: Readonly<Record<Planet["Atmosphere"], number>> = {
-  Vacuum: 8, Corrosive: 11, Invasive: 17, "Corrosive+Invasive": 20, "Inert gas": 26, "Breathable: Thin/Thick": 34, Breathable: 100,
-};
-const NATIVE_BIOSPHERE_MIN_PERCENTILE: Readonly<Record<Planet["NativeBiosphere"], number>> = { None: 1, Microbial: 20, Limited: 50, Significant: 60, Engineered: 95 };
-const POPULATION_RANGE: Readonly<Record<InhabitedInfo["Population"], readonly [number, number]>> = {
-  "Fewer than 500": [1, 9], "Fewer than a million inhabitants": [10, 31], "Several million inhabitants": [32, 75], "Hundreds of millions of inhabitants": [76, 94], "Billions of inhabitants": [95, 100],
-};
-const ATMOSPHERE_HAB: Readonly<Record<Planet["Atmosphere"], number>> = { Vacuum: 0, Corrosive: 0, Invasive: 0, "Corrosive+Invasive": 0, "Inert gas": 0, "Breathable: Thin/Thick": 2, Breathable: 3 };
-const TEMPERATURE_HAB: Readonly<Record<Planet["Temperature"], number>> = { Cryogenic: 0, Glacial: 1, Polar: 1, Subarctic: 2, Boreal: 3, Alpine: 3, "Temperate (chilly)": 3, Temperate: 3, "Temperate (warm)": 3, Mediterranean: 3, Subtropical: 3, Equatorial: 2, Arid: 1, Infernal: 1, Volcanic: 0 };
-const TERRAN_BIOSPHERE_HAB: Readonly<Record<InhabitedInfo["TerranBiosphere"], number>> = { None: 0, Microbial: 1, Limited: 2, Significant: 3, Engineered: 3 };
-const SIZE_HAB: Readonly<Record<Planet["Size"], number>> = { Luna: 1, Mars: 2, Earth: 3, "Super-Earth": 2, Neptune: 0, Jupiter: 0 };
-const BULK_COMPOSITION_HAB: Readonly<Record<Planet["BulkComposition"], number>> = { Sulfur: 1, Carbon: 1, Magnesium: 1, "Calcium-Aluminum": 1, Iron: 1, Water: 2, Silicon: 3, "Jovian Gas": 0, "Neptunian Gas": 0 };
-
-type TagConstraint = { tag: string; maxEnvironmentalHab?: number; maxAtmospherePercentile?: number; minNativeBiospherePercentile?: number; minTechLevel?: number; minPopulationPercentile?: number; maxPopulationPercentile?: number };
-const WORLD_TAG_CONSTRAINTS = new Map((rawWorldTagConstraints as { constraints: TagConstraint[] }).constraints.map(constraint => [constraint.tag, constraint]));
-const POI_TYPES = new Set<PointOfInterestType>([
-  "Deep-space station", "Asteroid base", "Remote moon base", "Ancient orbital ruin", "Research base", "Asteroid belt", "Gas giant mine", "Refueling station",
-]);
-
-type StarAuWidths = { FromStar: number; ExtremeHotRange: number; ExtremeColdRange: number; NormalRange: number; ToSystemEdge: number };
-const STAR_AU_WIDTHS: Readonly<Record<StarType, StarAuWidths>> = {
-  "A-type": { FromStar: .08, ExtremeHotRange: 5, ExtremeColdRange: 15, NormalRange: 3.6, ToSystemEdge: 4.736 },
-  "F-type": { FromStar: .04, ExtremeHotRange: 1.2, ExtremeColdRange: 3.6, NormalRange: 2.3, ToSystemEdge: .948 },
-  "G-type": { FromStar: .02, ExtremeHotRange: .8, ExtremeColdRange: 2.4, NormalRange: 1.2, ToSystemEdge: .564 },
-  "K-type": { FromStar: .01, ExtremeHotRange: .3, ExtremeColdRange: .9, NormalRange: 1, ToSystemEdge: .322 },
-  "M-type": { FromStar: .002, ExtremeHotRange: .02, ExtremeColdRange: .06, NormalRange: .58, ToSystemEdge: .1244 },
-  Giant: { FromStar: .15, ExtremeHotRange: 6.1, ExtremeColdRange: 18.3, NormalRange: 4.4, ToSystemEdge: 3.35 },
-  "White dwarf": { FromStar: .5, ExtremeHotRange: 1.5, ExtremeColdRange: 4.5, NormalRange: 0, ToSystemEdge: .7 },
-  "Neutron star": { FromStar: .5, ExtremeHotRange: 1.5, ExtremeColdRange: 4.5, NormalRange: 0, ToSystemEdge: .7 },
-  "Stellar-mass black hole": { FromStar: .5, ExtremeHotRange: 1.5, ExtremeColdRange: 4.5, NormalRange: 0, ToSystemEdge: .7 },
-};
-const NORMAL_TEMPERATURES_HOT_TO_COLD: readonly Planet["Temperature"][] = ["Infernal", "Arid", "Equatorial", "Subtropical", "Mediterranean", "Temperate (warm)", "Temperate", "Temperate (chilly)", "Alpine", "Boreal", "Subarctic", "Polar", "Glacial"];
-
 function isFiniteNumber(value: unknown): value is number {
   return typeof value === "number" && Number.isFinite(value);
-}
-
-function directOrbitAuBand(starType: StarType, temperature: Planet["Temperature"]): readonly [number, number] {
-  const widths = STAR_AU_WIDTHS[starType];
-  const hotEnd = widths.FromStar + widths.ExtremeHotRange;
-  const normalEnd = hotEnd + widths.NormalRange;
-  if (temperature === "Volcanic") return [widths.FromStar, hotEnd];
-  if (temperature === "Cryogenic") return [normalEnd, normalEnd + widths.ExtremeColdRange];
-  const temperatureIndex = NORMAL_TEMPERATURES_HOT_TO_COLD.indexOf(temperature);
-  if (temperatureIndex < 0) throw new Error(`No AU band for temperature ${temperature}`);
-  const bandWidth = widths.NormalRange / NORMAL_TEMPERATURES_HOT_TO_COLD.length;
-  return [hotEnd + temperatureIndex * bandWidth, hotEnd + (temperatureIndex + 1) * bandWidth];
-}
-
-function isGasPlanet(planet: Planet): boolean {
-  return planet.BulkComposition === "Jovian Gas" || planet.BulkComposition === "Neptunian Gas";
 }
 
 function allSelectables(sector: Sector): SelectableEntity[] {
@@ -312,25 +215,6 @@ function checkNoUnknownSchemaProperties(sector: Sector, fail: (ruleId: string, m
       checkSelectable(poi, `POI ${poi.Id}`);
       check(poi, [...selectable, "ParentObjectId", "POIType"], `POI ${poi.Id}`);
     }
-  }
-}
-
-/** Host rules are the existing generator's `otherPoint.locationType` mapping. */
-function isPoiHostCompatible(type: PointOfInterestType, parent: SystemObject): boolean {
-  switch (type) {
-    case "Deep-space station":
-      return parent.Kind === "OtherCelestialObject" && parent.ObjectType === "IndependentStation";
-    case "Asteroid base":
-    case "Asteroid belt":
-      return parent.Kind === "OtherCelestialObject" && parent.ObjectType === "AsteroidBelt";
-    case "Remote moon base":
-      return parent.Kind === "Planet" && !isGasPlanet(parent);
-    case "Ancient orbital ruin":
-    case "Research base":
-      return parent.Kind === "Planet";
-    case "Gas giant mine":
-    case "Refueling station":
-      return parent.Kind === "Planet" && isGasPlanet(parent);
   }
 }
 

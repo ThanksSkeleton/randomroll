@@ -1,5 +1,7 @@
 import { expect, test } from "vitest";
 import { randomUUID } from "node:crypto";
+import { writeFileSync } from "node:fs";
+import { join } from "node:path";
 import { generate } from "./generate";
 import { checkAllInvariants } from "./invariants";
 
@@ -22,11 +24,14 @@ function sectorCount(): number {
 test("Stochastic Success", () => {
   for (let index = 0; index < sectorCount(); index += 1) {
     const seed = `stochastic-success-${randomUUID()}`;
-    const violations = checkAllInvariants(generate(seed));
+    const sector = generate(seed);
+    const outputPath = join("temp", `randomroll-stochastic-sector-${randomUUID()}.json`);
+    writeFileSync(outputPath, `${JSON.stringify(sector, null, 2)}\n`, "utf8");
+    const violations = checkAllInvariants(sector);
 
     expect(
       violations,
-      `Seed ${seed} violated ${violations.length} invariant(s):\n${violations.map(violation => `[${violation.RuleId}] ${violation.Message}`).join("\n")}`,
+      `Seed ${seed} (${outputPath}) violated ${violations.length} invariant(s):\n${violations.map(violation => `[${violation.RuleId}] ${violation.Message}`).join("\n")}`,
     ).toEqual([]);
   }
 });
