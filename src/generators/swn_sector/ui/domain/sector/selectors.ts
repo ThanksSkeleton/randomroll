@@ -59,8 +59,14 @@ export function routePortals(sector: Sector, route: Route): [RoutePortal, RouteP
 export function routeSystems(sector: Sector, route: Route): [StarSystem, StarSystem] | undefined {
   const portals = routePortals(sector, route);
   if (!portals) return undefined;
-  const systems = portals.map(({ SystemId }) => sector.Systems.find((system) => system.Id === SystemId));
+  const systems = portals.map(({ SystemId }) =>
+    sector.Systems.find((system) => system.Id === SystemId),
+  );
   return systems[0] && systems[1] ? [systems[0], systems[1]] : undefined;
+}
+
+export function routeHasEndpointInSystem(sector: Sector, route: Route, systemId: Guid): boolean {
+  return routeSystems(sector, route)?.some((system) => system.Id === systemId) ?? false;
 }
 
 export function getAllSelectableIds(sector: Sector): Guid[] {
@@ -73,7 +79,8 @@ export function objectEntries(sector: Sector): FoundObject[] {
     entries.push({ object: system, kind: 'System', containingSystem: system });
     entries.push({ object: system.Star, kind: 'Star', containingSystem: system });
     for (const object of system.Objects) {
-      if (object.Kind === 'Planet') entries.push({ object, kind: 'Planet', containingSystem: system });
+      if (object.Kind === 'Planet')
+        entries.push({ object, kind: 'Planet', containingSystem: system });
       else entries.push({ object, kind: 'OtherCelestialObject', containingSystem: system });
     }
     for (const poi of system.PointsOfInterest)
@@ -122,7 +129,9 @@ export function objectDetails(sector: Sector, id: Guid) {
 }
 export const findDetails = objectDetails;
 export function isVisibleToPlayer(sector: Sector, id: Guid): boolean {
-  return (objectDetails(sector, id)?.VisibilityLevel ?? VisibilityLevel.NONE) !== VisibilityLevel.NONE;
+  return (
+    (objectDetails(sector, id)?.VisibilityLevel ?? VisibilityLevel.NONE) !== VisibilityLevel.NONE
+  );
 }
 export function objectKindLabel(sector: Sector, id: Guid | null): string {
   if (!id) return '';
@@ -131,7 +140,8 @@ export function objectKindLabel(sector: Sector, id: Guid | null): string {
   if (found.kind === 'PlayerShip') return 'PLAYER SHIP';
   if (found.kind === 'PointOfInterest') return 'POINT OF INTEREST';
   if (found.kind === 'RoutePortal') return 'ROUTE PORTAL';
-  if (found.kind === 'Planet') return (found.object as Planet).Orbit.ParentObjectId ? 'MOON' : 'WORLD';
+  if (found.kind === 'Planet')
+    return (found.object as Planet).Orbit.ParentObjectId ? 'MOON' : 'WORLD';
   return found.kind.toUpperCase();
 }
 export function resolveTravelDestination(sector: Sector, routeId: Guid, contextSystemId: Guid) {

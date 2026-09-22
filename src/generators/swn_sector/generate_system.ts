@@ -100,6 +100,43 @@ const TWO_INHABITED_WORLDS_MAX_ROLL = 95;
 const GAS_GIANT_MOON_MAX_ROLL = 10;
 export const MAX_SYSTEM_GENERATION_RETRIES = 5;
 
+const SYSTEM_NAME_ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+function randomSystemName(seed: string, entityPath: string): string {
+  const random = randomFor(seed, `${entityPath}:system-name`);
+  return Array.from({ length: 5 }, () => SYSTEM_NAME_ALPHABET[Math.floor(random() * 26)]).join('');
+}
+
+function hexCoordinatePart(value: number): string {
+  return value.toString().padStart(2, '0');
+}
+
+function applyGeneratedNames(seed: string, entityPath: string, system: StarSystem): StarSystem {
+  const niceName = randomSystemName(seed, entityPath);
+  const proceduralName = `${hexCoordinatePart(system.HexLocation.Column)}${hexCoordinatePart(system.HexLocation.Row)}`;
+  const objects = system.Objects.map((object, index) => {
+    const letter = String.fromCharCode('A'.charCodeAt(0) + index);
+    const suffix = `${object.Kind === 'Planet' ? '' : 'X '}${letter}`;
+    return {
+      ...object,
+      NiceName: `${niceName} ${suffix}`,
+      ProceduralName: `${proceduralName} ${suffix}`,
+    };
+  });
+
+  return {
+    ...system,
+    NiceName: niceName,
+    ProceduralName: proceduralName,
+    Star: {
+      ...system.Star,
+      NiceName: `${niceName} star`,
+      ProceduralName: `${proceduralName} star`,
+    },
+    Objects: objects,
+  };
+}
+
 function inhabitedCount(seed: string, path: string): number {
   const roll = rollDie(randomFor(seed, `${path}:inhabited-count`), 100);
   return roll <= ONE_INHABITED_WORLD_MAX_ROLL ? 1 : roll <= TWO_INHABITED_WORLDS_MAX_ROLL ? 2 : 3;
@@ -297,14 +334,15 @@ function generateSystemOnce(options: GenerateSystemOptions): StarSystem {
 
 /** Builds a system, retrying failed random draws with bounded deterministic attempts. */
 export function generateSystem(options: GenerateSystemOptions): StarSystem {
-  return retrySystemGeneration(options.seed, options.entityPath, (attemptSeed) =>
+  const system = retrySystemGeneration(options.seed, options.entityPath, (attemptSeed) =>
     generateSystemOnce({ ...options, seed: attemptSeed }),
   );
+  return applyGeneratedNames(options.seed, options.entityPath, system);
 }
 
 /** Builds the complete system output, including POIs, under one retry budget. */
 export function generateCompleteSystem(options: GenerateSystemOptions): StarSystem {
-  return retrySystemGeneration(options.seed, options.entityPath, (attemptSeed) => {
+  const system = retrySystemGeneration(options.seed, options.entityPath, (attemptSeed) => {
     const attemptOptions = { ...options, seed: attemptSeed };
     return populatePointsOfInterest(
       attemptSeed,
@@ -312,6 +350,7 @@ export function generateCompleteSystem(options: GenerateSystemOptions): StarSyst
       generateSystemOnce(attemptOptions),
     );
   });
+  return applyGeneratedNames(options.seed, options.entityPath, system);
 }
 
 function inhabitedObjectCount(objects: readonly SystemObject[]): number {

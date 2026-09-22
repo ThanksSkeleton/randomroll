@@ -9,6 +9,7 @@ import {
   assertReviewedTableIntegrity,
   directOrbitAuBand,
   directOrbitTemperatures,
+  systemEdgeAu,
 } from './generation_rules';
 
 test('reviewed tables adapt to canonical values without losing their weights', () => {
@@ -30,4 +31,9 @@ test('compact remnants retain only usable direct-orbit temperature bands', () =>
   expect(directOrbitAuBand('White dwarf', 'Volcanic')[1]).toBeGreaterThan(
     directOrbitAuBand('White dwarf', 'Volcanic')[0],
   );
+});
+
+test('system edge uses the complete System_AU_Width span', () => {
+  expect(systemEdgeAu('G-type')).toBe(4.984);
+  expect(systemEdgeAu('A-type')).toBe(28.416);
 });

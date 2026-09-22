@@ -47,7 +47,7 @@ describe('prototype application workflows', () => {
     expect(screen.getAllByRole('button', { name: /^Adjacent system / })).not.toHaveLength(0);
 
     fireEvent.click(screen.getByRole('button', { name: /^SYMBOLIC$/ }));
-    expect(screen.getByRole('button', { name: /SYSTEM INTELLIGENCE/ })).toBeTruthy();
+    expect(screen.queryByRole('button', { name: /SYSTEM INTELLIGENCE/ })).toBeNull();
 
     fireEvent.click(screen.getAllByRole('button', { name: /^SECTOR$/ })[1]);
     fireEvent.click(screen.getByRole('button', { name: /^MAP$/ }));

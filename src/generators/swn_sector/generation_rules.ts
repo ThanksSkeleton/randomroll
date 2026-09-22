@@ -48,6 +48,18 @@ export function directOrbitTemperatures(starType: StarType): Planet['Temperature
   });
 }
 
+/** The outer system boundary implied by System_AU_Width.csv. */
+export function systemEdgeAu(starType: StarType): number {
+  const widths = STAR_AU_WIDTHS[starType];
+  return (
+    widths.FromStar +
+    widths.ExtremeHotRange +
+    widths.NormalRange +
+    widths.ExtremeColdRange +
+    widths.ToSystemEdge
+  );
+}
+
 export type TagConstraint = {
   tag: string;
   maxEnvironmentalHab?: number;

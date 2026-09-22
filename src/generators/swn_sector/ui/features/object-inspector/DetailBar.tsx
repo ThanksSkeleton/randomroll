@@ -1,6 +1,13 @@
 import { VisibilityLevel, visibilityRank } from '../../domain/sector/visibility';
-import type { SelectableEntity, Sector } from '../../../merged_schema';
-import { findDetails, findObject, objectKindLabel } from '../../domain/sector/selectors';
+import { TECH_LEVEL } from '../../../tables';
+import type { Planet, SelectableEntity, Sector } from '../../../merged_schema';
+import {
+  findDetails,
+  findObject,
+  objectKindLabel,
+  routeSystems,
+  type FoundObject,
+} from '../../domain/sector/selectors';
 import type { EditDraft, Preview, EditableDetailField } from '../../application/appState';
 
 function displayName(info: SelectableEntity | undefined, preview: Preview) {
@@ -16,18 +23,118 @@ function showProceduralName(info: SelectableEntity, preview: Preview) {
     visibilityRank(info.VisibilityLevel) >= visibilityRank(VisibilityLevel.CULTURE_PARTIAL)
   );
 }
-function draftValue(
-  draft: EditDraft | null,
-  info: SelectableEntity,
-  field: EditableDetailField,
-) {
+function draftValue(draft: EditDraft | null, info: SelectableEntity, field: EditableDetailField) {
   return (
-    draft?.details[info.Id]?.[field] ?? (field === 'NiceName' ? info.NiceName : info.Intelligence[field])
+    draft?.details[info.Id]?.[field] ??
+    (field === 'NiceName' ? info.NiceName : info.Intelligence[field])
   );
 }
 function ContentText({ content }: { content: string }) {
   return <>{content}</>;
 }
+
+type StockSignals = {
+  basic: string;
+  deep: string;
+  gm: string;
+};
+
+function hexDistance(
+  first: { Column: number; Row: number },
+  second: { Column: number; Row: number },
+) {
+  const firstQ = first.Column - 1;
+  const secondQ = second.Column - 1;
+  const firstR = first.Row - 1 - Math.floor(firstQ / 2);
+  const secondR = second.Row - 1 - Math.floor(secondQ / 2);
+  const firstX = firstQ;
+  const firstZ = firstR;
+  const firstY = -firstX - firstZ;
+  const secondX = secondQ;
+  const secondZ = secondR;
+  const secondY = -secondX - secondZ;
+  return Math.max(
+    Math.abs(firstX - secondX),
+    Math.abs(firstY - secondY),
+    Math.abs(firstZ - secondZ),
+  );
+}
+
+function associatedPoiCount(sector: Sector, systemId: string | undefined, objectId: string) {
+  return (
+    sector.Systems.find((system) => system.Id === systemId)?.PointsOfInterest.filter(
+      (poi) => poi.ParentObjectId === objectId,
+    ).length ?? 0
+  );
+}
+
+function objectTypeLabel(objectType: string) {
+  return objectType.replace(/([a-z])([A-Z])/g, '$1 $2');
+}
+
+function planetStock(planet: Planet, sector: Sector, systemId: string | undefined): StockSignals {
+  const basic = `${planet.Orbit.AU} AU - ${planet.Temperature} - ${planet.Size}-Class\nAtmosphere: ${planet.Atmosphere} Composition: ${planet.BulkComposition}`;
+  const signalsDetected = associatedPoiCount(sector, systemId, planet.Id);
+  if (planet.InhabitedInfo === false) {
+    return {
+      basic,
+      deep: `Signals Detected: ${signalsDetected}`,
+      gm: '[nothing]',
+    };
+  }
+  const inhabited = planet.InhabitedInfo;
+  return {
+    basic,
+    deep: `Life, Native: ${planet.NativeBiosphere}\nLife, Terran: ${inhabited.TerranBiosphere}\nPopulation: ${inhabited.Population}\nTech Level: ${TECH_LEVEL[inhabited.TechLevel]} - ${inhabited.TechLevel}`,
+    gm: inhabited.WorldTags.join(', '),
+  };
+}
+
+function stockSignals(found: FoundObject, sector: Sector): StockSignals {
+  if (found.kind === 'Planet') return planetStock(found.object, sector, found.containingSystem?.Id);
+  if (found.kind === 'OtherCelestialObject') {
+    return {
+      basic: `${found.object.Orbit.AU} AU - ${objectTypeLabel(found.object.ObjectType)}`,
+      deep: `Signals Detected: ${associatedPoiCount(sector, found.containingSystem?.Id, found.object.Id)}`,
+      gm: '[Nothing]',
+    };
+  }
+  if (found.kind === 'System') {
+    return {
+      basic: found.object.Star.StarType,
+      deep: '[nothing]',
+      gm: '[nothing]',
+    };
+  }
+  if (found.kind === 'Route') {
+    const systems = routeSystems(sector, found.object);
+    return {
+      basic: systems
+        ? `${systems[0].NiceName} <=> ${systems[1].NiceName}\nSpike Length: ${hexDistance(systems[0].HexLocation, systems[1].HexLocation)}`
+        : '[Nothing]',
+      deep: '[nothing]',
+      gm: '[nothing]',
+    };
+  }
+  if (found.kind === 'PointOfInterest') {
+    return {
+      basic: found.object.POIType,
+      deep: '[Nothing]',
+      gm: found.object.Intelligence.GM || '[Nothing]',
+    };
+  }
+  return { basic: '[Nothing]', deep: '[nothing]', gm: '[nothing]' };
+}
+
+function StockField({ label, content }: { label: string; content: string }) {
+  return (
+    <div className="stock-field">
+      <h3>{label}</h3>
+      <p className="detail-section-description detail-stock-content">{content}</p>
+    </div>
+  );
+}
+
 function EditableText({
   value,
   multiline = false,
@@ -114,6 +221,8 @@ export function DetailBar({
           )}
           <DetailBox
             info={info}
+            found={found}
+            sector={sector}
             preview={preview}
             locked={locked}
             draft={draft}
@@ -127,12 +236,16 @@ export function DetailBar({
 
 function DetailBox({
   info,
+  found,
+  sector,
   preview,
   locked,
   draft,
   setDraft,
 }: {
   info: SelectableEntity;
+  found: FoundObject;
+  sector: Sector;
   preview: Preview;
   locked: boolean;
   draft: EditDraft | null;
@@ -143,6 +256,7 @@ function DetailBox({
       ...old,
       details: { ...old.details, [info.Id]: { ...old.details[info.Id], [field]: value } },
     }));
+  const stock = stockSignals(found, sector);
   if (preview === 'player' && info.VisibilityLevel === VisibilityLevel.NONE)
     return (
       <section className="detail-section warning">
@@ -156,6 +270,8 @@ function DetailBox({
     <div className="details-stack">
       {(preview === 'gm' || visibilityRank(info.VisibilityLevel) >= 1) && (
         <section className="detail-section basic-signal">
+          <StockField label="BasicSignal-Stock" content={stock.basic} />
+          <h3>BasicSignal</h3>
           {preview === 'gm' && !locked ? (
             <EditableText
               className="detail-editable"
@@ -170,24 +286,10 @@ function DetailBox({
           )}
         </section>
       )}
-      {(preview === 'gm' || visibilityRank(info.VisibilityLevel) >= 2) && (
-        <section className="detail-section culture-partial">
-          {preview === 'gm' && !locked ? (
-            <EditableText
-              className="detail-editable"
-              multiline
-              value={draftValue(draft, info, 'CulturePartial')}
-              onChange={edit('CulturePartial')}
-            />
-          ) : (
-            <p className="detail-section-description">
-              <ContentText content={info.Intelligence.CulturePartial} />
-            </p>
-          )}
-        </section>
-      )}
       {(preview === 'gm' || visibilityRank(info.VisibilityLevel) >= 3) && (
         <section className="detail-section deep-scan">
+          <StockField label="DeepScan-Stock" content={stock.deep} />
+          <h3>DeepScan</h3>
           {preview === 'gm' && !locked ? (
             <EditableText
               className="detail-editable"
@@ -204,6 +306,8 @@ function DetailBox({
       )}
       {preview === 'gm' && (
         <section className="detail-section gm-note">
+          <StockField label="GMNote-Stock" content={stock.gm} />
+          <h3>GMNote</h3>
           {!locked ? (
             <EditableText
               className="detail-editable"

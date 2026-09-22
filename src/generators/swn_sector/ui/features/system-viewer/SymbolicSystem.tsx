@@ -1,8 +1,13 @@
-import { Fragment, useState } from 'react';
+import { Fragment } from 'react';
 import type { Preview } from '../../application/appState';
-import type { Planet, Sector, StarSystem } from '../../../merged_schema';
+import type { OtherCelestialObject, Planet, Sector, StarSystem } from '../../../merged_schema';
 import { VisibilityLevel, visibilityRank } from '../../domain/sector/visibility';
-import { findDetails, isVisibleToPlayer, planets, routeSystems } from '../../domain/sector/selectors';
+import {
+  findDetails,
+  isVisibleToPlayer,
+  planets,
+  routeSystems,
+} from '../../domain/sector/selectors';
 
 function visible(id: string, sector: Sector, preview: Preview) {
   return preview === 'gm' || isVisibleToPlayer(sector, id);
@@ -149,6 +154,49 @@ function WorldSymbol({
     </div>
   );
 }
+
+function OtherObjectSymbol({
+  object,
+  sector,
+  selected,
+  select,
+  preview,
+}: {
+  object: OtherCelestialObject;
+  sector: Sector;
+  selected: string | null;
+  select: (id: string) => void;
+  preview: Preview;
+}) {
+  const d = details(object.Id, sector);
+  const label = displayName(d, preview) ?? object.ObjectType;
+  const glyphClass = `other-object-glyph other-object-${object.ObjectType.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase()}`;
+
+  return (
+    <div className="world-unit other-object-unit">
+      <div className="orbital-tick" />
+      <Selectable
+        id={object.Id}
+        selected={selected}
+        onSelect={select}
+        label={label}
+        className="world-orb other-object-orb"
+      >
+        <span className={glyphClass} aria-hidden="true">
+          {object.ObjectType === 'AsteroidBelt' &&
+            Array.from({ length: 5 }, (_, index) => <span key={index} />)}
+          {object.ObjectType === 'KuiperBelt' &&
+            Array.from({ length: 5 }, (_, index) => <span key={index} />)}
+        </span>
+      </Selectable>
+      <strong className="world-name world-symbol-name">{label}</strong>
+      {d && showProceduralName(d, preview) && (
+        <small className="world-procedural-name">{d.ProceduralName}</small>
+      )}
+    </div>
+  );
+}
+
 function SurveyCard({ summary, className = '' }: { summary: string; className?: string }) {
   return (
     <section className={`intelligence-card ${className}`}>
@@ -166,7 +214,7 @@ export function SymbolicSystem({
   select,
   selectRoute,
   preview,
-  defaultOpen,
+  defaultOpen: _defaultOpen,
   showHeader = true,
 }: {
   system: StarSystem;
@@ -178,16 +226,40 @@ export function SymbolicSystem({
   defaultOpen: boolean;
   showHeader?: boolean;
 }) {
-  const [open, setOpen] = useState(defaultOpen);
-  const worldPlanets = planets(system).filter((w) => !w.Orbit.ParentObjectId).sort((a, b) => a.Orbit.AU - b.Orbit.AU);
+  const open = false;
+  const worldPlanets = planets(system)
+    .filter((w) => !w.Orbit.ParentObjectId)
+    .sort((a, b) => a.Orbit.AU - b.Orbit.AU);
   const families = worldPlanets
     .map((planet) =>
-      [planet, ...planets(system).filter((moon) => moon.Orbit.ParentObjectId === planet.Id)].filter((world) =>
-        visible(world.Id, sector, preview),
+      [planet, ...planets(system).filter((moon) => moon.Orbit.ParentObjectId === planet.Id)].filter(
+        (world) => visible(world.Id, sector, preview),
       ),
     )
     .filter((family) => family.length > 0);
-  const routes = sector.Routes.filter((route) => routeSystems(sector, route)?.some((candidate) => candidate.Id === system.Id) && visible(route.Id, sector, preview));
+  const otherObjects = system.Objects.filter(
+    (object): object is OtherCelestialObject =>
+      object.Kind === 'OtherCelestialObject' && visible(object.Id, sector, preview),
+  ).sort((a, b) => a.Orbit.AU - b.Orbit.AU);
+  const orbitals = [
+    ...families.map((family) => ({
+      kind: 'family' as const,
+      key: family[0].Id,
+      au: family[0].Orbit.AU,
+      family,
+    })),
+    ...otherObjects.map((object) => ({
+      kind: 'other' as const,
+      key: object.Id,
+      au: object.Orbit.AU,
+      object,
+    })),
+  ].sort((left, right) => left.au - right.au);
+  const routes = sector.Routes.filter(
+    (route) =>
+      routeSystems(sector, route)?.some((candidate) => candidate.Id === system.Id) &&
+      visible(route.Id, sector, preview),
+  );
   const systemD = details(system.Id, sector);
   const shipAtSystem =
     sector.PlayerShip.CurrentLocationId === system.Star.Id &&
@@ -221,37 +293,58 @@ export function SymbolicSystem({
               </Selectable>
             </div>
           </div>
-          {families.map((family, familyIndex) => (
-            <Fragment key={family[0].Id}>
-              {familyIndex > 0 && <div className="interplanet-flex-spacer" aria-hidden="true" />}
-              <div
-                className={`planetary-family ${familyIndex === 0 ? 'first-planetary-family' : ''}`}
-              >
-                {family.map((world, memberIndex) => (
+          {orbitals.map((orbital, orbitalIndex) => {
+            const previous = orbitals[orbitalIndex - 1];
+            return (
+              <Fragment key={orbital.key}>
+                {previous?.kind === 'family' && orbital.kind === 'family' && (
+                  <div className="interplanet-flex-spacer" aria-hidden="true" />
+                )}
+                {orbital.kind === 'family' ? (
                   <div
-                    className={`symbolic-column world-column ${memberIndex > 0 ? 'family-member' : ''}`}
-                    key={world.Id}
+                    className={`planetary-family ${orbitalIndex === 0 ? 'first-planetary-family' : ''}`}
                   >
-                    <WorldSymbol
-                      world={world}
-                      system={system}
+                    {orbital.family.map((world, memberIndex) => (
+                      <div
+                        className={`symbolic-column world-column ${memberIndex > 0 ? 'family-member' : ''}`}
+                        key={world.Id}
+                      >
+                        <WorldSymbol
+                          world={world}
+                          system={system}
+                          sector={sector}
+                          selected={selected}
+                          select={select}
+                          preview={preview}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div
+                    className={`symbolic-column world-column ${orbitalIndex === 0 ? 'first-planetary-family' : ''}`}
+                  >
+                    <OtherObjectSymbol
+                      object={orbital.object}
                       sector={sector}
                       selected={selected}
                       select={select}
                       preview={preview}
                     />
                   </div>
-                ))}
-              </div>
-            </Fragment>
-          ))}
+                )}
+              </Fragment>
+            );
+          })}
           {(routes.length > 0 || shipAtSystem) && (
             <>
               <div className="routes-flex-spacer" aria-hidden="true" />
               <div className="symbolic-column route-column">
                 <div className="route-unit">
                   {routes.map((route) => {
-                    const other = routeSystems(sector, route)?.find((candidate) => candidate.Id !== system.Id);
+                    const other = routeSystems(sector, route)?.find(
+                      (candidate) => candidate.Id !== system.Id,
+                    );
                     const otherId = other?.Id ?? '';
                     const otherName =
                       displayName(details(otherId, sector), preview) ?? other?.Id ?? 'System';
@@ -284,14 +377,6 @@ export function SymbolicSystem({
             </>
           )}
         </div>
-        <button
-          className="more-toggle button-allowed"
-          aria-expanded={open}
-          onClick={() => setOpen(!open)}
-        >
-          <span className="toggle-icon">{open ? '−' : '+'}</span>
-          <span className="toggle-label">SYSTEM INTELLIGENCE</span>
-        </button>
         {open && (
           <div className="symbolic-info-grid">
             <div className="symbolic-info-sun-spacer" aria-hidden="true" />
@@ -315,6 +400,14 @@ export function SymbolicSystem({
                 </div>
               </Fragment>
             ))}
+            {otherObjects.map((object) => {
+              const objectD = details(object.Id, sector);
+              return (
+                <div className="symbolic-info-column" key={object.Id}>
+                  {objectD && <SurveyCard summary={objectD.Intelligence.InfoboxSummary} />}
+                </div>
+              );
+            })}
             {routes.length > 0 && (
               <>
                 <div className="routes-flex-spacer" aria-hidden="true" />
