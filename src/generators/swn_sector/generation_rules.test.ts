@@ -9,8 +9,10 @@ import {
   assertReviewedTableIntegrity,
   directOrbitAuBand,
   directOrbitTemperatures,
+  isPoiHostCompatible,
   systemEdgeAu,
 } from './generation_rules';
+import { generateTemplateOtherCelestialObject, generateTemplatePlanet } from './planet_templates';
 
 test('reviewed tables adapt to canonical values without losing their weights', () => {
   expect(() => assertReviewedTableIntegrity()).not.toThrow();
@@ -20,7 +22,41 @@ test('reviewed tables adapt to canonical values without losing their weights', (
   expect(WORLD_TAG_TABLE.map((row) => row.Value)).not.toContain('Primitive Aliens');
   expect(WORLD_TAG_TABLE.every((row) => CANONICAL_WORLD_TAGS.includes(row.Value))).toBe(true);
   expect(POI_TABLE.map((row) => row.Value)).toContain('Deep-space station');
+  expect(POI_TABLE.map((row) => row.Value)).toContain('Comet base');
+  expect(POI_TABLE.map((row) => row.Value)).toContain('Comet belt');
+  expect(POI_TABLE.map((row) => row.Value)).toContain('Gas Mine');
+  expect(POI_TABLE.map((row) => row.Value)).not.toContain('Gas giant mine');
   expect(EXTRA_WORLD_ARCHETYPES.map((row) => row.Archetype)).toContain('KuiperBelt');
+});
+
+test('new POIs use Kuiper belts and gas clouds as hosts', () => {
+  const kuiperBelt = generateTemplateOtherCelestialObject({
+    seed: 'poi-hosts',
+    entityPath: 'kuiper',
+    starType: 'G-type',
+    template: 'KuiperBelt',
+    orbit: { AU: 0, AngleDegrees: 0, ParentObjectId: null },
+  });
+  const gasCloud = generateTemplateOtherCelestialObject({
+    seed: 'poi-hosts',
+    entityPath: 'gas-cloud',
+    starType: 'G-type',
+    template: 'GasCloud',
+    orbit: { AU: 0, AngleDegrees: 0, ParentObjectId: null },
+  });
+  const gasGiant = generateTemplatePlanet({
+    seed: 'poi-hosts',
+    entityPath: 'gas-giant',
+    starType: 'G-type',
+    template: 'Jovian',
+    orbit: { AU: 0, AngleDegrees: 0, ParentObjectId: null },
+  });
+
+  expect(isPoiHostCompatible('Comet base', kuiperBelt)).toBe(true);
+  expect(isPoiHostCompatible('Comet belt', kuiperBelt)).toBe(true);
+  expect(isPoiHostCompatible('Gas Mine', gasCloud)).toBe(true);
+  expect(isPoiHostCompatible('Refueling station', gasCloud)).toBe(true);
+  expect(isPoiHostCompatible('Gas Mine', gasGiant)).toBe(true);
 });
 
 test('compact remnants retain only usable direct-orbit temperature bands', () => {

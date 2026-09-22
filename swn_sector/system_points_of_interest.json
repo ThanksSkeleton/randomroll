@@ -547,8 +547,8 @@
       },
       {
         "roll": 7,
-        "point": "Gas giant mine",
-        "locationType": "GasGiant Planet",
+        "point": "Gas Mine",
+        "locationType": "GasGiant Planet or GasCloud",
         "occupants": [
           {
             "roll": "1-2",
@@ -597,7 +597,7 @@
       {
         "roll": 8,
         "point": "Refueling station",
-        "locationType": "GasGiant Planet",
+        "locationType": "GasGiant Planet or GasCloud",
         "occupants": [
           {
             "roll": "1-2",
@@ -640,6 +640,104 @@
           {
             "roll": "9-10",
             "result": "Deep-space alien signal"
+          }
+        ]
+      },
+      {
+        "roll": 9,
+        "point": "Comet base",
+        "locationType": "KuiperBelt",
+        "occupants": [
+          {
+            "roll": "1-2",
+            "result": "Zealous religious sectarians"
+          },
+          {
+            "roll": "3-4",
+            "result": "Failed rebels from another world"
+          },
+          {
+            "roll": "5-6",
+            "result": "Wage-slave corporate miners"
+          },
+          {
+            "roll": "7-8",
+            "result": "Independent comet prospectors"
+          },
+          {
+            "roll": "9-10",
+            "result": "Pirates masquerading as otherwise"
+          }
+        ],
+        "situations": [
+          {
+            "roll": "1-2",
+            "result": "Life support is threatened"
+          },
+          {
+            "roll": "3-4",
+            "result": "Base needs a new comet"
+          },
+          {
+            "roll": "5-6",
+            "result": "Dug out something nasty"
+          },
+          {
+            "roll": "7-8",
+            "result": "Fighting another comet"
+          },
+          {
+            "roll": "9-10",
+            "result": "Hit a priceless vein of ore"
+          }
+        ]
+      },
+      {
+        "roll": 10,
+        "point": "Comet belt",
+        "locationType": "KuiperBelt",
+        "occupants": [
+          {
+            "roll": "1-2",
+            "result": "Grizzled belter mine laborers"
+          },
+          {
+            "roll": "3-4",
+            "result": "Ancient automated guardian drones"
+          },
+          {
+            "roll": "5-6",
+            "result": "Survivors of destroyed comet base"
+          },
+          {
+            "roll": "7-8",
+            "result": "Pirates hiding out among the ice"
+          },
+          {
+            "roll": "9-10",
+            "result": "Lonely military patrol base staff"
+          }
+        ],
+        "situations": [
+          {
+            "roll": "1-2",
+            "result": "Ruptured ice released a peril"
+          },
+          {
+            "roll": "3-4",
+            "result": "Foreign spy ships hide there"
+          },
+          {
+            "roll": "5-6",
+            "result": "Gold rush for new Volatiles"
+          },
+          {
+            "roll": "7-8",
+            "result": "Ancient ruins dot the ice"
+          },
+          {
+            "roll": "9-10",
+            "result": "War between rival ice"
           }
         ]
       }

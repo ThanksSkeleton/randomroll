@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import type { Preview } from '../../application/appState';
-import type { Sector, StarSystem } from '../../../merged_schema';
+import type { OtherCelestialObject, Sector, StarSystem } from '../../../merged_schema';
 import { systemEdgeAu } from '../../../generation_rules';
 import { VisibilityLevel, visibilityRank } from '../../domain/sector/visibility';
 import {
@@ -100,6 +100,16 @@ function Selectable({
   );
 }
 
+function OtherObjectGlyph({ object }: { object: OtherCelestialObject }) {
+  const glyphClass = `other-object-glyph td-other-object-glyph other-object-${object.ObjectType.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase()}`;
+  return (
+    <span className={glyphClass} aria-hidden="true">
+      {(object.ObjectType === 'AsteroidBelt' || object.ObjectType === 'KuiperBelt') &&
+        Array.from({ length: 5 }, (_, index) => <span key={index} />)}
+    </span>
+  );
+}
+
 export function TopDown({
   system,
   sector,
@@ -113,8 +123,15 @@ export function TopDown({
   select: (id: string) => void;
   preview: Preview;
 }) {
-  const visiblePlanets = planets(system).filter(
-    (w) => !w.Orbit.ParentObjectId && visible(w.Id, sector, preview),
+  const visibleDirectObjects = system.Objects.filter(
+    (object) => !object.Orbit.ParentObjectId && visible(object.Id, sector, preview),
+  );
+  const visiblePlanets = visibleDirectObjects.filter(
+    (object): object is Extract<(typeof system.Objects)[number], { Kind: 'Planet' }> =>
+      object.Kind === 'Planet',
+  );
+  const visibleOtherObjects = visibleDirectObjects.filter(
+    (object): object is OtherCelestialObject => object.Kind === 'OtherCelestialObject',
   );
   const shellRef = useRef<HTMLDivElement>(null);
   const [mapSize, setMapSize] = useState(320);
@@ -297,11 +314,11 @@ export function TopDown({
               </div>
             );
           })}
-          {visiblePlanets.map((p) => {
-            const orbitRadius = p.Orbit.AU * pixelsPerAu;
+          {visibleDirectObjects.map((object) => {
+            const orbitRadius = object.Orbit.AU * pixelsPerAu;
             return (
               <svg
-                key={`orbit-${p.Id}`}
+                key={`orbit-${object.Id}`}
                 className="orbit"
                 aria-hidden="true"
                 style={{
@@ -466,6 +483,63 @@ export function TopDown({
                     </div>
                   );
                 })}
+              </div>
+            );
+          })}
+          {visibleOtherObjects.map((object) => {
+            const pp = pos(object.Orbit.AngleDegrees, object.Orbit.AU * pixelsPerAu);
+            return (
+              <div className="td-object td-other-object" style={pp} key={object.Id}>
+                <Selectable
+                  id={object.Id}
+                  selected={selected}
+                  onSelect={select}
+                  label={displayName(details(object.Id, sector), preview) ?? object.ObjectType}
+                  className="td-other-object-button"
+                >
+                  <OtherObjectGlyph object={object} />
+                </Selectable>
+                <label className="topdown-object-caption">
+                  <strong>{displayName(details(object.Id, sector), preview)}</strong>
+                  {(() => {
+                    const objectD = details(object.Id, sector);
+                    return (
+                      objectD &&
+                      showProceduralName(objectD, preview) && (
+                        <small>{objectD.ProceduralName}</small>
+                      )
+                    );
+                  })()}
+                </label>
+                {objectPois(object.Id).length > 0 && (
+                  <div className="topdown-poi-list">
+                    {objectPois(object.Id).map((poi) => (
+                      <Selectable
+                        key={poi.Id}
+                        id={poi.Id}
+                        selected={selected}
+                        onSelect={select}
+                        label={displayName(details(poi.Id, sector), preview) ?? 'POI'}
+                        title={displayName(details(poi.Id, sector), preview) ?? 'POI'}
+                        className="topdown-poi"
+                      >
+                        ◆
+                      </Selectable>
+                    ))}
+                  </div>
+                )}
+                {sector.PlayerShip.CurrentLocationId === object.Id &&
+                  visible(sector.PlayerShip.Id, sector, preview) && (
+                    <Selectable
+                      id={sector.PlayerShip.Id}
+                      selected={selected}
+                      onSelect={select}
+                      label="Player ship"
+                      className="td-ship"
+                    >
+                      ▰
+                    </Selectable>
+                  )}
               </div>
             );
           })}

@@ -82,7 +82,9 @@ export const POI_TYPES = new Set<PointOfInterestType>([
   'Ancient orbital ruin',
   'Research base',
   'Asteroid belt',
-  'Gas giant mine',
+  'Comet base',
+  'Comet belt',
+  'Gas Mine',
   'Refueling station',
 ]);
 
@@ -96,14 +98,20 @@ export function isPoiHostCompatible(type: PointOfInterestType, parent: SystemObj
     case 'Asteroid base':
     case 'Asteroid belt':
       return parent.Kind === 'OtherCelestialObject' && parent.ObjectType === 'AsteroidBelt';
+    case 'Comet base':
+    case 'Comet belt':
+      return parent.Kind === 'OtherCelestialObject' && parent.ObjectType === 'KuiperBelt';
     case 'Remote moon base':
       return parent.Kind === 'Planet' && !isGasPlanet(parent);
     case 'Ancient orbital ruin':
     case 'Research base':
       return parent.Kind === 'Planet';
-    case 'Gas giant mine':
+    case 'Gas Mine':
     case 'Refueling station':
-      return parent.Kind === 'Planet' && isGasPlanet(parent);
+      return (
+        (parent.Kind === 'Planet' && isGasPlanet(parent)) ||
+        (parent.Kind === 'OtherCelestialObject' && parent.ObjectType === 'GasCloud')
+      );
   }
 }
 

@@ -303,7 +303,9 @@ export type PointOfInterestType =
   | 'Ancient orbital ruin'
   | 'Research base'
   | 'Asteroid belt'
-  | 'Gas giant mine'
+  | 'Comet base'
+  | 'Comet belt'
+  | 'Gas Mine'
   | 'Refueling station';
 
 export interface PointOfInterest extends SelectableEntity {

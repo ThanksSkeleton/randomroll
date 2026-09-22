@@ -157,12 +157,14 @@ function WorldSymbol({
 
 function OtherObjectSymbol({
   object,
+  system,
   sector,
   selected,
   select,
   preview,
 }: {
   object: OtherCelestialObject;
+  system: StarSystem;
   sector: Sector;
   selected: string | null;
   select: (id: string) => void;
@@ -171,6 +173,9 @@ function OtherObjectSymbol({
   const d = details(object.Id, sector);
   const label = displayName(d, preview) ?? object.ObjectType;
   const glyphClass = `other-object-glyph other-object-${object.ObjectType.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase()}`;
+  const pois = system.PointsOfInterest.filter(
+    (p) => p.ParentObjectId === object.Id && visible(p.Id, sector, preview),
+  );
 
   return (
     <div className="world-unit other-object-unit">
@@ -193,6 +198,20 @@ function OtherObjectSymbol({
       {d && showProceduralName(d, preview) && (
         <small className="world-procedural-name">{d.ProceduralName}</small>
       )}
+      <div className="poi-list world-poi-list">
+        {pois.map((p) => (
+          <Selectable
+            key={p.Id}
+            id={p.Id}
+            selected={selected}
+            onSelect={select}
+            label={displayName(details(p.Id, sector), preview) ?? 'POI'}
+            className="poi world-poi"
+          >
+            <span className="poi-marker">◆</span>
+          </Selectable>
+        ))}
+      </div>
     </div>
   );
 }
@@ -326,6 +345,7 @@ export function SymbolicSystem({
                   >
                     <OtherObjectSymbol
                       object={orbital.object}
+                      system={system}
                       sector={sector}
                       selected={selected}
                       select={select}

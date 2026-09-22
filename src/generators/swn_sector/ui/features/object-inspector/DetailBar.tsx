@@ -9,6 +9,7 @@ import {
   type FoundObject,
 } from '../../domain/sector/selectors';
 import type { EditDraft, Preview, EditableDetailField } from '../../application/appState';
+import { formatAu } from '../../formatters';
 
 function displayName(info: SelectableEntity | undefined, preview: Preview) {
   if (!info) return undefined;
@@ -73,7 +74,7 @@ function objectTypeLabel(objectType: string) {
 }
 
 function planetStock(planet: Planet, sector: Sector, systemId: string | undefined): StockSignals {
-  const basic = `${planet.Orbit.AU} AU - ${planet.Temperature} - ${planet.Size}-Class\nAtmosphere: ${planet.Atmosphere} Composition: ${planet.BulkComposition}`;
+  const basic = `${formatAu(planet.Orbit.AU)} AU - ${planet.Temperature} - ${planet.Size}-Class\nAtmosphere: ${planet.Atmosphere} Composition: ${planet.BulkComposition}`;
   const signalsDetected = associatedPoiCount(sector, systemId, planet.Id);
   if (planet.InhabitedInfo === false) {
     return {
@@ -94,7 +95,7 @@ function stockSignals(found: FoundObject, sector: Sector): StockSignals {
   if (found.kind === 'Planet') return planetStock(found.object, sector, found.containingSystem?.Id);
   if (found.kind === 'OtherCelestialObject') {
     return {
-      basic: `${found.object.Orbit.AU} AU - ${objectTypeLabel(found.object.ObjectType)}`,
+      basic: `${formatAu(found.object.Orbit.AU)} AU - ${objectTypeLabel(found.object.ObjectType)}`,
       deep: `Signals Detected: ${associatedPoiCount(sector, found.containingSystem?.Id, found.object.Id)}`,
       gm: '-',
     };

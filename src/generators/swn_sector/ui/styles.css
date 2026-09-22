@@ -845,6 +845,36 @@ select:focus-visible {
   background: var(--blue);
   box-shadow: inset -6px -3px #397387;
 }
+.td-other-object-button {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #12232a;
+}
+.td-other-object-glyph {
+  width: 24px;
+  height: 24px;
+}
+.td-other-object-glyph.other-object-asteroid-belt,
+.td-other-object-glyph.other-object-kuiper-belt {
+  gap: 2px;
+}
+.td-other-object-glyph.other-object-asteroid-belt span {
+  width: 4px;
+  height: 4px;
+}
+.td-other-object-glyph.other-object-kuiper-belt span {
+  width: 5px;
+  height: 3px;
+}
+.td-other-object-glyph.other-object-gas-cloud {
+  width: 20px;
+  height: 20px;
+}
+.td-other-object-glyph.other-object-independent-station {
+  width: 15px;
+  height: 15px;
+}
 .td-moon button {
   width: 14px;
   height: 14px;
@@ -1822,6 +1852,17 @@ select {
 .topdown .topdown-planet-caption strong,
 .topdown .topdown-planet-caption small {
   font-size: var(--td-planet-label-size);
+}
+.topdown .topdown-object-caption {
+  top: 20px;
+  font-size: var(--td-planet-label-size);
+}
+.topdown .topdown-object-caption strong,
+.topdown .topdown-object-caption small {
+  font-size: var(--td-planet-label-size);
+}
+.topdown .td-other-object .topdown-poi-list {
+  top: 34px;
 }
 .topdown .td-route-caption {
   font-size: var(--td-gate-label-size);
