@@ -28,8 +28,8 @@ test('compact remnants retain only usable direct-orbit temperature bands', () =>
     directOrbitAuBand('White dwarf', 'Temperate')[1],
   );
   expect(directOrbitTemperatures('White dwarf')).not.toContain('Temperate');
-  expect(directOrbitAuBand('White dwarf', 'Volcanic')[1]).toBeGreaterThan(
-    directOrbitAuBand('White dwarf', 'Volcanic')[0],
+  expect(directOrbitAuBand('White dwarf', 'Furance')[1]).toBeGreaterThan(
+    directOrbitAuBand('White dwarf', 'Furance')[0],
   );
 });
 

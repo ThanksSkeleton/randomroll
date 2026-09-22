@@ -283,9 +283,10 @@ select:focus-visible {
 .stock-field {
   margin-bottom: 14px;
 }
-.stock-field h3 {
-  color: var(--muted);
-  font-size: 9px;
+.detail-small-divider {
+  height: 1px;
+  margin: 0 0 12px;
+  background: #263a40;
 }
 .detail-stock-content {
   white-space: pre-line;

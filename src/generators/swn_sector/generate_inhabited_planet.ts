@@ -78,7 +78,7 @@ function waterState(
 ): boolean | undefined {
   const forcedDry =
     profile.Temperature === 'Cryogenic' ||
-    profile.Temperature === 'Volcanic' ||
+    profile.Temperature === 'Furance' ||
     profile.Atmosphere === 'Vacuum' ||
     tagsRequire(tags, 'Desert World');
   const forcedWet =
@@ -117,7 +117,7 @@ function profileInvalidReason(
       tagsRequire(tags, 'Seagoing Cities') ||
       profile.BulkComposition === 'Water' ||
       profile.Temperature === 'Cryogenic' ||
-      profile.Temperature === 'Volcanic' ||
+      profile.Temperature === 'Furance' ||
       profile.Atmosphere === 'Vacuum')
   )
     return 'the rolled temperature/atmosphere requires dry conditions while the tags or composition require water';
@@ -188,7 +188,7 @@ function tagPairHasIntersection(
     return false;
   if (
     allowedTemperatures?.every(
-      (temperature) => temperature === 'Cryogenic' || temperature === 'Volcanic',
+      (temperature) => temperature === 'Cryogenic' || temperature === 'Furance',
     ) &&
     (tagsRequire(tags, 'Oceanic World') || tagsRequire(tags, 'Seagoing Cities'))
   )
@@ -389,11 +389,11 @@ export function generateInhabitedPlanet(options: InhabitedPlanetOptions): Planet
     NiceName: name,
     VisibilityLevel: 'NONE',
     Intelligence: {
-      InfoboxSummary: `${profile.Population}; ${profile.TechLevel}.`,
-      BasicScan: `${profile.Temperature}, ${profile.Atmosphere}.`,
-      CulturePartial: tags.join('; '),
-      CultureFull: '',
-      GM: '',
+      InfoboxSummary: '-',
+      BasicScan: '-',
+      CulturePartial: '-',
+      CultureFull: '-',
+      GM: '-',
     },
     Orbit: options.orbit,
     Temperature: profile.Temperature,

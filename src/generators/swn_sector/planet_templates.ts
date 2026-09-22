@@ -125,7 +125,7 @@ export function generateTemplatePlanet(options: TemplatePlanetOptions): Planet {
   const surfaceWaterPresent =
     facts.SurfaceWaterPresent &&
     temperature !== 'Cryogenic' &&
-    temperature !== 'Volcanic' &&
+    temperature !== 'Furance' &&
     facts.Atmosphere !== 'Vacuum';
   const name = `${options.template} ${options.entityPath}`;
   return {
@@ -134,11 +134,11 @@ export function generateTemplatePlanet(options: TemplatePlanetOptions): Planet {
     NiceName: name,
     VisibilityLevel: 'NONE',
     Intelligence: {
-      InfoboxSummary: `Uninhabited ${options.template} planet.`,
-      BasicScan: `${temperature}, ${facts.Atmosphere}.`,
-      CulturePartial: '',
-      CultureFull: '',
-      GM: '',
+      InfoboxSummary: '-',
+      BasicScan: '-',
+      CulturePartial: '-',
+      CultureFull: '-',
+      GM: '-',
     },
     Orbit: options.orbit,
     Temperature: temperature,
@@ -162,8 +162,8 @@ export function generateTemplateOtherCelestialObject(options: {
 }): OtherCelestialObject {
   const allowedTemperatures = directOrbitTemperatures(options.starType).filter((temperature) =>
     options.template === 'AsteroidBelt'
-      ? !['Cryogenic', 'Glacial', 'Polar', 'Subarctic', 'Boreal'].includes(temperature)
-      : ['Cryogenic', 'Glacial', 'Polar', 'Subarctic', 'Boreal'].includes(temperature),
+      ? !['Cryogenic', 'Deepfrozen', 'Polar', 'Subarctic', 'Boreal'].includes(temperature)
+      : ['Cryogenic', 'Deepfrozen', 'Polar', 'Subarctic', 'Boreal'].includes(temperature),
   );
   if (allowedTemperatures.length === 0)
     throw new Error(
@@ -181,11 +181,11 @@ export function generateTemplateOtherCelestialObject(options: {
     NiceName: name,
     VisibilityLevel: 'NONE',
     Intelligence: {
-      InfoboxSummary: `Uninhabited ${options.template}.`,
-      BasicScan: temperature,
-      CulturePartial: '',
-      CultureFull: '',
-      GM: '',
+      InfoboxSummary: '-',
+      BasicScan: '-',
+      CulturePartial: '-',
+      CultureFull: '-',
+      GM: '-',
     },
     Orbit: options.orbit,
     Temperature: temperature,

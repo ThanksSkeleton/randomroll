@@ -52,15 +52,15 @@
         {
           "roll": "3-4",
           "orbitalOrder": 16,
-          "result": "Volcanic",
-          "description": "Melting point of lead",
+          "result": "Furance",
+          "description": "Melting Point of Lead",
           "hab": 0,
           "thermalOrbit": "Too Hot"
         },
         {
           "roll": "5-7",
           "orbitalOrder": 3,
-          "result": "Glacial",
+          "result": "Deepfrozen",
           "description": "Antarctica records, approximately ±10",
           "hab": 1,
           "thermalOrbit": "Cold"
@@ -76,16 +76,16 @@
         {
           "roll": "13-17",
           "orbitalOrder": 14,
-          "result": "Arid",
-          "description": "Death Valley",
+          "result": "Infernal",
+          "description": "Death Valley + 10",
           "hab": 1,
           "thermalOrbit": "Hot"
         },
         {
           "roll": "18-20",
           "orbitalOrder": 15,
-          "result": "Infernal",
-          "description": "Death Valley + 10",
+          "result": "Scorching",
+          "description": "Death Valley",
           "hab": 1,
           "thermalOrbit": "Hot"
         },

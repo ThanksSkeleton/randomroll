@@ -50,10 +50,10 @@ test('equal-temperature direct objects receive distinct in-band AUs', () => {
     orbit: { AU: 0, AngleDegrees: 1, ParentObjectId: null },
   });
   const placed = assignDirectOrbitAus('aus', 'system:01', 'G-type', [
-    { ...first, Temperature: 'Volcanic' },
-    { ...second, Temperature: 'Volcanic' },
+    { ...first, Temperature: 'Furance' },
+    { ...second, Temperature: 'Furance' },
   ]);
-  const [minimum, maximum] = directOrbitAuBand('G-type', 'Volcanic');
+  const [minimum, maximum] = directOrbitAuBand('G-type', 'Furance');
   expect(new Set(placed.map((object) => object.Orbit.AU)).size).toBe(2);
   expect(placed.every((object) => object.Orbit.AU > minimum && object.Orbit.AU < maximum)).toBe(
     true,

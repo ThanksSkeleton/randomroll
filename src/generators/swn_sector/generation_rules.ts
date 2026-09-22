@@ -13,8 +13,8 @@ import type {
 } from './merged_schema';
 import { STAR_AU_WIDTHS, TEMPERATURE_RANK } from './tables';
 export const NORMAL_TEMPERATURES_HOT_TO_COLD: readonly Planet['Temperature'][] = [
+  'Scorching',
   'Infernal',
-  'Arid',
   'Equatorial',
   'Subtropical',
   'Mediterranean',
@@ -25,7 +25,7 @@ export const NORMAL_TEMPERATURES_HOT_TO_COLD: readonly Planet['Temperature'][] =
   'Boreal',
   'Subarctic',
   'Polar',
-  'Glacial',
+  'Deepfrozen',
 ];
 export function directOrbitAuBand(
   starType: StarType,
@@ -34,7 +34,7 @@ export function directOrbitAuBand(
   const widths = STAR_AU_WIDTHS[starType];
   const hotEnd = widths.FromStar + widths.ExtremeHotRange;
   const normalEnd = hotEnd + widths.NormalRange;
-  if (temperature === 'Volcanic') return [widths.FromStar, hotEnd];
+  if (temperature === 'Furance') return [widths.FromStar, hotEnd];
   if (temperature === 'Cryogenic') return [normalEnd, normalEnd + widths.ExtremeColdRange];
   const index = NORMAL_TEMPERATURES_HOT_TO_COLD.indexOf(temperature);
   if (index < 0) throw new Error(`No AU band for temperature ${temperature}`);

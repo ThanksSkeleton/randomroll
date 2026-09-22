@@ -164,7 +164,7 @@ describe('merged-sector independent stations', () => {
       ...entity('asteroid'),
       Kind: 'OtherCelestialObject',
       ObjectType: 'AsteroidBelt',
-      Temperature: 'Volcanic',
+      Temperature: 'Furance',
       Orbit: { AU: 2, AngleDegrees: 0, ParentObjectId: null },
     };
     const coldPlanet = planet('planet', null, 'Earth');
@@ -179,7 +179,7 @@ describe('merged-sector independent stations', () => {
 
   it('treats temperature-band endpoints as exclusive', () => {
     const volcanic = planet('planet', null, 'Earth');
-    volcanic.Temperature = 'Volcanic';
+    volcanic.Temperature = 'Furance';
     volcanic.Orbit.AU = 0.02; // G-type FromStar boundary
 
     expect(

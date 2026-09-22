@@ -239,7 +239,7 @@ export type Atmosphere =
 
 export type Temperature =
   | 'Cryogenic'
-  | 'Glacial'
+  | 'Deepfrozen'
   | 'Polar'
   | 'Subarctic'
   | 'Boreal'
@@ -250,9 +250,9 @@ export type Temperature =
   | 'Mediterranean'
   | 'Subtropical'
   | 'Equatorial'
-  | 'Arid'
+  | 'Scorching'
   | 'Infernal'
-  | 'Volcanic';
+  | 'Furance';
 
 export type NativeBiosphere = 'None' | 'Microbial' | 'Limited' | 'Significant' | 'Engineered';
 

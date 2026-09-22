@@ -2,7 +2,7 @@ import type { InhabitedInfo, Planet, StarType } from './merged_schema';
 
 export const TEMPERATURE_RANK: Readonly<Record<Planet['Temperature'], number>> = {
   Cryogenic: 1,
-  Glacial: 2,
+  Deepfrozen: 2,
   Polar: 3,
   Subarctic: 4,
   Boreal: 5,
@@ -13,9 +13,9 @@ export const TEMPERATURE_RANK: Readonly<Record<Planet['Temperature'], number>> =
   Mediterranean: 10,
   Subtropical: 11,
   Equatorial: 12,
-  Arid: 13,
-  Infernal: 14,
-  Volcanic: 15,
+  Infernal: 13,
+  Scorching: 14,
+  Furance: 15,
 };
 
 export const SIZE_RANK: Readonly<Record<Planet['Size'], number>> = {
@@ -113,7 +113,7 @@ export const ATMOSPHERE_HAB: Readonly<Record<Planet['Atmosphere'], number>> = {
 
 export const TEMPERATURE_HAB: Readonly<Record<Planet['Temperature'], number>> = {
   Cryogenic: 0,
-  Glacial: 1,
+  Deepfrozen: 1,
   Polar: 1,
   Subarctic: 2,
   Boreal: 3,
@@ -124,9 +124,9 @@ export const TEMPERATURE_HAB: Readonly<Record<Planet['Temperature'], number>> = 
   Mediterranean: 3,
   Subtropical: 3,
   Equatorial: 2,
-  Arid: 1,
   Infernal: 1,
-  Volcanic: 0,
+  Scorching: 1,
+  Furance: 0,
 };
 
 export const TERRAN_BIOSPHERE_HAB: Readonly<Record<InhabitedInfo['TerranBiosphere'], number>> = {

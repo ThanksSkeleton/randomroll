@@ -586,7 +586,7 @@ function validateObject(
     fail('D12', `Gas giant ${planet.Id} is inhabited.`);
   if (
     planet.Temperature === 'Cryogenic' ||
-    planet.Temperature === 'Volcanic' ||
+    planet.Temperature === 'Furance' ||
     planet.Atmosphere === 'Vacuum'
   ) {
     if (planet.SurfaceWaterPresent)
@@ -730,7 +730,7 @@ function validateOtherObject(
   const temperatureRank = TEMPERATURE_RANK[object.Temperature];
   if (
     object.ObjectType === 'AsteroidBelt' &&
-    (temperatureRank < TEMPERATURE_RANK.Alpine || temperatureRank > TEMPERATURE_RANK.Volcanic)
+    (temperatureRank < TEMPERATURE_RANK.Alpine || temperatureRank > TEMPERATURE_RANK.Furance)
   ) {
     fail('F12', `Asteroid belt ${object.Id} has incompatible temperature ${object.Temperature}.`);
   }

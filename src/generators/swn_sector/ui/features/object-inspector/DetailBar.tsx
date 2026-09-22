@@ -79,7 +79,7 @@ function planetStock(planet: Planet, sector: Sector, systemId: string | undefine
     return {
       basic,
       deep: `Signals Detected: ${signalsDetected}`,
-      gm: '[nothing]',
+      gm: '-',
     };
   }
   const inhabited = planet.InhabitedInfo;
@@ -96,14 +96,14 @@ function stockSignals(found: FoundObject, sector: Sector): StockSignals {
     return {
       basic: `${found.object.Orbit.AU} AU - ${objectTypeLabel(found.object.ObjectType)}`,
       deep: `Signals Detected: ${associatedPoiCount(sector, found.containingSystem?.Id, found.object.Id)}`,
-      gm: '[Nothing]',
+      gm: '-',
     };
   }
   if (found.kind === 'System') {
     return {
-      basic: found.object.Star.StarType,
-      deep: '[nothing]',
-      gm: '[nothing]',
+      basic: `${found.object.Star.StarType} Type`,
+      deep: '-',
+      gm: '-',
     };
   }
   if (found.kind === 'Route') {
@@ -111,25 +111,24 @@ function stockSignals(found: FoundObject, sector: Sector): StockSignals {
     return {
       basic: systems
         ? `${systems[0].NiceName} <=> ${systems[1].NiceName}\nSpike Length: ${hexDistance(systems[0].HexLocation, systems[1].HexLocation)}`
-        : '[Nothing]',
-      deep: '[nothing]',
-      gm: '[nothing]',
+        : '-',
+      deep: '-',
+      gm: '-',
     };
   }
   if (found.kind === 'PointOfInterest') {
     return {
       basic: found.object.POIType,
-      deep: '[Nothing]',
-      gm: found.object.Intelligence.GM || '[Nothing]',
+      deep: '-',
+      gm: found.object.Intelligence.GM || '-',
     };
   }
-  return { basic: '[Nothing]', deep: '[nothing]', gm: '[nothing]' };
+  return { basic: '-', deep: '-', gm: '-' };
 }
 
-function StockField({ label, content }: { label: string; content: string }) {
+function StockField({ content }: { content: string }) {
   return (
     <div className="stock-field">
-      <h3>{label}</h3>
       <p className="detail-section-description detail-stock-content">{content}</p>
     </div>
   );
@@ -270,8 +269,9 @@ function DetailBox({
     <div className="details-stack">
       {(preview === 'gm' || visibilityRank(info.VisibilityLevel) >= 1) && (
         <section className="detail-section basic-signal">
-          <StockField label="BasicSignal-Stock" content={stock.basic} />
           <h3>BasicSignal</h3>
+          <StockField content={stock.basic} />
+          <div className="detail-small-divider" aria-hidden="true" />
           {preview === 'gm' && !locked ? (
             <EditableText
               className="detail-editable"
@@ -288,8 +288,9 @@ function DetailBox({
       )}
       {(preview === 'gm' || visibilityRank(info.VisibilityLevel) >= 3) && (
         <section className="detail-section deep-scan">
-          <StockField label="DeepScan-Stock" content={stock.deep} />
           <h3>DeepScan</h3>
+          <StockField content={stock.deep} />
+          <div className="detail-small-divider" aria-hidden="true" />
           {preview === 'gm' && !locked ? (
             <EditableText
               className="detail-editable"
@@ -306,8 +307,9 @@ function DetailBox({
       )}
       {preview === 'gm' && (
         <section className="detail-section gm-note">
-          <StockField label="GMNote-Stock" content={stock.gm} />
           <h3>GMNote</h3>
+          <StockField content={stock.gm} />
+          <div className="detail-small-divider" aria-hidden="true" />
           {!locked ? (
             <EditableText
               className="detail-editable"
