@@ -8,6 +8,7 @@ import {
   planets,
   routeSystems,
 } from '../../domain/sector/selectors';
+import { planetColorClass } from '../../../planet_presentation';
 
 function visible(id: string, sector: Sector, preview: Preview) {
   return preview === 'gm' || isVisibleToPlayer(sector, id);
@@ -106,7 +107,7 @@ function WorldSymbol({
       >
         <span
           style={{ '--scale': scale } as React.CSSProperties}
-          className={`orb type-${world.Size.toLowerCase()}`}
+          className={`orb ${planetColorClass(world)}`}
         />
       </Selectable>
       {sector.PlayerShip.CurrentLocationId === world.Id &&

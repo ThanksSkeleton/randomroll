@@ -11,6 +11,7 @@ import {
   routeHasEndpointInSystem,
   routeSystems,
 } from '../../domain/sector/selectors';
+import { planetColorClass } from '../../../planet_presentation';
 
 const TOP_DOWN_BOUNDARY_FILL = 0.88;
 const BAKED_TOP_DOWN = {
@@ -408,7 +409,7 @@ export function TopDown({
                     onSelect={select}
                     label={displayName(details(p.Id, sector), preview) ?? 'Planet'}
                   >
-                    <span className="td-planet" />
+                    <span className={`td-planet ${planetColorClass(p)}`} />
                   </Selectable>
                   <label className="topdown-planet-caption">
                     <strong>{displayName(details(p.Id, sector), preview)}</strong>
@@ -466,7 +467,7 @@ export function TopDown({
                         onSelect={select}
                         label={displayName(details(m.Id, sector), preview) ?? 'Moon'}
                       >
-                        <span />
+                        <span className={planetColorClass(m)} />
                       </Selectable>
                       {sector.PlayerShip.CurrentLocationId === m.Id &&
                         visible(sector.PlayerShip.Id, sector, preview) && (

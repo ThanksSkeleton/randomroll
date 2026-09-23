@@ -569,35 +569,62 @@ select:focus-visible {
   height: 36px;
   transform: scale(var(--scale));
   border-radius: 50%;
-  background: #78bfd1;
-  border: 2px solid #b2edf1;
-  box-shadow: inset -8px -5px 0 #3d7c8d;
-}
-.type-mars,
-.type-mercury {
-  background: #bb7358;
-  border-color: #e3aa85;
-  box-shadow: inset -7px -4px #754432;
-}
-.type-jupiter,
-.type-saturn {
-  background: #d4ad77;
-  border-color: #f1d2a1;
-  box-shadow: inset -8px -5px #8d693c;
-}
-.type-neptune,
-.type-uranus {
-  background: #477fae;
-  border-color: #79b4e3;
-  box-shadow: inset -8px -5px #244c72;
+  background: var(--planet-fill, #78bfd1);
+  border: 2px solid var(--planet-edge, #b2edf1);
+  box-shadow: inset -8px -5px 0 var(--planet-shadow, #3d7c8d);
 }
 .moon-unit {
   margin-left: -25px;
 }
-.moon-unit .orb {
-  background: #869295;
-  border-color: #c8d1d2;
-  box-shadow: inset -6px -4px #525c5d;
+.planet-color-yellow {
+  --planet-fill: #c9b52f;
+  --planet-edge: #f4e985;
+  --planet-shadow: #75691a;
+}
+.planet-color-black {
+  --planet-fill: #27343a;
+  --planet-edge: #718087;
+  --planet-shadow: #11191d;
+}
+.planet-color-dark-green {
+  --planet-fill: #246b4a;
+  --planet-edge: #70c79c;
+  --planet-shadow: #123d2b;
+}
+.planet-color-gray {
+  --planet-fill: #858e92;
+  --planet-edge: #d0d8d9;
+  --planet-shadow: #525c5d;
+}
+.planet-color-red {
+  --planet-fill: #a9474c;
+  --planet-edge: #ef8984;
+  --planet-shadow: #612d32;
+}
+.planet-color-blue {
+  --planet-fill: #2f82a4;
+  --planet-edge: #8ddcf0;
+  --planet-shadow: #1b526b;
+}
+.planet-color-light-brown {
+  --planet-fill: #a97d50;
+  --planet-edge: #e5bd83;
+  --planet-shadow: #684b30;
+}
+.planet-color-orange {
+  --planet-fill: #d1742f;
+  --planet-edge: #ffb16d;
+  --planet-shadow: #814119;
+}
+.planet-color-dark-blue {
+  --planet-fill: #244c72;
+  --planet-edge: #79b4e3;
+  --planet-shadow: #142d4a;
+}
+.planet-color-green {
+  --planet-fill: #2e9b69;
+  --planet-edge: #8ef0c4;
+  --planet-shadow: #18553b;
 }
 .other-object-orb {
   position: relative;
@@ -842,8 +869,8 @@ select:focus-visible {
   width: 25px;
   height: 25px;
   border-radius: 50%;
-  background: var(--blue);
-  box-shadow: inset -6px -3px #397387;
+  background: var(--planet-fill, var(--blue));
+  box-shadow: inset -6px -3px var(--planet-shadow, #397387);
 }
 .td-other-object-button {
   width: 30px;
@@ -883,7 +910,8 @@ select:focus-visible {
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: #a0adae;
+  background: var(--planet-fill, #a0adae);
+  box-shadow: inset -3px -2px var(--planet-shadow, #596466);
 }
 .td-ship {
   position: absolute;
