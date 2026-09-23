@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import type { Preview } from '../../application/appState';
 import type { OtherCelestialObject, Sector, StarSystem } from '../../../merged_schema';
-import { systemEdgeAu } from '../../../generation_rules';
+import { normalTemperatureAuBand, systemEdgeAu } from '../../../generation_rules';
 import { VisibilityLevel, visibilityRank } from '../../domain/sector/visibility';
 import {
   areAdjacentHexes,
@@ -138,12 +138,19 @@ export function TopDown({
   );
   const shellRef = useRef<HTMLDivElement>(null);
   const [mapSize, setMapSize] = useState(320);
+  const [showTemperatureOverlay, setShowTemperatureOverlay] = useState(false);
   const c = mapSize / 2;
   const hexWidth = mapSize * BAKED_TOP_DOWN.centralHexWidth;
   const hexHeight = (hexWidth * 98) / 112;
   const systemSize = mapSize * BAKED_TOP_DOWN.systemDetailScale;
   const spikeBoundaryRadius = (systemSize / 2) * TOP_DOWN_BOUNDARY_FILL;
   const pixelsPerAu = spikeBoundaryRadius / systemEdgeAu(system.Star.StarType);
+  const [normalTemperatureInnerAu, normalTemperatureOuterAu] = normalTemperatureAuBand(
+    system.Star.StarType,
+  );
+  const normalTemperatureInnerRadius = normalTemperatureInnerAu * pixelsPerAu;
+  const normalTemperatureOuterRadius = normalTemperatureOuterAu * pixelsPerAu;
+  const isRemnantStar = normalTemperatureInnerAu === normalTemperatureOuterAu;
   const topDownStyle = {
     '--td-route-width': `${BAKED_TOP_DOWN.routeWidth}px`,
     '--td-route-length': `${BAKED_TOP_DOWN.routeLength}px`,
@@ -250,6 +257,14 @@ export function TopDown({
   });
   return (
     <div className="topdown-shell" ref={shellRef}>
+      <label className="topdown-temperature-toggle">
+        <input
+          type="checkbox"
+          checked={showTemperatureOverlay}
+          onChange={(event) => setShowTemperatureOverlay(event.target.checked)}
+        />
+        Temperate overlay
+      </label>
       <div className="topdown-frame" style={{ width: mapSize, height: mapSize }}>
         <div className="topdown" style={{ width: mapSize, height: mapSize, ...topDownStyle }}>
           <svg className="system-hex-grid" aria-hidden="true" viewBox={`0 0 ${mapSize} ${mapSize}`}>
@@ -298,6 +313,50 @@ export function TopDown({
               strokeDasharray={spikeDashArray}
             />
           </svg>
+          {showTemperatureOverlay && (
+            <svg
+              className="temperature-boundaries"
+              aria-hidden="true"
+              style={{
+                width: spikeBoundaryRadius * 2,
+                height: spikeBoundaryRadius * 2,
+                left: c - spikeBoundaryRadius,
+                top: c - spikeBoundaryRadius,
+              }}
+            >
+              {isRemnantStar ? (
+                <circle
+                  cx={spikeBoundaryRadius}
+                  cy={spikeBoundaryRadius}
+                  r={normalTemperatureInnerRadius}
+                  fill="none"
+                  stroke="#ffe39a"
+                  strokeWidth={2}
+                />
+              ) : (
+                <>
+                  <circle
+                    cx={spikeBoundaryRadius}
+                    cy={spikeBoundaryRadius}
+                    r={normalTemperatureInnerRadius}
+                    fill="none"
+                    stroke="#8ef0c4"
+                    strokeWidth={2}
+                    strokeDasharray="2 6"
+                  />
+                  <circle
+                    cx={spikeBoundaryRadius}
+                    cy={spikeBoundaryRadius}
+                    r={normalTemperatureOuterRadius}
+                    fill="none"
+                    stroke="#8ef0c4"
+                    strokeWidth={2}
+                    strokeDasharray="2 6"
+                  />
+                </>
+              )}
+            </svg>
+          )}
           {routes.map(({ route, destination, angle }) => {
             const routePosition = pos(angle, spikeBoundaryRadius);
             const destinationName =

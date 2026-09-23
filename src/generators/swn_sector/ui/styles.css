@@ -1022,12 +1022,34 @@ select:focus-visible {
   margin-top: 12px;
 }
 .topdown-shell {
+  position: relative;
   height: calc(100vh - 215px);
   overflow: auto;
   background:
     linear-gradient(#0e171a22 1px, transparent 1px),
     linear-gradient(90deg, #0e171a22 1px, transparent 1px);
   background-size: 30px 30px;
+}
+.topdown-temperature-toggle {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 10px;
+  border: 1px solid #2b4148;
+  background: #071015e8;
+  color: var(--green);
+  font: 10px 'IBM Plex Mono';
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  user-select: none;
+}
+.topdown-temperature-toggle input {
+  margin: 0;
+  accent-color: var(--green);
 }
 .topdown-frame {
   position: relative;
@@ -2117,12 +2139,16 @@ select {
 }
 
 .topdown svg.spike-boundary,
-.topdown svg.orbit {
+.topdown svg.orbit,
+.topdown svg.temperature-boundaries {
   position: absolute;
   border: 0;
   border-radius: 0;
   overflow: visible;
   pointer-events: none;
+}
+.topdown svg.temperature-boundaries {
+  z-index: 3;
 }
 .topdown .td-route-marker {
   width: var(--td-route-length);

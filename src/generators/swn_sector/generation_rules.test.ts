@@ -10,6 +10,7 @@ import {
   directOrbitAuBand,
   directOrbitTemperatures,
   isPoiHostCompatible,
+  normalTemperatureAuBand,
   systemEdgeAu,
 } from './generation_rules';
 import { generateTemplateOtherCelestialObject, generateTemplatePlanet } from './planet_templates';
@@ -70,6 +71,13 @@ test('compact remnants retain only usable direct-orbit temperature bands', () =>
 });
 
 test('system edge uses the complete System_AU_Width span', () => {
-  expect(systemEdgeAu('G-type')).toBe(4.984);
-  expect(systemEdgeAu('A-type')).toBe(28.416);
+  expect(systemEdgeAu('G-type')).toBeCloseTo(4.899);
+  expect(systemEdgeAu('A-type')).toBeCloseTo(15.493);
+});
+
+test('normal temperature boundaries collapse for remnant stars', () => {
+  const [inner, outer] = normalTemperatureAuBand('G-type');
+  expect(inner).toBeCloseTo(0.95);
+  expect(outer).toBeCloseTo(1.67);
+  expect(normalTemperatureAuBand('White dwarf')).toEqual([4.598, 4.598]);
 });

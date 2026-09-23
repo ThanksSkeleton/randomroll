@@ -180,7 +180,7 @@ describe('merged-sector independent stations', () => {
   it('treats temperature-band endpoints as exclusive', () => {
     const volcanic = planet('planet', null, 'Earth');
     volcanic.Temperature = 'Furance';
-    volcanic.Orbit.AU = 0.02; // G-type FromStar boundary
+    volcanic.Orbit.AU = 0.086; // G-type FromStar boundary
 
     expect(
       checkAllInvariants(sector([volcanic, station('station', null)])).some(
