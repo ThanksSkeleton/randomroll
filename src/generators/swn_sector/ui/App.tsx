@@ -10,52 +10,19 @@ import { HexMap as FeatureHexMap } from './features/sector-map/HexMap';
 import { SystemViewer } from './features/system-viewer/SystemViewer';
 import { SymbolicSystem as FeatureSymbolicSystem } from './features/system-viewer/SymbolicSystem';
 import { TopDown as FeatureTopDown } from './features/system-viewer/TopDown';
-import { VisibilityLevel, visibilityRank } from './domain/sector/visibility';
-import type { SelectableEntity, Sector } from '../merged_schema';
+import type { Sector } from '../merged_schema';
 import { applySectorEdits } from './domain/sector/operations';
 import {
   findContainingSystem,
-  findDetails,
   findObject,
   isVisibleToPlayer,
   objectKindLabel,
   resolveTravelDestination,
 } from './domain/sector/selectors';
 import { createPrototypeApplication } from './application/prototypeApplication';
-import { IconButton } from './features/navigation/IconButton';
 
 function isVisible(id: string, sector: Sector, preview: Preview) {
   return preview === 'gm' || isVisibleToPlayer(sector, id);
-}
-
-function details(id: string, sector: Sector) {
-  return findDetails(sector, id);
-}
-
-function displayName(info: SelectableEntity | undefined, preview: Preview): string | undefined {
-  if (!info) return undefined;
-  return preview === 'player' &&
-    visibilityRank(info.VisibilityLevel) < visibilityRank(VisibilityLevel.CULTURE_PARTIAL)
-    ? info.ProceduralName
-    : info.NiceName;
-}
-
-function EditableText({
-  value,
-  multiline = false,
-  className = '',
-  onChange,
-}: {
-  value: string;
-  multiline?: boolean;
-  className?: string;
-  onChange: (value: string) => void;
-}) {
-  return multiline ? (
-    <textarea className={className} value={value} onChange={(e) => onChange(e.target.value)} />
-  ) : (
-    <input className={className} value={value} onChange={(e) => onChange(e.target.value)} />
-  );
 }
 
 function objectKind(sector: Sector, id: string | null): string {
@@ -196,18 +163,6 @@ export default function App() {
     }
     dispatch({ type: 'returnToSector', view: nextMode.endsWith('symbolic') ? 'all' : 'hex' });
   };
-  const stageName =
-    view === 'system' && currentSystem ? (
-      (displayName(details(currentSystem.Id, sector), preview) ?? currentSystem.Id)
-    ) : preview === 'gm' && !locked ? (
-      <EditableText
-        className="stage-name-editor"
-        value={editDraft?.sectorName ?? sector.SectorName}
-        onChange={(value) => updateDraft((old) => ({ ...old, sectorName: value }))}
-      />
-    ) : (
-      sector.SectorName
-    );
   return (
     <div className={`app ${preview === 'player' ? 'player-mode' : ''}`}>
       <AppChrome view={view} preview={preview} setPreview={setPreviewMode} go={go} />
@@ -250,16 +205,17 @@ export default function App() {
           <main className="workspace">
             <aside className="control-sidebar" aria-label="Sector controls">
               <StageNav
-                name={stageName}
                 mode={stageMode}
                 singleReady={Boolean(selectedSystem || currentSystem)}
                 shipSelected={selected === sector.PlayerShip.Id}
                 travelReady={canTravel}
+                showTemperatureOverlay={showTemperatureOverlay}
+                temperatureOverlayReady={view === 'system' && systemMode === 'topdown'}
+                onTemperatureOverlay={() => setShowTemperatureOverlay((current) => !current)}
                 onMode={switchStageMode}
                 onSelectShip={() => setSelected(sector.PlayerShip.Id)}
                 onTravel={travelToSelectedSystem}
               />
-              <div className="sidebar-divider" aria-hidden="true" />
               {preview === 'gm' && isGmSession ? (
                 <FeatureGMEditBar
                   locked={locked}
@@ -277,18 +233,16 @@ export default function App() {
                   saveEdit={saveEdit}
                 />
               ) : null}
-              <div className="sidebar-divider" aria-hidden="true" />
-              <IconButton
-                icon="temperate-overlay"
-                label="TEMPERATE OVERLAY"
-                title="Temperate Overlay"
-                className={`temperature-sidebar-button ${showTemperatureOverlay ? 'button-active' : 'button-allowed'}`}
-                disabled={view !== 'system' || systemMode !== 'topdown'}
-                pressed={showTemperatureOverlay}
-                onClick={() => setShowTemperatureOverlay((current) => !current)}
-              />
             </aside>
-            <section className="stage">
+            <section
+              className={`stage ${
+                view === 'hex'
+                  ? 'stage-hex'
+                  : view === 'system' && systemMode === 'topdown'
+                    ? 'stage-topdown'
+                    : ''
+              }`}
+            >
               {view === 'hex' && (
                 <FeatureHexMap
                   sector={sector}

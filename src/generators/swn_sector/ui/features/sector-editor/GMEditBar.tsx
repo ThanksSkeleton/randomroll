@@ -40,7 +40,7 @@ export function GMEditBar({
     if (result.ok) mutate(result.value);
   };
   return (
-    <div className="edit-bar">
+    <div className="edit-bar sidebar-group sidebar-group-bottom">
       <IconButton
         icon="gm-lock"
         label={locked ? '▣ LOCKED' : '□ UNLOCKED'}
@@ -56,6 +56,7 @@ export function GMEditBar({
           }
         }}
       />
+      <div className="third-spacer" aria-hidden="true" />
       <IconButton
         icon="move-ship"
         label="MOVE SHIP TO TARGET"
@@ -64,10 +65,8 @@ export function GMEditBar({
         onClick={move}
         disabled={!canMove}
       />
+      <div className="third-spacer" aria-hidden="true" />
       <div className="vis-controls">
-        <span className="edit-visibility-label" aria-hidden="true">
-          VISIBILITY
-        </span>
         {(
           [
             VisibilityLevel.NONE,
@@ -110,6 +109,7 @@ export function GMEditBar({
           );
         })}
       </div>
+      <div className="sidebar-spacer" aria-hidden="true" />
       <IconButton
         icon="delete-target"
         label="⌫ DELETE TARGET"

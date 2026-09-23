@@ -57,9 +57,9 @@ export interface PlayerShip extends SelectableEntity {
 }
 
 export interface HexLocation {
-  /** Intended sector grid bounds: integer 1 through 12. */
+  /** Intended sector grid bounds: integer 1 through 11. */
   Column: number;
-  /** Intended sector grid bounds: integer 1 through 6. */
+  /** Intended sector grid bounds: integer 1 through 7. */
   Row: number;
 }
 

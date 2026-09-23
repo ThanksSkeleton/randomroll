@@ -1,4 +1,3 @@
-import type { ReactNode } from 'react';
 import type { Preview, View } from '../../application/appState';
 import { IconButton } from './IconButton';
 
@@ -59,20 +58,24 @@ export function AppChrome({
 export type StageMode = 'multi-symbolic' | 'multi-map' | 'single-symbolic' | 'single-map';
 
 export function StageNav({
-  name,
   mode,
   singleReady,
   shipSelected,
   travelReady,
+  showTemperatureOverlay,
+  temperatureOverlayReady,
+  onTemperatureOverlay,
   onMode,
   onSelectShip,
   onTravel,
 }: {
-  name: ReactNode;
   mode: StageMode;
   singleReady: boolean;
   shipSelected: boolean;
   travelReady: boolean;
+  showTemperatureOverlay: boolean;
+  temperatureOverlayReady: boolean;
+  onTemperatureOverlay: () => void;
   onMode: (mode: StageMode) => void;
   onSelectShip: () => void;
   onTravel: () => void;
@@ -100,16 +103,8 @@ export function StageNav({
           : 'multi-map',
     );
   return (
-    <div className="stage-nav">
-      <div className="stage-nav-name">{name}</div>
+    <div className="stage-nav sidebar-group sidebar-group-top">
       <div className="stage-nav-controls" aria-label="View mode">
-        <IconButton
-          icon="select-ship"
-          label="SELECT SHIP"
-          title="Select Ship"
-          className={`stage-nav-select-ship ${shipSelected ? 'button-active' : 'button-allowed'}`}
-          onClick={onSelectShip}
-        />
         <IconButton
           icon="view-system"
           label="VIEW SYSTEM"
@@ -118,25 +113,25 @@ export function StageNav({
           disabled={!travelReady}
           onClick={onTravel}
         />
-        <div className="stage-nav-pair stage-nav-scope" aria-label="Scope">
-          <IconButton
-            icon="sector-view"
-            label="SECTOR"
-            title="Sector View"
-            className={!isSystem ? 'button-active' : 'button-allowed'}
-            onClick={() => selectScope(false)}
-          />
-          <IconButton
-            icon="system-view"
-            label="SYSTEM"
-            title="System View"
-            className={
-              isSystem ? 'button-active' : singleReady ? 'button-bold-allowed' : 'button-disabled'
-            }
-            disabled={!singleReady && !isSystem}
-            onClick={() => selectScope(true)}
-          />
-        </div>
+        <div className="third-spacer" aria-hidden="true" />
+        <IconButton
+          icon="sector-view"
+          label="SECTOR"
+          title="Sector View"
+          className={!isSystem ? 'button-active' : 'button-allowed'}
+          onClick={() => selectScope(false)}
+        />
+        <IconButton
+          icon="system-view"
+          label="SYSTEM"
+          title="System View"
+          className={
+            isSystem ? 'button-active' : singleReady ? 'button-bold-allowed' : 'button-disabled'
+          }
+          disabled={!singleReady && !isSystem}
+          onClick={() => selectScope(true)}
+        />
+        <div className="third-spacer" aria-hidden="true" />
         <div className="stage-nav-pair stage-nav-representation" aria-label="Representation">
           <IconButton
             icon="symbolic-view"
@@ -153,6 +148,23 @@ export function StageNav({
             onClick={() => selectRepresentation(false)}
           />
         </div>
+        <div className="third-spacer" aria-hidden="true" />
+        <IconButton
+          icon="temperate-overlay"
+          label="TEMPERATE OVERLAY"
+          title="Temperate Overlay"
+          className={`temperature-sidebar-button ${showTemperatureOverlay ? 'button-active' : 'button-allowed'}`}
+          disabled={!temperatureOverlayReady}
+          pressed={showTemperatureOverlay}
+          onClick={onTemperatureOverlay}
+        />
+        <IconButton
+          icon="select-ship"
+          label="SELECT SHIP"
+          title="Select Ship"
+          className={`stage-nav-select-ship ${shipSelected ? 'button-active' : 'button-allowed'}`}
+          onClick={onSelectShip}
+        />
       </div>
     </div>
   );

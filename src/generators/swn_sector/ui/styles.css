@@ -341,12 +341,12 @@ select:focus-visible {
   padding-bottom: 7px;
 }
 .hex-wrap {
-  min-height: 680px;
+  min-height: 778px;
   overflow: auto;
 }
 .hex-map {
-  width: 1120px;
-  height: 680px;
+  width: 1036px;
+  height: 778px;
   position: relative;
   margin: 0 auto;
 }
@@ -1207,19 +1207,12 @@ select:focus-visible {
   flex-direction: column;
   align-items: center;
   padding: 8px 8px;
-  gap: 5px;
+  gap: 0;
   position: sticky;
   top: 56px;
   height: calc(100vh - 56px);
   overflow-y: auto;
   z-index: 30;
-}
-.sidebar-divider {
-  width: 34px;
-  height: 1px;
-  background: #30454b;
-  flex: none;
-  margin: 4px 0;
 }
 .sector-icon {
   width: 25px;
@@ -1232,7 +1225,7 @@ select:focus-visible {
 }
 .icon-button {
   width: 50px;
-  height: 38px;
+  height: 36px;
   border: 1px solid #2b3d43;
   background: #0c1418;
   color: var(--green);
@@ -1255,48 +1248,19 @@ select:focus-visible {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 5px;
-}
-.stage-nav-name {
-  width: 100%;
-  min-width: 0;
-  min-height: 30px;
-  overflow: hidden;
-  color: #dce9e8;
-  font: 600 9px 'IBM Plex Mono';
-  letter-spacing: 0.06em;
-  line-height: 1.3;
-  text-align: center;
-  text-overflow: ellipsis;
-  text-transform: uppercase;
-  white-space: normal;
-  overflow-wrap: anywhere;
-}
-.stage-name-editor {
-  width: 100%;
-  height: auto;
-  min-height: 34px;
-  padding: 0;
-  border: 0;
-  border-bottom: 1px solid #2b3f46;
-  background: transparent;
-  color: #dce9e8;
-  font: 600 9px 'IBM Plex Mono';
-  letter-spacing: 0.06em;
-  text-align: center;
-  text-transform: uppercase;
+  gap: 0;
 }
 .stage-nav-controls {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 2px;
   margin: 0;
 }
 .stage-nav-pair {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
   border: 0;
 }
 .stage-nav-pair .icon-button,
@@ -1304,14 +1268,24 @@ select:focus-visible {
 .stage-nav-travel {
   border: 1px solid #2b3d43;
 }
-.temperature-sidebar-button {
+.sidebar-group-bottom {
   margin-top: auto;
+}
+.third-spacer {
+  width: 50px;
+  height: 12px;
+  flex: none;
+}
+.sidebar-spacer {
+  width: 50px;
+  height: 36px;
+  flex: none;
 }
 .edit-bar {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 7px;
+  gap: 2px;
   width: 100%;
 }
 .edit-title {
@@ -1352,7 +1326,7 @@ select:focus-visible {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 3px;
+  gap: 2px;
   border: 0;
   width: 100%;
   height: auto;
@@ -1363,7 +1337,7 @@ select:focus-visible {
   padding: 0;
 }
 .vis-controls button {
-  height: 29px;
+  height: 36px;
 }
 .vis-controls button.active {
   background: var(--green);
@@ -1497,7 +1471,7 @@ select {
 .saved button.danger {
   color: var(--red);
   border-color: #563035;
-  margin-top: 28px;
+  margin-top: 0;
 }
 .saved small {
   display: block;
@@ -1534,13 +1508,13 @@ select {
   }
 }
 
-/* Geometry for the one-based, vertical odd-column 12×6 sector grid. */
+/* Geometry for the one-based, vertical odd-column 11×7 sector grid. */
 .hex-wrap {
-  min-height: 680px;
+  min-height: 778px;
 }
 .hex-map {
-  width: 1120px;
-  height: 680px;
+  width: 1036px;
+  height: 778px;
 }
 .hex-pois {
   position: absolute;
@@ -1908,7 +1882,7 @@ select {
 
 /* Keep scrolling inside the map stage so the inspector stays fixed-width and stable. */
 .workspace {
-  height: calc(100vh - 150px);
+  height: calc(100vh - 56px);
   min-height: 0;
 }
 .stage {
@@ -1916,9 +1890,34 @@ select {
   overflow: auto;
 }
 .detail-bar {
-  height: calc(100vh - 150px);
+  height: calc(100vh - 56px);
   min-height: 0;
   overflow-y: auto;
+}
+.stage-hex {
+  display: flex;
+  flex-direction: column;
+}
+.stage-hex .hex-wrap {
+  display: flex;
+  align-items: safe center;
+  justify-content: safe center;
+  flex: 1;
+  height: auto;
+  min-height: 0;
+}
+.stage-hex .hex-map {
+  flex: none;
+  margin: 0;
+}
+.stage-topdown {
+  display: flex;
+  flex-direction: column;
+}
+.stage-topdown .topdown-shell {
+  flex: 1;
+  height: auto;
+  min-height: 0;
 }
 .sector-footer {
   height: 120px;

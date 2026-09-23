@@ -103,10 +103,10 @@ export function checkAllInvariants(value: unknown): InvariantViolation[] {
     if (
       !Number.isInteger(system.HexLocation.Column) ||
       system.HexLocation.Column < 1 ||
-      system.HexLocation.Column > 12 ||
+      system.HexLocation.Column > 11 ||
       !Number.isInteger(system.HexLocation.Row) ||
       system.HexLocation.Row < 1 ||
-      system.HexLocation.Row > 6
+      system.HexLocation.Row > 7
     ) {
       fail('A1', `System ${system.Id} has an out-of-bounds hex location.`);
     }

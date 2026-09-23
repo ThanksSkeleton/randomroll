@@ -72,7 +72,7 @@ export function HexMap({
   return (
     <div className="hex-wrap" onClick={() => select(null)}>
       <div className="hex-map" role="group" aria-label="Sector map">
-        <svg className="routes" viewBox="0 0 1120 680" preserveAspectRatio="none">
+        <svg className="routes" viewBox="0 0 1036 778" preserveAspectRatio="none">
           {sector.Routes.filter((r) => visible(r.Id, sector, preview)).map((route) => {
             const endpoints = routeSystems(sector, route);
             const a = endpoints?.[0],
@@ -97,9 +97,9 @@ export function HexMap({
             );
           })}
         </svg>
-        {Array.from({ length: 72 }, (_, i) => {
-          const x = (i % 12) + 1,
-            y = Math.floor(i / 12) + 1;
+        {Array.from({ length: 77 }, (_, i) => {
+          const x = (i % 11) + 1,
+            y = Math.floor(i / 11) + 1;
           return <div key={i} className="hex-cell" style={position(x, y)} />;
         })}
         {sector.Systems.filter((s) => visible(s.Id, sector, preview)).map((system) => {

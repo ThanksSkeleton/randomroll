@@ -8,9 +8,9 @@ export function generate(seed: string): Sector {
   const count = rollDie(randomFor(seed, 'sector:system-count'), 10) + 20;
   const cells = shuffled(
     randomFor(seed, 'sector:grid'),
-    Array.from({ length: 72 }, (_, index) => ({
-      Column: (index % 12) + 1,
-      Row: Math.floor(index / 12) + 1,
+    Array.from({ length: 77 }, (_, index) => ({
+      Column: (index % 11) + 1,
+      Row: Math.floor(index / 11) + 1,
     })),
   );
   const Systems = cells.slice(0, count).map((hexLocation, index) => {
