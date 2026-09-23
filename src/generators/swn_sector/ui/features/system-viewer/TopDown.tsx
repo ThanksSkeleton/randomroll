@@ -12,6 +12,8 @@ import {
   routeSystems,
 } from '../../domain/sector/selectors';
 import { planetColorClass } from '../../../planet_presentation';
+import { starPresentationClass, starPresentationStyle } from '../../../star_presentation';
+import { StarGlyph } from './StarGlyph';
 
 const TOP_DOWN_BOUNDARY_FILL = 0.88;
 const BAKED_TOP_DOWN = {
@@ -347,8 +349,10 @@ export function TopDown({
               selected={selected}
               onSelect={select}
               label={`System ${displayName(details(system.Id, sector), preview) ?? 'System'}`}
+              className={`td-star-button ${starPresentationClass(system.Star.StarType)}`}
+              style={starPresentationStyle(system.Star.StarType)}
             >
-              <span>✦</span>
+              <StarGlyph starType={system.Star.StarType} />
             </Selectable>
             {objectPois(system.Star.Id).length > 0 && (
               <div className="topdown-poi-list">

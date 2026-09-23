@@ -1,7 +1,14 @@
 import { VisibilityLevel, visibilityRank } from '../../domain/sector/visibility';
 import type { Sector } from '../../../merged_schema';
 import type { Preview } from '../../application/appState';
-import { findContainingSystem, findDetails, isVisibleToPlayer, routeSystems } from '../../domain/sector/selectors';
+import {
+  findContainingSystem,
+  findDetails,
+  isVisibleToPlayer,
+  routeSystems,
+} from '../../domain/sector/selectors';
+import { starPresentationClass, starPresentationStyle } from '../../../star_presentation';
+import { StarGlyph } from '../system-viewer/StarGlyph';
 
 function visible(id: string, sector: Sector, preview: Preview) {
   return preview === 'gm' || isVisibleToPlayer(sector, id);
@@ -24,6 +31,7 @@ function Selectable({
   className = '',
   children,
   label,
+  style,
 }: {
   id: string;
   selected: string | null;
@@ -31,6 +39,7 @@ function Selectable({
   className?: string;
   children: React.ReactNode;
   label: string;
+  style?: React.CSSProperties;
 }) {
   return (
     <button
@@ -38,6 +47,7 @@ function Selectable({
       aria-label={label}
       aria-pressed={selected === id}
       className={`selectable ${selected === id ? 'selected' : ''} ${className}`}
+      style={style}
       onClick={(e) => {
         e.stopPropagation();
         onSelect(id);
@@ -65,7 +75,8 @@ export function HexMap({
         <svg className="routes" viewBox="0 0 1000 850" preserveAspectRatio="none">
           {sector.Routes.filter((r) => visible(r.Id, sector, preview)).map((route) => {
             const endpoints = routeSystems(sector, route);
-            const a = endpoints?.[0], b = endpoints?.[1];
+            const a = endpoints?.[0],
+              b = endpoints?.[1];
             if (!a || !b || !visible(a.Id, sector, preview) || !visible(b.Id, sector, preview))
               return null;
             const p1 = position(a.HexLocation.Column, a.HexLocation.Row),
@@ -98,15 +109,19 @@ export function HexMap({
             findContainingSystem(sector, sector.PlayerShip.CurrentLocationId)?.Id === system.Id &&
             visible(sector.PlayerShip.Id, sector, preview);
           return (
-            <div className="system-pin" key={system.Id} style={p}>
+            <div
+              className="system-pin"
+              key={system.Id}
+              style={{ ...p, ...starPresentationStyle(system.Star.StarType) }}
+            >
               <Selectable
                 id={system.Id}
                 selected={selected}
                 onSelect={select}
                 label={`System ${label}`}
-                className="star-pin"
+                className={`star-pin ${starPresentationClass(system.Star.StarType)}`}
               >
-                <span>✦</span>
+                <StarGlyph starType={system.Star.StarType} />
               </Selectable>
               <label className="system-name-label system-map-caption">
                 <strong>{label}</strong>

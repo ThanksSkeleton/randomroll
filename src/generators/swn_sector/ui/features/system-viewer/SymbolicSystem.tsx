@@ -9,6 +9,8 @@ import {
   routeSystems,
 } from '../../domain/sector/selectors';
 import { planetColorClass } from '../../../planet_presentation';
+import { starPresentationClass, starPresentationStyle } from '../../../star_presentation';
+import { StarGlyph } from './StarGlyph';
 
 function visible(id: string, sector: Sector, preview: Preview) {
   return preview === 'gm' || isVisibleToPlayer(sector, id);
@@ -39,6 +41,7 @@ function Selectable({
   className = '',
   children,
   label,
+  style,
 }: {
   id: string;
   selected: string | null;
@@ -46,6 +49,7 @@ function Selectable({
   className?: string;
   children: React.ReactNode;
   label: string;
+  style?: React.CSSProperties;
 }) {
   return (
     <button
@@ -53,6 +57,7 @@ function Selectable({
       aria-label={label}
       aria-pressed={selected === id}
       className={`selectable ${selected === id ? 'selected' : ''} ${className}`}
+      style={style}
       onClick={(e) => {
         e.stopPropagation();
         onSelect(id);
@@ -307,9 +312,10 @@ export function SymbolicSystem({
                 selected={selected}
                 onSelect={select}
                 label={`System ${displayName(systemD, preview) ?? 'System'}`}
-                className="star-orb"
+                className={`star-orb ${starPresentationClass(system.Star.StarType)}`}
+                style={starPresentationStyle(system.Star.StarType)}
               >
-                <span>✦</span>
+                <StarGlyph starType={system.Star.StarType} />
               </Selectable>
             </div>
           </div>

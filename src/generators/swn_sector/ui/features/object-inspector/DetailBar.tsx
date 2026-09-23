@@ -10,6 +10,8 @@ import {
 } from '../../domain/sector/selectors';
 import type { EditDraft, Preview, EditableDetailField } from '../../application/appState';
 import { formatAu } from '../../formatters';
+import { starPresentationClass, starPresentationStyle } from '../../../star_presentation';
+import { StarGlyph } from '../system-viewer/StarGlyph';
 
 function displayName(info: SelectableEntity | undefined, preview: Preview) {
   if (!info) return undefined;
@@ -182,15 +184,23 @@ export function DetailBar({
         <>
           <div className={`object-art art-${kind.toLowerCase().replaceAll(' ', '-')}`}>
             <div>
-              {kind === 'STAR'
-                ? '✦'
-                : kind === 'PLAYER SHIP'
-                  ? '▰'
-                  : kind === 'ROUTE'
-                    ? '╱'
-                    : kind.includes('POINT')
-                      ? '◆'
-                      : '●'}
+              {kind === 'STAR' && found.kind === 'Star' ? (
+                <div
+                  className={`detail-star-glyph ${starPresentationClass(found.object.StarType)}`}
+                  style={starPresentationStyle(found.object.StarType)}
+                  aria-hidden="true"
+                >
+                  <StarGlyph starType={found.object.StarType} />
+                </div>
+              ) : kind === 'PLAYER SHIP' ? (
+                '▰'
+              ) : kind === 'ROUTE' ? (
+                '╱'
+              ) : kind.includes('POINT') ? (
+                '◆'
+              ) : (
+                '●'
+              )}
             </div>
           </div>
           {preview === 'gm' && !locked ? (
