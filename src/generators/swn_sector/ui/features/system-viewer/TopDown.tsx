@@ -119,12 +119,14 @@ export function TopDown({
   selected,
   select,
   preview,
+  showTemperatureOverlay,
 }: {
   system: StarSystem;
   sector: Sector;
   selected: string | null;
   select: (id: string) => void;
   preview: Preview;
+  showTemperatureOverlay: boolean;
 }) {
   const visibleDirectObjects = system.Objects.filter(
     (object) => !object.Orbit.ParentObjectId && visible(object.Id, sector, preview),
@@ -138,7 +140,6 @@ export function TopDown({
   );
   const shellRef = useRef<HTMLDivElement>(null);
   const [mapSize, setMapSize] = useState(320);
-  const [showTemperatureOverlay, setShowTemperatureOverlay] = useState(false);
   const c = mapSize / 2;
   const hexWidth = mapSize * BAKED_TOP_DOWN.centralHexWidth;
   const hexHeight = (hexWidth * 98) / 112;
@@ -257,14 +258,6 @@ export function TopDown({
   });
   return (
     <div className="topdown-shell" ref={shellRef}>
-      <label className="topdown-temperature-toggle">
-        <input
-          type="checkbox"
-          checked={showTemperatureOverlay}
-          onChange={(event) => setShowTemperatureOverlay(event.target.checked)}
-        />
-        Temperate overlay
-      </label>
       <div className="topdown-frame" style={{ width: mapSize, height: mapSize }}>
         <div className="topdown" style={{ width: mapSize, height: mapSize, ...topDownStyle }}>
           <svg className="system-hex-grid" aria-hidden="true" viewBox={`0 0 ${mapSize} ${mapSize}`}>

@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import type { Preview, View } from '../../application/appState';
+import { IconButton } from './IconButton';
 
 export function AppChrome({
   view,
@@ -99,54 +100,60 @@ export function StageNav({
           : 'multi-map',
     );
   return (
-    <header className="stage-nav">
+    <div className="stage-nav">
       <div className="stage-nav-name">{name}</div>
       <div className="stage-nav-controls" aria-label="View mode">
-        <button
+        <IconButton
+          icon="select-ship"
+          label="SELECT SHIP"
+          title="Select Ship"
           className={`stage-nav-select-ship ${shipSelected ? 'button-active' : 'button-allowed'}`}
           onClick={onSelectShip}
-        >
-          SELECT SHIP
-        </button>
-        <button
+        />
+        <IconButton
+          icon="view-system"
+          label="VIEW SYSTEM"
+          title="View System"
           className={`stage-nav-travel ${travelReady ? 'button-bold-allowed' : 'button-disabled'}`}
           disabled={!travelReady}
           onClick={onTravel}
-        >
-          TRAVEL TO
-        </button>
+        />
         <div className="stage-nav-pair stage-nav-scope" aria-label="Scope">
-          <button
+          <IconButton
+            icon="sector-view"
+            label="SECTOR"
+            title="Sector View"
             className={!isSystem ? 'button-active' : 'button-allowed'}
             onClick={() => selectScope(false)}
-          >
-            SECTOR
-          </button>
-          <button
+          />
+          <IconButton
+            icon="system-view"
+            label="SYSTEM"
+            title="System View"
             className={
               isSystem ? 'button-active' : singleReady ? 'button-bold-allowed' : 'button-disabled'
             }
             disabled={!singleReady && !isSystem}
             onClick={() => selectScope(true)}
-          >
-            SYSTEM
-          </button>
+          />
         </div>
         <div className="stage-nav-pair stage-nav-representation" aria-label="Representation">
-          <button
+          <IconButton
+            icon="symbolic-view"
+            label="SYMBOLIC"
+            title="Symbolic View"
             className={isSymbolic ? 'button-active' : 'button-allowed'}
             onClick={() => selectRepresentation(true)}
-          >
-            SYMBOLIC
-          </button>
-          <button
+          />
+          <IconButton
+            icon="map-view"
+            label="MAP"
+            title="Map View"
             className={!isSymbolic ? 'button-active' : 'button-allowed'}
             onClick={() => selectRepresentation(false)}
-          >
-            MAP
-          </button>
+          />
         </div>
       </div>
-    </header>
+    </div>
   );
 }

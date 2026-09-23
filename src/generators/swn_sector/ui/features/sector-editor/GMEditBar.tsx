@@ -7,6 +7,7 @@ import {
 } from '../../domain/sector/operations';
 import { findDetails, objectKindLabel } from '../../domain/sector/selectors';
 import type { EditDraft, View } from '../../application/appState';
+import { IconButton } from '../navigation/IconButton';
 
 export function GMEditBar({
   locked,
@@ -39,13 +40,11 @@ export function GMEditBar({
     if (result.ok) mutate(result.value);
   };
   return (
-    <footer className="edit-bar">
-      <div className="edit-title">
-        <div>
-          <strong className="edit-title-label">GM EDIT</strong>
-        </div>
-      </div>
-      <button
+    <div className="edit-bar">
+      <IconButton
+        icon="gm-lock"
+        label={locked ? '▣ LOCKED' : '□ UNLOCKED'}
+        title="GM Lock"
         className={`lock lock-state-button ${locked ? 'button-bold-allowed' : 'button-allowed'}`}
         onClick={() => {
           if (locked) {
@@ -56,18 +55,19 @@ export function GMEditBar({
             setLocked(true);
           }
         }}
-      >
-        {locked ? '▣ LOCKED' : '□ UNLOCKED'}
-      </button>
-      <button
+      />
+      <IconButton
+        icon="move-ship"
+        label="MOVE SHIP TO TARGET"
+        title="Move Ship"
         className={`move-ship-button ${canMove ? 'button-allowed' : 'button-disabled'}`}
         onClick={move}
         disabled={!canMove}
-      >
-        ⌖ MOVE SHIP TO TARGET
-      </button>
+      />
       <div className="vis-controls">
-        <span className="edit-visibility-label">VISIBILITY</span>
+        <span className="edit-visibility-label" aria-hidden="true">
+          VISIBILITY
+        </span>
         {(
           [
             VisibilityLevel.NONE,
@@ -78,8 +78,27 @@ export function GMEditBar({
         ).map((level) => {
           const enabled = !locked && Boolean(info);
           return (
-            <button
+            <IconButton
               key={level}
+              icon={
+                level === VisibilityLevel.NONE
+                  ? 'visibility-none'
+                  : level === VisibilityLevel.BASIC_SCAN
+                    ? 'visibility-basic'
+                    : level === VisibilityLevel.CULTURE_PARTIAL
+                      ? 'visibility-cultural-partial'
+                      : 'visibility-cultural-full'
+              }
+              label={`VISIBILITY: ${level}`}
+              title={`Visibility: ${
+                level === VisibilityLevel.NONE
+                  ? 'None'
+                  : level === VisibilityLevel.BASIC_SCAN
+                    ? 'Basic'
+                    : level === VisibilityLevel.CULTURE_PARTIAL
+                      ? 'Cultural Partial'
+                      : 'Cultural Full'
+              }`}
               disabled={!enabled}
               className={`visibility-level-${level.toLowerCase()} ${!enabled ? 'button-disabled' : info?.VisibilityLevel === level ? 'button-active' : 'button-allowed'}`}
               onClick={() => {
@@ -87,13 +106,14 @@ export function GMEditBar({
                 const result = updateObjectVisibility(sector, selected, level);
                 if (result.ok) mutate(result.value);
               }}
-            >
-              {level}
-            </button>
+            />
           );
         })}
       </div>
-      <button
+      <IconButton
+        icon="delete-target"
+        label="⌫ DELETE TARGET"
+        title="Delete Target"
         className={`danger delete-target-button ${!locked && Boolean(selected) && kind !== 'PLAYER SHIP' && kind !== 'STAR' ? 'button-scary-allowed' : 'button-disabled'}`}
         disabled={locked || !selected || kind === 'PLAYER SHIP' || kind === 'STAR'}
         onClick={() => {
@@ -101,9 +121,7 @@ export function GMEditBar({
           const result = deleteSectorObject(sector, selected);
           if (result.ok) mutate(result.value);
         }}
-      >
-        ⌫ DELETE TARGET
-      </button>
-    </footer>
+      />
+    </div>
   );
 }

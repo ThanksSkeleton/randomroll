@@ -22,6 +22,7 @@ import {
   resolveTravelDestination,
 } from './domain/sector/selectors';
 import { createPrototypeApplication } from './application/prototypeApplication';
+import { IconButton } from './features/navigation/IconButton';
 
 function isVisible(id: string, sector: Sector, preview: Preview) {
   return preview === 'gm' || isVisibleToPlayer(sector, id);
@@ -63,6 +64,7 @@ function objectKind(sector: Sector, id: string | null): string {
 
 export default function App() {
   const [application] = useState(createPrototypeApplication);
+  const [showTemperatureOverlay, setShowTemperatureOverlay] = useState(false);
   const [state, dispatch] = useReducer(appReducer, undefined, () =>
     createAppState(application.listSectors()),
   );
@@ -123,9 +125,7 @@ export default function App() {
     const kind = objectKind(sector, selected);
     if (kind === 'SYSTEM') return sector.Systems.find((system) => system.Id === selected) ?? null;
     if (kind === 'PLAYER SHIP')
-      return (
-        findContainingSystem(sector, sector.PlayerShip.CurrentLocationId) ?? null
-      );
+      return findContainingSystem(sector, sector.PlayerShip.CurrentLocationId) ?? null;
     if (kind === 'ROUTE') return null;
     return findContainingSystem(sector, selected) ?? null;
   }, [sector, selected]);
@@ -248,7 +248,7 @@ export default function App() {
       ) : (
         <>
           <main className="workspace">
-            <section className="stage">
+            <aside className="control-sidebar" aria-label="Sector controls">
               <StageNav
                 name={stageName}
                 mode={stageMode}
@@ -259,6 +259,36 @@ export default function App() {
                 onSelectShip={() => setSelected(sector.PlayerShip.Id)}
                 onTravel={travelToSelectedSystem}
               />
+              <div className="sidebar-divider" aria-hidden="true" />
+              {preview === 'gm' && isGmSession ? (
+                <FeatureGMEditBar
+                  locked={locked}
+                  setLocked={setLocked}
+                  canMove={canMove}
+                  selected={selected}
+                  sector={sector}
+                  mutate={(next) => {
+                    mutate(next);
+                    if (selected && !findObject(next, selected)) setSelected(null);
+                  }}
+                  view={view}
+                  draft={editDraft}
+                  beginEdit={beginEdit}
+                  saveEdit={saveEdit}
+                />
+              ) : null}
+              <div className="sidebar-divider" aria-hidden="true" />
+              <IconButton
+                icon="temperate-overlay"
+                label="TEMPERATE OVERLAY"
+                title="Temperate Overlay"
+                className={`temperature-sidebar-button ${showTemperatureOverlay ? 'button-active' : 'button-allowed'}`}
+                disabled={view !== 'system' || systemMode !== 'topdown'}
+                pressed={showTemperatureOverlay}
+                onClick={() => setShowTemperatureOverlay((current) => !current)}
+              />
+            </aside>
+            <section className="stage">
               {view === 'hex' && (
                 <FeatureHexMap
                   sector={sector}
@@ -293,6 +323,7 @@ export default function App() {
                       selected={selected}
                       select={setSelected}
                       preview={preview}
+                      showTemperatureOverlay={showTemperatureOverlay}
                     />
                   }
                 />
@@ -323,25 +354,6 @@ export default function App() {
               setDraft={updateDraft}
             />
           </main>
-          {preview === 'gm' && isGmSession ? (
-            <FeatureGMEditBar
-              locked={locked}
-              setLocked={setLocked}
-              canMove={canMove}
-              selected={selected}
-              sector={sector}
-              mutate={(next) => {
-                mutate(next);
-                if (selected && !findObject(next, selected)) setSelected(null);
-              }}
-              view={view}
-              draft={editDraft}
-              beginEdit={beginEdit}
-              saveEdit={saveEdit}
-            />
-          ) : (
-            <footer className="edit-bar player-edit-bar" aria-hidden="true" />
-          )}
         </>
       )}
     </div>
