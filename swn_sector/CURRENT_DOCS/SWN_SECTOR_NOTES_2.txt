@@ -1,0 +1,73 @@
+Sector Creation - 
+World Locations:
+	Cluster Them (bump to nearest if occupied)
+	2 Away Max - Network Connections
+
+World Creation
+	Name
+	One Sentence Summary (Tag Relations)
+
+Polities
+	Option 1 - None! 
+	Option 2 - Alliances and Hegemons
+		Alliances - Two Neighboring TL4 worlds are linked
+			Military
+			Trade
+			Culture
+		Hegemons - A TL 5 Conquers TL4s "properly" - empire
+		Offplanet Colonialism - a TL 4 conquers TL0-3s
+
+How Many Worlds to Detail 
+	1 - Adventure Location
+	Surrounding
+
+
+World Detailing - 
+	Cultural Template
+	Original Reason of Settlement
+	
+	Merged Enemy
+	Merged Friend
+	Merged Thing
+	Merged Place
+	
+	Big Conflict 
+		* Class Struggle
+		* Offworlders 
+		* Local War
+		* Other
+	
+	Attitude Towards Outsiders
+	
+	Law Enforcement
+	
+	Major Starport 
+		Name
+		Qualities
+	
+	Orbital Station -
+		Air Traffic Control
+		Defenses
+
+Factions -
+	Session 0  
+		1 Faction (Full)
+		1 Mentioned
+	Adventure
+		3-6 Active Factions Total
+		
+Faction Creation Procedure
+	Size - Minor Major Hegemons
+	Homeworld 
+	Choose Faction Style
+		Force / Cunning / Wealth
+		(which order)?
+		Force / Cunning
+		Force / Wealth
+		Cunning / Force
+		Cunning / Wealth
+		Wealth / Force 
+		Wealth / Cunning
+	1 Asset 
+	(Leave the rest for later)
+	

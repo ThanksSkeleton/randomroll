@@ -1,0 +1,173 @@
+Physical Proximity Is Not The Same As Proximity in Spike Space / Warp Space
+But It doesn't matter.
+
+
+Default Generation Techique 
+* Generate Lots of Systems 
+* Stock with Inhabited Worlds
+ 
+Question: 
+How Much of the Sector Should be constructed at once
+
+Question:
+Roll A Sector
+
+8x10 Sector Map
+Cluster Them (bump to nearest if occupied)
+
+2 Away Max - Network Connections
+
+If Rolled Atmosphere Conflicts, Reroll
+
+Optionally, you can go on to add additional planets or points of interest to each system.
+
+Assumption is that worlds that in contact with eachother have some knowledge
+
+Military Alliance
+Trade Alliance
+Cultural Alliance
+TL4 Planet Controlling Low Tech Planets
+
+But some have no multi-system government
+
+Planet Name, Description
+Summarize How the Two Tags Relate To Each Other
+
+Pick Adventure World and Adjacent Worlds
+* Cultural Template + Colonist Reason
+
+Merged NPC Concepts
+Merged Enemy 
+Merged Friend
+Merged Thing
+Merged Place
+
+What does this world have that the PCs might care 
+about? 
+Does it export a valuable and portable commodity?
+Provide a special tech? 
+Unique job opportunities for expendable offworlder adventurers?
+
+What is the biggest conflict on the world right now? 
+Is it a social struggle between classes, 
+tension with offworlder merchants or visitors
+a war going on among local governments, or some other big crisis? 
+
+Every world should have at least one obvious conflict 
+that the PCs might choose to engage or be pulled into.
+
+What do they think about outsiders? 
+Are they comfortable with offworlders, do they view them with 
+unusual mistrust, or are they outright xenophobic?
+
+What is law enforcement like? 
+Are there special laws that might tangle the PCs? 
+If the PCs break a law, what kind of enforcement can they expect?
+
+Major Starport Name
+Special Starport Qualities
+
+Faction Rules - 
+
+News Chyron - 
+Making a Little Newspaper Handout / Radio Broadcast
+
+PC Actions Destory Assets
+
+Factions are Factions the PCs care about 
+
+A "Live Player" is a person or an organization that is capable of doing things they have never done before. When an unprecedented geopolitical crisis hits (like a sudden war, an unexpected economic embargo, or a massive technological shift), a live player doesn't look at a manual. They can generate new, functional behavior, adapt their inner circles, ignore standard bureaucracies, and respond dynamically to reality.
+A "Dead Player" is a person or an organization that is only capable of repeating scripts it has already learned. A dead state or institution might look incredibly powerful, massive, and wealthy on paper. However, it is fundamentally a machine run by bureaucrats. When an unusual event occurs, it cannot adapt. It tries to force the crisis into its pre-existing, rigid regulatory frameworks, effectively blinding itself to the reality of the threat until it breaks.
+
+PC Factions are possible 
+HP 
+FacCreds
+XP
+Tags (1 or 2)
+Force / Cunning / Wealth
+Starting Goal
+Faction Tag
+
+
+Asset Cap - Rating
+
+Procedures 
+Decide On Scale
+Set Homeworld and Bases of Influence
+Newborn Faction: 2/1/1 Assets: 1/0 
+Minor 4/3/1 - 15 HP Assets: 1/1
+Major 6/5/3 - 29 HP Assets: 2/2
+Hegemon 8/7/5 - 49  Assets: 4/4
+Add Planetary Government Tag for Planet Rulers
+
+Pick Conflicting Goals, No Hiding
+
+Make Faction Assets Easy to Command
+
+1 FacCred = 100,000
+
+Colony World
+Thinly-populated worlds with limited infrastructure 
+tend to have weak colonial governments concerned 
+chiefly with issues of basic survival rather than expan
+sion or intrigue.
+Attributes: Force 4, Cunning 3, Wealth 1
+Hit Points: 15
+Assets: Guerrilla Populace/Force 2 and Saboteurs/Cunning 2
+Tags: Colonists
+
+Lost World
+Primitive and barbaric by the standards of the space go
+ing worlds, a lost world lacks the technical resources of 
+their neighbors, but may well have substantial advan
+tages in population and cultural cohesion depending on 
+the world’s habitability.
+Attributes: Force 4, Cunning 1, Wealth 3
+Hit Points: 15
+Assets: Zealots/Force 3, Harvesters/Wealth 1
+Tags: Savage
+
+Backwater Planet
+Perhaps this world was important once, but disaster, 
+ennui, or the Scream has left it a sleepy planet disinter
+ested in the wider galaxy. Most worlds with ordinary 
+levels of technology in a sector will fit this template.
+Attributes: Force 6, Cunning 3, Wealth 5
+Hit Points: 29
+Assets: Postech Infantry/Force 4, Planetary Defenses/
+Force 6, Informers/Cunning 1, Bank/Wealth 4
+Tags: Deep Rooted
+
+Zealous Faith
+This religious organization is a powerful force in the 
+sector, likely with major congregations on several 
+worlds. 
+Attributes: Force 3, Cunning 6, Wealth 5
+Hit Points: 29
+Assets: Demagogue/Cunning 6, Organization Moles/
+Cunning 5, Zealots/Force 3, Marketers/Wealth 5
+Tags: Theocratic
+
+Regional Hegemon
+This world is the mightiest military power in the sector 
+and leads a half-dozen neighboring worlds in a “volun
+tary confederation” that it ever seeks to expand.
+Attributes: Force 8, Cunning 5, Wealth 7
+Hit Points: 49
+Assets: Space Marines/Force 7, Planetary Defenses/
+Force 6, Blockade Fleet/Force 5, Extended The
+ater/Force 4, Pretech Manufactory/Wealth 7, 
+Shipping Combine/Wealth 4, Tripwire Cells/
+Cunning 4, Cyberninjas/Cunning 3
+Tags: Imperialists
+
+Mercantile Combine
+A star-spanning consortium of merchants might oper
+ate out of one particular world, but their final loyalty 
+is always to their credit balance.
+Attributes: Force 3, Cunning 5, Wealth 6
+Hit Points: 29
+Assets: Venture Capital/Wealth 6, Shipping Combine/
+Wealth 4, Hardened Personnel/Forces 2, Black
+mail/Cunning 2
+Tags: Plutocratic

@@ -1,0 +1,31 @@
+TL,,Attack,Defend,Project
+0,500,0,0,0
+0,1m,0,0,0
+0,several Million,0,0,0
+0,100M,0,0,0
+0,Billion,0,0,0
+1,500,0,0,0
+1,1m,0,0,0
+1,several Million,0,0,0
+1,100M,0,0,0
+1,Billion,0,0,0
+2,500,0,0,0
+2,1m,0,0,0
+2,several Million,0,0,0
+2,100M,0,0,0
+2,Billion,0,0,0
+3,500,0,0,0
+3,1m,0,0,0
+3,several Million,0,0,0
+3,100M,1,1,0
+3,Billion,1,1,0
+4,500,1,1,0
+4,1m,2,2,1
+4,several Million,2,2,1
+4,100M,2,3,1
+4,Billion,2,3,1
+5,500,2,2,1
+5,1m,3,3,2
+5,several Million,3,4,2
+5,100M,3,4,2
+5,Billion,4,4,3
