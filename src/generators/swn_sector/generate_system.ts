@@ -167,6 +167,34 @@ function hexCoordinatePart(value: number): string {
   return value.toString().padStart(2, '0');
 }
 
+function lowercaseRomanNumeral(value: number): string {
+  if (!Number.isInteger(value) || value < 1) throw new Error(`Invalid Roman numeral value ${value}`);
+  const numerals: Array<[number, string]> = [
+    [1000, 'm'],
+    [900, 'cm'],
+    [500, 'd'],
+    [400, 'cd'],
+    [100, 'c'],
+    [90, 'xc'],
+    [50, 'l'],
+    [40, 'xl'],
+    [10, 'x'],
+    [9, 'ix'],
+    [5, 'v'],
+    [4, 'iv'],
+    [1, 'i'],
+  ];
+  let remaining = value;
+  let result = '';
+  for (const [amount, numeral] of numerals) {
+    while (remaining >= amount) {
+      result += numeral;
+      remaining -= amount;
+    }
+  }
+  return result;
+}
+
 function applyGeneratedNames(seed: string, entityPath: string, system: StarSystem): StarSystem {
   const niceName = randomSystemName(seed, entityPath);
   const proceduralName = `${hexCoordinatePart(system.HexLocation.Column)}${hexCoordinatePart(system.HexLocation.Row)}`;
@@ -201,13 +229,17 @@ function applyGeneratedNames(seed: string, entityPath: string, system: StarSyste
       ProceduralName: `${proceduralName} ${suffix}`,
     };
   });
+  const poiIndexesByParent = new Map<string, number>();
   const pointsOfInterest = system.PointsOfInterest.map((poi) => {
     const parent = objects.find((object) => object.Id === poi.ParentObjectId);
     if (parent === undefined) throw new Error(`Missing POI parent ${poi.ParentObjectId}`);
+    const poiIndex = (poiIndexesByParent.get(parent.Id) ?? 0) + 1;
+    poiIndexesByParent.set(parent.Id, poiIndex);
+    const ordinal = lowercaseRomanNumeral(poiIndex);
     return {
       ...poi,
-      NiceName: `${parent.NiceName}:${poi.POIType}`,
-      ProceduralName: `${parent.ProceduralName}:${poi.POIType}`,
+      NiceName: `${parent.NiceName}${ordinal}:${poi.POIType}`,
+      ProceduralName: `${parent.ProceduralName}${ordinal}:${poi.POIType}`,
     };
   });
 
@@ -463,11 +495,12 @@ function makePoi(
   parentObjectId: string,
   type: PointOfInterestType,
 ): PointOfInterest {
-  const name = `${type} ${path}`;
+  const temporaryNumber = Math.floor(randomFor(seed, `${path}:temporary-name`)() * 9000) + 1000;
+  const temporaryName = `${temporaryNumber}-TEMP`;
   return {
     Id: deterministicId(seed, path),
-    ProceduralName: name,
-    NiceName: name,
+    ProceduralName: temporaryName,
+    NiceName: temporaryName,
     VisibilityLevel: 'NONE',
     Intelligence: {
       InfoboxSummary: '-',

@@ -14,9 +14,8 @@ The current canonical entities, visibility levels, IDs, names, intelligence fiel
 4. Inhabited-world summary ratings.
 5. Symbolic-view layout cleanup.
 6. Moon rendering, description, and naming.
-7. Route endpoint navigation.
-8. POI naming and generated details.
-9. Temperature-sensitive display of water composition.
+7. POI naming and generated details.
+8. Temperature-sensitive display of water composition.
 
 Portrait artwork is Step 2. Starting-world visibility is Step 3. Political data is Step 4.
 
@@ -142,34 +141,24 @@ Moon order is arbitrary but stable; use generation order consistently. Nice name
 
 The generated BasicSignal facts for a moon explicitly state that it is a moon and identify its host planet. A direct-orbit planet is not described as a moon or "nonmoon", just not mentioned.
 
-## 8. Route endpoint navigation
+## 8. POIs
 
-Route inspection must provide navigation to both endpoint systems, including routes whose endpoints are more than one hex apart.
-
-- A selected route exposes two endpoint controls.
-- Each control displays the endpoint system name appropriate to the active GM/player preview.
-- Activating a control selects or opens that endpoint system.
-- Endpoint navigation is derived through `Route.PortalIds` and `RoutePortal.SystemId`; it must not assume hex adjacency.
-- The current contextual “To [other system]” control may remain in a system view, but the route detail UI must expose both endpoints.
-- Styling previously removed in git history will be revived. Where or when that styling is applied is TBD.
-
-## 9. POIs
-
-### 9.1 Naming
+### 8.1 Naming
 
 Generated POI names use:
 
-`<Type>-<lowercase roman numeral>-<ParentObjectName>`
+`<ParentObjectName><lowercase Roman numeral>:<Type>`
 
 Rules:
 
-- Numbering starts at `i` for each `(parent, POI type)` pair.
-- Numbering follows stable generation order.
+- Numbering starts at `i` for each parent and increments across all of that parent's POIs, regardless of POI type.
+- Numbering follows POI generation order. The specific order is arbitrary, but it is stable for a seed.
 - The POI's `NiceName` is generated from the parent's `NiceName`.
 - The POI's procedural name is generated from the parent's procedural name.
 - The POI's `NiceName` remains independently editable.
+- Before final naming, each POI receives a deterministic random four-digit temporary name in the form `<four digits>-TEMP`. Final generated output replaces this temporary name.
 
-### 9.2 Generated details
+### 8.2 Generated details
 
 Each POI rolls all random detail columns supplied by its POI table, currently including an occupant and a situation where defined.
 
@@ -179,7 +168,7 @@ Each POI rolls all random detail columns supplied by its POI table, currently in
 - The GMNote clearly labels each result, for example `Occupants:` and `Situation:`.
 - These details are not automatically exposed to players by Basic Scan.
 
-## 10. Water versus ice display
+## 9. Water versus ice display
 
 When `BulkComposition` is stored as `Water`, presentation uses:
 
