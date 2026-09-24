@@ -618,7 +618,7 @@ export function TopDown({
                     <span className={`td-planet ${planetColorClass(p)}`} />
                   </Selectable>
                   <label className="topdown-planet-caption">
-                    <strong>{planetName}</strong>
+                    {moons.length === 0 && <strong>{planetName}</strong>}
                   </label>
                   {objectPois(p.Id).length > 0 && (
                     <div className="topdown-poi-list">
@@ -678,6 +678,9 @@ export function TopDown({
                             ▰
                           </Selectable>
                         )}
+                      <label className="topdown-moon-caption">
+                        <strong>{displayName(details(m.Id, sector), preview)}</strong>
+                      </label>
                     </div>
                   );
                 })}

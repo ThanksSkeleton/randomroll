@@ -2122,6 +2122,22 @@ select {
 .symbolic-info-family .family-member {
   margin-left: var(--symbolic-moon-gap);
 }
+.symbolic-object-grid .planetary-family .world-column {
+  z-index: auto;
+}
+.symbolic-object-grid .world-unit.moon-unit {
+  z-index: 1;
+}
+.symbolic-object-grid .world-unit.moon-unit::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  left: -58px;
+  right: 50%;
+  top: 40px;
+  border-top: 2px dotted #e3c84b;
+  pointer-events: none;
+}
 .interplanet-flex-spacer {
   flex: 1 1 0;
   min-width: 0;
@@ -2255,6 +2271,13 @@ select {
 .topdown .td-moon > button:first-child span {
   width: var(--td-moon-size);
   height: var(--td-moon-size);
+}
+.topdown .topdown-moon-caption {
+  top: calc(var(--td-moon-size) / 2 + 6px);
+  font-size: var(--td-planet-label-size);
+}
+.topdown .topdown-moon-caption strong {
+  font-size: var(--td-planet-label-size);
 }
 .topdown .topdown-planet-caption {
   top: calc(var(--td-planet-size) / 2 + 6px);

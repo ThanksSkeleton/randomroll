@@ -170,8 +170,30 @@ function hexCoordinatePart(value: number): string {
 function applyGeneratedNames(seed: string, entityPath: string, system: StarSystem): StarSystem {
   const niceName = randomSystemName(seed, entityPath);
   const proceduralName = `${hexCoordinatePart(system.HexLocation.Column)}${hexCoordinatePart(system.HexLocation.Row)}`;
-  const objects = system.Objects.map((object, index) => {
-    const letter = String.fromCharCode('A'.charCodeAt(0) + index);
+  const directObjects = system.Objects.filter((object) => object.Orbit.ParentObjectId === null);
+  const directLetters = new Map(directObjects.map((object, index) => [
+    object.Id,
+    String.fromCharCode('A'.charCodeAt(0) + index),
+  ]));
+  const moonIndexes = new Map<string, number>();
+  const objects = system.Objects.map((object) => {
+    if (object.Orbit.ParentObjectId !== null && object.Kind === 'Planet') {
+      const parent = system.Objects.find((candidate) => candidate.Id === object.Orbit.ParentObjectId);
+      const parentLetter = parent === undefined ? undefined : directLetters.get(parent.Id);
+      if (parent === undefined || parent.Kind !== 'Planet' || parentLetter === undefined) {
+        throw new Error(`Missing named parent for moon ${object.Id}`);
+      }
+      const moonIndex = moonIndexes.get(parent.Id) ?? 0;
+      moonIndexes.set(parent.Id, moonIndex + 1);
+      const moonSuffix = String.fromCharCode('a'.charCodeAt(0) + moonIndex);
+      return {
+        ...object,
+        NiceName: `${niceName} ${parentLetter}${moonSuffix}`,
+        ProceduralName: `${proceduralName} ${parentLetter}${moonSuffix}`,
+      };
+    }
+    const letter = directLetters.get(object.Id);
+    if (letter === undefined) throw new Error(`Missing direct-orbit name for ${object.Id}`);
     const suffix = `${object.Kind === 'Planet' ? '' : 'X '}${letter}`;
     return {
       ...object,

@@ -75,8 +75,25 @@ function objectTypeLabel(objectType: string) {
   return objectType.replace(/([a-z])([A-Z])/g, '$1 $2');
 }
 
-function planetStock(planet: Planet, sector: Sector, systemId: string | undefined): StockSignals {
-  const basic = `${formatAu(planet.Orbit.AU)} AU - ${planet.Temperature} - ${planet.Size}-Class\nAtmosphere: ${planet.Atmosphere} Composition: ${planet.BulkComposition}`;
+function planetStock(
+  planet: Planet,
+  sector: Sector,
+  systemId: string | undefined,
+  preview: Preview,
+): StockSignals {
+  const host = planet.Orbit.ParentObjectId
+    ? sector.Systems
+        .find((system) => system.Id === systemId)
+        ?.Objects.find(
+          (object): object is Planet =>
+            object.Kind === 'Planet' && object.Id === planet.Orbit.ParentObjectId,
+        )
+    : undefined;
+  const hostName = host
+    ? displayName(findDetails(sector, host.Id), preview) ?? host.ProceduralName
+    : undefined;
+  const moonFact = hostName ? `\nMoon of ${hostName}` : '';
+  const basic = `${formatAu(planet.Orbit.AU)} AU - ${planet.Temperature} - ${planet.Size}-Class${moonFact}\nAtmosphere: ${planet.Atmosphere} Composition: ${planet.BulkComposition}`;
   const signalsDetected = associatedPoiCount(sector, systemId, planet.Id);
   if (planet.InhabitedInfo === false) {
     return {
@@ -93,8 +110,10 @@ function planetStock(planet: Planet, sector: Sector, systemId: string | undefine
   };
 }
 
-function stockSignals(found: FoundObject, sector: Sector): StockSignals {
-  if (found.kind === 'Planet') return planetStock(found.object, sector, found.containingSystem?.Id);
+function stockSignals(found: FoundObject, sector: Sector, preview: Preview): StockSignals {
+  if (found.kind === 'Planet') {
+    return planetStock(found.object, sector, found.containingSystem?.Id, preview);
+  }
   if (found.kind === 'OtherCelestialObject') {
     return {
       basic: `${formatAu(found.object.Orbit.AU)} AU - ${objectTypeLabel(found.object.ObjectType)}`,
@@ -266,7 +285,7 @@ function DetailBox({
       ...old,
       details: { ...old.details, [info.Id]: { ...old.details[info.Id], [field]: value } },
     }));
-  const stock = stockSignals(found, sector);
+  const stock = stockSignals(found, sector, preview);
   if (preview === 'player' && info.VisibilityLevel === VisibilityLevel.NONE)
     return (
       <section className="detail-section warning">
