@@ -153,7 +153,6 @@ export const EXTRA_OBJECT_TYPE_WEIGHTS: readonly { Value: ExtraObjectCategory; W
     { Value: 'KuiperBelt', Weight: 10 },
   ];
 const ONE_INHABITED_WORLD_MAX_ROLL = 85;
-const TWO_INHABITED_WORLDS_MAX_ROLL = 95;
 const GAS_GIANT_MOON_MAX_ROLL = 10;
 export const MAX_SYSTEM_GENERATION_RETRIES = 5;
 
@@ -180,6 +179,15 @@ function applyGeneratedNames(seed: string, entityPath: string, system: StarSyste
       ProceduralName: `${proceduralName} ${suffix}`,
     };
   });
+  const pointsOfInterest = system.PointsOfInterest.map((poi) => {
+    const parent = objects.find((object) => object.Id === poi.ParentObjectId);
+    if (parent === undefined) throw new Error(`Missing POI parent ${poi.ParentObjectId}`);
+    return {
+      ...poi,
+      NiceName: `${parent.NiceName}:${poi.POIType}`,
+      ProceduralName: `${parent.ProceduralName}:${poi.POIType}`,
+    };
+  });
 
   return {
     ...system,
@@ -191,12 +199,13 @@ function applyGeneratedNames(seed: string, entityPath: string, system: StarSyste
       ProceduralName: `${proceduralName} star`,
     },
     Objects: objects,
+    PointsOfInterest: pointsOfInterest,
   };
 }
 
 function inhabitedCount(seed: string, path: string): number {
   const roll = rollDie(randomFor(seed, `${path}:inhabited-count`), 100);
-  return roll <= ONE_INHABITED_WORLD_MAX_ROLL ? 1 : roll <= TWO_INHABITED_WORLDS_MAX_ROLL ? 2 : 3;
+  return roll <= ONE_INHABITED_WORLD_MAX_ROLL ? 1 : 2;
 }
 
 /**
@@ -271,13 +280,13 @@ function generateSystemOnce(options: GenerateSystemOptions): StarSystem {
     objects.push(parent);
     pendingMoons.push({ worldPath, parentId: parent.Id });
   }
-  const extraTarget = Math.max(
-    2,
-    rollDie(randomFor(options.seed, `${options.entityPath}:extra-count`), 6),
+  const extraTarget = Math.min(
+    5 - count,
+    rollDie(randomFor(options.seed, `${options.entityPath}:extra-count`), 3) + 1,
   );
   // A gas-giant parent of an inhabited moon is itself an extra object. Moons
-  // live outside `objects` until final assembly, so include them here to keep
-  // the final extra-object total within the invariant's two-through-seven cap.
+  // live outside `objects` until final assembly, so include them here when
+  // keeping the total object count within five.
   while (objects.length + pendingMoons.length - count < extraTarget) {
     const index = objects.length + 1;
     const path = `${options.entityPath}:extra:${String(index).padStart(2, '0')}`;
@@ -426,12 +435,6 @@ export function generateCompleteSystem(options: GenerateSystemOptions): StarSyst
   return applyGeneratedNames(options.seed, options.entityPath, system);
 }
 
-function inhabitedObjectCount(objects: readonly SystemObject[]): number {
-  return objects.filter(
-    (object): object is Planet => object.Kind === 'Planet' && object.InhabitedInfo !== false,
-  ).length;
-}
-
 function makePoi(
   seed: string,
   path: string,
@@ -453,6 +456,7 @@ function makePoi(
     },
     ParentObjectId: parentObjectId,
     POIType: type,
+    AngleDegrees: randomFor(seed, `${path}:angle`)() * 360,
   };
 }
 
@@ -483,8 +487,7 @@ export function populatePointsOfInterest(
         )
         .map((object) => ({ Value: { type: row.Value, host: object }, Weight: row.Weight })),
     );
-    const extraCount = objects.length - inhabitedObjectCount(objects);
-    const canCreateStation = extraCount < 7;
+    const canCreateStation = objects.length < 5;
     const candidates = canCreateStation
       ? [
           ...eligible,
@@ -499,7 +502,7 @@ export function populatePointsOfInterest(
         )
         .join(', ');
       throw new Error(
-        `No feasible POI candidates for ${seed}:${entityPath}:${index}; extraObjects=${extraCount}; eligible=${eligible.length}; hosts=[${hostSummary}]`,
+        `No feasible POI candidates for ${seed}:${entityPath}:${index}; objects=${objects.length}; eligible=${eligible.length}; hosts=[${hostSummary}]`,
       );
     }
     const selected = chooseWeighted(

@@ -114,16 +114,17 @@ export function checkAllInvariants(value: unknown): InvariantViolation[] {
     const inhabitedCount = system.Objects.filter(
       (object): object is Planet => object.Kind === 'Planet' && object.InhabitedInfo !== false,
     ).length;
-    if (inhabitedCount < 1 || inhabitedCount > 3)
+    if (inhabitedCount < 1 || inhabitedCount > 2)
       fail(
         '2A-10',
-        `System ${system.Id} has ${inhabitedCount} inhabited planets; expected one through three.`,
+        `System ${system.Id} has ${inhabitedCount} inhabited worlds; expected one or two.`,
       );
     const extraObjectCount = system.Objects.length - inhabitedCount;
-    if (extraObjectCount < 2 || extraObjectCount > 7)
+    const maxExtraObjectCount = 5 - inhabitedCount;
+    if (extraObjectCount < 2 || extraObjectCount > maxExtraObjectCount)
       fail(
         '2A-35',
-        `System ${system.Id} has ${extraObjectCount} extra objects; expected two through seven.`,
+        `System ${system.Id} has ${extraObjectCount} extra objects; expected two through ${maxExtraObjectCount} (five total objects maximum).`,
       );
     if (system.PointsOfInterest.length < 2 || system.PointsOfInterest.length > 5)
       fail(
@@ -184,6 +185,9 @@ export function checkAllInvariants(value: unknown): InvariantViolation[] {
           'F13',
           `POI ${poi.Id} of type ${poi.POIType} is incompatible with parent ${parent.Id}.`,
         );
+      if (!isFiniteNumber(poi.AngleDegrees) || poi.AngleDegrees < 0 || poi.AngleDegrees >= 360) {
+        fail('F15', `POI ${poi.Id} has invalid angle ${poi.AngleDegrees}; expected [0, 360).`);
+      }
     }
     for (const object of system.Objects) {
       if (system.PointsOfInterest.filter((poi) => poi.ParentObjectId === object.Id).length > 3)
@@ -352,7 +356,8 @@ function validateCanonicalShape(
       if (
         !selectable(poi, `${path}.PointsOfInterest[${poiIndex}]`) ||
         !string(poi.ParentObjectId, `${path}.PointsOfInterest[${poiIndex}].ParentObjectId`) ||
-        !string(poi.POIType, `${path}.PointsOfInterest[${poiIndex}].POIType`)
+        !string(poi.POIType, `${path}.PointsOfInterest[${poiIndex}].POIType`) ||
+        !number(poi.AngleDegrees, `${path}.PointsOfInterest[${poiIndex}].AngleDegrees`)
       )
         return undefined;
   }
@@ -466,7 +471,7 @@ function checkNoUnknownSchemaProperties(
     }
     for (const poi of system.PointsOfInterest) {
       checkSelectable(poi, `POI ${poi.Id}`);
-      check(poi, [...selectable, 'ParentObjectId', 'POIType'], `POI ${poi.Id}`);
+      check(poi, [...selectable, 'ParentObjectId', 'POIType', 'AngleDegrees'], `POI ${poi.Id}`);
     }
   }
 }

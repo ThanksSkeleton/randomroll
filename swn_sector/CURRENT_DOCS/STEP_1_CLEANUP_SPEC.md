@@ -11,7 +11,7 @@ The current canonical entities, visibility levels, IDs, names, intelligence fiel
 1. Star and planet presentation.
 2. Orbit spacing for physical validity and UI readability.
 3. Belt and gas-cloud rendering.
-4. Inhabited-world summary icons.
+4. Inhabited-world summary ratings.
 5. Symbolic-view layout cleanup.
 6. Moon rendering, description, and naming.
 7. Route endpoint navigation.
@@ -81,26 +81,37 @@ Readability is a best-effort heuristic, not a hard requirement.
 
 ## 4. Belts and gas clouds
 
-### 4.1 Asteroid and Kuiper belts
+### 4.1 POI angles
 
-- In the top-down view, an `AsteroidBelt` and `KuiperBelt` are rendered as annular bands centered on the star, not as planet-like point markers.
-- Asteroid and Kuiper belts have distinct textures or colors.
-- The belt remains selectable through a clear hit target and accessible label.
+- Every POI has a persisted `AngleDegrees` field generated deterministically in `[0, 360)`.
+- POI `ProceduralName` and `NiceName` use `{ParentObjName}:{Type}`, with each variant using its matching parent name variant.
+- The angle places a gas-cloud or belt POI on a star-centered radial line at the host object's AU radius. It does not change the POI's parent relationship.
+- The exact placement treatment is defined with each host type: belt POIs use the annulus in 4.2, and gas-cloud POIs use the treatment in 4.3.
+
+### 4.2 Asteroid and Kuiper Belts
+
+- In the top-down view, an `AsteroidBelt` and `KuiperBelt` are rendered as donut-shaped annular bands centered on the star, not as planet-like point markers.
+- Each belt's visual and hit region use an outer circular boundary minus an inner circular cutout. The annulus centerline sits at that object's AU radius; belt width is cosmetic and does not alter AU or orbital calculations.
+- The annulus body uses a repeating Swiss cross pattern. Asteroid belts use brown, and Kuiper belts use light blue; their appearances are configured independently.
+- Baked top-down appearance: asteroid belts use a 15 px width, 6 px cross spacing, `#b98958`, and 50% opacity; Kuiper belts use a 24 px width, 33 px cross spacing, `#8fd8ed`, and 50% opacity.
+- Belt rendering and cosmetic width apply only in the top-down view.
+- No dotted orbit line is drawn for belts. The whole donut body is selectable with an accessible label, and a selected belt has inner and outer outlines.
 - The symbolic representation is TBD.
 
-Add an angle field to all POIs. It is relevant only for belt-hosted POIs, where it places the POI at a specific point on the annulus. The angle is deterministic, lies in `[0, 360)`, and does not change the POI's parent relationship.
+### 4.3 Gas Clouds
 
-### 4.2 Gas clouds
-
-TBD.
+- In the top-down view, a shell-sized rectangular pattern layer is masked by the central system hex, with the disk inside the gas cloud's stored AU radius cut out. The visual mask and hit region use the same geometry.
+- The cloud uses dark purple Swiss crosses at 25% opacity on a transparent background. Its shell-sized overlay is clipped to the central system hex and the cloud’s AU radius, and renders beneath stars, planets, belts, and other selectable objects.
+- Gas clouds do not show a dotted orbit line or a top-down pentagon glyph. The patterned region itself is the accessible selection target; there is no separate point hit target.
+- The symbolic view represents a gas cloud with four purple Swiss crosses.
 
 ## 5. Inhabited-world summary
 
-Every inhabited planet or moon shows population, habitability (`TotalHab`), and tech level in the symbolic view. Whether these use text, symbols, or a combination is TBD, but content-less placeholders should be removed. Uninhabited worlds show no inhabited-world summary row.
+Every inhabited planet or moon shows habitability, population, and tech level in the symbolic view. Habitability is a solid circle: rating 0 is gray, 1 red, 2 yellow, and 3 green. Population is shown as one white bust-up human glyph per population tier (tiers 1–5); glyphs overlap with spacing narrower than the glyph width. Tech level remains numeric: ratings 0–3 are white, 4 and 4.1 are blue, and 5 is light purple. Uninhabited worlds show no inhabited-world summary row.
 
 ## 6. Symbolic-view layout
 
-The symbolic object grid and its track occupy the same vertical extent.
+The symbolic track fits the object grid’s natural content height without adding extra minimum-height space.
 
 ## 7. Moons
 
@@ -186,4 +197,4 @@ Step 1 is complete after visual inspection by human dev.
 - Exact star palette and relative sizes.
 - Orbital-spacing investigation and readability heuristic.
 - Final top-down gas-cloud treatment.
-- Exact schema field names for POI placement/details.
+- Exact schema field names for POI details.

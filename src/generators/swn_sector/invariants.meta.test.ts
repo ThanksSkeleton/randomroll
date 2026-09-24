@@ -102,6 +102,7 @@ describe('merged-sector independent stations', () => {
       ...entity('poi'),
       ParentObjectId: stationObject.Id,
       POIType: 'Deep-space station',
+      AngleDegrees: 0,
     });
     const result = checkAllInvariants(input);
 
@@ -117,6 +118,7 @@ describe('merged-sector independent stations', () => {
       ...entity('poi'),
       ParentObjectId: giant.Id,
       POIType: 'Asteroid base',
+      AngleDegrees: 0,
     });
 
     expect(checkAllInvariants(input).some((violation) => violation.RuleId === 'F13')).toBe(true);
@@ -136,6 +138,7 @@ describe('merged-sector independent stations', () => {
       ...entity('poi'),
       ParentObjectId: terrestrial.Id,
       POIType: 'Remote moon base',
+      AngleDegrees: 0,
     });
     const violations = checkAllInvariants(input);
 

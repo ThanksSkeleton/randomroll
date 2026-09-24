@@ -16,6 +16,10 @@ import { starPresentationClass, starPresentationStyle } from '../../../star_pres
 import { StarGlyph } from './StarGlyph';
 
 const TOP_DOWN_BOUNDARY_FILL = 0.88;
+const BELT_APPEARANCE = {
+  asteroid: { widthPx: 15, crossSizePx: 6, color: '#b98958', alpha: 0.5 },
+  kuiper: { widthPx: 24, crossSizePx: 33, color: '#8fd8ed', alpha: 0.5 },
+} as const;
 const BAKED_TOP_DOWN = {
   spaceshipDistance: 30,
   routeWidth: 7,
@@ -125,6 +129,7 @@ export function TopDown({
   );
   const shellRef = useRef<HTMLDivElement>(null);
   const [mapSize, setMapSize] = useState(320);
+  const [shellSize, setShellSize] = useState({ width: 320, height: 320 });
   const c = mapSize / 2;
   const hexWidth = mapSize * BAKED_TOP_DOWN.centralHexWidth;
   const hexHeight = (hexWidth * 98) / 112;
@@ -202,8 +207,12 @@ export function TopDown({
   useEffect(() => {
     const shell = shellRef.current;
     if (!shell) return;
-    const updateSize = () =>
-      setMapSize(Math.max(0, Math.min(shell.clientWidth - 24, shell.clientHeight - 24)));
+    const updateSize = () => {
+      const width = shell.clientWidth;
+      const height = shell.clientHeight;
+      setShellSize({ width, height });
+      setMapSize(Math.max(0, Math.min(width - 24, height - 24)));
+    };
     updateSize();
     const observer = new ResizeObserver(updateSize);
     observer.observe(shell);
@@ -226,6 +235,88 @@ export function TopDown({
               return <polygon key={`${hex.Column}-${hex.Row}`} points={hexPoints(point)} />;
             })}
           </svg>
+          {visibleOtherObjects
+            .filter((object) => object.ObjectType === 'GasCloud')
+            .map((object) => {
+              const innerRadius = object.Orbit.AU * pixelsPerAu;
+              const shellCenterX = shellSize.width / 2;
+              const shellCenterY = shellSize.height / 2;
+              const hex = hexPoints({ left: shellCenterX, top: shellCenterY });
+              const patternId = `gas-cloud-cross-${object.Id}`;
+              const maskId = `gas-cloud-mask-${object.Id}`;
+              const patternSize = 18;
+              const objectName = displayName(details(object.Id, sector), preview) ?? 'Gas cloud';
+              const hexPath = `M ${hex.replaceAll(' ', ' L ')} Z`;
+              const innerCirclePath =
+                innerRadius > 0
+                  ? `M ${shellCenterX + innerRadius} ${shellCenterY} A ${innerRadius} ${innerRadius} 0 1 0 ${shellCenterX - innerRadius} ${shellCenterY} A ${innerRadius} ${innerRadius} 0 1 0 ${shellCenterX + innerRadius} ${shellCenterY} Z`
+                  : '';
+              const selectableRegionPath = `${hexPath} ${innerCirclePath}`;
+              const crossPath = `M ${patternSize * 0.4} ${patternSize * 0.15} H ${patternSize * 0.6} V ${patternSize * 0.4} H ${patternSize * 0.85} V ${patternSize * 0.6} H ${patternSize * 0.6} V ${patternSize * 0.85} H ${patternSize * 0.4} V ${patternSize * 0.6} H ${patternSize * 0.15} V ${patternSize * 0.4} H ${patternSize * 0.4} Z`;
+              return (
+                <svg
+                  key={`gas-cloud-field-${object.Id}`}
+                  className="td-gas-cloud-field"
+                  width={shellSize.width}
+                  height={shellSize.height}
+                  viewBox={`0 0 ${shellSize.width} ${shellSize.height}`}
+                  style={{
+                    left: (mapSize - shellSize.width) / 2,
+                    top: (mapSize - shellSize.height) / 2,
+                  }}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={objectName}
+                  aria-pressed={selected === object.Id}
+                  onClick={() => select(object.Id)}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                      event.preventDefault();
+                      select(object.Id);
+                    }
+                  }}
+                >
+                  <defs>
+                    <pattern
+                      id={patternId}
+                      width={patternSize}
+                      height={patternSize}
+                      patternUnits="userSpaceOnUse"
+                    >
+                      <path d={crossPath} fill="#4b286b" />
+                    </pattern>
+                    <mask id={maskId} maskUnits="userSpaceOnUse" maskContentUnits="userSpaceOnUse">
+                      <rect width={shellSize.width} height={shellSize.height} fill="black" />
+                      <polygon points={hex} fill="white" />
+                      <circle cx={shellCenterX} cy={shellCenterY} r={innerRadius} fill="black" />
+                    </mask>
+                  </defs>
+                  <g mask={`url(#${maskId})`} opacity={0.25} pointerEvents="none">
+                    <rect
+                      width={shellSize.width}
+                      height={shellSize.height}
+                      fill={`url(#${patternId})`}
+                    />
+                  </g>
+                  {selected === object.Id && (
+                    <path
+                      d={selectableRegionPath}
+                      fill="none"
+                      stroke="#c38be0"
+                      strokeWidth={2}
+                      fillRule="evenodd"
+                      pointerEvents="none"
+                    />
+                  )}
+                  <path
+                    className="gas-cloud-select-region"
+                    d={selectableRegionPath}
+                    fill="transparent"
+                    fillRule="evenodd"
+                  />
+                </svg>
+              );
+            })}
           <svg
             className="spike-boundary"
             aria-hidden="true"
@@ -310,6 +401,13 @@ export function TopDown({
             );
           })}
           {visibleDirectObjects.map((object) => {
+            if (
+              object.Kind === 'OtherCelestialObject' &&
+              (object.ObjectType === 'AsteroidBelt' ||
+                object.ObjectType === 'KuiperBelt' ||
+                object.ObjectType === 'GasCloud')
+            )
+              return null;
             const orbitRadius = object.Orbit.AU * pixelsPerAu;
             return (
               <svg
@@ -335,6 +433,117 @@ export function TopDown({
               </svg>
             );
           })}
+          {visibleOtherObjects
+            .filter(
+              (object) =>
+                object.ObjectType === 'AsteroidBelt' || object.ObjectType === 'KuiperBelt',
+            )
+            // Paint outer bands first so an inner belt remains the topmost hit target
+            // wherever their cosmetic widths overlap.
+            .sort((left, right) => right.Orbit.AU - left.Orbit.AU)
+            .map((object) => {
+              const settings =
+                object.ObjectType === 'AsteroidBelt'
+                  ? BELT_APPEARANCE.asteroid
+                  : BELT_APPEARANCE.kuiper;
+              const radius = object.Orbit.AU * pixelsPerAu;
+              const outerRadius = radius + settings.widthPx / 2;
+              const innerRadius = Math.max(0, radius - settings.widthPx / 2);
+              const diameter = outerRadius * 2;
+              const patternId = `belt-cross-${object.Id}`;
+              const maskId = `belt-mask-${object.Id}`;
+              const name = displayName(details(object.Id, sector), preview) ?? object.ObjectType;
+              const circlePath = (circleRadius: number) =>
+                circleRadius > 0
+                  ? `M ${outerRadius + circleRadius} ${outerRadius} A ${circleRadius} ${circleRadius} 0 1 0 ${outerRadius - circleRadius} ${outerRadius} A ${circleRadius} ${circleRadius} 0 1 0 ${outerRadius + circleRadius} ${outerRadius} Z`
+                  : '';
+              const annulusPath = `${circlePath(outerRadius)} ${circlePath(innerRadius)}`;
+              return (
+                <svg
+                  key={`belt-ring-${object.Id}`}
+                  className={`td-belt-ring${selected === object.Id ? ' selected' : ''}`}
+                  width={diameter}
+                  height={diameter}
+                  viewBox={`0 0 ${diameter} ${diameter}`}
+                  style={{ left: c - outerRadius, top: c - outerRadius }}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={name}
+                  aria-pressed={selected === object.Id}
+                  pointerEvents="none"
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                      event.preventDefault();
+                      select(object.Id);
+                    }
+                  }}
+                >
+                  <defs>
+                    <pattern
+                      id={patternId}
+                      width={settings.crossSizePx}
+                      height={settings.crossSizePx}
+                      patternUnits="userSpaceOnUse"
+                    >
+                      <path
+                        d={`M ${settings.crossSizePx * 0.4} ${settings.crossSizePx * 0.15} H ${settings.crossSizePx * 0.6} V ${settings.crossSizePx * 0.4} H ${settings.crossSizePx * 0.85} V ${settings.crossSizePx * 0.6} H ${settings.crossSizePx * 0.6} V ${settings.crossSizePx * 0.85} H ${settings.crossSizePx * 0.4} V ${settings.crossSizePx * 0.6} H ${settings.crossSizePx * 0.15} V ${settings.crossSizePx * 0.4} H ${settings.crossSizePx * 0.4} Z`}
+                        fill={settings.color}
+                      />
+                    </pattern>
+                    <mask id={maskId} maskUnits="userSpaceOnUse" maskContentUnits="userSpaceOnUse">
+                      <rect width={diameter} height={diameter} fill="black" />
+                      <circle cx={outerRadius} cy={outerRadius} r={outerRadius} fill="white" />
+                      <circle cx={outerRadius} cy={outerRadius} r={innerRadius} fill="black" />
+                    </mask>
+                  </defs>
+                  <g opacity={settings.alpha} pointerEvents="none">
+                    <rect
+                      width={diameter}
+                      height={diameter}
+                      fill={settings.color}
+                      fillOpacity={0.22}
+                      mask={`url(#${maskId})`}
+                    />
+                    <rect
+                      width={diameter}
+                      height={diameter}
+                      fill={`url(#${patternId})`}
+                      mask={`url(#${maskId})`}
+                    />
+                  </g>
+                  {selected === object.Id && (
+                    <g pointerEvents="none">
+                      <circle
+                        cx={outerRadius}
+                        cy={outerRadius}
+                        r={innerRadius}
+                        fill="none"
+                        stroke="#ffffff"
+                        strokeWidth={1.5}
+                      />
+                      <circle
+                        cx={outerRadius}
+                        cy={outerRadius}
+                        r={outerRadius}
+                        fill="none"
+                        stroke="#ffffff"
+                        strokeWidth={1.5}
+                      />
+                    </g>
+                  )}
+                  <path
+                    className="belt-select-region"
+                    d={annulusPath}
+                    fill="transparent"
+                    fillRule="evenodd"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      select(object.Id);
+                    }}
+                  />
+                </svg>
+              );
+            })}
           <div className="td-object td-star" style={{ left: c, top: c }}>
             <Selectable
               id={system.Id}
@@ -478,21 +687,32 @@ export function TopDown({
           {visibleOtherObjects.map((object) => {
             const pp = pos(object.Orbit.AngleDegrees, object.Orbit.AU * pixelsPerAu);
             const objectName = displayName(details(object.Id, sector), preview);
+            const beltPoiHost =
+              object.ObjectType === 'AsteroidBelt' || object.ObjectType === 'KuiperBelt';
+            const radialPoiHost = beltPoiHost || object.ObjectType === 'GasCloud';
             return (
-              <div className="td-object td-other-object" style={pp} key={object.Id}>
-                <Selectable
-                  id={object.Id}
-                  selected={selected}
-                  onSelect={select}
-                  label={objectName ?? object.ObjectType}
-                  className="td-other-object-button"
-                >
-                  <OtherObjectGlyph object={object} />
-                </Selectable>
-                <label className="topdown-object-caption">
-                  <strong>{objectName}</strong>
-                </label>
-                {objectPois(object.Id).length > 0 && (
+              <div
+                className={`td-object td-other-object${object.ObjectType === 'GasCloud' ? ' td-gas-cloud-object' : ''}`}
+                style={pp}
+                key={object.Id}
+              >
+                {!beltPoiHost && object.ObjectType !== 'GasCloud' && (
+                  <Selectable
+                    id={object.Id}
+                    selected={selected}
+                    onSelect={select}
+                    label={objectName ?? object.ObjectType}
+                    className="td-other-object-button"
+                  >
+                    <OtherObjectGlyph object={object} />
+                  </Selectable>
+                )}
+                {!beltPoiHost && object.ObjectType !== 'GasCloud' && (
+                  <label className="topdown-object-caption">
+                    <strong>{objectName}</strong>
+                  </label>
+                )}
+                {!radialPoiHost && objectPois(object.Id).length > 0 && (
                   <div className="topdown-poi-list">
                     {objectPois(object.Id).map((poi) => (
                       <Selectable
@@ -509,6 +729,28 @@ export function TopDown({
                     ))}
                   </div>
                 )}
+                {radialPoiHost &&
+                  objectPois(object.Id).map((poi) => {
+                    const absolutePosition = pos(poi.AngleDegrees, object.Orbit.AU * pixelsPerAu);
+                    const poiPosition = {
+                      left: absolutePosition.left - pp.left,
+                      top: absolutePosition.top - pp.top,
+                    };
+                    return (
+                      <div className="td-radial-poi" style={poiPosition} key={poi.Id}>
+                        <Selectable
+                          id={poi.Id}
+                          selected={selected}
+                          onSelect={select}
+                          label={displayName(details(poi.Id, sector), preview) ?? 'POI'}
+                          title={displayName(details(poi.Id, sector), preview) ?? 'POI'}
+                          className="topdown-poi"
+                        >
+                          ◆
+                        </Selectable>
+                      </div>
+                    );
+                  })}
                 {sector.PlayerShip.CurrentLocationId === object.Id &&
                   visible(sector.PlayerShip.Id, sector, preview) && (
                     <Selectable

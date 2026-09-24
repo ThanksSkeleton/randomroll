@@ -515,7 +515,6 @@ select:focus-visible {
   margin: 3px 0;
 }
 .symbolic-track {
-  min-height: 290px;
   display: flex;
   align-items: flex-start;
   gap: 30px;
@@ -916,11 +915,33 @@ select:focus-visible {
   border-bottom: 0;
 }
 .other-object-gas-cloud {
-  width: 29px;
-  height: 29px;
-  background: #8954a8;
-  border: 2px solid #c38be0;
-  clip-path: polygon(50% 0%, 98% 35%, 79% 92%, 21% 92%, 2% 35%);
+  display: grid;
+  width: 30px;
+  height: 30px;
+  grid-template-columns: repeat(2, 9px);
+  grid-template-rows: repeat(2, 9px);
+  place-content: center;
+  gap: 4px;
+}
+.other-object-gas-cloud .gas-cloud-cross {
+  display: block;
+  width: 9px;
+  height: 9px;
+  background: #c38be0;
+  clip-path: polygon(
+    35% 0,
+    65% 0,
+    65% 35%,
+    100% 35%,
+    100% 65%,
+    65% 65%,
+    65% 100%,
+    35% 100%,
+    35% 65%,
+    0 65%,
+    0 35%,
+    35% 35%
+  );
 }
 .other-object-independent-station {
   width: 21px;
@@ -1063,6 +1084,46 @@ select:focus-visible {
   position: absolute;
   border: 1px dashed #2b4148;
   border-radius: 50%;
+}
+.td-belt-ring {
+  position: absolute;
+  z-index: 2;
+  overflow: visible;
+  cursor: pointer;
+  outline: none;
+}
+.td-belt-ring:focus-visible {
+  filter: drop-shadow(0 0 3px #fff);
+}
+.td-belt-ring .belt-select-region {
+  pointer-events: fill;
+  cursor: pointer;
+}
+.td-radial-poi {
+  position: absolute;
+  width: 0;
+  height: 0;
+  z-index: 4;
+}
+.td-radial-poi .topdown-poi {
+  transform: translate(-50%, -50%);
+}
+.td-gas-cloud-field {
+  position: absolute;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  pointer-events: none;
+}
+.td-gas-cloud-field:focus-visible {
+  filter: drop-shadow(0 0 3px #fff);
+}
+.td-gas-cloud-field .gas-cloud-select-region {
+  pointer-events: fill;
+  cursor: pointer;
+}
+.td-gas-cloud-object {
+  z-index: 1;
 }
 .spike-boundary {
   position: absolute;
@@ -1708,6 +1769,43 @@ select {
 .world-summary-icons {
   min-height: 28px;
   align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+.summary-icons .summary-rating {
+  width: auto;
+  height: auto;
+  border: 0;
+  font: 700 12px 'IBM Plex Mono';
+}
+.summary-icons .summary-rating-habitability {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+.summary-icons .summary-rating-population {
+  display: inline-flex;
+  align-items: center;
+  color: #f4f4f4;
+}
+.population-bust {
+  display: block;
+  width: 9px;
+  height: 12px;
+  flex: 0 0 9px;
+  fill: currentColor;
+}
+.population-bust + .population-bust {
+  margin-left: -4px;
+}
+.summary-icons .summary-rating-tech-white {
+  color: #f4f4f4;
+}
+.summary-icons .summary-rating-tech-blue {
+  color: #61c7ed;
+}
+.summary-icons .summary-rating-tech-purple {
+  color: #c38be0;
 }
 .world-poi-list {
   display: grid;

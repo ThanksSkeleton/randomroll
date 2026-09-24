@@ -312,6 +312,8 @@ export interface PointOfInterest extends SelectableEntity {
   /** The system object that contains this point of interest. */
   ParentObjectId: Guid;
   POIType: PointOfInterestType;
+  /** Deterministic polar placement used for POIs hosted by belts and gas clouds. */
+  AngleDegrees: number;
 }
 
 /** Every entity that may be selected, inspected, or given visibility. */

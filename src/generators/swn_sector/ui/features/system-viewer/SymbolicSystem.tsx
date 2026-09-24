@@ -1,6 +1,13 @@
 import { Fragment } from 'react';
 import type { Preview } from '../../application/appState';
-import type { OtherCelestialObject, Planet, Sector, StarSystem } from '../../../merged_schema';
+import type {
+  OtherCelestialObject,
+  Planet,
+  Population,
+  Sector,
+  StarSystem,
+} from '../../../merged_schema';
+import { TECH_LEVEL } from '../../../tables';
 import { VisibilityLevel, visibilityRank } from '../../domain/sector/visibility';
 import {
   findDetails,
@@ -67,6 +74,19 @@ function Selectable({
     </button>
   );
 }
+const POPULATION_RATING: Record<Population, number> = {
+  'Fewer than 500': 1,
+  'Fewer than a million inhabitants': 2,
+  'Several million inhabitants': 3,
+  'Hundreds of millions of inhabitants': 4,
+  'Billions of inhabitants': 5,
+};
+const HABITABILITY_COLOR: Record<number, string> = {
+  0: '#858b90',
+  1: '#e34b4b',
+  2: '#e3c84b',
+  3: '#55c96b',
+};
 const worldScale: Record<string, number> = {
   mercury: 0.5,
   luna: 0.5,
@@ -96,6 +116,14 @@ function WorldSymbol({
   preview: Preview;
 }) {
   const d = details(world.Id, sector);
+  const techRating =
+    world.InhabitedInfo === false ? undefined : TECH_LEVEL[world.InhabitedInfo.TechLevel];
+  const techRatingColorClass =
+    techRating === 5
+      ? 'summary-rating-tech-purple'
+      : techRating === 4 || techRating === 4.1
+        ? 'summary-rating-tech-blue'
+        : 'summary-rating-tech-white';
   const pois = system.PointsOfInterest.filter(
     (p) => p.ParentObjectId === world.Id && visible(p.Id, sector, preview),
   );
@@ -131,18 +159,44 @@ function WorldSymbol({
       {d && showProceduralName(d, preview) && (
         <small className="world-procedural-name">{d.ProceduralName}</small>
       )}
-      <div
-        className="summary-icons world-summary-icons"
-        title={world.InhabitedInfo !== false ? 'Atmosphere / population / technology' : undefined}
-      >
-        {world.InhabitedInfo !== false && (
-          <>
-            <span className="summary-icon summary-icon-atmosphere">◉</span>
-            <span className="summary-icon summary-icon-population">♟</span>
-            <span className="summary-icon summary-icon-technology">⌁</span>
-          </>
-        )}
-      </div>
+      {world.InhabitedInfo !== false && (
+        <div className="summary-icons world-summary-icons" role="group" aria-label="World ratings">
+          <span
+            className="summary-rating summary-rating-habitability"
+            style={{
+              backgroundColor:
+                HABITABILITY_COLOR[world.InhabitedInfo.TotalHab] ?? HABITABILITY_COLOR[0],
+            }}
+            role="img"
+            aria-label={`Habitability rating ${world.InhabitedInfo.TotalHab}`}
+            title={`Habitability rating: ${world.InhabitedInfo.TotalHab}`}
+          />
+          <span
+            className="summary-rating summary-rating-population"
+            role="img"
+            aria-label={`Population tier ${POPULATION_RATING[world.InhabitedInfo.Population]}: ${world.InhabitedInfo.Population}`}
+            title={`Population tier ${POPULATION_RATING[world.InhabitedInfo.Population]}: ${world.InhabitedInfo.Population}`}
+          >
+            {Array.from(
+              { length: POPULATION_RATING[world.InhabitedInfo.Population] },
+              (_, index) => (
+                <svg key={index} className="population-bust" viewBox="0 0 12 14" aria-hidden="true">
+                  <circle cx="6" cy="3.5" r="2.5" />
+                  <path d="M1 13v-1.2a5 5 0 0 1 10 0V13z" />
+                </svg>
+              ),
+            )}
+          </span>
+          <span
+            className={`summary-rating summary-rating-technology ${techRatingColorClass}`}
+            role="img"
+            aria-label={`Technology rating ${techRating}: ${world.InhabitedInfo.TechLevel}`}
+            title={`Technology rating: ${techRating} (${world.InhabitedInfo.TechLevel})`}
+          >
+            {techRating}
+          </span>
+        </div>
+      )}
       <div className="poi-list world-poi-list">
         {pois.map((p) => (
           <Selectable
@@ -198,6 +252,10 @@ function OtherObjectSymbol({
             Array.from({ length: 5 }, (_, index) => <span key={index} />)}
           {object.ObjectType === 'KuiperBelt' &&
             Array.from({ length: 5 }, (_, index) => <span key={index} />)}
+          {object.ObjectType === 'GasCloud' &&
+            Array.from({ length: 4 }, (_, index) => (
+              <span className="gas-cloud-cross" key={index} />
+            ))}
         </span>
       </Selectable>
       <strong className="world-name world-symbol-name">{label}</strong>
