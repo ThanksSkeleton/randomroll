@@ -10,6 +10,12 @@ import {
 import { starPresentationClass, starPresentationStyle } from '../../../star_presentation';
 import { StarGlyph } from '../system-viewer/StarGlyph';
 
+const BAKED_HEXMAP = {
+  hexSize: 106,
+  topMargin: 21,
+  leftMargin: 36,
+} as const;
+
 function visible(id: string, sector: Sector, preview: Preview) {
   return preview === 'gm' || isVisibleToPlayer(sector, id);
 }
@@ -22,7 +28,12 @@ function name(id: string, sector: Sector, preview: Preview) {
     : d.NiceName;
 }
 function position(x: number, y: number) {
-  return { left: 100 + (x - 1) * 84, top: 55 + (y - 1) * 98 + ((x - 1) % 2) * 49 };
+  const scale = BAKED_HEXMAP.hexSize / 112;
+  const hexHeight = BAKED_HEXMAP.hexSize * (98 / 112);
+  return {
+    left: BAKED_HEXMAP.leftMargin + BAKED_HEXMAP.hexSize / 2 + (x - 1) * 84 * scale,
+    top: BAKED_HEXMAP.topMargin + hexHeight / 2 + ((y - 1) * 98 + ((x - 1) % 2) * 49) * scale,
+  };
 }
 function Selectable({
   id,
@@ -69,10 +80,19 @@ export function HexMap({
   select: (id: string | null) => void;
   preview: Preview;
 }) {
+  const scale = BAKED_HEXMAP.hexSize / 112;
+  const hexHeight = BAKED_HEXMAP.hexSize * (98 / 112);
+  const mapWidth = BAKED_HEXMAP.leftMargin + (1036 - 44) * scale;
+  const mapHeight = BAKED_HEXMAP.topMargin + (778 - 6) * scale;
   return (
     <div className="hex-wrap" onClick={() => select(null)}>
-      <div className="hex-map" role="group" aria-label="Sector map">
-        <svg className="routes" viewBox="0 0 1036 778" preserveAspectRatio="none">
+      <div
+        className="hex-map"
+        role="group"
+        aria-label="Sector map"
+        style={{ width: mapWidth, height: mapHeight }}
+      >
+        <svg className="routes" viewBox={`0 0 ${mapWidth} ${mapHeight}`}>
           {sector.Routes.filter((r) => visible(r.Id, sector, preview)).map((route) => {
             const endpoints = routeSystems(sector, route);
             const a = endpoints?.[0],
@@ -100,7 +120,17 @@ export function HexMap({
         {Array.from({ length: 77 }, (_, i) => {
           const x = (i % 11) + 1,
             y = Math.floor(i / 11) + 1;
-          return <div key={i} className="hex-cell" style={position(x, y)} />;
+          return (
+            <div
+              key={i}
+              className="hex-cell"
+              style={{
+                ...position(x, y),
+                width: BAKED_HEXMAP.hexSize,
+                height: hexHeight,
+              }}
+            />
+          );
         })}
         {sector.Systems.filter((s) => visible(s.Id, sector, preview)).map((system) => {
           const p = position(system.HexLocation.Column, system.HexLocation.Row);

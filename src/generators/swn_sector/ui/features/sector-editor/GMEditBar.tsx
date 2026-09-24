@@ -99,7 +99,7 @@ export function GMEditBar({
                       : 'Cultural Full'
               }`}
               disabled={!enabled}
-              className={`visibility-level-${level.toLowerCase()} ${!enabled ? 'button-disabled' : info?.VisibilityLevel === level ? 'button-active' : 'button-allowed'}`}
+              className={`visibility-level-${level.toLowerCase()} ${info?.VisibilityLevel === level ? 'button-active' : !enabled ? 'button-disabled' : 'button-allowed'}`}
               onClick={() => {
                 if (!selected) return;
                 const result = updateObjectVisibility(sector, selected, level);

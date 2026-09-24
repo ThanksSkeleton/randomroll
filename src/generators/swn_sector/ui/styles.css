@@ -1215,25 +1215,30 @@ select:focus-visible {
   z-index: 30;
 }
 .sector-icon {
-  width: 25px;
-  height: 25px;
+  width: 50px;
+  height: 50px;
   display: block;
   flex: none;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
   background: currentColor;
   -webkit-mask: var(--sector-icon) center / contain no-repeat;
   mask: var(--sector-icon) center / contain no-repeat;
 }
 .icon-button {
+  position: relative;
   width: 50px;
   height: 36px;
   border: 1px solid #2b3d43;
   background: #0c1418;
   color: var(--green);
-  padding: 6px 9px;
-  display: grid;
-  place-items: center;
+  padding: 0;
+  display: block;
   cursor: pointer;
   flex: none;
+  overflow: hidden;
 }
 .icon-button:hover:not(:disabled) {
   border-color: var(--green);
@@ -1850,15 +1855,6 @@ select {
   stroke: #38545c;
   stroke-width: 1.5;
 }
-.system-hex-label {
-  fill: #b6ccca;
-  font: 8px 'IBM Plex Mono';
-  letter-spacing: 0.06em;
-  paint-order: stroke;
-  stroke: #071015;
-  stroke-width: 4px;
-  stroke-linejoin: round;
-}
 .td-adjacent-hex {
   position: absolute;
   z-index: 4;
@@ -1900,8 +1896,8 @@ select {
 }
 .stage-hex .hex-wrap {
   display: flex;
-  align-items: safe center;
-  justify-content: safe center;
+  align-items: flex-start;
+  justify-content: flex-start;
   flex: 1;
   height: auto;
   min-height: 0;
@@ -2281,4 +2277,11 @@ button.button-active:hover:not(:disabled) {
   color: #778b92;
   border-color: #2b3d43;
   opacity: 1;
+}
+.edit-bar button.button-active:disabled {
+  background: var(--green);
+  color: #06100d;
+  border-color: var(--green);
+  opacity: 1;
+  cursor: not-allowed;
 }

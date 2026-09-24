@@ -30,20 +30,9 @@ const BAKED_TOP_DOWN = {
   orbitDutyCycle: 31,
   planetLabelFontSize: 13,
   gateLabelFontSize: 12,
-  centralHexWidth: 1.03,
-  systemDetailScale: 0.93,
-  adjacentLabelFontSize: 16,
-  diagonalLabelAngle: 60,
-  labelBoundaryDistances: {
-    top: 20,
-    upperRight: 25,
-    lowerRight: 25,
-    bottom: 25,
-    lowerLeft: 25,
-    upperLeft: 25,
-  },
+  centralHexWidth: 1.11,
+  systemDetailScale: 1.06,
 } as const;
-type HexLabelDirection = 'top' | 'upperRight' | 'lowerRight' | 'bottom' | 'lowerLeft' | 'upperLeft';
 function visible(id: string, sector: Sector, preview: Preview) {
   return preview === 'gm' || isVisibleToPlayer(sector, id);
 }
@@ -210,34 +199,6 @@ export function TopDown({
     const halfHeight = hexHeight / 2;
     return `${point.left - halfWidth / 2},${point.top - halfHeight} ${point.left + halfWidth / 2},${point.top - halfHeight} ${point.left + halfWidth},${point.top} ${point.left + halfWidth / 2},${point.top + halfHeight} ${point.left - halfWidth / 2},${point.top + halfHeight} ${point.left - halfWidth},${point.top}`;
   };
-  const boundaryLabel = (candidate: { HexLocation: { Column: number; Row: number } }) => {
-    const point = neighboringHexPosition(candidate.HexLocation);
-    const dx = point.left - c;
-    const dy = point.top - c;
-    const direction: HexLabelDirection =
-      Math.abs(dx) < 1
-        ? dy < 0
-          ? 'top'
-          : 'bottom'
-        : dx > 0
-          ? dy < 0
-            ? 'upperRight'
-            : 'lowerRight'
-          : dy < 0
-            ? 'upperLeft'
-            : 'lowerLeft';
-    const distance = BAKED_TOP_DOWN.labelBoundaryDistances[direction];
-    if (Math.abs(dx) < 1)
-      return { x: c, y: c + Math.sign(dy) * (hexHeight / 2 + distance), angle: 0 };
-    const length = Math.hypot(dx, dy);
-    const x = c + dx / 2 + (dx / length) * distance;
-    const y = c + dy / 2 + (dy / length) * distance;
-    return {
-      x,
-      y,
-      angle: dx * dy < 0 ? BAKED_TOP_DOWN.diagonalLabelAngle : -BAKED_TOP_DOWN.diagonalLabelAngle,
-    };
-  };
   const objectPois = (parentId: string) =>
     system.PointsOfInterest.filter(
       (poi) => poi.ParentObjectId === parentId && visible(poi.Id, sector, preview),
@@ -267,23 +228,6 @@ export function TopDown({
                   ? { left: c, top: c }
                   : neighboringHexPosition(hex);
               return <polygon key={`${hex.Column}-${hex.Row}`} points={hexPoints(point)} />;
-            })}
-            {adjacentSystems.map((candidate) => {
-              const name = displayName(details(candidate.Id, sector), preview) ?? 'System';
-              const label = boundaryLabel(candidate);
-              return (
-                <text
-                  key={candidate.Id}
-                  className="system-hex-label"
-                  style={{ fontSize: BAKED_TOP_DOWN.adjacentLabelFontSize }}
-                  x={label.x}
-                  y={label.y}
-                  textAnchor="middle"
-                  transform={`rotate(${label.angle} ${label.x} ${label.y})`}
-                >
-                  {name}
-                </text>
-              );
             })}
           </svg>
           <svg

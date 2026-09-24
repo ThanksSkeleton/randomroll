@@ -85,6 +85,19 @@ describe('prototype application workflows', () => {
     expect(document.querySelector('.object-name-editor')).toBeNull();
   });
 
+  it('keeps the selected visibility highlighted while GM editing is locked', () => {
+    renderApp();
+    fireEvent.click(firstSystemButton());
+
+    const visibilityButtons = screen.getAllByRole('button', { name: /^VISIBILITY:/ });
+    const currentVisibility = visibilityButtons.find((button) =>
+      button.className.includes('button-active'),
+    );
+
+    expect(currentVisibility).toBeTruthy();
+    expect(currentVisibility).toHaveProperty('disabled', true);
+  });
+
   it('discards an unsaved GM draft on navigation', () => {
     renderApp();
     const originalName = firstSystemButton()
