@@ -16,6 +16,9 @@ The current canonical entities, visibility levels, IDs, names, intelligence fiel
 6. Moon rendering, description, and naming.
 7. POI naming and generated details.
 8. Temperature-sensitive display of water composition.
+9. Detail bar name and visibility presentation.
+10. Independent-station marker sizing.
+11. Sector-map route styling.
 
 Portrait artwork is Step 2. Starting-world visibility is Step 3. Political data is Step 4.
 
@@ -176,6 +179,23 @@ When `BulkComposition` is stored as `Water`, presentation uses:
 - `Water` for all warmer temperature categories.
 
 This is display-only. The serialized `BulkComposition` remains `Water`, and generation/habitability rules continue to use that canonical value.
+
+## 10. Detail bar
+
+- Remove the Player Visibility box.
+- Show the object's `NiceName` and procedural name on the same line, separated by ` - `.
+
+## 11. Independent-station markers
+
+- Halve the displayed size of the independent-station diamond in the top-down view.
+- Halve the displayed size of the independent-station diamond in the symbolic view.
+- These size changes are visual only and do not affect selection or hit regions.
+
+## 12. Sector-map routes
+
+- The selected route uses the style currently used for an unselected route.
+- The unselected route uses half the current line weight and a dotted line style.
+- These route-style changes apply only to the sector map. Top-down view routes remain unchanged.
 
 ## Acceptance criteria
 

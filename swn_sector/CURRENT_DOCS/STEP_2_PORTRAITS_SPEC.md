@@ -1,43 +1,32 @@
 # Step 2 Specification: Portrait System
 
-## Status and intent
+We are generating standard images that will be used as portraits of lesser celestial objects in a randomly generated star sector and points of interest within a star system. "Hero" objects will have an alternate generation system and will be out of scope
 
-This specification defines a stable, hosted portrait system for generated sector entities. Portraits provide consistent symbolic flavor. They are not canonical illustrations of specific campaign locations.
-
-Portrait assignment occurs during sector generation, is persisted, and is not rerolled.
-
-## Visual direction
-
-All image-bank artwork must:
-
-- Use one coherent symbolic or stylized visual language.
-- Center the target object in the frame.
-- Include enough color to support useful hue variants.
-- Avoid text, labels, logos, or interface chrome.
-- Avoid unrelated stars, planets, ships, structures, or other objects that might contradict the generated sector.
-- Avoid unique landmarks or implied civilizations unless the category itself requires a structure.
-- Remain readable at the final inspector-card size.
-
-Portraits are category illustrations. A `Martian` portrait communicates the class of world, not the exact appearance of a particular named planet.
+Global Guideline:
+Standard shell - All
+- Black Space background with no nebulae, and no other stellar objects other than small background stars. No host star except the star images themselves
 
 ## Coverage inventory
 
 ### Stars: one bank per `StarType`
 
-1. `A-type`
-2. `F-type`
-3. `G-type`
-4. `K-type`
-5. `M-type`
-6. `Giant`
-7. `White dwarf`
-8. `Neutron star`
-9. `Stellar-mass black hole`
+1. `A-type` - Emphasize Danger, "Flare Star"
+2. `F-type` - Slightly whiter than the Sun
+3. `G-type` - Sun-like
+4. `K-type` - Slightly orange-r than the Sun
+5. `M-type` - Emphasize Small Size, Somewhat Dim
+6. `Giant` Emphasize Danger, Larger in Frame
+7. `White dwarf` - "Whitish Blue", Emphasize Small Size
+8. `Neutron star` - "Cinematic" Bright purple 
+9. `Stellar-mass black hole` - "Cinematic" depiction - deep dark red infalling matter, gravitational lensing effects
 
 ### Uninhabited planets: one bank per visual type
 
+These should be straightforward as these are just visual reproductions of real world planet types. Ensure that each image is isolated despite many of these worlds being moons irl. 
+
 1. `Mercurian`
-2. `Europan / Plutonic`
+2a. `Europan / Plutonic` - Ice
+2b. `Europan / Plutonic` - Water World
 3. `Lunar`
 4. `Ioan`
 5. `Titanian`
@@ -46,29 +35,35 @@ Portraits are category illustrations. A `Martian` portrait communicates the clas
 8. `Jovian`
 9. `Neptunian`
 
-The persisted planet visual classification introduced in Step 1 is authoritative for bank selection.
 
 ### Other celestial objects: one bank per `ObjectType`
 
-1. `AsteroidBelt`
-2. `KuiperBelt`
-3. `GasCloud`
-4. `IndependentStation`
+1. `AsteroidBelt` - From within a dense field of rocky bodies - "Cinematic" not realistic density
+2. `KuiperBelt` - From within a dense field of icy bodies - "Cinematic" not realistic density
+3. `GasCloud` - More of a shot from within a Nebula of swirling gas - "Cinematic" not realistic density
+4. `IndependentStation` - Free floating structure entered in frame, somewhat small (contrast with POI)
+
+ [IndependentStation / Base POI] - No nearby Spaceships or other objects unless specifically directed , no writing
 
 ### Points of interest: one bank per `POIType`
 
-1. `Deep-space station`
-2. `Asteroid base`
-3. `Remote moon base`
-4. `Ancient orbital ruin`
-5. `Research base`
-6. `Asteroid belt`
-7. `Comet base`
-8. `Comet belt`
-9. `Gas Mine`
-10. `Refueling station`
+General Guidelines for POI images
+- POI - POV: Very close in. As if we are doing a spacewalk from the structure and snapped a photo. Structure takes up large fraction of frame. Some of these have implicit stellar objects (ex: asteroid base- asteroid), which is fine.
+- POI Human structure "Chroma / Saturation Variation" - In service of these being hueshifted, try to stay to have regions with high chroma and a single hue, and have other areas desaturated. Colored lights are good for this.
+- [IndependentStation / Base POI] - No nearby Spaceships or other objects unless specifically directed , no writing
 
-POI portraits should emphasize the POI itself rather than repeat the host world's portrait.
+1. `Deep-space station` - Symmetric, cylindrical with spokes
+2. `Asteroid base` - Embedded in an asteroid, with docking ports and mining equipment visible
+3. `Remote moon base` - Solar Panels and antennae visible - Nondescript lunar surface
+4. `Ancient orbital ruin` - Obvious damage, alien or exotic shape
+5. `Research base` - landing pads, smokestacks or exhaust pipes, multiple structures in a complex - Nondescript lunar surface 
+6. `Asteroid belt` - 1-3 small mining ships interacting with asteroids
+7. `Comet base` - Embedded in a comet, with docking ports and mining equipment visible
+8. `Comet belt` - 1-3 small mining ships interacting with comets
+9. `Gas Mine` - Diamond shaped and blocky human made structure floating in green glass cloud (ambiguous if in a gas cloud or gas giant)
+10. `Refueling station` Cube-shaped shaped with cylindrical protrusions (docking ports) and huge gas tanks, free floating in space
+
+POI portraits should emphasize the POI itself 
 
 ### Routes
 
@@ -76,11 +71,6 @@ All routes use a route-specific bank. A route portrait is an abstract representa
 
 Route portals reuse the parent route portrait and do not receive a separate bank.
 
-### Explicit placeholders
-
-- Every inhabited planet or moon uses the inhabited-world placeholder until a human-created image is supplied out of band.
-- The player ship uses the ship placeholder until a human-created image is supplied out of band.
-- A star system uses its star's portrait rather than a separate system bank.
 
 ## Bank size and variation workflow
 

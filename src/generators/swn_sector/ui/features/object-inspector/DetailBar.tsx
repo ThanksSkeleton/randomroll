@@ -221,32 +221,33 @@ export function DetailBar({
               )}
             </div>
           </div>
-          {preview === 'gm' && !locked ? (
-            <EditableText
-              className="object-name-editor"
-              value={draftValue(draft, info, 'NiceName')}
-              onChange={(value) =>
-                setDraft((old) => ({
-                  ...old,
-                  details: {
-                    ...old.details,
-                    [info.Id]: { ...old.details[info.Id], NiceName: value },
-                  },
-                }))
-              }
-            />
-          ) : (
-            <h1 className={`object-name object-name-${kind.toLowerCase().replaceAll(' ', '-')}`}>
-              {displayName(info, preview)}
-            </h1>
-          )}
-          {showProceduralName(info, preview) && (
-            <p
-              className={`object-procedural-name object-procedural-name-${kind.toLowerCase().replaceAll(' ', '-')}`}
-            >
-              {info.ProceduralName}
-            </p>
-          )}
+          <h1 className={`object-name object-name-${kind.toLowerCase().replaceAll(' ', '-')}`}>
+            {preview === 'gm' && !locked ? (
+              <EditableText
+                className="object-name-editor"
+                value={draftValue(draft, info, 'NiceName')}
+                onChange={(value) =>
+                  setDraft((old) => ({
+                    ...old,
+                    details: {
+                      ...old.details,
+                      [info.Id]: { ...old.details[info.Id], NiceName: value },
+                    },
+                  }))
+                }
+              />
+            ) : (
+              displayName(info, preview)
+            )}
+            {showProceduralName(info, preview) && (
+              <span
+                className={`object-procedural-name object-procedural-name-${kind.toLowerCase().replaceAll(' ', '-')}`}
+              >
+                {' - '}
+                {info.ProceduralName}
+              </span>
+            )}
+          </h1>
           <DetailBox
             info={info}
             found={found}
@@ -355,12 +356,6 @@ function DetailBox({
               <ContentText content={info.Intelligence.GM} />
             </p>
           )}
-        </section>
-      )}
-      {preview === 'gm' && (
-        <section className="visibility-readout">
-          <span className="visibility-label">PLAYER VISIBILITY</span>
-          <strong className="visibility-value">{info.VisibilityLevel}</strong>
         </section>
       )}
     </div>

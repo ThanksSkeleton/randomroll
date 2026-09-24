@@ -386,7 +386,9 @@ select:focus-visible {
 }
 .routes line {
   stroke: var(--blue);
-  stroke-width: 4;
+  stroke-width: 2;
+  stroke-dasharray: 1 4;
+  stroke-linecap: round;
   pointer-events: stroke;
   cursor: pointer;
   opacity: 0.65;
@@ -396,9 +398,10 @@ select:focus-visible {
   opacity: 1;
 }
 .routes line.selected {
-  stroke: #fff0a8;
-  stroke-width: 8;
-  opacity: 1;
+  stroke: var(--blue);
+  stroke-width: 4;
+  stroke-dasharray: none;
+  opacity: 0.65;
 }
 .system-pin {
   position: absolute;
@@ -944,10 +947,10 @@ select:focus-visible {
   );
 }
 .other-object-independent-station {
-  width: 21px;
-  height: 21px;
+  width: 10.5px;
+  height: 10.5px;
   background: #899294;
-  border: 2px solid #d2d8d8;
+  border: 1px solid #d2d8d8;
   transform: rotate(45deg);
 }
 .orbital-tick {
@@ -1240,8 +1243,8 @@ select:focus-visible {
   height: 20px;
 }
 .td-other-object-glyph.other-object-independent-station {
-  width: 15px;
-  height: 15px;
+  width: 7.5px;
+  height: 7.5px;
 }
 .td-moon button {
   width: 14px;
@@ -1860,6 +1863,10 @@ select {
   margin-top: 3px;
   white-space: nowrap;
 }
+.detail-bar .object-procedural-name {
+  display: inline;
+  margin: 0 0 0 0.4em;
+}
 .poi-name {
   display: block;
   font-size: 8px;
@@ -1897,8 +1904,8 @@ select {
 
 /* Editable GM fields keep the same scale and rhythm as their read-only counterparts. */
 .detail-bar .object-name-editor {
-  display: block;
-  width: 100%;
+  display: inline-block;
+  width: 62%;
   height: auto;
   min-height: 31px;
   margin: 0;
