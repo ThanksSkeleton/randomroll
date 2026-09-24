@@ -333,6 +333,41 @@ export const WORLD_TAG_TABLE: WeightedCategory<WorldTag>[] = (
 export const POI_TABLE: WeightedCategory<PointOfInterestType>[] = (
   rawPointsOfInterest as { otherPoint: { rows: Array<{ point: string }> } }
 ).otherPoint.rows.map((row) => ({ Value: row.point as PointOfInterestType, Weight: 1 }));
+
+export interface PointOfInterestDetailEntry {
+  roll: string;
+  result: string;
+}
+export interface PointOfInterestDetailColumn {
+  key: string;
+  label: string;
+  entries: PointOfInterestDetailEntry[];
+}
+const POI_DETAIL_COLUMN_LABELS: Record<string, string> = {
+  occupants: 'Occupants',
+  situations: 'Situation',
+};
+const rawPoiDetailRows = (
+  rawPointsOfInterest as {
+    otherPoint: { rows: Array<Record<string, unknown> & { point: string }> };
+  }
+).otherPoint.rows;
+export const POI_DETAIL_COLUMNS_BY_TYPE: Partial<
+  Record<PointOfInterestType, PointOfInterestDetailColumn[]>
+> = Object.fromEntries(
+  rawPoiDetailRows.map((row) => [
+    row.point as PointOfInterestType,
+    Object.entries(row)
+      .filter(
+        ([key, value]) => !['roll', 'point', 'locationType'].includes(key) && Array.isArray(value),
+      )
+      .map(([key, value]) => ({
+        key,
+        label: POI_DETAIL_COLUMN_LABELS[key] ?? `${key[0]!.toUpperCase()}${key.slice(1)}`,
+        entries: value as PointOfInterestDetailEntry[],
+      })),
+  ]),
+);
 export const EXTRA_WORLD_ARCHETYPES = (
   rawPointsOfInterest as {
     extraWorlds: { archetypes: Array<{ archetype: string; category: string }> };

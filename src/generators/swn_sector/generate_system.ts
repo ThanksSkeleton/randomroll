@@ -20,6 +20,7 @@ import {
   directOrbitAuBand,
   directOrbitAuRange,
   isPoiHostCompatible,
+  POI_DETAIL_COLUMNS_BY_TYPE,
   POI_TABLE,
   temperatureForDirectOrbitAu,
 } from './generation_rules';
@@ -168,7 +169,8 @@ function hexCoordinatePart(value: number): string {
 }
 
 function lowercaseRomanNumeral(value: number): string {
-  if (!Number.isInteger(value) || value < 1) throw new Error(`Invalid Roman numeral value ${value}`);
+  if (!Number.isInteger(value) || value < 1)
+    throw new Error(`Invalid Roman numeral value ${value}`);
   const numerals: Array<[number, string]> = [
     [1000, 'm'],
     [900, 'cm'],
@@ -199,14 +201,18 @@ function applyGeneratedNames(seed: string, entityPath: string, system: StarSyste
   const niceName = randomSystemName(seed, entityPath);
   const proceduralName = `${hexCoordinatePart(system.HexLocation.Column)}${hexCoordinatePart(system.HexLocation.Row)}`;
   const directObjects = system.Objects.filter((object) => object.Orbit.ParentObjectId === null);
-  const directLetters = new Map(directObjects.map((object, index) => [
-    object.Id,
-    String.fromCharCode('A'.charCodeAt(0) + index),
-  ]));
+  const directLetters = new Map(
+    directObjects.map((object, index) => [
+      object.Id,
+      String.fromCharCode('A'.charCodeAt(0) + index),
+    ]),
+  );
   const moonIndexes = new Map<string, number>();
   const objects = system.Objects.map((object) => {
     if (object.Orbit.ParentObjectId !== null && object.Kind === 'Planet') {
-      const parent = system.Objects.find((candidate) => candidate.Id === object.Orbit.ParentObjectId);
+      const parent = system.Objects.find(
+        (candidate) => candidate.Id === object.Orbit.ParentObjectId,
+      );
       const parentLetter = parent === undefined ? undefined : directLetters.get(parent.Id);
       if (parent === undefined || parent.Kind !== 'Planet' || parentLetter === undefined) {
         throw new Error(`Missing named parent for moon ${object.Id}`);
@@ -489,6 +495,33 @@ export function generateCompleteSystem(options: GenerateSystemOptions): StarSyst
   return applyGeneratedNames(options.seed, options.entityPath, system);
 }
 
+function rollPoiDetail(
+  seed: string,
+  path: string,
+  column: {
+    key: string;
+    label: string;
+    entries: Array<{ roll: string; result: string }>;
+  },
+): string {
+  const ranges = column.entries.map((entry) => {
+    const match = /^(\d+)(?:-(\d+))?$/.exec(entry.roll);
+    if (match === null) throw new Error(`Invalid ${column.key} roll range ${entry.roll}`);
+    const first = Number(match[1]);
+    const last = Number(match[2] ?? match[1]);
+    if (first < 1 || last < first)
+      throw new Error(`Invalid ${column.key} roll range ${entry.roll}`);
+    return { entry, first, last };
+  });
+  const dieSides = Math.max(...ranges.map((range) => range.last));
+  const roll = rollDie(randomFor(seed, `${path}:detail:${column.key}`), dieSides);
+  const selected = ranges.find((range) => roll >= range.first && roll <= range.last);
+  if (selected === undefined) {
+    throw new Error(`No ${column.key} result for roll ${roll} on ${path}`);
+  }
+  return `${column.label}: ${selected.entry.result}`;
+}
+
 function makePoi(
   seed: string,
   path: string,
@@ -497,6 +530,10 @@ function makePoi(
 ): PointOfInterest {
   const temporaryNumber = Math.floor(randomFor(seed, `${path}:temporary-name`)() * 9000) + 1000;
   const temporaryName = `${temporaryNumber}-TEMP`;
+  const generatedDetails =
+    (POI_DETAIL_COLUMNS_BY_TYPE[type] ?? [])
+      .map((column) => rollPoiDetail(seed, path, column))
+      .join('\n') || '-';
   return {
     Id: deterministicId(seed, path),
     ProceduralName: temporaryName,
@@ -507,7 +544,7 @@ function makePoi(
       BasicScan: '-',
       CulturePartial: '-',
       CultureFull: '-',
-      GM: '-',
+      GM: generatedDetails,
     },
     ParentObjectId: parentObjectId,
     POIType: type,

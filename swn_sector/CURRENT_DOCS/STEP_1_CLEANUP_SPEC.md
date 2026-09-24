@@ -164,9 +164,9 @@ Each POI rolls all random detail columns supplied by its POI table, currently in
 
 - Each column uses an independent deterministic random stream.
 - One detail roll cannot be reused for another column.
-- Results are persisted in, or rendered into, the POI's GM-only note.
-- The GMNote clearly labels each result, for example `Occupants:` and `Situation:`.
-- These details are not automatically exposed to players by Basic Scan.
+- Results are persisted in the POI's `Intelligence.GM` note.
+- The GM note gives each result its own labeled line, for example `Occupants: <result>` and `Situation: <result>`.
+- These details are not copied into `Intelligence.BasicScan` or automatically exposed to players by Basic Scan.
 
 ## 9. Water versus ice display
 

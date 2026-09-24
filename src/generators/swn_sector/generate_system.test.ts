@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { generate } from './generate';
+import { POI_DETAIL_COLUMNS_BY_TYPE } from './generation_rules';
 
 describe('generated names', () => {
   it('uses five-letter system names, hex coordinates, and ordered object suffixes', () => {
@@ -73,6 +74,37 @@ describe('generated POI names', () => {
         expect(poi.ProceduralName).toBe(`${parent.ProceduralName}${romanNumeral}:${poi.POIType}`);
         expect(poi.NiceName).not.toMatch(/^\d{4}-TEMP$/);
         expect(poi.ProceduralName).not.toMatch(/^\d{4}-TEMP$/);
+      }
+    }
+  });
+});
+
+describe('generated POI details', () => {
+  it('stores deterministic labeled table results in the GM note only', () => {
+    const sector = generate('GENERATED-POI-DETAILS');
+    const repeatedSector = generate('GENERATED-POI-DETAILS');
+
+    expect(
+      repeatedSector.Systems.map((system) =>
+        system.PointsOfInterest.map((poi) => [poi.Id, poi.Intelligence.GM]),
+      ),
+    ).toEqual(
+      sector.Systems.map((system) =>
+        system.PointsOfInterest.map((poi) => [poi.Id, poi.Intelligence.GM]),
+      ),
+    );
+
+    for (const system of sector.Systems) {
+      for (const poi of system.PointsOfInterest) {
+        const columns = POI_DETAIL_COLUMNS_BY_TYPE[poi.POIType] ?? [];
+        const noteLines = poi.Intelligence.GM.split('\n');
+        expect(noteLines).toHaveLength(columns.length);
+        columns.forEach((column, index) => {
+          expect(
+            column.entries.some((entry) => noteLines[index] === `${column.label}: ${entry.result}`),
+          ).toBe(true);
+        });
+        expect(poi.Intelligence.BasicScan).toBe('-');
       }
     }
   });

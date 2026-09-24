@@ -1,4 +1,4 @@
-import type { BulkComposition, Planet } from './merged_schema';
+import type { BulkComposition, Planet, Temperature } from './merged_schema';
 
 export type PlanetColor =
   | 'yellow'
@@ -24,6 +24,21 @@ export const PLANET_COLOR_BY_COMPOSITION: Readonly<Record<BulkComposition, Plane
   'Jovian Gas': 'orange',
   'Neptunian Gas': 'dark-blue',
 };
+
+const COLD_TEMPERATURES: ReadonlySet<Temperature> = new Set([
+  'Cryogenic',
+  'Deepfrozen',
+  'Polar',
+  'Subarctic',
+]);
+
+/** Water remains the canonical composition; cold worlds display it as ice. */
+export function displayBulkComposition(
+  composition: BulkComposition,
+  temperature: Temperature,
+): BulkComposition | 'Ice' {
+  return composition === 'Water' && COLD_TEMPERATURES.has(temperature) ? 'Ice' : composition;
+}
 
 /** Inhabited worlds intentionally override their physical composition color. */
 export function planetColor(

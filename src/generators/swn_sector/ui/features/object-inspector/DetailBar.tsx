@@ -11,6 +11,7 @@ import {
 import type { EditDraft, Preview, EditableDetailField } from '../../application/appState';
 import { formatAu } from '../../formatters';
 import { starPresentationClass, starPresentationStyle } from '../../../star_presentation';
+import { displayBulkComposition } from '../../../planet_presentation';
 import { StarGlyph } from '../system-viewer/StarGlyph';
 
 function displayName(info: SelectableEntity | undefined, preview: Preview) {
@@ -82,18 +83,16 @@ function planetStock(
   preview: Preview,
 ): StockSignals {
   const host = planet.Orbit.ParentObjectId
-    ? sector.Systems
-        .find((system) => system.Id === systemId)
-        ?.Objects.find(
-          (object): object is Planet =>
-            object.Kind === 'Planet' && object.Id === planet.Orbit.ParentObjectId,
-        )
+    ? sector.Systems.find((system) => system.Id === systemId)?.Objects.find(
+        (object): object is Planet =>
+          object.Kind === 'Planet' && object.Id === planet.Orbit.ParentObjectId,
+      )
     : undefined;
   const hostName = host
-    ? displayName(findDetails(sector, host.Id), preview) ?? host.ProceduralName
+    ? (displayName(findDetails(sector, host.Id), preview) ?? host.ProceduralName)
     : undefined;
   const moonFact = hostName ? `\nMoon of ${hostName}` : '';
-  const basic = `${formatAu(planet.Orbit.AU)} AU - ${planet.Temperature} - ${planet.Size}-Class${moonFact}\nAtmosphere: ${planet.Atmosphere} Composition: ${planet.BulkComposition}`;
+  const basic = `${formatAu(planet.Orbit.AU)} AU - ${planet.Temperature} - ${planet.Size}-Class${moonFact}\nAtmosphere: ${planet.Atmosphere} Composition: ${displayBulkComposition(planet.BulkComposition, planet.Temperature)}`;
   const signalsDetected = associatedPoiCount(sector, systemId, planet.Id);
   if (planet.InhabitedInfo === false) {
     return {
@@ -338,8 +337,12 @@ function DetailBox({
       {preview === 'gm' && (
         <section className="detail-section gm-note">
           <h3>GMNote</h3>
-          <StockField content={stock.gm} />
-          <div className="detail-small-divider" aria-hidden="true" />
+          {found.kind !== 'PointOfInterest' && (
+            <>
+              <StockField content={stock.gm} />
+              <div className="detail-small-divider" aria-hidden="true" />
+            </>
+          )}
           {!locked ? (
             <EditableText
               className="detail-editable"
