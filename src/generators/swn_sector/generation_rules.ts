@@ -48,6 +48,25 @@ export function directOrbitTemperatures(starType: StarType): Planet['Temperature
   });
 }
 
+/** The continuous AU interval available to direct-orbit objects. */
+export function directOrbitAuRange(starType: StarType): readonly [number, number] {
+  const widths = STAR_AU_WIDTHS[starType];
+  const minimum = widths.FromStar;
+  const maximum = minimum + widths.ExtremeHotRange + widths.NormalRange + widths.ExtremeColdRange;
+  return [minimum, maximum];
+}
+
+/** Resolves a direct-orbit AU into the detailed temperature band containing it. */
+export function temperatureForDirectOrbitAu(starType: StarType, au: number): Planet['Temperature'] {
+  const temperature = directOrbitTemperatures(starType).find((candidate) => {
+    const [bandMinimum, bandMaximum] = directOrbitAuBand(starType, candidate);
+    return au > bandMinimum && au < bandMaximum;
+  });
+  if (temperature === undefined)
+    throw new Error(`No direct-orbit temperature band contains ${starType} AU ${au}`);
+  return temperature;
+}
+
 /** Returns the AU boundaries enclosing all normal temperatures. */
 export function normalTemperatureAuBand(starType: StarType): readonly [number, number] {
   const widths = STAR_AU_WIDTHS[starType];

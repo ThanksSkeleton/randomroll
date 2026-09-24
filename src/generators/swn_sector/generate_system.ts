@@ -18,9 +18,10 @@ import {
 } from './generation_random';
 import {
   directOrbitAuBand,
-  directOrbitTemperatures,
+  directOrbitAuRange,
   isPoiHostCompatible,
   POI_TABLE,
+  temperatureForDirectOrbitAu,
 } from './generation_rules';
 import { generateInhabitedPlanet } from './generate_inhabited_planet';
 import {
@@ -54,7 +55,10 @@ export function assignDirectOrbitAus(
     const width = (maximum - minimum) / ordered.length;
     ordered.forEach((object, index) => {
       const random = randomFor(seed, `${entityPath}:au:${temperature}:${object.Id}`);
-      auById.set(object.Id, minimum + width * (index + random()));
+      auById.set(
+        object.Id,
+        sampleOpenRange(random, minimum + width * index, minimum + width * (index + 1)),
+      );
     });
   }
   return objects
@@ -66,6 +70,59 @@ export function assignDirectOrbitAus(
       (left, right) =>
         left.Orbit.AU - right.Orbit.AU || (left.Orbit.ParentObjectId === null ? -1 : 1),
     );
+}
+
+function sampleOpenRange(random: () => number, minimum: number, maximum: number): number {
+  const unit = Math.min(1 - Number.EPSILON, Math.max(Number.EPSILON, random()));
+  return minimum + (maximum - minimum) * unit;
+}
+
+function directObjectAuRange(starType: StarType, object: SystemObject): readonly [number, number] {
+  if (
+    object.Kind === 'OtherCelestialObject' &&
+    (object.ObjectType === 'KuiperBelt' || object.ObjectType === 'GasCloud')
+  )
+    return directOrbitAuBand(starType, 'Cryogenic');
+  return directOrbitAuRange(starType);
+}
+
+function deriveNonInhabitedPlanetFacts(planet: Planet): Planet {
+  const surfaceWaterPresent =
+    planet.BulkComposition === 'Water' &&
+    planet.Temperature !== 'Cryogenic' &&
+    planet.Temperature !== 'Furance' &&
+    planet.Atmosphere !== 'Vacuum';
+  return { ...planet, SurfaceWaterPresent: surfaceWaterPresent };
+}
+
+/** Places non-inhabited direct objects uniformly, then derives their temperature from AU. */
+export function assignUniformDirectOrbitAus(
+  seed: string,
+  entityPath: string,
+  starType: StarType,
+  objects: readonly SystemObject[],
+  occupiedAus: readonly number[] = [],
+): SystemObject[] {
+  const occupied = new Set(occupiedAus);
+  return objects.map((object) => {
+    if (object.Orbit.ParentObjectId !== null) return object;
+    const [minimum, maximum] = directObjectAuRange(starType, object);
+    if (maximum <= minimum)
+      throw new Error(`No direct-orbit AU interval for ${seed}:${entityPath}:${object.Id}`);
+    const random = randomFor(seed, `${entityPath}:au:${object.Id}`);
+    let au = sampleOpenRange(random, minimum, maximum);
+    while (occupied.has(au)) au = sampleOpenRange(random, minimum, maximum);
+    occupied.add(au);
+    const temperature = temperatureForDirectOrbitAu(starType, au);
+    const placed = {
+      ...object,
+      Temperature: temperature,
+      Orbit: { ...object.Orbit, AU: au },
+    };
+    return placed.Kind === 'Planet' && placed.InhabitedInfo === false
+      ? deriveNonInhabitedPlanetFacts(placed)
+      : placed;
+  });
 }
 
 export type GenerateSystemOptions = {
@@ -176,7 +233,7 @@ export function retrySystemGeneration<T>(
 function generateSystemOnce(options: GenerateSystemOptions): StarSystem {
   const name = `System ${options.entityPath}`;
   const objects: SystemObject[] = [];
-  const moons: Planet[] = [];
+  const pendingMoons: Array<{ worldPath: string; parentId: string }> = [];
   const count = inhabitedCount(options.seed, options.entityPath);
   for (let index = 0; index < count; index += 1) {
     const worldPath = `${options.entityPath}:inhabited:${String(index + 1).padStart(2, '0')}`;
@@ -204,6 +261,7 @@ function generateSystemOnce(options: GenerateSystemOptions): StarSystem {
       entityPath: parentPath,
       starType: options.starType,
       template: 'Jovian',
+      temperature: 'Cryogenic',
       orbit: {
         AU: 0,
         AngleDegrees: randomFor(options.seed, `${parentPath}:angle`)() * 360,
@@ -211,20 +269,7 @@ function generateSystemOnce(options: GenerateSystemOptions): StarSystem {
       },
     });
     objects.push(parent);
-    moons.push(
-      generateInhabitedPlanet({
-        seed: options.seed,
-        entityPath: worldPath,
-        starType: options.starType,
-        starHabitability: options.starHabitability,
-        allowedTemperatures: [parent.Temperature],
-        orbit: {
-          AU: 0,
-          AngleDegrees: randomFor(options.seed, `${worldPath}:angle`)() * 360,
-          ParentObjectId: parent.Id,
-        },
-      }),
-    );
+    pendingMoons.push({ worldPath, parentId: parent.Id });
   }
   const extraTarget = Math.max(
     2,
@@ -233,7 +278,7 @@ function generateSystemOnce(options: GenerateSystemOptions): StarSystem {
   // A gas-giant parent of an inhabited moon is itself an extra object. Moons
   // live outside `objects` until final assembly, so include them here to keep
   // the final extra-object total within the invariant's two-through-seven cap.
-  while (objects.length + moons.length - count < extraTarget) {
+  while (objects.length + pendingMoons.length - count < extraTarget) {
     const index = objects.length + 1;
     const path = `${options.entityPath}:extra:${String(index).padStart(2, '0')}`;
     const category = chooseWeighted(
@@ -260,6 +305,7 @@ function generateSystemOnce(options: GenerateSystemOptions): StarSystem {
             templates,
             'extra-world templates',
           ),
+          temperature: 'Cryogenic',
           orbit,
         }),
       );
@@ -270,31 +316,58 @@ function generateSystemOnce(options: GenerateSystemOptions): StarSystem {
           entityPath: path,
           starType: options.starType,
           template: category,
+          temperature: 'Cryogenic',
           orbit,
         }),
       );
     }
   }
-  const directPlaced = assignDirectOrbitAus(options.seed, options.entityPath, options.starType, [
-    ...objects,
-    ...moons,
-  ]);
-  const directById = new Map(directPlaced.map((object) => [object.Id, object]));
-  const placed = directPlaced.map((object) => {
-    if (object.Orbit.ParentObjectId === null) return object;
-    const parent = directById.get(object.Orbit.ParentObjectId);
-    if (parent === undefined)
-      throw new Error(`Missing moon parent for ${options.seed}:${object.Id}`);
-    return {
-      ...object,
-      Temperature: parent.Temperature,
-      Orbit: { ...object.Orbit, AU: parent.Orbit.AU },
-    };
-  });
-  const parentById = new Map(placed.map((object) => [object.Id, object]));
-  for (const moon of moons) {
-    const placedMoon = parentById.get(moon.Id);
-    if (placedMoon === undefined) throw new Error(`Missing generated moon ${moon.Id}`);
+  const inhabitedDirect = objects.filter(
+    (object): object is Planet =>
+      object.Kind === 'Planet' &&
+      object.InhabitedInfo !== false &&
+      object.Orbit.ParentObjectId === null,
+  );
+  const nonInhabitedDirect = objects.filter(
+    (object) =>
+      object.Orbit.ParentObjectId === null &&
+      !(object.Kind === 'Planet' && object.InhabitedInfo !== false),
+  );
+  const placedInhabited = assignDirectOrbitAus(
+    options.seed,
+    options.entityPath,
+    options.starType,
+    inhabitedDirect,
+  );
+  const placedOther = assignUniformDirectOrbitAus(
+    options.seed,
+    options.entityPath,
+    options.starType,
+    nonInhabitedDirect,
+    placedInhabited.map((object) => object.Orbit.AU),
+  );
+  const placedById = new Map(
+    [...placedInhabited, ...placedOther].map((object) => [object.Id, object]),
+  );
+  const placed = objects.map((object) => placedById.get(object.Id) ?? object);
+  for (const pendingMoon of pendingMoons) {
+    const parent = placedById.get(pendingMoon.parentId);
+    if (parent === undefined || parent.Kind !== 'Planet')
+      throw new Error(`Missing moon parent for ${options.seed}:${pendingMoon.worldPath}`);
+    placed.push(
+      generateInhabitedPlanet({
+        seed: options.seed,
+        entityPath: pendingMoon.worldPath,
+        starType: options.starType,
+        starHabitability: options.starHabitability,
+        allowedTemperatures: [parent.Temperature],
+        orbit: {
+          AU: parent.Orbit.AU,
+          AngleDegrees: randomFor(options.seed, `${pendingMoon.worldPath}:angle`)() * 360,
+          ParentObjectId: parent.Id,
+        },
+      }),
+    );
   }
   return {
     Id: deterministicId(options.seed, options.entityPath),
@@ -436,11 +509,6 @@ export function populatePointsOfInterest(
     ).Value;
     if (selected.type === 'Deep-space station') {
       const stationPath = `${entityPath}:station:${index}`;
-      const temperature = choose(
-        randomFor(seed, `${stationPath}:temperature`),
-        directOrbitTemperatures(system.Star.StarType),
-        'station temperatures',
-      );
       const station: OtherCelestialObject = {
         Id: deterministicId(seed, stationPath),
         ProceduralName: `Independent station ${stationPath}`,
@@ -455,34 +523,40 @@ export function populatePointsOfInterest(
         },
         Kind: 'OtherCelestialObject',
         ObjectType: 'IndependentStation',
-        Temperature: temperature,
+        // The final temperature is derived from the uniformly selected AU.
+        Temperature: 'Cryogenic',
         Orbit: {
           AU: 0,
           AngleDegrees: randomFor(seed, `${stationPath}:angle`)() * 360,
           ParentObjectId: null,
         },
       };
-      objects.push(station);
-      pois.push(makePoi(seed, `${entityPath}:poi:${index}`, station.Id, selected.type));
-      capacity.set(station.Id, 1);
+      const existingDirectAus = objects
+        .filter((object) => object.Orbit.ParentObjectId === null)
+        .map((object) => object.Orbit.AU);
+      const [placedStation] = assignUniformDirectOrbitAus(
+        seed,
+        stationPath,
+        system.Star.StarType,
+        [station],
+        existingDirectAus,
+      );
+      if (placedStation === undefined || placedStation.Kind !== 'OtherCelestialObject')
+        throw new Error(`Missing station ${stationPath}`);
+      objects.push(placedStation);
+      pois.push(makePoi(seed, `${entityPath}:poi:${index}`, placedStation.Id, selected.type));
+      capacity.set(placedStation.Id, 1);
       continue;
     }
     pois.push(makePoi(seed, `${entityPath}:poi:${index}`, selected.host.Id, selected.type));
     capacity.set(selected.host.Id, (capacity.get(selected.host.Id) ?? 0) + 1);
   }
-  const placed = assignDirectOrbitAus(
-    seed,
-    `${entityPath}:with-pois`,
-    system.Star.StarType,
-    objects,
-  );
-  const placedById = new Map(placed.map((object) => [object.Id, object]));
   return {
     ...system,
-    Objects: placed
+    Objects: objects
       .map((object) => {
         if (object.Orbit.ParentObjectId === null) return object;
-        const parent = placedById.get(object.Orbit.ParentObjectId);
+        const parent = objects.find((candidate) => candidate.Id === object.Orbit.ParentObjectId);
         if (parent === undefined) throw new Error(`Missing moon parent for ${seed}:${object.Id}`);
         return {
           ...object,

@@ -28,7 +28,9 @@ describe('canonical sector domain', () => {
   it('moves the ship to an object and derives its containing system', () => {
     const sector = generate('DOMAIN-MOVEMENT');
     const targetSystem = sector.Systems[1];
-    const target = targetSystem.Objects[0];
+    const target = targetSystem.Objects.find((object) => object.Kind === 'Planet');
+    expect(target).toBeDefined();
+    if (target === undefined) throw new Error('expected a planet target');
     const result = relocatePlayerShip(sector, target.Id);
     expect(result.ok).toBe(true);
     if (!result.ok) throw new Error(result.reason);

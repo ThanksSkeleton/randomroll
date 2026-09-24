@@ -1,13 +1,19 @@
 import { expect, test, vi } from 'vitest';
 import {
   assignDirectOrbitAus,
+  assignUniformDirectOrbitAus,
   generateSystem,
   MAX_SYSTEM_GENERATION_RETRIES,
   populatePointsOfInterest,
   retrySystemGeneration,
 } from './generate_system';
-import { directOrbitAuBand, isPoiHostCompatible } from './generation_rules';
-import { generateTemplatePlanet } from './planet_templates';
+import {
+  directOrbitAuBand,
+  directOrbitAuRange,
+  isPoiHostCompatible,
+  temperatureForDirectOrbitAu,
+} from './generation_rules';
+import { generateTemplateOtherCelestialObject, generateTemplatePlanet } from './planet_templates';
 
 test('every planet template expands to a complete canonical uninhabited planet', () => {
   const templates = [
@@ -58,6 +64,40 @@ test('equal-temperature direct objects receive distinct in-band AUs', () => {
   expect(placed.every((object) => object.Orbit.AU > minimum && object.Orbit.AU < maximum)).toBe(
     true,
   );
+});
+
+test('non-inhabited objects use class AU ranges and derive temperature from AU', () => {
+  const asteroid = generateTemplateOtherCelestialObject({
+    seed: 'uniform-aus',
+    entityPath: 'asteroid',
+    starType: 'G-type',
+    template: 'AsteroidBelt',
+    orbit: { AU: 0, AngleDegrees: 0, ParentObjectId: null },
+  });
+  const kuiperBelt = generateTemplateOtherCelestialObject({
+    seed: 'uniform-aus',
+    entityPath: 'kuiper',
+    starType: 'G-type',
+    template: 'KuiperBelt',
+    orbit: { AU: 0, AngleDegrees: 1, ParentObjectId: null },
+  });
+  const [minimum, maximum] = directOrbitAuRange('G-type');
+  const [coldMinimum, coldMaximum] = directOrbitAuBand('G-type', 'Cryogenic');
+  const [placedAsteroid, placedKuiper] = assignUniformDirectOrbitAus(
+    'uniform-aus',
+    'system:01',
+    'G-type',
+    [asteroid, kuiperBelt],
+  );
+
+  expect(placedAsteroid.Orbit.AU).toBeGreaterThan(minimum);
+  expect(placedAsteroid.Orbit.AU).toBeLessThan(maximum);
+  expect(placedAsteroid.Temperature).toBe(
+    temperatureForDirectOrbitAu('G-type', placedAsteroid.Orbit.AU),
+  );
+  expect(placedKuiper.Orbit.AU).toBeGreaterThan(coldMinimum);
+  expect(placedKuiper.Orbit.AU).toBeLessThan(coldMaximum);
+  expect(placedKuiper.Temperature).toBe('Cryogenic');
 });
 
 test('system object construction gives moons their parent temperature and AU', () => {

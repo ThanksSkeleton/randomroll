@@ -56,6 +56,16 @@ The exact color and size table must be approved during this step and must live i
 
 Physical placement and screen layout are separate requirements.
 
+### Status
+
+A modest physical-placement fix has been applied: direct-orbit AU values now
+respect the star's forbidden inner and outer regions, inhabited planets retain
+temperature-table placement, and other direct objects use their approved AU
+ranges with temperature derived from the selected AU. Moon AU values continue
+to inherit from their parent. The more difficult work of designing a robust
+system for spacing AU values and angles for readability is intentionally
+deferred. See [Step 1 Part 3: Deferred Orbital Spacing Work](STEP_1_PART_3_ORBITAL_SPACING_DEFERRED.md).
+
 ### 3.1 Stored AU spacing
 
 This requires investigation.

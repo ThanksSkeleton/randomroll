@@ -506,7 +506,7 @@ function validateSystem(
     const [minimum, maximum] = directOrbitAuBand(system.Star.StarType, object.Temperature);
     if (object.Orbit.AU <= minimum || object.Orbit.AU >= maximum) {
       fail(
-        object.Kind === 'Planet' ? 'C2' : 'F12',
+        object.Kind === 'Planet' && object.InhabitedInfo !== false ? 'C2' : 'F12',
         `Direct object ${object.Id} has AU ${object.Orbit.AU} outside its exclusive temperature band (${minimum}, ${maximum}).`,
       );
     }
@@ -547,14 +547,15 @@ function validateSystem(
   for (const left of directObjects)
     for (const right of directObjects) {
       if (
+        left.Kind === 'Planet' &&
+        right.Kind === 'Planet' &&
+        left.InhabitedInfo !== false &&
+        right.InhabitedInfo !== false &&
         left.Id !== right.Id &&
         TEMPERATURE_RANK[left.Temperature] > TEMPERATURE_RANK[right.Temperature] &&
         left.Orbit.AU >= right.Orbit.AU
       ) {
-        fail(
-          left.Kind === 'Planet' && right.Kind === 'Planet' ? 'C2' : 'F12',
-          `Hotter direct object ${left.Id} is not closer than ${right.Id}.`,
-        );
+        fail('C2', `Hotter direct planet ${left.Id} is not closer than ${right.Id}.`);
       }
     }
 }
@@ -727,16 +728,9 @@ function validateOtherObject(
   parent: SystemObject | undefined,
   fail: (ruleId: string, message: string) => void,
 ): void {
-  const temperatureRank = TEMPERATURE_RANK[object.Temperature];
-  if (
-    object.ObjectType === 'AsteroidBelt' &&
-    (temperatureRank < TEMPERATURE_RANK.Alpine || temperatureRank > TEMPERATURE_RANK.Furance)
-  ) {
-    fail('F12', `Asteroid belt ${object.Id} has incompatible temperature ${object.Temperature}.`);
-  }
   if (
     (object.ObjectType === 'KuiperBelt' || object.ObjectType === 'GasCloud') &&
-    (temperatureRank < TEMPERATURE_RANK.Cryogenic || temperatureRank > TEMPERATURE_RANK.Boreal)
+    object.Temperature !== 'Cryogenic'
   ) {
     fail(
       'F12',

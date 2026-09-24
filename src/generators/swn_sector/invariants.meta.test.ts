@@ -184,7 +184,7 @@ describe('merged-sector independent stations', () => {
 
     expect(
       checkAllInvariants(sector([volcanic, station('station', null)])).some(
-        (violation) => violation.RuleId === 'C2',
+        (violation) => violation.RuleId === 'F12',
       ),
     ).toBe(true);
   });

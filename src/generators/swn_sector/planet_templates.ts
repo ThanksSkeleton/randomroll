@@ -25,6 +25,8 @@ export type TemplatePlanetOptions = {
   starType: StarType;
   orbit: Orbit;
   template: ExtraPlanetTemplate;
+  /** Used by callers that will derive temperature after choosing AU. */
+  temperature?: Planet['Temperature'];
 };
 
 export type OtherCelestialObjectTemplate = Extract<
@@ -117,11 +119,13 @@ export function generateTemplatePlanet(options: TemplatePlanetOptions): Planet {
     throw new Error(
       `No usable temperature for ${options.template} at ${options.seed}:${options.entityPath}`,
     );
-  const temperature = choose(
-    randomFor(options.seed, `${options.entityPath}:temperature`),
-    usableTemperatures,
-    `${options.template} temperatures`,
-  );
+  const temperature =
+    options.temperature ??
+    choose(
+      randomFor(options.seed, `${options.entityPath}:temperature`),
+      usableTemperatures,
+      `${options.template} temperatures`,
+    );
   const surfaceWaterPresent =
     facts.SurfaceWaterPresent &&
     temperature !== 'Cryogenic' &&
@@ -159,6 +163,8 @@ export function generateTemplateOtherCelestialObject(options: {
   starType: StarType;
   orbit: Orbit;
   template: OtherCelestialObjectTemplate;
+  /** Used by callers that will derive temperature after choosing AU. */
+  temperature?: Planet['Temperature'];
 }): OtherCelestialObject {
   const allowedTemperatures = directOrbitTemperatures(options.starType).filter((temperature) =>
     options.template === 'AsteroidBelt'
@@ -169,11 +175,13 @@ export function generateTemplateOtherCelestialObject(options: {
     throw new Error(
       `No usable temperature for ${options.template} at ${options.seed}:${options.entityPath}`,
     );
-  const temperature = choose(
-    randomFor(options.seed, `${options.entityPath}:temperature`),
-    allowedTemperatures,
-    `${options.template} temperatures`,
-  );
+  const temperature =
+    options.temperature ??
+    choose(
+      randomFor(options.seed, `${options.entityPath}:temperature`),
+      allowedTemperatures,
+      `${options.template} temperatures`,
+    );
   const name = `${options.template} ${options.entityPath}`;
   return {
     Id: deterministicId(options.seed, options.entityPath),
