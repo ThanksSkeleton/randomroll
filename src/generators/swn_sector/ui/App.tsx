@@ -216,8 +216,9 @@ export default function App() {
                 onSelectShip={() => setSelected(sector.PlayerShip.Id)}
                 onTravel={travelToSelectedSystem}
               />
-              {preview === 'gm' && isGmSession ? (
+              {isGmSession ? (
                 <FeatureGMEditBar
+                  hidden={preview !== 'gm'}
                   locked={locked}
                   setLocked={setLocked}
                   canMove={canMove}

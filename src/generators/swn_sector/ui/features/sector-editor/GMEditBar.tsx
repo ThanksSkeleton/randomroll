@@ -11,6 +11,7 @@ import { IconButton } from '../navigation/IconButton';
 
 export function GMEditBar({
   locked,
+  hidden = false,
   setLocked,
   canMove,
   selected,
@@ -22,6 +23,7 @@ export function GMEditBar({
   saveEdit,
 }: {
   locked: boolean;
+  hidden?: boolean;
   setLocked: (v: boolean) => void;
   canMove: boolean;
   selected: string | null;
@@ -40,7 +42,7 @@ export function GMEditBar({
     if (result.ok) mutate(result.value);
   };
   return (
-    <div className="edit-bar sidebar-group sidebar-group-bottom">
+    <div className="edit-bar sidebar-group sidebar-group-bottom" hidden={hidden}>
       <IconButton
         icon="gm-lock"
         label={locked ? '▣ LOCKED' : '□ UNLOCKED'}

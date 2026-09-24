@@ -71,6 +71,19 @@ describe('prototype application workflows', () => {
     );
   });
 
+  it('restores the existing GM icons when returning from player preview', () => {
+    renderApp();
+    const lockIcon = document.querySelector('.lock .sector-icon');
+    expect(lockIcon).not.toBeNull();
+
+    fireEvent.click(screen.getByRole('button', { name: 'PLAYER VIEW' }));
+    expect(screen.queryByRole('button', { name: '▣ LOCKED' })).toBeNull();
+
+    fireEvent.click(screen.getByRole('button', { name: 'GM VIEW' }));
+    expect(screen.getByRole('button', { name: '▣ LOCKED' })).toBeTruthy();
+    expect(document.querySelector('.lock .sector-icon')).toBe(lockIcon);
+  });
+
   it("saves a selected object's edited name when the GM lock is restored", () => {
     renderApp();
     fireEvent.click(firstSystemButton());

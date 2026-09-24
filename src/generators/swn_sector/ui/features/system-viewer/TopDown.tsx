@@ -41,16 +41,12 @@ function details(id: string, sector: Sector) {
 }
 function displayName(info: ReturnType<typeof findDetails>, preview: Preview) {
   if (!info) return undefined;
-  return preview === 'player' &&
+  const preferredName =
+    preview === 'player' &&
     visibilityRank(info.VisibilityLevel) < visibilityRank(VisibilityLevel.CULTURE_PARTIAL)
-    ? info.ProceduralName
-    : info.NiceName;
-}
-function showProceduralName(info: NonNullable<ReturnType<typeof findDetails>>, preview: Preview) {
-  return (
-    preview === 'gm' ||
-    visibilityRank(info.VisibilityLevel) >= visibilityRank(VisibilityLevel.CULTURE_PARTIAL)
-  );
+      ? info.ProceduralName
+      : info.NiceName;
+  return preferredName.trim() || info.ProceduralName;
 }
 function hexMapPosition(x: number, y: number) {
   return { left: 100 + (x - 1) * 84, top: 55 + (y - 1) * 98 + ((x - 1) % 2) * 49 };
@@ -397,6 +393,7 @@ export function TopDown({
           })}
           {visiblePlanets.map((p) => {
             const pp = pos(p.Orbit.AngleDegrees, p.Orbit.AU * pixelsPerAu);
+            const planetName = displayName(details(p.Id, sector), preview);
             const moons = planets(system).filter(
               (m) => m.Orbit.ParentObjectId === p.Id && visible(m.Id, sector, preview),
             );
@@ -407,21 +404,12 @@ export function TopDown({
                     id={p.Id}
                     selected={selected}
                     onSelect={select}
-                    label={displayName(details(p.Id, sector), preview) ?? 'Planet'}
+                    label={planetName ?? 'Planet'}
                   >
                     <span className={`td-planet ${planetColorClass(p)}`} />
                   </Selectable>
                   <label className="topdown-planet-caption">
-                    <strong>{displayName(details(p.Id, sector), preview)}</strong>
-                    {(() => {
-                      const worldD = details(p.Id, sector);
-                      return (
-                        worldD &&
-                        showProceduralName(worldD, preview) && (
-                          <small>{worldD.ProceduralName}</small>
-                        )
-                      );
-                    })()}
+                    <strong>{planetName}</strong>
                   </label>
                   {objectPois(p.Id).length > 0 && (
                     <div className="topdown-poi-list">
@@ -489,28 +477,20 @@ export function TopDown({
           })}
           {visibleOtherObjects.map((object) => {
             const pp = pos(object.Orbit.AngleDegrees, object.Orbit.AU * pixelsPerAu);
+            const objectName = displayName(details(object.Id, sector), preview);
             return (
               <div className="td-object td-other-object" style={pp} key={object.Id}>
                 <Selectable
                   id={object.Id}
                   selected={selected}
                   onSelect={select}
-                  label={displayName(details(object.Id, sector), preview) ?? object.ObjectType}
+                  label={objectName ?? object.ObjectType}
                   className="td-other-object-button"
                 >
                   <OtherObjectGlyph object={object} />
                 </Selectable>
                 <label className="topdown-object-caption">
-                  <strong>{displayName(details(object.Id, sector), preview)}</strong>
-                  {(() => {
-                    const objectD = details(object.Id, sector);
-                    return (
-                      objectD &&
-                      showProceduralName(objectD, preview) && (
-                        <small>{objectD.ProceduralName}</small>
-                      )
-                    );
-                  })()}
+                  <strong>{objectName}</strong>
                 </label>
                 {objectPois(object.Id).length > 0 && (
                   <div className="topdown-poi-list">
