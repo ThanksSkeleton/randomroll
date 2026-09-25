@@ -2,9 +2,22 @@
 
 We are generating standard images that will be used as portraits of lesser celestial objects in a randomly generated star sector and points of interest within a star system. "Hero" objects will have an alternate generation system and will be out of scope
 
-Global Guideline:
-Standard shell - All
-- Black Space background with no nebulae, and no other stellar objects other than small background stars. No host star except the star images themselves
+Global Guidelines
+
+### Planets and stars
+
+- Show one stellar object: the target planet or star, centered in the image.
+- Use black space behind it, dotted with small, unobtrusive background stars.
+- Include no other celestial or manmade objects: no host star, galaxies, moons, ships, cities, satellites, or other structures. The target and the small background stars are the only visible objects.
+
+### Asteroid belts, Kuiper belts, and gas clouds
+
+- These categories use a different composition from planets and stars: the full image is filled/dotted with the target material—small rocky bodies for an asteroid belt, small icy bodies for a Kuiper belt, or swirling gas for a gas cloud/nebula.
+- Do not include other celestial or manmade objects: no host star, planets, moons, galaxies, ships, stations, cities, or satellites. The target field/material is the only subject; for the belts, small bodies should fill the view rather than appear as one centered object.
+
+### Independent stations and points of interest
+
+- Follow the category-specific framing below. The close-up POI and human-made structure guidance is intentionally distinct from the isolated celestial-object rules above.
 
 ## Coverage inventory
 
@@ -38,9 +51,9 @@ These should be straightforward as these are just visual reproductions of real w
 
 ### Other celestial objects: one bank per `ObjectType`
 
-1. `AsteroidBelt` - From within a dense field of rocky bodies - "Cinematic" not realistic density
-2. `KuiperBelt` - From within a dense field of icy bodies - "Cinematic" not realistic density
-3. `GasCloud` - More of a shot from within a Nebula of swirling gas - "Cinematic" not realistic density
+1. `AsteroidBelt` - From within a dense field of rocky bodies - "Cinematic" not realistic density; fill the image with the rocky field, without other objects.
+2. `KuiperBelt` - From within a dense field of icy bodies - "Cinematic" not realistic density; fill the image with the icy field, without other objects.
+3. `GasCloud` - More of a shot from within a Nebula of swirling gas - "Cinematic" not realistic density; the gas fills the image, without other objects.
 4. `IndependentStation` - Free floating structure entered in frame, somewhat small (contrast with POI)
 
  [IndependentStation / Base POI] - No nearby Spaceships or other objects unless specifically directed , no writing

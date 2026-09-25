@@ -7,8 +7,14 @@ export type QueueEntry = Tunings & { decision: Decision };
 export type QueueState = { cursor: number; entries: Record<string, QueueEntry> };
 export type TotalManifest = Record<string, { a: Tuning; b: Tuning }>;
 
-// The order is editorial rather than alphabetical: rocky, water, then ice.
-export const queue: QueueItem[] = [categories[0], categories[2], categories[1]].flatMap(
+// Keep the original review set first, then continue through the expanded inventory.
+const originalOrder = ['mercurian', 'europan-water', 'europan-ice'];
+const originalCategories = originalOrder.map(
+  (key) => categories.find((category) => category.key === key)!,
+);
+const newCategories = categories.filter((category) => !originalOrder.includes(category.key));
+
+export const queue: QueueItem[] = [...originalCategories, ...newCategories].flatMap(
   (category) =>
     category.initial.images.map((image) => ({
       category,

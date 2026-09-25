@@ -1,8 +1,8 @@
-# Planet portrait review queue
+# Celestial portrait review queue
 
 Open /randomroll/swn_sector/portrait_review/ on the local Vite server (npm run dev). This is an asset-production page, not part of the player UI.
 
-The current nine 1500 × 850 source PNGs are kept under public/swn_sector/portraits/sources/. The queue visits Mercurian 01–03, Europan/Plutonic water 01–03, then Europan/Plutonic ice 01–03, and wraps around.
+The source PNGs are kept under public/swn_sector/portraits/sources/. The queue starts with the original Mercurian, Europan/Plutonic water, and Europan/Plutonic ice sources, then continues through the additional planet types, all nine star types, and asteroid belts, Kuiper belts, and gas clouds. Each category has three sources, for 66 sources total. Independent stations, POIs, routes, and other manmade objects are out of this batch.
 
 Only one source appears at a time. Its base image and color A/B previews are shown at the application's 300 × 170 size. A and B each have hue, saturation, and value controls. CSS hue-rotate, saturate, and brightness approximate HSV for the preview. The flipped variant is generated downstream and has no separate preview or controls here.
 

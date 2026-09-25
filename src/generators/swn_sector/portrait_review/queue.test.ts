@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { getTotalManifest, initialQueueState, queue, wrappedIndex } from './queue';
 
 describe('portrait review queue', () => {
-  it('walks all nine sources in a stable order and wraps in both directions', () => {
-    expect(queue.map((item) => item.category.key + '/' + item.sourceId)).toEqual([
+  it('walks all 66 sources in a stable order and wraps in both directions', () => {
+    expect(queue.slice(0, 9).map((item) => item.category.key + '/' + item.sourceId)).toEqual([
       'mercurian/01',
       'mercurian/02',
       'mercurian/03',
@@ -14,8 +14,15 @@ describe('portrait review queue', () => {
       'europan-ice/02',
       'europan-ice/03',
     ]);
-    expect(wrappedIndex(0, -1, queue.length)).toBe(8);
-    expect(wrappedIndex(8, 1, queue.length)).toBe(0);
+    expect(queue).toHaveLength(66);
+    expect([...new Set(queue.slice(9).map((item) => item.category.key))]).toEqual([
+      'lunar', 'ioan', 'titanian', 'martian', 'venusian', 'jovian', 'neptunian',
+      'star-a', 'star-f', 'star-g', 'star-k', 'star-m', 'star-giant',
+      'star-white-dwarf', 'star-neutron-star', 'star-black-hole', 'asteroid-belt',
+      'kuiper-belt', 'gas-cloud',
+    ]);
+    expect(wrappedIndex(0, -1, queue.length)).toBe(65);
+    expect(wrappedIndex(65, 1, queue.length)).toBe(0);
   });
 
   it('exports only accepted source paths and their two HSV settings', () => {

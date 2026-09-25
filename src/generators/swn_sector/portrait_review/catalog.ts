@@ -10,10 +10,39 @@ export const VARIANTS_PER_SOURCE = 6;
 export const SOURCES_PER_CATEGORY = 3;
 export const BANK_SIZE = SOURCES_PER_CATEGORY * VARIANTS_PER_SOURCE;
 
+function pendingSources(): { images: { sourceId: string; tuningA: Tuning; tuningB: Tuning }[] } {
+  return {
+    images: ['01', '02', '03'].map((sourceId) => ({
+      sourceId,
+      tuningA: { h: 0, s: 100, v: 100 },
+      tuningB: { h: 0, s: 100, v: 100 },
+    })),
+  };
+}
+
 export const categories = [
   { key: 'mercurian', label: 'Mercurian', initial: mercurian },
   { key: 'europan-ice', label: 'Europan / Plutonic · Ice', initial: europanIce },
   { key: 'europan-water', label: 'Europan / Plutonic · Water world', initial: europanWater },
+  { key: 'lunar', label: 'Lunar', initial: pendingSources() },
+  { key: 'ioan', label: 'Ioan', initial: pendingSources() },
+  { key: 'titanian', label: 'Titanian', initial: pendingSources() },
+  { key: 'martian', label: 'Martian', initial: pendingSources() },
+  { key: 'venusian', label: 'Venusian', initial: pendingSources() },
+  { key: 'jovian', label: 'Jovian', initial: pendingSources() },
+  { key: 'neptunian', label: 'Neptunian', initial: pendingSources() },
+  { key: 'star-a', label: 'A-type star', initial: pendingSources() },
+  { key: 'star-f', label: 'F-type star', initial: pendingSources() },
+  { key: 'star-g', label: 'G-type star', initial: pendingSources() },
+  { key: 'star-k', label: 'K-type star', initial: pendingSources() },
+  { key: 'star-m', label: 'M-type star', initial: pendingSources() },
+  { key: 'star-giant', label: 'Giant star', initial: pendingSources() },
+  { key: 'star-white-dwarf', label: 'White dwarf', initial: pendingSources() },
+  { key: 'star-neutron-star', label: 'Neutron star', initial: pendingSources() },
+  { key: 'star-black-hole', label: 'Stellar-mass black hole', initial: pendingSources() },
+  { key: 'asteroid-belt', label: 'Asteroid belt', initial: pendingSources() },
+  { key: 'kuiper-belt', label: 'Kuiper belt', initial: pendingSources() },
+  { key: 'gas-cloud', label: 'Gas cloud', initial: pendingSources() },
 ] as const;
 
 export type Category = (typeof categories)[number];

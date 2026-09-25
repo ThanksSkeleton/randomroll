@@ -154,7 +154,7 @@ function render(): void {
   const canAccept = sourceStatus?.ready === true;
   const manifest = JSON.stringify(getTotalManifest(state), null, 2);
   app!.innerHTML =
-    '<header><div><p class="eyebrow">SWN / LOCAL ASSET PRODUCTION</p><h1>Planet portrait review</h1>' +
+    '<header><div><p class="eyebrow">SWN / LOCAL ASSET PRODUCTION</p><h1>Celestial portrait review</h1>' +
     '<p>Review one base image at a time. Tune two color treatments, then accept or skip. The queue wraps around.</p></div>' +
     '<div class="summary"><strong>' +
     accepted +

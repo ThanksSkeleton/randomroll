@@ -1,15 +1,49 @@
 # Source portrait prompt set
 
-All nine replacement images were made with the built-in imagegen tool in stylized-concept mode, then normalized to 1500 × 850 PNG with ffmpeg. The shared production brief was: a wide 30:17 science-fiction inspector portrait; one isolated, believable planet centered at about 48% of frame width and 75% of frame height; near-black space with sparse tiny stars; cinematic astronomical rendering; no host star, moon, other body, nebula, spacecraft, rings, text, symbols, or watermark.
+All source art uses the shared wide 30:17 inspector portrait format, cinematic astronomical rendering, and no text or watermark. Planet portraits show one isolated body against near-black space with sparse tiny stars. Star portraits show only the selected star against the same sparse black field. The asteroid, Kuiper, and gas-cloud views intentionally use dense cinematic environments, as called for by the spec. Generated files are normalized to 1500 × 850 PNGs.
 
-| File | Subject and distinguishing direction |
+## Existing reviewed-source set
+
+The original nine are retained unchanged: `mercurian/01–03`, `europan-water/01–03`, and `europan-ice/01–03`.
+
+## New planetary sources
+
+Each category has three visibly varied lighting/surface treatments, numbered `01–03`:
+
+| Category | Direction |
 | --- | --- |
-| mercurian/01.png | Airless Mercury-like world, charcoal and warm gray craters, bright ancient impact basin, upper-left sunlight. |
-| mercurian/02.png | Dark slate cratered globe, pale ejecta rays around an off-center fresh crater and broad scarred plain, upper-right sunlight. |
-| mercurian/03.png | Warm dusty brown-gray regolith, overlapping crater chains and large dark volcanic plain, low-angle left sunlight. |
-| europan-ice/01.png | Blue-white ice shell and reddish-brown fracture network reminiscent of Europa, upper-left sunlight. |
-| europan-ice/02.png | Pale blue glacier fields, dark crevasses, scattered craters and frosted ridges reminiscent of Pluto, upper-right sunlight. |
-| europan-ice/03.png | Pale lavender-white nitrogen ice, bright offset plain, rugged dark mountain border, lower-left sunlight. |
-| europan-water/01.png | Deep cobalt global ocean, turquoise shallow-water swirls, sparse white cloud streaks, upper-left sunlight; no land. |
-| europan-water/02.png | Dark indigo ocean, bright cyan current bands, wispy spiral clouds, upper-right sunlight; no land. |
-| europan-water/03.png | Blue-green ocean, large dark-blue gyre with sea-foam cloud bands and storm whorls, lower-left sunlight; no land. |
+| `lunar` | Gray airless regolith, craters, ejecta, maria, hard sunlight. |
+| `ioan` | Sulfur yellow/orange crust, volcanic calderas, dark lava and occasional glow. |
+| `titanian` | Amber haze, dunes, dark hydrocarbon lakes/channels, diffused light. |
+| `martian` | Rust deserts, canyons, volcanoes, dry channels and polar frost. |
+| `venusian` | Cream and golden cloud decks, ochre swirls and atmospheric haze. |
+| `jovian` | Cream, caramel and rust cloud belts with large turbulent storms. |
+| `neptunian` | Deep cobalt and indigo ice giant, cyan cloud streaks and dark storms. |
+
+## New star sources
+
+Each category has three variations, numbered `01–03`, with differing surface detail, flare structure, and lighting:
+
+| Category | Direction |
+| --- | --- |
+| `star-a` | Bright blue-white, energetic corona and flare prominences. |
+| `star-f` | Pale white to champagne, slightly whiter than the Sun. |
+| `star-g` | Sun-like warm white-yellow photosphere and restrained corona. |
+| `star-k` | Slightly orange, amber/copper photosphere. |
+| `star-m` | Small, dim red dwarf with ample dark negative space. |
+| `star-giant` | Oversized, bright and dangerous, with dramatic prominences. |
+| `star-white-dwarf` | Compact, small blue-white star with faint cool corona. |
+| `star-neutron-star` | Small, cinematic violet-purple pulsar with magnetic beams. |
+| `star-black-hole` | Dark event horizon, deep-red accretion flow and gravitational lensing. |
+
+## New other-object sources
+
+Each category has three variations, numbered `01–03`:
+
+| Category | Direction |
+| --- | --- |
+| `asteroid-belt` | Immersive, deliberately dense field of rugged rocky bodies. |
+| `kuiper-belt` | Immersive, deliberately dense field of blue-white icy bodies. |
+| `gas-cloud` | Immersive turbulent gas filaments and colored vapor, with no distinct celestial body. |
+
+Independent stations, POIs, routes, and other manmade objects are not part of this batch.
