@@ -1,0 +1,264 @@
+:root {
+  color-scheme: dark;
+  font-family: Inter, system-ui, sans-serif;
+  background: #070d13;
+  color: #e5edf3;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+}
+main {
+  max-width: 1160px;
+  margin: auto;
+  padding: 24px;
+}
+header {
+  display: flex;
+  justify-content: space-between;
+  gap: 30px;
+  align-items: end;
+  border-bottom: 1px solid #33414d;
+  padding-bottom: 20px;
+}
+h1 {
+  font-size: 2rem;
+  margin: 0 0 8px;
+}
+h2 {
+  font-size: 1.25rem;
+  margin: 0;
+}
+p {
+  margin: 0;
+  color: #a9bac5;
+  line-height: 1.5;
+}
+.eyebrow {
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  color: #65d6c0;
+  margin-bottom: 10px;
+}
+.summary {
+  text-align: right;
+  white-space: nowrap;
+}
+.summary strong {
+  display: block;
+  font-size: 2rem;
+  color: #65d6c0;
+}
+.summary span {
+  color: #a9bac5;
+  font-size: 0.8rem;
+}
+.queue-progress {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin: 20px 0;
+}
+.queue-step {
+  color: #a9bac5;
+  border: 1px solid #395360;
+  background: #101c25;
+  padding: 6px 8px;
+  font-size: 0.7rem;
+}
+.queue-step.accepted {
+  border-color: #65d6c0;
+  color: #65d6c0;
+}
+.queue-step.skipped {
+  color: #e4c582;
+  border-color: #927e4f;
+}
+.queue-step.current {
+  outline: 2px solid #e5edf3;
+  outline-offset: 2px;
+}
+.current,
+.manifest {
+  background: #101c25;
+  border: 1px solid #2b4350;
+  padding: 20px;
+}
+.source-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 20px;
+}
+.source-heading code {
+  color: #9bb6c6;
+  font-size: 0.72rem;
+  overflow-wrap: anywhere;
+}
+.source-status {
+  font-size: 0.8rem;
+  margin: 12px 0 18px;
+}
+.good {
+  color: #65d6c0;
+}
+.bad {
+  color: #ff9587;
+}
+.pending {
+  color: #e4c582;
+}
+.previews {
+  display: grid;
+  grid-template-columns: repeat(3, 300px);
+  gap: 18px;
+  margin-bottom: 24px;
+}
+.preview strong {
+  display: block;
+  margin-bottom: 7px;
+  font-size: 0.8rem;
+}
+.inspector {
+  width: 300px;
+  height: 170px;
+  outline: 1px solid #273a42;
+  background: #000;
+  overflow: hidden;
+}
+.inspector img {
+  display: block;
+  width: 300px;
+  height: 170px;
+  object-fit: cover;
+}
+.tunings {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+fieldset {
+  border: 1px solid #395360;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  min-width: 0;
+}
+legend {
+  color: #65d6c0;
+  font-size: 0.85rem;
+  padding: 0 6px;
+}
+.dial {
+  display: grid;
+  gap: 5px;
+  font-size: 0.72rem;
+  color: #b9cbd4;
+}
+output {
+  color: #65d6c0;
+  font-size: 0.8rem;
+}
+input[type='range'] {
+  width: 100%;
+  accent-color: #65d6c0;
+}
+.actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 22px;
+}
+button {
+  border: 1px solid #4c6a78;
+  background: #152630;
+  color: #e5edf3;
+  padding: 9px 12px;
+  font: inherit;
+  cursor: pointer;
+}
+button:hover {
+  border-color: #65d6c0;
+}
+button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+#accept {
+  background: #1b5149;
+  border-color: #65d6c0;
+}
+#total {
+  margin-left: auto;
+}
+.message:empty {
+  display: none;
+}
+.message {
+  margin-top: 10px;
+  font-size: 0.8rem;
+}
+.manifest {
+  margin-top: 20px;
+}
+.manifest-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.manifest-heading > div {
+  display: flex;
+  gap: 8px;
+}
+.manifest p {
+  font-size: 0.8rem;
+}
+pre {
+  max-height: 460px;
+  overflow: auto;
+  padding: 14px;
+  background: #070d13;
+  border: 1px solid #273a42;
+  font-size: 0.75rem;
+  line-height: 1.5;
+}
+footer {
+  color: #91a7b4;
+  font-size: 0.8rem;
+  padding: 30px 0;
+}
+@media (max-width: 1020px) {
+  .previews {
+    grid-template-columns: repeat(auto-fit, 300px);
+  }
+  .tunings {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 650px) {
+  header,
+  .source-heading,
+  .manifest-heading {
+    display: block;
+  }
+  .summary {
+    text-align: left;
+    margin-top: 15px;
+  }
+  .source-heading code {
+    display: block;
+    margin-top: 8px;
+  }
+  fieldset {
+    grid-template-columns: 1fr;
+  }
+  .actions {
+    flex-wrap: wrap;
+  }
+  #total {
+    margin-left: 0;
+  }
+}

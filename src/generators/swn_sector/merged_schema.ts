@@ -119,6 +119,8 @@ export type SystemObject = Planet | OtherCelestialObject;
 
 export interface Planet extends SystemObjectBase {
   Kind: 'Planet';
+  /** Stable variant ID; omitted for categories awaiting portrait production. */
+  PortraitAssetId?: string;
   Size: Size;
   BulkComposition: BulkComposition;
   SurfaceWaterPresent: boolean;

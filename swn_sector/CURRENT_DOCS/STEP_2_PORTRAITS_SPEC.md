@@ -74,37 +74,30 @@ Route portals reuse the parent route portrait and do not receive a separate bank
 
 ## Bank size and variation workflow
 
-The target is 12 approved images per standard category.
+The production target is three accepted base images per standard category. Each accepted base image yields six mandatory runtime variants: base, horizontal flip, color A, color A plus flip, color B, and color B plus flip. Thus a completed three-source bank has 18 variants. A skipped source contributes nothing to the current manifest and can be revisited. There is no selection among variants of an accepted source.
 
-The current source plan also calls for three AI-generated bases, horizontal flips, and two human-tuned hue shifts. Taken literally, retaining every original and every variation would produce 18 images, not 12. Before asset production, choose and document a precise 12-image recipe.
+Color A and B are tuned separately for each source with hue, saturation, and value controls. The jig previews CSS hue-rotate, saturate, and brightness approximations. The flip requires no tuning or preview. Downstream code translates each accepted source and its two HSV triplets into the six display variants.
 
-Candidate recipe that preserves all stated techniques:
-
-1. Generate three base images.
-2. Create one horizontal flip of each, producing six compositions.
-3. For each composition, retain the original plus one selected human-tuned hue shift, producing 12 approved images.
-
-The second proposed hue angle can be reviewed in the local jig but would not enter the final bank under this recipe. This recipe is a proposal, not yet a settled decision.
+Base images use a 300:170 aspect ratio, currently stored as 1500 × 850 PNGs. The inspector art frame and jig preview are 300 × 170 pixels.
 
 ## Local review jig
 
-Create a local HTML review tool for semi-manual asset preparation. It must allow a human reviewer to:
+The local jig is a stateful queue over all source images. It shows one source at a time with base, color A, and color B previews. The reviewer can:
 
-- Select an object category.
-- View each source image and its flipped version.
-- Preview the candidate hue shifts.
-- Compare variants at the application's actual portrait size.
-- Mark exactly the variants accepted into the final bank.
-- Detect duplicate filenames, missing variants, incorrect dimensions, and an incorrect final bank count.
+- Tune separate hue, saturation, and value controls for A and B.
+- Accept the current source and advance, skip it without accepting, or go back without changing its decision.
+- Loop from the last source to the first and back again, revisiting prior decisions and tuning.
+- Get a total manifest mapping accepted source paths to their two HSV triplets.
 
-The jig is an asset-production tool, not part of the player-facing application.
+Queue position, decisions, and dial settings persist locally. A skipped or pending source is omitted from the total manifest. The jig checks that source images load at the expected dimensions. It is an asset-production tool, not part of the player-facing application.
 
 ## Asset storage and manifest
 
-- Final assets are hosted with the site as static project assets.
-- Each bank has a manifest containing its category key and ordered portrait asset IDs or paths.
+- Base assets are hosted with the site as static project assets.
+- The jig's total manifest contains only accepted source paths and their A/B HSV values; it contains no duplicated image files or derived CSS blocks.
+- Downstream translation produces stable variant IDs and styles for app consumption. Every accepted source contributes all six variants.
 - Asset filenames are stable and do not contain editable object names.
-- The application validates that every required category has a nonempty bank and, once production is complete, exactly 12 approved images.
+- Once production is complete, the application validates that every required category has a nonempty bank and that every referenced variant resolves.
 - Placeholder assets are listed explicitly rather than masquerading as ordinary random banks.
 
 ## Assignment and persistence
@@ -143,7 +136,7 @@ No reroll history or generation provenance beyond the selected asset reference i
 
 ## Acceptance criteria
 
-1. Every listed standard category has a manifest entry and approved image bank.
+1. Every listed standard category eventually has three accepted base images and 18 derived variants.
 2. Every generated star, uninhabited planet, other celestial object, POI, and route receives a valid stable portrait reference.
 3. Inhabited worlds and the player ship always receive their explicit placeholders.
 4. Route portals display the parent route portrait when inspected.
@@ -151,12 +144,11 @@ No reroll history or generation provenance beyond the selected asset reference i
 6. Save/load and ordinary edits preserve assignments.
 7. There is no portrait-reroll action.
 8. Inspector portraits obey player visibility and provide appropriate fallback and accessibility behavior.
-9. The local review jig verifies the final count and integrity of each bank.
+9. The local review jig verifies source dimensions and exports only accepted sources with two HSV triplets each.
 10. Automated validation fails clearly when a required manifest category or referenced asset is missing.
 
 ## Drill-down decisions remaining
 
-- Approve the exact 12-image variation recipe.
-- Image dimensions, aspect ratio, format, and compression target.
+- Final image compression target.
 - Final directory and manifest format.
 - Whether manual portrait replacement belongs in this phase or a later editing phase.

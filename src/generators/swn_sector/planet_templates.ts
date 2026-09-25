@@ -7,6 +7,7 @@ import type {
 } from './merged_schema';
 import { choose, deterministicId, randomFor } from './generation_random';
 import { directOrbitTemperatures } from './generation_rules';
+import { assignPlanetPortraitId, planetPortraitCategory } from './planet_portraits';
 
 export type ExtraPlanetTemplate =
   | 'Mercurian'
@@ -132,6 +133,7 @@ export function generateTemplatePlanet(options: TemplatePlanetOptions): Planet {
     temperature !== 'Furance' &&
     facts.Atmosphere !== 'Vacuum';
   const name = `${options.template} ${options.entityPath}`;
+  const portraitCategory = planetPortraitCategory(options.template, temperature);
   return {
     Id: deterministicId(options.seed, options.entityPath),
     ProceduralName: name,
@@ -147,6 +149,9 @@ export function generateTemplatePlanet(options: TemplatePlanetOptions): Planet {
     Orbit: options.orbit,
     Temperature: temperature,
     Kind: 'Planet',
+    ...(portraitCategory && {
+      PortraitAssetId: assignPlanetPortraitId(options.seed, options.entityPath, portraitCategory),
+    }),
     Size: facts.Size,
     BulkComposition: facts.BulkComposition,
     SurfaceWaterPresent: surfaceWaterPresent,

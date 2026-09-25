@@ -12,6 +12,7 @@ import type { EditDraft, Preview, EditableDetailField } from '../../application/
 import { formatAu } from '../../formatters';
 import { starPresentationClass, starPresentationStyle } from '../../../star_presentation';
 import { displayBulkComposition } from '../../../planet_presentation';
+import { resolvePlanetPortrait } from '../../../planet_portraits';
 import { StarGlyph } from '../system-viewer/StarGlyph';
 
 function displayName(info: SelectableEntity | undefined, preview: Preview) {
@@ -191,6 +192,12 @@ export function DetailBar({
   const info = selectedId ? findDetails(sector, selectedId) : undefined;
   const found = selectedId ? findObject(sector, selectedId) : undefined;
   const kind = objectKindLabel(sector, selectedId);
+  const portrait =
+    found?.kind === 'Planet' &&
+    (preview === 'gm' || visibilityRank(found.object.VisibilityLevel) >= 1) &&
+    found.object.PortraitAssetId
+      ? resolvePlanetPortrait(found.object.PortraitAssetId)
+      : undefined;
   return (
     <aside className="detail-bar">
       {!info || !found ? (
@@ -201,7 +208,24 @@ export function DetailBar({
       ) : (
         <>
           <div className={`object-art art-${kind.toLowerCase().replaceAll(' ', '-')}`}>
-            <div>
+            {portrait && (
+              <img
+                className="portrait-image"
+                src={import.meta.env.BASE_URL + portrait.sourcePath}
+                style={portrait.css}
+                alt={`Portrait of ${displayName(info, preview) ?? info.ProceduralName}, uninhabited planet`}
+                onError={(event) => {
+                  event.currentTarget.hidden = true;
+                  event.currentTarget.nextElementSibling?.setAttribute('aria-hidden', 'false');
+                }}
+              />
+            )}
+            <div
+              className="object-art-glyph"
+              aria-hidden={!!portrait}
+              role={portrait ? 'img' : undefined}
+              aria-label={portrait ? 'Planet portrait unavailable' : undefined}
+            >
               {kind === 'STAR' && found.kind === 'Star' ? (
                 <div
                   className={`detail-star-glyph ${starPresentationClass(found.object.StarType)}`}
@@ -221,7 +245,10 @@ export function DetailBar({
               )}
             </div>
           </div>
-          <h1 className={`object-name object-name-${kind.toLowerCase().replaceAll(' ', '-')}`}>
+          <h1
+            className={`object-name object-name-${kind.toLowerCase().replaceAll(' ', '-')}`}
+            aria-label={displayName(info, preview)}
+          >
             {preview === 'gm' && !locked ? (
               <EditableText
                 className="object-name-editor"

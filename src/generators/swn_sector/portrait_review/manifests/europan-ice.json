@@ -1,0 +1,163 @@
+{
+  "categoryKey": "europan-ice",
+  "width": 1500,
+  "height": 850,
+  "images": [
+    {
+      "sourceId": "01",
+      "sourcePath": "swn_sector/portraits/sources/europan-ice/01.png",
+      "tuningA": {
+        "h": 35,
+        "s": 110,
+        "v": 100
+      },
+      "tuningB": {
+        "h": -35,
+        "s": 90,
+        "v": 110
+      },
+      "variants": [
+        {
+          "id": "europan-ice-01-base",
+          "css": {}
+        },
+        {
+          "id": "europan-ice-01-flip",
+          "css": {
+            "transform": "scaleX(-1)"
+          }
+        },
+        {
+          "id": "europan-ice-01-a",
+          "css": {
+            "filter": "hue-rotate(35deg) saturate(110%) brightness(100%)"
+          }
+        },
+        {
+          "id": "europan-ice-01-a-flip",
+          "css": {
+            "filter": "hue-rotate(35deg) saturate(110%) brightness(100%)",
+            "transform": "scaleX(-1)"
+          }
+        },
+        {
+          "id": "europan-ice-01-b",
+          "css": {
+            "filter": "hue-rotate(-35deg) saturate(90%) brightness(110%)"
+          }
+        },
+        {
+          "id": "europan-ice-01-b-flip",
+          "css": {
+            "filter": "hue-rotate(-35deg) saturate(90%) brightness(110%)",
+            "transform": "scaleX(-1)"
+          }
+        }
+      ]
+    },
+    {
+      "sourceId": "02",
+      "sourcePath": "swn_sector/portraits/sources/europan-ice/02.png",
+      "tuningA": {
+        "h": 35,
+        "s": 110,
+        "v": 100
+      },
+      "tuningB": {
+        "h": -35,
+        "s": 90,
+        "v": 110
+      },
+      "variants": [
+        {
+          "id": "europan-ice-02-base",
+          "css": {}
+        },
+        {
+          "id": "europan-ice-02-flip",
+          "css": {
+            "transform": "scaleX(-1)"
+          }
+        },
+        {
+          "id": "europan-ice-02-a",
+          "css": {
+            "filter": "hue-rotate(35deg) saturate(110%) brightness(100%)"
+          }
+        },
+        {
+          "id": "europan-ice-02-a-flip",
+          "css": {
+            "filter": "hue-rotate(35deg) saturate(110%) brightness(100%)",
+            "transform": "scaleX(-1)"
+          }
+        },
+        {
+          "id": "europan-ice-02-b",
+          "css": {
+            "filter": "hue-rotate(-35deg) saturate(90%) brightness(110%)"
+          }
+        },
+        {
+          "id": "europan-ice-02-b-flip",
+          "css": {
+            "filter": "hue-rotate(-35deg) saturate(90%) brightness(110%)",
+            "transform": "scaleX(-1)"
+          }
+        }
+      ]
+    },
+    {
+      "sourceId": "03",
+      "sourcePath": "swn_sector/portraits/sources/europan-ice/03.png",
+      "tuningA": {
+        "h": 35,
+        "s": 110,
+        "v": 100
+      },
+      "tuningB": {
+        "h": -35,
+        "s": 90,
+        "v": 110
+      },
+      "variants": [
+        {
+          "id": "europan-ice-03-base",
+          "css": {}
+        },
+        {
+          "id": "europan-ice-03-flip",
+          "css": {
+            "transform": "scaleX(-1)"
+          }
+        },
+        {
+          "id": "europan-ice-03-a",
+          "css": {
+            "filter": "hue-rotate(35deg) saturate(110%) brightness(100%)"
+          }
+        },
+        {
+          "id": "europan-ice-03-a-flip",
+          "css": {
+            "filter": "hue-rotate(35deg) saturate(110%) brightness(100%)",
+            "transform": "scaleX(-1)"
+          }
+        },
+        {
+          "id": "europan-ice-03-b",
+          "css": {
+            "filter": "hue-rotate(-35deg) saturate(90%) brightness(110%)"
+          }
+        },
+        {
+          "id": "europan-ice-03-b-flip",
+          "css": {
+            "filter": "hue-rotate(-35deg) saturate(90%) brightness(110%)",
+            "transform": "scaleX(-1)"
+          }
+        }
+      ]
+    }
+  ]
+}

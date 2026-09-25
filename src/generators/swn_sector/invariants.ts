@@ -1,3 +1,4 @@
+import { resolvePlanetPortrait } from './planet_portraits';
 /**
  * Executable business-rule validation for the merged SWN sector contract.
  *
@@ -292,6 +293,11 @@ function validateCanonicalShape(
       !string(item.NativeBiosphere, `${path}.NativeBiosphere`)
     )
       return invalid(path, 'a complete Planet');
+    if (
+      item.PortraitAssetId !== undefined &&
+      !string(item.PortraitAssetId, `${path}.PortraitAssetId`)
+    )
+      return false;
     if (item.InhabitedInfo === false) return true;
     return (
       record(item.InhabitedInfo, `${path}.InhabitedInfo`) &&
@@ -453,6 +459,7 @@ function checkNoUnknownSchemaProperties(
             'Atmosphere',
             'NativeBiosphere',
             'InhabitedInfo',
+            'PortraitAssetId',
           ],
           `Planet ${object.Id}`,
         );
@@ -578,6 +585,8 @@ function validateObject(
     return;
   }
   const planet = object;
+  if (planet.PortraitAssetId && !resolvePlanetPortrait(planet.PortraitAssetId))
+    fail('PORTRAIT', `Planet ${planet.Id} has unknown portrait ${planet.PortraitAssetId}.`);
   const expectedGasComposition = GAS_COMPOSITION_BY_SIZE[planet.Size];
   if (expectedGasComposition !== undefined && planet.BulkComposition !== expectedGasComposition)
     fail('C7', `Gas giant ${planet.Id} has incompatible bulk composition.`);

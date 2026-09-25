@@ -1,0 +1,163 @@
+{
+  "categoryKey": "mercurian",
+  "width": 1500,
+  "height": 850,
+  "images": [
+    {
+      "sourceId": "01",
+      "sourcePath": "swn_sector/portraits/sources/mercurian/01.png",
+      "tuningA": {
+        "h": 35,
+        "s": 110,
+        "v": 100
+      },
+      "tuningB": {
+        "h": -35,
+        "s": 90,
+        "v": 110
+      },
+      "variants": [
+        {
+          "id": "mercurian-01-base",
+          "css": {}
+        },
+        {
+          "id": "mercurian-01-flip",
+          "css": {
+            "transform": "scaleX(-1)"
+          }
+        },
+        {
+          "id": "mercurian-01-a",
+          "css": {
+            "filter": "hue-rotate(35deg) saturate(110%) brightness(100%)"
+          }
+        },
+        {
+          "id": "mercurian-01-a-flip",
+          "css": {
+            "filter": "hue-rotate(35deg) saturate(110%) brightness(100%)",
+            "transform": "scaleX(-1)"
+          }
+        },
+        {
+          "id": "mercurian-01-b",
+          "css": {
+            "filter": "hue-rotate(-35deg) saturate(90%) brightness(110%)"
+          }
+        },
+        {
+          "id": "mercurian-01-b-flip",
+          "css": {
+            "filter": "hue-rotate(-35deg) saturate(90%) brightness(110%)",
+            "transform": "scaleX(-1)"
+          }
+        }
+      ]
+    },
+    {
+      "sourceId": "02",
+      "sourcePath": "swn_sector/portraits/sources/mercurian/02.png",
+      "tuningA": {
+        "h": 35,
+        "s": 110,
+        "v": 100
+      },
+      "tuningB": {
+        "h": -35,
+        "s": 90,
+        "v": 110
+      },
+      "variants": [
+        {
+          "id": "mercurian-02-base",
+          "css": {}
+        },
+        {
+          "id": "mercurian-02-flip",
+          "css": {
+            "transform": "scaleX(-1)"
+          }
+        },
+        {
+          "id": "mercurian-02-a",
+          "css": {
+            "filter": "hue-rotate(35deg) saturate(110%) brightness(100%)"
+          }
+        },
+        {
+          "id": "mercurian-02-a-flip",
+          "css": {
+            "filter": "hue-rotate(35deg) saturate(110%) brightness(100%)",
+            "transform": "scaleX(-1)"
+          }
+        },
+        {
+          "id": "mercurian-02-b",
+          "css": {
+            "filter": "hue-rotate(-35deg) saturate(90%) brightness(110%)"
+          }
+        },
+        {
+          "id": "mercurian-02-b-flip",
+          "css": {
+            "filter": "hue-rotate(-35deg) saturate(90%) brightness(110%)",
+            "transform": "scaleX(-1)"
+          }
+        }
+      ]
+    },
+    {
+      "sourceId": "03",
+      "sourcePath": "swn_sector/portraits/sources/mercurian/03.png",
+      "tuningA": {
+        "h": 35,
+        "s": 110,
+        "v": 100
+      },
+      "tuningB": {
+        "h": -35,
+        "s": 90,
+        "v": 110
+      },
+      "variants": [
+        {
+          "id": "mercurian-03-base",
+          "css": {}
+        },
+        {
+          "id": "mercurian-03-flip",
+          "css": {
+            "transform": "scaleX(-1)"
+          }
+        },
+        {
+          "id": "mercurian-03-a",
+          "css": {
+            "filter": "hue-rotate(35deg) saturate(110%) brightness(100%)"
+          }
+        },
+        {
+          "id": "mercurian-03-a-flip",
+          "css": {
+            "filter": "hue-rotate(35deg) saturate(110%) brightness(100%)",
+            "transform": "scaleX(-1)"
+          }
+        },
+        {
+          "id": "mercurian-03-b",
+          "css": {
+            "filter": "hue-rotate(-35deg) saturate(90%) brightness(110%)"
+          }
+        },
+        {
+          "id": "mercurian-03-b-flip",
+          "css": {
+            "filter": "hue-rotate(-35deg) saturate(90%) brightness(110%)",
+            "transform": "scaleX(-1)"
+          }
+        }
+      ]
+    }
+  ]
+}
