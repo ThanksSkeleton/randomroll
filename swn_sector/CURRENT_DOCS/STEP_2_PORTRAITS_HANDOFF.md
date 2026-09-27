@@ -3,7 +3,7 @@
 ## Current state
 
 - The local review jig is at `/randomroll/swn_sector/portrait_review/` when running `npm run dev`. It queues one source at a time across the 66-image batch. The original Mercurian, Europan water, and Europan ice sources come first, followed by the new categories. Accept, Skip, and Back wrap through the queue; position, decisions, and HSV drafts persist in browser localStorage.
-- The original nine source PNGs remain at `public/swn_sector/portraits/sources/`. The expanded current review batch now contains 66 sources, all 1500 × 850: the original Mercurian and Europan ice/water sources plus the remaining seven planet categories, nine star types, and asteroid belt, Kuiper belt, and gas cloud. IndependentStation and all manmade objects are held for a later batch.
+- The original nine source PNGs remain at `public/swn_sector/portraits/sources/`. The expanded celestial review batch contains 66 sources, all 1500 × 850: the original Mercurian and Europan ice/water sources plus the remaining seven planet categories, nine star types, and asteroid belt, Kuiper belt, and gas cloud. The next art batch is the `IndependentStation` system object plus all ten POI types. POIs are human-relevant, so ships, stations, and related activity may appear where appropriate even in categories that are not themselves human structures.
 - **Get Total Manifest** exposes a compact JSON mapping of accepted source paths to A/B HSV triplets. Skipped sources are omitted. Download or copy that JSON when tuning is done; no compact total manifest is checked in yet.
 - The jig previews base, A, and B at 300 × 170. Each accepted source will produce six variants downstream: base, flip, A, A flip, B, B flip. The flip has no separate tuning.
 

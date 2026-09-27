@@ -18,6 +18,7 @@ Global Guidelines
 ### Independent stations and points of interest
 
 - Follow the category-specific framing below. The close-up POI and human-made structure guidance is intentionally distinct from the isolated celestial-object rules above.
+- This portrait pass covers the `IndependentStation` system object and all ten `POIType` categories. POIs are human-relevant points of interest; they may depict human-made structures, ships, or other relevant activity even when the category is not itself a human structure.
 
 ## Coverage inventory
 
@@ -54,11 +55,11 @@ These should be straightforward as these are just visual reproductions of real w
 1. `AsteroidBelt` - From within a dense field of rocky bodies - "Cinematic" not realistic density; fill the image with the rocky field, without other objects.
 2. `KuiperBelt` - From within a dense field of icy bodies - "Cinematic" not realistic density; fill the image with the icy field, without other objects.
 3. `GasCloud` - More of a shot from within a Nebula of swirling gas - "Cinematic" not realistic density; the gas fills the image, without other objects.
-4. `IndependentStation` - Free floating structure entered in frame, somewhat small (contrast with POI)
+4. `IndependentStation` system object - Free floating structure entered in frame, somewhat small (contrast with close-up POI framing). This is included in the portrait pass alongside all POI types.
 
  [IndependentStation / Base POI] - No nearby Spaceships or other objects unless specifically directed , no writing
 
-### Points of interest: one bank per `POIType`
+### Points of interest: one bank per `POIType` (all ten included in this portrait pass)
 
 General Guidelines for POI images
 - POI - POV: Very close in. As if we are doing a spacewalk from the structure and snapped a photo. Structure takes up large fraction of frame. Some of these have implicit stellar objects (ex: asteroid base- asteroid), which is fine.
@@ -66,17 +67,17 @@ General Guidelines for POI images
 - [IndependentStation / Base POI] - No nearby Spaceships or other objects unless specifically directed , no writing
 
 1. `Deep-space station` - Symmetric, cylindrical with spokes
-2. `Asteroid base` - Embedded in an asteroid, with docking ports and mining equipment visible
+2. `Asteroid base` - Embedded in an asteroid, with docking ports and purpose-built, space-rated extraction equipment visible: robotic drill heads or augers anchored to the rock, articulated excavator arms, ore collection hoppers, sealed conveyors or pneumatic transfer lines, and compact processing modules. Equipment should be bolted or anchored to the asteroid and designed for vacuum and microgravity. Do not depict generic terrestrial construction/mining vehicles (such as backhoes, bulldozers, or dump trucks), wheeled machinery, or vehicles parked on open-air cliffside terrain.
 3. `Remote moon base` - Solar Panels and antennae visible - Nondescript lunar surface
 4. `Ancient orbital ruin` - Obvious damage, alien or exotic shape
 5. `Research base` - landing pads, smokestacks or exhaust pipes, multiple structures in a complex - Nondescript lunar surface 
 6. `Asteroid belt` - 1-3 small mining ships interacting with asteroids
-7. `Comet base` - Embedded in a comet, with docking ports and mining equipment visible
+7. `Comet base` - Embedded in a comet, with docking ports and purpose-built, space-rated extraction equipment visible, such as anchored robotic drill heads, sampling arms, sealed collection hoppers, and insulated transfer lines suited to volatile ice and dust. Do not depict generic terrestrial construction/mining vehicles or wheeled machinery.
 8. `Comet belt` - 1-3 small mining ships interacting with comets
 9. `Gas Mine` - Diamond shaped and blocky human made structure floating in green glass cloud (ambiguous if in a gas cloud or gas giant)
 10. `Refueling station` Cube-shaped shaped with cylindrical protrusions (docking ports) and huge gas tanks, free floating in space
 
-POI portraits should emphasize the POI itself 
+POI portraits should emphasize the POI itself. All ten POI categories are in scope for this pass, including categories such as asteroid belt, comet belt, ancient orbital ruin, and gas mine; their subjects may include human-relevant ships, stations, or activity where appropriate.
 
 ### Routes
 
@@ -149,7 +150,7 @@ No reroll history or generation provenance beyond the selected asset reference i
 
 ## Acceptance criteria
 
-1. Every listed standard category eventually has three accepted base images and 18 derived variants.
+1. Every listed standard category eventually has three accepted base images and 18 derived variants. The human-relevant structure/POI portrait pass includes the `IndependentStation` system object and all ten `POIType` categories.
 2. Every generated star, uninhabited planet, other celestial object, POI, and route receives a valid stable portrait reference.
 3. Inhabited worlds and the player ship always receive their explicit placeholders.
 4. Route portals display the parent route portrait when inspected.

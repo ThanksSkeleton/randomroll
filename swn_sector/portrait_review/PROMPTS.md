@@ -46,4 +46,12 @@ Each category has three variations, numbered `01–03`:
 | `kuiper-belt` | Immersive, deliberately dense field of blue-white icy bodies. |
 | `gas-cloud` | Immersive turbulent gas filaments and colored vapor, with no distinct celestial body. |
 
-Independent stations, POIs, routes, and other manmade objects are not part of this batch.
+Independent stations, POIs, routes, and other manmade objects are not part of the celestial batch above. The upcoming POI batch includes all ten POI types and the IndependentStation system object.
+
+## Upcoming POI prompt guidance
+
+All POI portraits use a close spacewalk viewpoint, with the point of interest filling a large part of the wide 30:17 frame. Use medium-hard science-fiction design: plausible, purpose-built equipment; visible structural supports and connections; restrained practical lighting; and materials that read as engineered and space-rated. Avoid fantasy ornament, magical energy effects, and generic contemporary Earth equipment unless a category explicitly calls for it.
+
+For `Asteroid base`, describe specific vacuum- and microgravity-capable extraction equipment: robotic drill heads or augers anchored to rock, articulated excavator arms mounted to structural supports, sealed ore hoppers, enclosed conveyors or pneumatic transfer lines, and compact processing modules. These components should be attached to the asteroid or station structure. Do not use the unqualified phrase “mining equipment”; do not show terrestrial backhoes, bulldozers, dump trucks, wheels, or construction vehicles sitting on open-air cliffside terrain. Make the asteroid an airless body in space, not an Earth-like landscape.
+
+For `Comet base`, use similarly space-rated equipment adapted to volatile ice and dust: anchored robotic sampling or drill heads, sealed collection hoppers, insulated transfer lines, and compact processing modules. Do not depict terrestrial construction vehicles or wheeled machinery.
