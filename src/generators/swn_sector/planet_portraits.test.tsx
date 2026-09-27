@@ -7,7 +7,7 @@ import { describe, expect, it } from 'vitest';
 import routeTuning from '../../../swn_sector/CURRENT_DOCS/portrait_routes.json';
 import variantSetOne from '../../../swn_sector/CURRENT_DOCS/portrait_variants_1.json';
 import variantSetTwo from '../../../swn_sector/CURRENT_DOCS/portrait_variants_2.json';
-import mergedTuning from '../../../swn_sector/CURRENT_DOCS/portrait_variants.json';
+import mergedTuning from '../../../swn_sector/portraits/portrait_variants.json';
 import { generate } from './generate';
 import { checkAllInvariants } from './invariants';
 import { portraitCategoryKeys, portraitManifest, resolvePortrait } from './portrait_assets';

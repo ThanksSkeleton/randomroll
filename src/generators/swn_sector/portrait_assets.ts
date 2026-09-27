@@ -1,4 +1,4 @@
-import tunedSources from '../../../swn_sector/CURRENT_DOCS/portrait_variants.json';
+import tunedSources from '../../../swn_sector/portraits/portrait_variants.json';
 import type { OtherCelestialObjectType, PointOfInterestType, StarType } from './merged_schema';
 import { choose, randomFor } from './generation_random';
 
