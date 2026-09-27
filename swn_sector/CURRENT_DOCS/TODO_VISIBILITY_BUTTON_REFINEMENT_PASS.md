@@ -1,3 +1,5 @@
+# TODO
+
 # Visibility Button Refinement Pass
 
 ## Current state
@@ -20,3 +22,5 @@ Current Cedalion values:
 The current composition is an accepted stopping point, not a final visual design. Revisit the glyph/button alignment and two-column fit in a later pass. Keep the scan and culture dependency behavior intact while refining presentation. The Cedalion tuning panel has been removed; reopen it only for a future tuning session.
 
 Defer a unified icon language between the scan fields in the detail bar and the GM visibility controls to a future visual pass. The detail bar field icons and visibility control icons should use a consistent visual vocabulary when that work resumes.
+
+Review the names used for visibility levels and scan fields. Make sure the names are consistent across the detail bar and GM visibility controls, and clearly describe the information each level reveals.

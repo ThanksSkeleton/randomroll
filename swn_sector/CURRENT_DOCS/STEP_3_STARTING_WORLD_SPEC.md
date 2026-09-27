@@ -4,14 +4,14 @@
 
 This step selects the campaign's starting inhabited world, places the player ship there, and establishes the initial player-visible neighborhood.
 
-It uses the existing entity-level visibility model:
+It uses the existing entity-level visibility grants:
 
-- `NONE`
 - `BASIC_SCAN`
-- `CULTURE_PARTIAL`
-- `CULTURE_FULL`
+- `CULTURE_1`
+- `CULTURE_II`
+- `NONE` when no grants are present
 
-This step changes visibility values; it does not introduce a second knowledge model.
+Grants are cumulative and independent: an entity may receive `BASIC_SCAN` together with a culture tier. This step changes visibility grants; it does not introduce a second knowledge model.
 
 ## Generation input
 
@@ -63,7 +63,7 @@ Let `S` be the system containing the selected starting world.
 
 ### 1. Reveal the starting system contents
 
-Set the following entities in `S` to `BASIC_SCAN`:
+Grant the following entities in `S` both `BASIC_SCAN` and `CULTURE_II`:
 
 - `S` itself.
 - `S.Star`.
@@ -71,7 +71,7 @@ Set the following entities in `S` to `BASIC_SCAN`:
 - Every other celestial object in `S.Objects`.
 - Every POI in `S.PointsOfInterest`.
 
-Set the player ship to `BASIC_SCAN`.
+Grant the player ship both `BASIC_SCAN` and `CULTURE_II`.
 
 “Everything in the starting system” includes objects that remain narratively mysterious; `BASIC_SCAN` controls which existing intelligence fields the player view exposes.
 
@@ -84,9 +84,8 @@ For every route with one endpoint in `S`:
 
 ### 3. Reveal first-order neighboring systems
 
-For the system at the other endpoint of each revealed route:
+For the system at the other endpoint of each revealed route, grant the neighboring `StarSystem` entity both `BASIC_SCAN` and `CULTURE_1`.
 
-- Set the neighboring `StarSystem` entity to `BASIC_SCAN`.
 - Do not automatically reveal that neighboring system's star, planets, moons, other objects, or POIs.
 
 ### 4. Stop propagation
@@ -100,8 +99,8 @@ In graph terms, the result contains the full starting system, all incident route
 ## Existing information boundaries
 
 - GM preview continues to display sector truth and GM notes regardless of visibility.
-- Player preview continues to hide `NONE` entities.
-- `BASIC_SCAN` does not reveal `CULTURE_PARTIAL`, `CULTURE_FULL`, or GM-only text.
+- Player preview continues to hide entities with no visibility grants.
+- `BASIC_SCAN` reveals basic scan information; `CULTURE_1` and `CULTURE_II` reveal their corresponding cultural information tiers. GM-only text remains hidden from players.
 - This step does not generate cultural information. It only establishes initial visibility values.
 - Later GM visibility edits use the existing edit controls and do not recalculate this initial reveal.
 
@@ -134,9 +133,9 @@ No reroll state is added.
 5. Selection is deterministic for the same seed, sector contents, and mode.
 6. A mode with no eligible candidates fails clearly and never falls back silently.
 7. The ship's initial location is the selected world.
-8. Every selectable entity contained by the starting system receives `BASIC_SCAN`.
+8. Every selectable entity contained by the starting system receives both `BASIC_SCAN` and `CULTURE_II`.
 9. Every incident route and both of its portals receive `BASIC_SCAN`.
-10. Directly connected system records receive `BASIC_SCAN` while their contained objects remain `NONE`.
+10. Directly connected system records receive both `BASIC_SCAN` and `CULTURE_1` while their contained objects remain without visibility grants.
 11. Second-order routes and systems remain `NONE` unless independently included by another settled rule.
 12. Moving the ship later does not repeat or reverse initial visibility assignment.
 13. GM and player previews continue to honor the existing visibility-level content rules.
