@@ -1,5 +1,5 @@
-import { VisibilityLevel } from './visibility';
-import type { Guid, Sector } from '../../../merged_schema';
+import { isValidScanVisibility, type ScanField } from './visibility';
+import type { Guid, ScanVisibility, Sector } from '../../../merged_schema';
 import { containingSystem, findObject, routePortals } from './selectors';
 
 export type SectorOperationFailure =
@@ -14,18 +14,28 @@ const success = <T>(value: T): SectorOperationResult<T> => ({ ok: true, value })
 const failure = <T>(reason: SectorOperationFailure): SectorOperationResult<T> => ({ ok: false, reason });
 const copySector = (sector: Sector): Sector => structuredClone(sector);
 
-export function updateObjectVisibility(
+export function updateObjectScanVisibility(
   sector: Sector,
   id: Guid,
-  level: (typeof VisibilityLevel)[keyof typeof VisibilityLevel],
+  field: ScanField,
+  enabled: boolean,
 ): SectorOperationResult<Sector> {
-  if (!Object.values(VisibilityLevel).includes(level)) return failure('invalid-visibility');
   const found = findObject(sector, id);
   if (!found) return failure('object-not-found');
   const next = copySector(sector);
   const updated = findObject(next, id);
   if (!updated) return failure('object-not-found');
-  updated.object.VisibilityLevel = level;
+  const visibility: ScanVisibility = { ...updated.object.Visibility };
+  visibility[field] = enabled;
+  if (field === 'BasicScan' && !enabled) {
+    visibility.DetailedScan = false;
+    visibility.PoliticsScan = false;
+    visibility.DeepPoliticsScan = false;
+  } else if (field === 'PoliticsScan' && !enabled) {
+    visibility.DeepPoliticsScan = false;
+  }
+  if (!isValidScanVisibility(visibility)) return failure('invalid-visibility');
+  updated.object.Visibility = visibility;
   return success(next);
 }
 
@@ -89,8 +99,9 @@ export type EditableDetailField =
   | 'NiceName'
   | 'InfoboxSummary'
   | 'BasicScan'
-  | 'CulturePartial'
-  | 'CultureFull'
+  | 'DetailedScan'
+  | 'PoliticsScan'
+  | 'DeepPoliticsScan'
   | 'GM';
 export interface SectorEdits {
   sectorName: string;

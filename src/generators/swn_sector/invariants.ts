@@ -274,14 +274,14 @@ function validateCanonicalShape(
   const selectable = (item: unknown, path: string): item is Record<string, unknown> => {
     if (
       !record(item, path) ||
-      !required(item, ['Id', 'ProceduralName', 'NiceName', 'VisibilityLevel', 'Intelligence'], path)
+      !required(item, ['Id', 'ProceduralName', 'NiceName', 'Visibility', 'Intelligence'], path)
     )
       return false;
     if (
       !string(item.Id, `${path}.Id`) ||
       !string(item.ProceduralName, `${path}.ProceduralName`) ||
       !string(item.NiceName, `${path}.NiceName`) ||
-      !string(item.VisibilityLevel, `${path}.VisibilityLevel`) ||
+      !record(item.Visibility, `${path}.Visibility`) ||
       !record(item.Intelligence, `${path}.Intelligence`)
     )
       return false;
@@ -291,7 +291,16 @@ function validateCanonicalShape(
     )
       return false;
     const intelligence = item.Intelligence;
-    return ['InfoboxSummary', 'BasicScan', 'CulturePartial', 'CultureFull', 'GM'].every((key) =>
+    const visibility = item.Visibility;
+    const validVisibility =
+      typeof visibility.BasicScan === 'boolean' &&
+      typeof visibility.DetailedScan === 'boolean' &&
+      typeof visibility.PoliticsScan === 'boolean' &&
+      typeof visibility.DeepPoliticsScan === 'boolean' &&
+      (!visibility.DetailedScan || visibility.BasicScan) &&
+      (!visibility.PoliticsScan || visibility.BasicScan) &&
+      (!visibility.DeepPoliticsScan || visibility.PoliticsScan);
+    return validVisibility && ['InfoboxSummary', 'BasicScan', 'DetailedScan', 'PoliticsScan', 'DeepPoliticsScan', 'GM'].every((key) =>
       string(intelligence[key], `${path}.Intelligence.${key}`),
     );
   };
@@ -372,7 +381,7 @@ function validateCanonicalShape(
       ],
       'Sector',
     ) ||
-    !string(value.SchemaVersion, 'Sector.SchemaVersion') ||
+    value.SchemaVersion !== 'merged-v2' ||
     !string(value.OriginalSeed, 'Sector.OriginalSeed') ||
     !string(value.SectorName, 'Sector.SectorName') ||
     !array(value.Systems, 'Sector.Systems') ||
@@ -440,14 +449,15 @@ function checkNoUnknownSchemaProperties(
     'Id',
     'ProceduralName',
     'NiceName',
-    'VisibilityLevel',
+    'Visibility',
     'Intelligence',
     'PortraitAssetId',
   ];
   const checkSelectable = (entity: SelectableEntity, path: string): void => {
+    check(entity.Visibility, ['BasicScan', 'DetailedScan', 'PoliticsScan', 'DeepPoliticsScan'], `${path}.Visibility`);
     check(
       entity.Intelligence,
-      ['InfoboxSummary', 'BasicScan', 'CulturePartial', 'CultureFull', 'GM'],
+      ['InfoboxSummary', 'BasicScan', 'DetailedScan', 'PoliticsScan', 'DeepPoliticsScan', 'GM'],
       `${path}.Intelligence`,
     );
   };

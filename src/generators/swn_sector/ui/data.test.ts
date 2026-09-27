@@ -2,15 +2,14 @@ import { describe, expect, it } from 'vitest';
 import { generate } from '../generate';
 import { createInitialSectors, findContainingSystem, findObject, getAllSelectableIds, validateSector } from './data';
 import { objectEntries, routePortals } from './domain/sector/selectors';
-import { VisibilityLevel } from '../merged_schema';
-import { updateObjectVisibility } from './domain/sector/operations';
+import { updateObjectScanVisibility } from './domain/sector/operations';
 
 describe('canonical sector data', () => {
   it('creates deterministic generator-backed initial sectors', () => {
     const first = createInitialSectors();
     expect(first).toEqual(createInitialSectors());
     for (const sector of first) {
-      expect(sector.SchemaVersion).toBe('merged-v1');
+      expect(sector.SchemaVersion).toBe('merged-v2');
       expect(sector.Systems.length).toBeGreaterThanOrEqual(20);
       expect(sector.Systems.length).toBeLessThanOrEqual(30);
       expect(new Set(getAllSelectableIds(sector)).size).toBe(getAllSelectableIds(sector).length);
@@ -33,10 +32,10 @@ describe('canonical sector data', () => {
     const object = system.Objects[0];
     expect(findObject(sector, object.Id)?.object).toBe(object);
     expect(findContainingSystem(sector, object.Id)).toBe(system);
-    const result = updateObjectVisibility(sector, object.Id, VisibilityLevel.CULTURE_FULL);
+    const result = updateObjectScanVisibility(sector, object.Id, 'BasicScan', true);
     expect(result.ok).toBe(true);
     if (!result.ok) throw new Error(result.reason);
-    expect(findObject(result.value, object.Id)?.object.VisibilityLevel).toBe(VisibilityLevel.CULTURE_FULL);
+    expect(findObject(result.value, object.Id)?.object.Visibility.BasicScan).toBe(true);
     expect(validateSector(result.value)).toEqual([]);
   });
 

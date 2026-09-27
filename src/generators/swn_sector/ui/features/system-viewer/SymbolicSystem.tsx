@@ -8,7 +8,6 @@ import type {
   StarSystem,
 } from '../../../merged_schema';
 import { TECH_LEVEL } from '../../../tables';
-import { VisibilityLevel, visibilityRank } from '../../domain/sector/visibility';
 import {
   findDetails,
   isVisibleToPlayer,
@@ -27,16 +26,12 @@ function details(id: string, sector: Sector) {
 }
 function displayName(info: ReturnType<typeof findDetails>, preview: Preview) {
   if (!info) return undefined;
-  return preview === 'player' &&
-    visibilityRank(info.VisibilityLevel) < visibilityRank(VisibilityLevel.CULTURE_PARTIAL)
+  return preview === 'player' && !info.Visibility.DetailedScan
     ? info.ProceduralName
     : info.NiceName;
 }
 function showProceduralName(info: NonNullable<ReturnType<typeof findDetails>>, preview: Preview) {
-  return (
-    preview === 'gm' ||
-    visibilityRank(info.VisibilityLevel) >= visibilityRank(VisibilityLevel.CULTURE_PARTIAL)
-  );
+  return preview === 'gm' || info.Visibility.DetailedScan;
 }
 function ContentText({ content }: { content: string }) {
   return <>{content}</>;

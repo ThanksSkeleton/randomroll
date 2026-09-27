@@ -1,4 +1,3 @@
-import { VisibilityLevel, visibilityRank } from '../../domain/sector/visibility';
 import type { Sector } from '../../../merged_schema';
 import type { Preview } from '../../application/appState';
 import {
@@ -22,10 +21,7 @@ function visible(id: string, sector: Sector, preview: Preview) {
 function name(id: string, sector: Sector, preview: Preview) {
   const d = findDetails(sector, id);
   if (!d) return undefined;
-  return preview === 'player' &&
-    visibilityRank(d.VisibilityLevel) < visibilityRank(VisibilityLevel.CULTURE_PARTIAL)
-    ? d.ProceduralName
-    : d.NiceName;
+  return preview === 'player' && !d.Visibility.DetailedScan ? d.ProceduralName : d.NiceName;
 }
 function position(x: number, y: number) {
   const scale = BAKED_HEXMAP.hexSize / 112;

@@ -1,4 +1,4 @@
-import { VisibilityLevel } from './visibility';
+import { isValidScanVisibility } from './visibility';
 import type { Sector } from '../../../merged_schema';
 import { containingSystem, getAllSelectableIds, routePortals } from './selectors';
 
@@ -9,8 +9,8 @@ export function validateSector(sector: Sector): string[] {
   const ids = getAllSelectableIds(sector);
   if (new Set(ids).size !== ids.length) errors.push('Selectable object IDs must be globally unique.');
   for (const entity of sector.Systems.flatMap((system) => [system, system.Star, ...system.Objects, ...system.PointsOfInterest]))
-    if (!Object.values(VisibilityLevel).includes(entity.VisibilityLevel as never))
-      errors.push(`Invalid visibility level for ${entity.Id}.`);
+    if (!isValidScanVisibility(entity.Visibility))
+      errors.push(`Invalid scan visibility for ${entity.Id}.`);
   const systemIds = new Set(sector.Systems.map((system) => system.Id));
   const objectIds = new Set(sector.Systems.flatMap((system) => system.Objects.map((object) => object.Id)));
   for (const system of sector.Systems) {

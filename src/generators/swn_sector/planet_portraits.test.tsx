@@ -197,10 +197,10 @@ describe('sector portrait assets', () => {
     const visibleSector = {
       ...sector,
       Routes: sector.Routes.map((item) =>
-        item.Id === route.Id ? { ...item, VisibilityLevel: 'BASIC_SCAN' as const } : item,
+        item.Id === route.Id ? { ...item, Visibility: { ...item.Visibility, BasicScan: true } } : item,
       ),
       RoutePortals: sector.RoutePortals.map((item) =>
-        item.Id === routePortal.Id ? { ...item, VisibilityLevel: 'BASIC_SCAN' as const } : item,
+        item.Id === routePortal.Id ? { ...item, Visibility: { ...item.Visibility, BasicScan: true } } : item,
       ),
     };
     const { container, rerender } = render(

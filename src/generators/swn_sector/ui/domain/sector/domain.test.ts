@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { generate } from '../../../generate';
-import { VisibilityLevel } from '../../../merged_schema';
-import { deleteSectorObject, relocatePlayerShip, updateObjectVisibility } from './operations';
+import { deleteSectorObject, relocatePlayerShip, updateObjectScanVisibility } from './operations';
 import {
   findContainingSystem,
   findDetails,
@@ -16,13 +15,11 @@ describe('canonical sector domain', () => {
   it('updates visibility immutably', () => {
     const sector = generate('DOMAIN-VISIBILITY');
     const object = sector.Systems[0].Objects[0];
-    const result = updateObjectVisibility(sector, object.Id, VisibilityLevel.CULTURE_FULL);
+    const result = updateObjectScanVisibility(sector, object.Id, 'BasicScan', true);
     expect(result.ok).toBe(true);
     if (!result.ok) throw new Error(result.reason);
-    expect(findDetails(result.value, object.Id)?.VisibilityLevel).toBe(
-      VisibilityLevel.CULTURE_FULL,
-    );
-    expect(findDetails(sector, object.Id)?.VisibilityLevel).not.toBe(VisibilityLevel.CULTURE_FULL);
+    expect(findDetails(result.value, object.Id)?.Visibility.BasicScan).toBe(true);
+    expect(findDetails(sector, object.Id)?.Visibility.BasicScan).toBe(false);
   });
 
   it('moves the ship to an object and derives its containing system', () => {

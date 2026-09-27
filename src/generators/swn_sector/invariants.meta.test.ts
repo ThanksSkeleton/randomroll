@@ -7,12 +7,18 @@ function entity(id: string): SelectableEntity {
     Id: id,
     ProceduralName: `proc-${id}`,
     NiceName: `nice-${id}`,
-    VisibilityLevel: 'NONE',
+    Visibility: {
+      BasicScan: false,
+      DetailedScan: false,
+      PoliticsScan: false,
+      DeepPoliticsScan: false,
+    },
     Intelligence: {
       InfoboxSummary: '',
       BasicScan: '',
-      CulturePartial: '',
-      CultureFull: '',
+      DetailedScan: '',
+      PoliticsScan: '',
+      DeepPoliticsScan: '',
       GM: '',
     },
   };
@@ -51,7 +57,7 @@ function station(id: string, parentObjectId: string | null): OtherCelestialObjec
 
 function sector(objects: Array<Planet | OtherCelestialObject>): Sector {
   return {
-    SchemaVersion: 'merged-v1',
+    SchemaVersion: 'merged-v2',
     OriginalSeed: 'test',
     SectorName: 'Test',
     Systems: [
@@ -259,7 +265,7 @@ describe('merged-sector independent stations', () => {
 
   it('safely rejects malformed serialized input', () => {
     expect(
-      checkAllInvariants({ SchemaVersion: 'merged-v1' }).some(
+      checkAllInvariants({ SchemaVersion: 'merged-v2' }).some(
         (violation) => violation.RuleId === 'SCHEMA',
       ),
     ).toBe(true);

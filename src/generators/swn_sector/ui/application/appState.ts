@@ -6,8 +6,9 @@ export type SystemMode = 'symbolic' | 'topdown';
 export type EditableDetailField =
   | 'NiceName'
   | 'BasicScan'
-  | 'CulturePartial'
-  | 'CultureFull'
+  | 'DetailedScan'
+  | 'PoliticsScan'
+  | 'DeepPoliticsScan'
   | 'GM';
 export type EditDraft = {
   sectorName: string;

@@ -1,4 +1,3 @@
-import { VisibilityLevel, visibilityRank } from '../../domain/sector/visibility';
 import { TECH_LEVEL } from '../../../tables';
 import type { Planet, SelectableEntity, Sector } from '../../../merged_schema';
 import {
@@ -15,16 +14,12 @@ import { resolvePortrait } from '../../../portrait_assets';
 
 function displayName(info: SelectableEntity | undefined, preview: Preview) {
   if (!info) return undefined;
-  return preview === 'player' &&
-    visibilityRank(info.VisibilityLevel) < visibilityRank(VisibilityLevel.CULTURE_PARTIAL)
+  return preview === 'player' && !info.Visibility.DetailedScan
     ? info.ProceduralName
     : info.NiceName;
 }
 function showProceduralName(info: SelectableEntity, preview: Preview) {
-  return (
-    preview === 'gm' ||
-    visibilityRank(info.VisibilityLevel) >= visibilityRank(VisibilityLevel.CULTURE_PARTIAL)
-  );
+  return preview === 'gm' || info.Visibility.DetailedScan;
 }
 function draftValue(draft: EditDraft | null, info: SelectableEntity, field: EditableDetailField) {
   return (
@@ -197,10 +192,7 @@ export function DetailBar({
         ? found.object.Star.PortraitAssetId
         : found?.object.PortraitAssetId;
   const portrait =
-    found &&
-    (preview === 'gm' ||
-      visibilityRank(found.object.VisibilityLevel) >= visibilityRank(VisibilityLevel.BASIC_SCAN)) &&
-    portraitId
+    found && (preview === 'gm' || found.object.Visibility.BasicScan) && portraitId
       ? resolvePortrait(portraitId)
       : undefined;
   const portraitName = displayName(info, preview) ?? info?.ProceduralName ?? 'object';
@@ -208,9 +200,7 @@ export function DetailBar({
     found?.kind === 'PlayerShip' ||
     (found?.kind === 'Planet' &&
       found.object.InhabitedInfo !== false &&
-      (preview === 'gm' ||
-        visibilityRank(found.object.VisibilityLevel) >=
-          visibilityRank(VisibilityLevel.BASIC_SCAN)));
+      (preview === 'gm' || found.object.Visibility.BasicScan));
   const portraitDescription =
     found?.kind === 'System'
       ? `${found.object.Star.StarType} star`
@@ -314,7 +304,7 @@ function DetailBox({
       details: { ...old.details, [info.Id]: { ...old.details[info.Id], [field]: value } },
     }));
   const stock = stockSignals(found, sector, preview);
-  if (preview === 'player' && info.VisibilityLevel === VisibilityLevel.NONE)
+  if (preview === 'player' && !info.Visibility.BasicScan)
     return (
       <section className="detail-section warning">
         <h3 className="detail-section-title restricted-title">RESTRICTED</h3>
@@ -325,43 +315,36 @@ function DetailBox({
     );
   return (
     <div className="details-stack">
-      {(preview === 'gm' || visibilityRank(info.VisibilityLevel) >= 1) && (
-        <section className="detail-section basic-signal">
-          <h3>BasicSignal</h3>
-          <StockField content={stock.basic} />
-          <div className="detail-small-divider" aria-hidden="true" />
-          {preview === 'gm' && !locked ? (
-            <EditableText
-              className="detail-editable"
-              multiline
-              value={draftValue(draft, info, 'BasicScan')}
-              onChange={edit('BasicScan')}
-            />
-          ) : (
-            <p className="detail-section-description">
-              <ContentText content={info.Intelligence.BasicScan} />
-            </p>
-          )}
-        </section>
-      )}
-      {(preview === 'gm' || visibilityRank(info.VisibilityLevel) >= 3) && (
-        <section className="detail-section deep-scan">
-          <h3>DeepScan</h3>
-          <StockField content={stock.deep} />
-          <div className="detail-small-divider" aria-hidden="true" />
-          {preview === 'gm' && !locked ? (
-            <EditableText
-              className="detail-editable"
-              multiline
-              value={draftValue(draft, info, 'CultureFull')}
-              onChange={edit('CultureFull')}
-            />
-          ) : (
-            <p className="detail-section-description">
-              <ContentText content={info.Intelligence.CultureFull} />
-            </p>
-          )}
-        </section>
+      {(
+        [
+          ['BasicScan', 'Basic Scan'],
+          ['DetailedScan', 'Detailed Scan'],
+          ['PoliticsScan', 'Politics Scan'],
+          ['DeepPoliticsScan', 'Deep Politics Scan'],
+        ] as const
+      ).map(([field, title]) =>
+        preview === 'gm' || info.Visibility[field] ? (
+          <section className={`detail-section scan-${field.toLowerCase()}`} key={field}>
+            <h3>{title}</h3>
+            {field === 'BasicScan' && <StockField content={stock.basic} />}
+            {field === 'DeepPoliticsScan' && <StockField content={stock.deep} />}
+            {(field === 'BasicScan' || field === 'DeepPoliticsScan') && (
+              <div className="detail-small-divider" aria-hidden="true" />
+            )}
+            {preview === 'gm' && !locked ? (
+              <EditableText
+                className="detail-editable"
+                multiline
+                value={draftValue(draft, info, field)}
+                onChange={edit(field)}
+              />
+            ) : (
+              <p className="detail-section-description">
+                <ContentText content={info.Intelligence[field]} />
+              </p>
+            )}
+          </section>
+        ) : null,
       )}
       {preview === 'gm' && (
         <section className="detail-section gm-note">

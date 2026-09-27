@@ -1,4 +1,4 @@
-import { VisibilityLevel } from './visibility';
+import { hasAnyScan } from './visibility';
 import type {
   Guid,
   HexLocation,
@@ -129,9 +129,8 @@ export function objectDetails(sector: Sector, id: Guid) {
 }
 export const findDetails = objectDetails;
 export function isVisibleToPlayer(sector: Sector, id: Guid): boolean {
-  return (
-    (objectDetails(sector, id)?.VisibilityLevel ?? VisibilityLevel.NONE) !== VisibilityLevel.NONE
-  );
+  const visibility = objectDetails(sector, id)?.Visibility;
+  return visibility ? hasAnyScan(visibility) : false;
 }
 export function objectKindLabel(sector: Sector, id: Guid | null): string {
   if (!id) return '';

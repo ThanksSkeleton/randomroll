@@ -9,13 +9,21 @@
 
 export type Guid = string;
 
-export type VisibilityLevel = 'NONE' | 'BASIC_SCAN' | 'CULTURE_PARTIAL' | 'CULTURE_FULL';
+/** Independent scan availability. Valid states require BasicScan for all other
+ * scans, and PoliticsScan for DeepPoliticsScan. */
+export interface ScanVisibility {
+  BasicScan: boolean;
+  DetailedScan: boolean;
+  PoliticsScan: boolean;
+  DeepPoliticsScan: boolean;
+}
 
 export interface IntelligenceText {
   InfoboxSummary: string;
   BasicScan: string;
-  CulturePartial: string;
-  CultureFull: string;
+  DetailedScan: string;
+  PoliticsScan: string;
+  DeepPoliticsScan: string;
   GM: string;
 }
 
@@ -24,14 +32,14 @@ export interface SelectableEntity {
   Id: Guid;
   ProceduralName: string;
   NiceName: string;
-  VisibilityLevel: VisibilityLevel;
+  Visibility: ScanVisibility;
   Intelligence: IntelligenceText;
   /** Stable reference to a generated runtime portrait variant, when applicable. */
   PortraitAssetId?: string;
 }
 
 export interface Sector {
-  SchemaVersion: 'merged-v1';
+  SchemaVersion: 'merged-v2';
   /** Generation provenance; it is not a complete replay specification. */
   OriginalSeed: string;
   SectorName: string;
@@ -339,10 +347,9 @@ export type SelectableObjectKind =
   | 'Route'
   | 'PlayerShip';
 
-/** Runtime values for the serialized VisibilityLevel union. */
-export const VisibilityLevel = {
-  NONE: 'NONE',
-  BASIC_SCAN: 'BASIC_SCAN',
-  CULTURE_PARTIAL: 'CULTURE_PARTIAL',
-  CULTURE_FULL: 'CULTURE_FULL',
-} as const;
+export const DEFAULT_SCAN_VISIBILITY: ScanVisibility = {
+  BasicScan: false,
+  DetailedScan: false,
+  PoliticsScan: false,
+  DeepPoliticsScan: false,
+};

@@ -27,7 +27,7 @@ export function generate(seed: string): Sector {
   const { Routes, RoutePortals } = generateRoutes(seed, Systems);
   const shipName = 'Player ship';
   return {
-    SchemaVersion: 'merged-v1',
+    SchemaVersion: 'merged-v2',
     OriginalSeed: seed,
     SectorName: `Sector ${seed}`,
     Systems,
@@ -37,12 +37,13 @@ export function generate(seed: string): Sector {
       Id: deterministicId(seed, 'player-ship'),
       ProceduralName: shipName,
       NiceName: shipName,
-      VisibilityLevel: 'NONE',
+      Visibility: { BasicScan: false, DetailedScan: false, PoliticsScan: false, DeepPoliticsScan: false },
       Intelligence: {
         InfoboxSummary: '-',
         BasicScan: '-',
-        CulturePartial: '-',
-        CultureFull: '-',
+        DetailedScan: '-',
+        PoliticsScan: '-',
+        DeepPoliticsScan: '-',
         GM: '-',
       },
       CurrentLocationId: Systems[0]!.Star.Id,

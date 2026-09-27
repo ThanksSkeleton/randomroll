@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react';
 import type { Preview } from '../../application/appState';
 import type { OtherCelestialObject, Sector, StarSystem } from '../../../merged_schema';
 import { normalTemperatureAuBand, systemEdgeAu } from '../../../generation_rules';
-import { VisibilityLevel, visibilityRank } from '../../domain/sector/visibility';
 import {
   areAdjacentHexes,
   findDetails,
@@ -46,10 +45,7 @@ function details(id: string, sector: Sector) {
 function displayName(info: ReturnType<typeof findDetails>, preview: Preview) {
   if (!info) return undefined;
   const preferredName =
-    preview === 'player' &&
-    visibilityRank(info.VisibilityLevel) < visibilityRank(VisibilityLevel.CULTURE_PARTIAL)
-      ? info.ProceduralName
-      : info.NiceName;
+    preview === 'player' && !info.Visibility.DetailedScan ? info.ProceduralName : info.NiceName;
   return preferredName.trim() || info.ProceduralName;
 }
 function hexMapPosition(x: number, y: number) {
