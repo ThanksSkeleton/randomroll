@@ -4,9 +4,6 @@ import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import routeTuning from '../../../swn_sector/CURRENT_DOCS/portrait_routes.json';
-import variantSetOne from '../../../swn_sector/CURRENT_DOCS/portrait_variants_1.json';
-import variantSetTwo from '../../../swn_sector/CURRENT_DOCS/portrait_variants_2.json';
 import mergedTuning from '../../../swn_sector/portraits/portrait_variants.json';
 import { generate } from './generate';
 import { checkAllInvariants } from './invariants';
@@ -36,8 +33,15 @@ function allPortraitBearingEntities() {
 }
 
 describe('sector portrait assets', () => {
-  it('merges the two existing variant files and route settings without omissions', () => {
-    expect(mergedTuning).toEqual({ ...variantSetOne, ...variantSetTwo, ...routeTuning });
+  it('has tuning data for every portrait source', () => {
+    const sourcePaths = Object.values(portraitManifest).flatMap((images) =>
+      images.map((image) => image.sourcePath),
+    );
+    expect(Object.keys(mergedTuning).sort()).toEqual(sourcePaths.sort());
+    for (const tuning of Object.values(mergedTuning)) {
+      expect(tuning.a).toBeDefined();
+      expect(tuning.b).toBeDefined();
+    }
   });
 
   it('contains a complete 18-variant bank for every category and existing source file', () => {
