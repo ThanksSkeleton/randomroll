@@ -7,23 +7,8 @@ export type QueueEntry = Tunings & { decision: Decision };
 export type QueueState = { cursor: number; entries: Record<string, QueueEntry> };
 export type TotalManifest = Record<string, { a: Tuning; b: Tuning }>;
 
-// The second production batch contains the independent station and ten POI banks.
-const reviewCategoryKeys = [
-  'independent-station',
-  'deep-space-station',
-  'asteroid-base',
-  'remote-moon-base',
-  'ancient-orbital-ruin',
-  'research-base',
-  'asteroid-belt-poi',
-  'comet-base',
-  'comet-belt-poi',
-  'gas-mine',
-  'refueling-station',
-];
-const reviewCategories = reviewCategoryKeys.map(
-  (key) => categories.find((category) => category.key === key)!,
-);
+// Review only route portraits in this production pass.
+const reviewCategories = [categories.find((category) => category.key === 'Route')!];
 
 export const queue: QueueItem[] = reviewCategories.flatMap(
   (category) =>

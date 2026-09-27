@@ -14,8 +14,8 @@ import './style.css';
 const app = document.querySelector<HTMLElement>('#app');
 if (!app) throw new Error('Review root is missing');
 
-const STORAGE_KEY = 'swn-portrait-review-structure-poi-queue-v1';
-const TUNING_RESET_KEY = 'swn-portrait-review-structure-poi-tuning-reset-v1';
+const STORAGE_KEY = 'swn-portrait-review-route-queue-v1';
+const TUNING_RESET_KEY = 'swn-portrait-review-route-tuning-reset-v1';
 type SourceStatus = { ready: boolean; error?: string };
 const sourceStatuses = new Map<string, SourceStatus>();
 let state = readState();
@@ -166,7 +166,7 @@ function render(): void {
   const canAccept = sourceStatus?.ready === true;
   const manifest = JSON.stringify(getTotalManifest(state), null, 2);
   app!.innerHTML =
-    '<header><div><p class="eyebrow">SWN / LOCAL ASSET PRODUCTION</p><h1>Celestial portrait review</h1>' +
+    '<header><div><p class="eyebrow">SWN / LOCAL ASSET PRODUCTION</p><h1>Route portrait review</h1>' +
     '<p>Review one base image at a time. Tune two color treatments, then accept or skip. The queue wraps around.</p></div>' +
     '<div class="summary"><strong>' +
     accepted +
@@ -318,7 +318,7 @@ function bind(): void {
     const url = URL.createObjectURL(blob);
     const anchor = document.createElement('a');
     anchor.href = url;
-    anchor.download = 'structure-poi-hsv-manifest.json';
+    anchor.download = 'route-hsv-manifest.json';
     anchor.click();
     setTimeout(() => URL.revokeObjectURL(url), 0);
   });

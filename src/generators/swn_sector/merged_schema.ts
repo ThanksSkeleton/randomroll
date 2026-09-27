@@ -26,6 +26,8 @@ export interface SelectableEntity {
   NiceName: string;
   VisibilityLevel: VisibilityLevel;
   Intelligence: IntelligenceText;
+  /** Stable reference to a generated runtime portrait variant, when applicable. */
+  PortraitAssetId?: string;
 }
 
 export interface Sector {
@@ -119,8 +121,6 @@ export type SystemObject = Planet | OtherCelestialObject;
 
 export interface Planet extends SystemObjectBase {
   Kind: 'Planet';
-  /** Stable variant ID; omitted for categories awaiting portrait production. */
-  PortraitAssetId?: string;
   Size: Size;
   BulkComposition: BulkComposition;
   SurfaceWaterPresent: boolean;

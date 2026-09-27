@@ -130,9 +130,10 @@ If a future manual portrait override is added, it is an ordinary edit and not a 
 ## UI integration
 
 - The object inspector replaces its current generic art glyph with the assigned portrait.
-- Placeholder entities display their explicit placeholder.
+- Portraits appear in player view at `BASIC_SCAN` visibility and above.
 - Portraits include useful alt text derived from the entity kind and displayed name; decorative backgrounds remain hidden from assistive technology.
-- Missing or corrupt assets fall back to a stable generic category placeholder without changing stored data.
+- Inhabited worlds and the player ship show centered white `NO DATA` text in the inspector art frame. No portrait placeholder images or banks are required.
+- If an assigned image fails to load, the inspector keeps its existing generic art visible.
 - Portrait loading must not reveal objects that are hidden by existing player visibility behavior.
 
 Portraits do not replace the compact symbolic markers in the sector map, top-down view, or symbolic system track during this step.
@@ -143,7 +144,7 @@ Add one stable portrait reference to portrait-bearing selectable entities, or de
 
 - Serialize with the sector.
 - Validate that references resolve to known manifest entries.
-- Support shared placeholder references.
+- Omit portrait references for entities that do not receive portraits.
 - Avoid copying image binary data into sector JSON.
 
 No reroll history or generation provenance beyond the selected asset reference is required.
@@ -152,12 +153,12 @@ No reroll history or generation provenance beyond the selected asset reference i
 
 1. Every listed standard category eventually has three accepted base images and 18 derived variants. The human-relevant structure/POI portrait pass includes the `IndependentStation` system object and all ten `POIType` categories.
 2. Every generated star, uninhabited planet, other celestial object, POI, and route receives a valid stable portrait reference.
-3. Inhabited worlds and the player ship always receive their explicit placeholders.
+3. Inhabited worlds and the player ship do not receive portraits and display centered white `NO DATA` text.
 4. Route portals display the parent route portrait when inspected.
 5. The same seed and inputs produce the same initial portrait assignments.
 6. Save/load and ordinary edits preserve assignments.
 7. There is no portrait-reroll action.
-8. Inspector portraits obey player visibility and provide appropriate fallback and accessibility behavior.
+8. Inspector portraits appear at basic player visibility and above, preserve accessibility, and retain generic inspector art if an image fails to load.
 9. The local review jig verifies source dimensions and exports only accepted sources with two HSV triplets each.
 10. Automated validation fails clearly when a required manifest category or referenced asset is missing.
 

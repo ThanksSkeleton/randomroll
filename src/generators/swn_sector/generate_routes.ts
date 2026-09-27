@@ -1,5 +1,6 @@
 import type { Route, RoutePortal, StarSystem } from './merged_schema';
 import { deterministicId, randomFor } from './generation_random';
+import { assignPortraitId } from './portrait_assets';
 
 type Edge = { left: StarSystem; right: StarSystem; distance: number; tie: number };
 const PORTAL_BEARING_OFFSET_DEGREES = 5;
@@ -78,6 +79,7 @@ export function generateRoutes(
         GM: '-',
       },
       PortalIds: portalIds,
+      PortraitAssetId: assignPortraitId(seed, routeId, 'Route'),
     });
     for (const [side, other, id] of [
       [edge.left, edge.right, portalIds[0]],

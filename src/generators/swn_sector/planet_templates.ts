@@ -8,6 +8,7 @@ import type {
 import { choose, deterministicId, randomFor } from './generation_random';
 import { directOrbitTemperatures } from './generation_rules';
 import { assignPlanetPortraitId, planetPortraitCategory } from './planet_portraits';
+import { assignPortraitId, categoryForOtherObject } from './portrait_assets';
 
 export type ExtraPlanetTemplate =
   | 'Mercurian'
@@ -204,5 +205,10 @@ export function generateTemplateOtherCelestialObject(options: {
     Temperature: temperature,
     Kind: 'OtherCelestialObject',
     ObjectType: options.template,
+    PortraitAssetId: assignPortraitId(
+      options.seed,
+      deterministicId(options.seed, options.entityPath),
+      categoryForOtherObject(options.template),
+    ),
   };
 }

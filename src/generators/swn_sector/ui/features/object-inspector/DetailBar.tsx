@@ -10,10 +10,8 @@ import {
 } from '../../domain/sector/selectors';
 import type { EditDraft, Preview, EditableDetailField } from '../../application/appState';
 import { formatAu } from '../../formatters';
-import { starPresentationClass, starPresentationStyle } from '../../../star_presentation';
 import { displayBulkComposition } from '../../../planet_presentation';
-import { resolvePlanetPortrait } from '../../../planet_portraits';
-import { StarGlyph } from '../system-viewer/StarGlyph';
+import { resolvePortrait } from '../../../portrait_assets';
 
 function displayName(info: SelectableEntity | undefined, preview: Preview) {
   if (!info) return undefined;
@@ -192,12 +190,37 @@ export function DetailBar({
   const info = selectedId ? findDetails(sector, selectedId) : undefined;
   const found = selectedId ? findObject(sector, selectedId) : undefined;
   const kind = objectKindLabel(sector, selectedId);
+  const portraitId =
+    found?.kind === 'RoutePortal'
+      ? sector.Routes.find((route) => route.Id === found.object.RouteId)?.PortraitAssetId
+      : found?.kind === 'System'
+        ? found.object.Star.PortraitAssetId
+        : found?.object.PortraitAssetId;
   const portrait =
-    found?.kind === 'Planet' &&
-    (preview === 'gm' || visibilityRank(found.object.VisibilityLevel) >= 1) &&
-    found.object.PortraitAssetId
-      ? resolvePlanetPortrait(found.object.PortraitAssetId)
+    found &&
+    (preview === 'gm' ||
+      visibilityRank(found.object.VisibilityLevel) >= visibilityRank(VisibilityLevel.BASIC_SCAN)) &&
+    portraitId
+      ? resolvePortrait(portraitId)
       : undefined;
+  const portraitName = displayName(info, preview) ?? info?.ProceduralName ?? 'object';
+  const showNoData =
+    found?.kind === 'PlayerShip' ||
+    (found?.kind === 'Planet' &&
+      found.object.InhabitedInfo !== false &&
+      (preview === 'gm' ||
+        visibilityRank(found.object.VisibilityLevel) >=
+          visibilityRank(VisibilityLevel.BASIC_SCAN)));
+  const portraitDescription =
+    found?.kind === 'System'
+      ? `${found.object.Star.StarType} star`
+      : found?.kind === 'Planet'
+        ? 'uninhabited planet'
+        : found?.kind === 'PointOfInterest'
+          ? `${found.object.POIType} point of interest`
+          : found?.kind === 'OtherCelestialObject'
+            ? objectTypeLabel(found.object.ObjectType)
+            : (found?.kind ?? 'object');
   return (
     <aside className="detail-bar">
       {!info || !found ? (
@@ -210,40 +233,18 @@ export function DetailBar({
           <div className={`object-art art-${kind.toLowerCase().replaceAll(' ', '-')}`}>
             {portrait && (
               <img
+                key={portraitId}
                 className="portrait-image"
                 src={import.meta.env.BASE_URL + portrait.sourcePath}
                 style={portrait.css}
-                alt={`Portrait of ${displayName(info, preview) ?? info.ProceduralName}, uninhabited planet`}
+                alt={`Portrait of ${portraitName}, ${portraitDescription}`}
                 onError={(event) => {
                   event.currentTarget.hidden = true;
                   event.currentTarget.nextElementSibling?.setAttribute('aria-hidden', 'false');
                 }}
               />
             )}
-            <div
-              className="object-art-glyph"
-              aria-hidden={!!portrait}
-              role={portrait ? 'img' : undefined}
-              aria-label={portrait ? 'Planet portrait unavailable' : undefined}
-            >
-              {kind === 'STAR' && found.kind === 'Star' ? (
-                <div
-                  className={`detail-star-glyph ${starPresentationClass(found.object.StarType)}`}
-                  style={starPresentationStyle(found.object.StarType)}
-                  aria-hidden="true"
-                >
-                  <StarGlyph starType={found.object.StarType} />
-                </div>
-              ) : kind === 'PLAYER SHIP' ? (
-                '▰'
-              ) : kind === 'ROUTE' ? (
-                '╱'
-              ) : kind.includes('POINT') ? (
-                '◆'
-              ) : (
-                '●'
-              )}
-            </div>
+            {showNoData && <div className="portrait-no-data">NO DATA</div>}
           </div>
           <h1
             className={`object-name object-name-${kind.toLowerCase().replaceAll(' ', '-')}`}

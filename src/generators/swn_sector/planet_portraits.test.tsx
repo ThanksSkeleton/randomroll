@@ -1,47 +1,96 @@
 // @vitest-environment jsdom
 
+import { existsSync, readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
+import routeTuning from '../../../swn_sector/CURRENT_DOCS/portrait_routes.json';
+import variantSetOne from '../../../swn_sector/CURRENT_DOCS/portrait_variants_1.json';
+import variantSetTwo from '../../../swn_sector/CURRENT_DOCS/portrait_variants_2.json';
+import mergedTuning from '../../../swn_sector/CURRENT_DOCS/portrait_variants.json';
 import { generate } from './generate';
 import { checkAllInvariants } from './invariants';
-import { planetPortraitManifests, resolvePlanetPortrait } from './planet_portraits';
-import { BANK_SIZE, categories, manifestIssues } from './portrait_review/catalog';
+import { portraitCategoryKeys, portraitManifest, resolvePortrait } from './portrait_assets';
 import { DetailBar } from './ui/features/object-inspector/DetailBar';
 
 const sector = generate('PORTRAIT-CHECK');
-const planet = sector.Systems.flatMap((system) => system.Objects).find(
-  (object) => object.Kind === 'Planet' && object.PortraitAssetId,
+const system = sector.Systems.find((candidate) => candidate.Star.PortraitAssetId)!;
+const planet = sector.Systems.flatMap((candidate) => candidate.Objects).find(
+  (object) => object.Kind === 'Planet' && object.InhabitedInfo === false,
 );
 if (!planet || planet.Kind !== 'Planet' || !planet.PortraitAssetId)
   throw new Error('Expected an assigned uninhabited planet');
-const portraitId = planet.PortraitAssetId;
+const route = sector.Routes[0]!;
 
-describe('planet portrait consumption', () => {
-  it('includes every mandatory variant in each of the three manifests', () => {
-    for (const category of categories) {
-      const manifest = planetPortraitManifests[category.key];
-      expect(manifestIssues(category, manifest)).toEqual([]);
-      expect(manifest.images.flatMap((image) => image.variants)).toHaveLength(BANK_SIZE);
+function allPortraitBearingEntities() {
+  return [
+    ...sector.Systems.flatMap((item) => [
+      item.Star,
+      ...item.Objects.filter(
+        (object) => object.Kind === 'OtherCelestialObject' || object.InhabitedInfo === false,
+      ),
+      ...item.PointsOfInterest,
+    ]),
+    ...sector.Routes,
+  ];
+}
+
+describe('sector portrait assets', () => {
+  it('merges the two existing variant files and route settings without omissions', () => {
+    expect(mergedTuning).toEqual({ ...variantSetOne, ...variantSetTwo, ...routeTuning });
+  });
+
+  it('contains a complete 18-variant bank for every category and existing source file', () => {
+    expect(Object.keys(portraitManifest).sort()).toEqual([...portraitCategoryKeys].sort());
+    for (const category of portraitCategoryKeys) {
+      expect(portraitManifest[category]).toHaveLength(3);
+      for (const image of portraitManifest[category]) {
+        expect(image.variants).toHaveLength(6);
+        const assetPath = resolve(process.cwd(), 'public', image.sourcePath);
+        if (!existsSync(assetPath))
+          throw new Error(`Portrait source asset missing: ${image.sourcePath}`);
+        const pngHeader = readFileSync(assetPath).subarray(0, 24);
+        expect([pngHeader.readUInt32BE(16), pngHeader.readUInt32BE(20)]).toEqual([1500, 850]);
+      }
     }
   });
-  it('assigns a stable valid variant and preserves it through JSON', () => {
-    expect(
-      generate('PORTRAIT-CHECK')
-        .Systems.flatMap((system) => system.Objects)
-        .find((object) => object.Id === planet.Id && object.Kind === 'Planet'),
-    ).toHaveProperty('PortraitAssetId', portraitId);
-    expect(resolvePlanetPortrait(portraitId)).toBeDefined();
+
+  it('assigns every required generated entity a stable, resolvable portrait reference', () => {
+    for (const entity of allPortraitBearingEntities()) {
+      expect(entity.PortraitAssetId).toBeTruthy();
+      expect(resolvePortrait(entity.PortraitAssetId!)).toBeDefined();
+    }
     expect(checkAllInvariants(sector)).toEqual([]);
+    expect(sector.PlayerShip.PortraitAssetId).toBeUndefined();
+    expect(
+      sector.Systems.flatMap((item) => item.Objects)
+        .filter((object) => object.Kind === 'Planet' && object.InhabitedInfo !== false)
+        .every((object) => object.PortraitAssetId === undefined),
+    ).toBe(true);
+
     const restored = JSON.parse(JSON.stringify(sector));
     expect(
-      restored.Systems.flatMap((system: (typeof sector.Systems)[number]) => system.Objects).find(
-        (object: typeof planet) => object.Id === planet.Id,
-      ).PortraitAssetId,
-    ).toBe(portraitId);
+      restored.Systems.find((item: typeof system) => item.Id === system.Id).Star.PortraitAssetId,
+    ).toBe(system.Star.PortraitAssetId);
+    expect(restored.Routes.find((item: typeof route) => item.Id === route.Id).PortraitAssetId).toBe(
+      route.PortraitAssetId,
+    );
+    expect(generate('PORTRAIT-CHECK').Routes[0]?.PortraitAssetId).toBe(route.PortraitAssetId);
   });
 
-  it('uses the single base image with variant CSS at inspector size', () => {
-    const portrait = resolvePlanetPortrait(portraitId)!;
+  it('reports portrait IDs that do not resolve in the merged manifest', () => {
+    const invalidSector = JSON.parse(JSON.stringify(sector));
+    invalidSector.Systems[0].Star.PortraitAssetId = 'missing-portrait-variant';
+    expect(
+      checkAllInvariants(invalidSector).some(
+        (violation) =>
+          violation.RuleId === 'PORTRAIT' && violation.Message.includes('missing-portrait-variant'),
+      ),
+    ).toBe(true);
+  });
+
+  it('uses a source image with CSS variants in the inspector', () => {
+    const portrait = resolvePortrait(planet.PortraitAssetId!)!;
     const { container } = render(
       <DetailBar
         sector={sector}
@@ -59,9 +108,126 @@ describe('planet portrait consumption', () => {
     expect(image.style.filter).toBe(portrait.css.filter ?? '');
     expect(image.style.transform).toBe(portrait.css.transform ?? '');
     expect(container.querySelector('.object-art')).toBeTruthy();
+    expect(container.querySelector('.object-art-glyph')).toBeNull();
   });
 
-  it('does not show an undisclosed portrait in player preview', () => {
+  it('shows the selected system’s star portrait', () => {
+    const { container } = render(
+      <DetailBar
+        sector={sector}
+        selectedId={system.Id}
+        preview="gm"
+        locked={true}
+        draft={null}
+        setDraft={() => {}}
+      />,
+    );
+    const image = container.querySelector('.object-art img') as HTMLImageElement;
+    expect(image.getAttribute('src')).toContain(
+      resolvePortrait(system.Star.PortraitAssetId!)!.sourcePath,
+    );
+    expect(image.alt).toContain(`${system.Star.StarType} star`);
+  });
+
+  it('replaces the image element when the selected portrait changes', () => {
+    const { container, rerender } = render(
+      <DetailBar
+        sector={sector}
+        selectedId={planet.Id}
+        preview="gm"
+        locked={true}
+        draft={null}
+        setDraft={() => {}}
+      />,
+    );
+    const firstImage = container.querySelector('.object-art img');
+    rerender(
+      <DetailBar
+        sector={sector}
+        selectedId={route.Id}
+        preview="gm"
+        locked={true}
+        draft={null}
+        setDraft={() => {}}
+      />,
+    );
+    const nextImage = container.querySelector('.object-art img');
+    expect(nextImage).not.toBe(firstImage);
+    expect(nextImage?.getAttribute('src')).toContain(
+      resolvePortrait(route.PortraitAssetId!)!.sourcePath,
+    );
+  });
+
+  it('shows centered NO DATA for the ship and visible inhabited worlds', () => {
+    const inhabitedPlanet = sector.Systems.flatMap((item) => item.Objects).find(
+      (object) => object.Kind === 'Planet' && object.InhabitedInfo !== false,
+    );
+    if (!inhabitedPlanet) throw new Error('Expected an inhabited planet in the test sector');
+    const { container, rerender } = render(
+      <DetailBar
+        sector={sector}
+        selectedId={sector.PlayerShip.Id}
+        preview="gm"
+        locked={true}
+        draft={null}
+        setDraft={() => {}}
+      />,
+    );
+    expect(container.querySelector('.portrait-no-data')?.textContent).toBe('NO DATA');
+    expect(container.querySelector('.object-art-glyph')).toBeNull();
+    rerender(
+      <DetailBar
+        sector={sector}
+        selectedId={inhabitedPlanet.Id}
+        preview="gm"
+        locked={true}
+        draft={null}
+        setDraft={() => {}}
+      />,
+    );
+    expect(container.querySelector('.portrait-no-data')?.textContent).toBe('NO DATA');
+  });
+
+  it('shows a route portrait when inspecting either its route or portal at basic visibility', () => {
+    const routePortal = sector.RoutePortals.find((portal) => portal.RouteId === route.Id)!;
+    const visibleSector = {
+      ...sector,
+      Routes: sector.Routes.map((item) =>
+        item.Id === route.Id ? { ...item, VisibilityLevel: 'BASIC_SCAN' as const } : item,
+      ),
+      RoutePortals: sector.RoutePortals.map((item) =>
+        item.Id === routePortal.Id ? { ...item, VisibilityLevel: 'BASIC_SCAN' as const } : item,
+      ),
+    };
+    const { container, rerender } = render(
+      <DetailBar
+        sector={visibleSector}
+        selectedId={route.Id}
+        preview="player"
+        locked={true}
+        draft={null}
+        setDraft={() => {}}
+      />,
+    );
+    expect(container.querySelector('.object-art img')?.getAttribute('alt')).toMatch(
+      /Portrait of Route 1, route/i,
+    );
+    rerender(
+      <DetailBar
+        sector={visibleSector}
+        selectedId={routePortal.Id}
+        preview="player"
+        locked={true}
+        draft={null}
+        setDraft={() => {}}
+      />,
+    );
+    expect(container.querySelector('.object-art img')?.getAttribute('alt')).toMatch(
+      /Portrait of Portal/i,
+    );
+  });
+
+  it('does not show a portrait before basic visibility', () => {
     const { container } = render(
       <DetailBar
         sector={sector}

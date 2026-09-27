@@ -24,6 +24,13 @@ import {
   POI_TABLE,
   temperatureForDirectOrbitAu,
 } from './generation_rules';
+import {
+  assignPortraitId,
+  categoryForOtherObject,
+  categoryForPoi,
+  categoryForStar,
+} from './portrait_assets';
+import { matchWaterWorldPortraitToTemperature } from './planet_portraits';
 import { generateInhabitedPlanet } from './generate_inhabited_planet';
 import {
   generateTemplateOtherCelestialObject,
@@ -93,7 +100,10 @@ function deriveNonInhabitedPlanetFacts(planet: Planet): Planet {
     planet.Temperature !== 'Cryogenic' &&
     planet.Temperature !== 'Furance' &&
     planet.Atmosphere !== 'Vacuum';
-  return { ...planet, SurfaceWaterPresent: surfaceWaterPresent };
+  return matchWaterWorldPortraitToTemperature({
+    ...planet,
+    SurfaceWaterPresent: surfaceWaterPresent,
+  });
 }
 
 /** Places non-inhabited direct objects uniformly, then derives their temperature from AU. */
@@ -465,6 +475,11 @@ function generateSystemOnce(options: GenerateSystemOptions): StarSystem {
       },
       StarType: options.starType,
       HabitabilityRating: options.starHabitability,
+      PortraitAssetId: assignPortraitId(
+        options.seed,
+        deterministicId(options.seed, `${options.entityPath}:star`),
+        categoryForStar(options.starType),
+      ),
     },
     Objects: placed.sort(
       (left, right) =>
@@ -549,6 +564,7 @@ function makePoi(
     ParentObjectId: parentObjectId,
     POIType: type,
     AngleDegrees: randomFor(seed, `${path}:angle`)() * 360,
+    PortraitAssetId: assignPortraitId(seed, deterministicId(seed, path), categoryForPoi(type)),
   };
 }
 
@@ -618,6 +634,11 @@ export function populatePointsOfInterest(
         },
         Kind: 'OtherCelestialObject',
         ObjectType: 'IndependentStation',
+        PortraitAssetId: assignPortraitId(
+          seed,
+          deterministicId(seed, stationPath),
+          categoryForOtherObject('IndependentStation'),
+        ),
         // The final temperature is derived from the uniformly selected AU.
         Temperature: 'Cryogenic',
         Orbit: {
@@ -653,11 +674,12 @@ export function populatePointsOfInterest(
         if (object.Orbit.ParentObjectId === null) return object;
         const parent = objects.find((candidate) => candidate.Id === object.Orbit.ParentObjectId);
         if (parent === undefined) throw new Error(`Missing moon parent for ${seed}:${object.Id}`);
-        return {
+        const placed = {
           ...object,
           Temperature: parent.Temperature,
           Orbit: { ...object.Orbit, AU: parent.Orbit.AU },
         };
+        return placed.Kind === 'Planet' ? matchWaterWorldPortraitToTemperature(placed) : placed;
       })
       .sort(
         (left, right) =>

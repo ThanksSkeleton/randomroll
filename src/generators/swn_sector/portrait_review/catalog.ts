@@ -54,6 +54,7 @@ export const categories = [
   { key: 'comet-belt-poi', label: 'Comet belt POI', initial: pendingSources() },
   { key: 'gas-mine', label: 'Gas mine', initial: pendingSources() },
   { key: 'refueling-station', label: 'Refueling station', initial: pendingSources() },
+  { key: 'Route', label: 'Route', initial: pendingSources() },
 ] as const;
 
 export type Category = (typeof categories)[number];

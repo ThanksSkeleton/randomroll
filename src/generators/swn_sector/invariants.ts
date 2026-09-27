@@ -1,4 +1,10 @@
-import { resolvePlanetPortrait } from './planet_portraits';
+import {
+  categoryForOtherObject,
+  categoryForPoi,
+  categoryForStar,
+  resolvePortrait,
+} from './portrait_assets';
+import type { PortraitCategory } from './portrait_assets';
 /**
  * Executable business-rule validation for the merged SWN sector contract.
  *
@@ -9,8 +15,11 @@ import { resolvePlanetPortrait } from './planet_portraits';
 import type {
   OtherCelestialObject,
   Planet,
+  OtherCelestialObjectType,
+  PointOfInterestType,
   Sector,
   SelectableEntity,
+  StarType,
   StarSystem,
   SystemObject,
 } from './merged_schema';
@@ -66,6 +75,36 @@ function routePairKey(first: string, second: string): string {
   return [first, second].sort().join('\u0000');
 }
 
+function expectedPortraitCategory(entity: SelectableEntity): PortraitCategory | undefined {
+  if ('StarType' in entity) return categoryForStar(entity.StarType as StarType);
+  if ('ObjectType' in entity)
+    return categoryForOtherObject(entity.ObjectType as OtherCelestialObjectType);
+  if ('POIType' in entity) return categoryForPoi(entity.POIType as PointOfInterestType);
+  if ('PortalIds' in entity) return 'Route';
+  return undefined;
+}
+
+function validatePortraitReference(
+  entity: SelectableEntity,
+  fail: (ruleId: string, message: string) => void,
+): void {
+  const portraitId = entity.PortraitAssetId;
+  if (portraitId === undefined) return;
+
+  const portrait = resolvePortrait(portraitId);
+  if (!portrait) {
+    fail('PORTRAIT', `Entity ${entity.Id} has unknown portrait ${portraitId}.`);
+    return;
+  }
+
+  const expectedCategory = expectedPortraitCategory(entity);
+  if (expectedCategory !== undefined && portrait.category !== expectedCategory)
+    fail(
+      'PORTRAIT',
+      `Entity ${entity.Id} uses portrait category ${portrait.category}; expected ${expectedCategory}.`,
+    );
+}
+
 /** Returns every known violation; one malformed record must not hide another. */
 export function checkAllInvariants(value: unknown): InvariantViolation[] {
   const violations: InvariantViolation[] = [];
@@ -88,6 +127,7 @@ export function checkAllInvariants(value: unknown): InvariantViolation[] {
     if (entity.NiceName.trim() === '') fail('H5', `Entity ${entity.Id} has a blank nice name.`);
     if (entity.ProceduralName.trim() === '')
       fail('H7', `Entity ${entity.Id} has a blank procedural name.`);
+    validatePortraitReference(entity, fail);
   }
   for (let index = 0; index < sector.Systems.length; index += 1) {
     const left = sector.Systems[index]!;
@@ -245,6 +285,11 @@ function validateCanonicalShape(
       !record(item.Intelligence, `${path}.Intelligence`)
     )
       return false;
+    if (
+      item.PortraitAssetId !== undefined &&
+      !string(item.PortraitAssetId, `${path}.PortraitAssetId`)
+    )
+      return false;
     const intelligence = item.Intelligence;
     return ['InfoboxSummary', 'BasicScan', 'CulturePartial', 'CultureFull', 'GM'].every((key) =>
       string(intelligence[key], `${path}.Intelligence.${key}`),
@@ -293,11 +338,6 @@ function validateCanonicalShape(
       !string(item.NativeBiosphere, `${path}.NativeBiosphere`)
     )
       return invalid(path, 'a complete Planet');
-    if (
-      item.PortraitAssetId !== undefined &&
-      !string(item.PortraitAssetId, `${path}.PortraitAssetId`)
-    )
-      return false;
     if (item.InhabitedInfo === false) return true;
     return (
       record(item.InhabitedInfo, `${path}.InhabitedInfo`) &&
@@ -396,7 +436,14 @@ function checkNoUnknownSchemaProperties(
     for (const key of Object.keys(value))
       if (!allowed.includes(key)) fail('2A-09', `${path} contains unknown property ${key}.`);
   };
-  const selectable = ['Id', 'ProceduralName', 'NiceName', 'VisibilityLevel', 'Intelligence'];
+  const selectable = [
+    'Id',
+    'ProceduralName',
+    'NiceName',
+    'VisibilityLevel',
+    'Intelligence',
+    'PortraitAssetId',
+  ];
   const checkSelectable = (entity: SelectableEntity, path: string): void => {
     check(
       entity.Intelligence,
@@ -585,8 +632,6 @@ function validateObject(
     return;
   }
   const planet = object;
-  if (planet.PortraitAssetId && !resolvePlanetPortrait(planet.PortraitAssetId))
-    fail('PORTRAIT', `Planet ${planet.Id} has unknown portrait ${planet.PortraitAssetId}.`);
   const expectedGasComposition = GAS_COMPOSITION_BY_SIZE[planet.Size];
   if (expectedGasComposition !== undefined && planet.BulkComposition !== expectedGasComposition)
     fail('C7', `Gas giant ${planet.Id} has incompatible bulk composition.`);

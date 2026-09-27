@@ -1,26 +1,54 @@
-import mercurian from './portrait_review/manifests/mercurian.json';
-import europanIce from './portrait_review/manifests/europan-ice.json';
-import europanWater from './portrait_review/manifests/europan-water.json';
 import type { Planet } from './merged_schema';
-import { choose, randomFor } from './generation_random';
+import { assignPortraitId, portraitIdInCategory, type PortraitCategory } from './portrait_assets';
 import { displayBulkComposition } from './planet_presentation';
 
-export const planetPortraitManifests = {
-  mercurian,
-  'europan-ice': europanIce,
-  'europan-water': europanWater,
-} as const;
+export type PlanetPortraitCategory = Exclude<
+  PortraitCategory,
+  | 'star-a'
+  | 'star-f'
+  | 'star-g'
+  | 'star-k'
+  | 'star-m'
+  | 'star-giant'
+  | 'star-white-dwarf'
+  | 'star-neutron-star'
+  | 'star-black-hole'
+  | 'asteroid-belt'
+  | 'kuiper-belt'
+  | 'gas-cloud'
+  | 'independent-station'
+  | 'deep-space-station'
+  | 'asteroid-base'
+  | 'remote-moon-base'
+  | 'ancient-orbital-ruin'
+  | 'research-base'
+  | 'asteroid-belt-poi'
+  | 'comet-base'
+  | 'comet-belt-poi'
+  | 'gas-mine'
+  | 'refueling-station'
+  | 'Route'
+>;
 
-export type PlanetPortraitCategory = keyof typeof planetPortraitManifests;
+const templateCategories: Record<string, PlanetPortraitCategory> = {
+  Mercurian: 'mercurian',
+  'Europan / Plutonic': 'europan-ice',
+  Lunar: 'lunar',
+  Ioan: 'ioan',
+  Titanian: 'titanian',
+  Martian: 'martian',
+  Venusian: 'venusian',
+  Jovian: 'jovian',
+  Neptunian: 'neptunian',
+};
 
 export function planetPortraitCategory(
   template: string,
   temperature: Planet['Temperature'],
 ): PlanetPortraitCategory | undefined {
-  if (template === 'Mercurian') return 'mercurian';
   if (template === 'Europan / Plutonic')
     return displayBulkComposition('Water', temperature) === 'Ice' ? 'europan-ice' : 'europan-water';
-  return undefined;
+  return templateCategories[template];
 }
 
 export function assignPlanetPortraitId(
@@ -28,22 +56,24 @@ export function assignPlanetPortraitId(
   entityPath: string,
   category: PlanetPortraitCategory,
 ): string {
-  const manifest = planetPortraitManifests[category];
-  const ids = manifest.images.flatMap((image) => image.variants.map((variant) => variant.id));
-  return choose(randomFor(seed, entityPath + ':portrait'), ids, category + ' portraits');
+  return assignPortraitId(seed, entityPath, category);
 }
 
-export type PlanetPortrait = {
-  sourcePath: string;
-  css: { filter?: string; transform?: string };
-};
+export function matchWaterWorldPortraitToTemperature(planet: Planet): Planet {
+  if (
+    planet.Kind !== 'Planet' ||
+    planet.InhabitedInfo !== false ||
+    planet.BulkComposition !== 'Water'
+  )
+    return planet;
 
-export function resolvePlanetPortrait(id: string): PlanetPortrait | undefined {
-  for (const manifest of Object.values(planetPortraitManifests)) {
-    for (const image of manifest.images) {
-      const variant = image.variants.find((item) => item.id === id);
-      if (variant) return { sourcePath: image.sourcePath, css: variant.css };
-    }
-  }
-  return undefined;
+  const category = planetPortraitCategory('Europan / Plutonic', planet.Temperature);
+  if (!category || !planet.PortraitAssetId) return planet;
+
+  const portraitAssetId = portraitIdInCategory(planet.PortraitAssetId, category);
+  if (!portraitAssetId)
+    throw new Error(`Cannot map water-world portrait ${planet.PortraitAssetId} to ${category}.`);
+  return portraitAssetId === planet.PortraitAssetId
+    ? planet
+    : { ...planet, PortraitAssetId: portraitAssetId };
 }

@@ -205,22 +205,8 @@ select:focus-visible {
   margin: 16px 0 22px;
   display: grid;
   place-items: center;
-  background:
-    repeating-linear-gradient(0deg, transparent 0 23px, #17252b 24px),
-    repeating-linear-gradient(90deg, transparent 0 23px, #17252b 24px);
+  background: #000;
   overflow: hidden;
-}
-.object-art .object-art-glyph {
-  font-size: 68px;
-  color: var(--blue);
-  filter: drop-shadow(0 0 18px #74cde566);
-}
-.art-star .object-art-glyph {
-  color: #ffe396;
-}
-.detail-star-glyph {
-  width: 68px;
-  height: 68px;
 }
 .object-art img.portrait-image {
   position: absolute;
@@ -232,9 +218,16 @@ select:focus-visible {
 .object-art img.portrait-image[hidden] {
   display: none;
 }
-.art-player-ship .object-art-glyph {
-  color: var(--green);
-  transform: skewX(-12deg);
+.portrait-no-data {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  font:
+    700 18px 'IBM Plex Mono',
+    monospace;
+  letter-spacing: 0.12em;
 }
 .eyebrow {
   margin: 0 0 5px;
