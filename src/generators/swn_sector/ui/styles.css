@@ -268,6 +268,40 @@ select:focus-visible {
 .details-stack {
   margin-top: 18px;
 }
+.detail-pane-tabs {
+  margin-top: 18px;
+}
+.detail-tab-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border-bottom: 1px solid var(--line);
+}
+.detail-tab {
+  min-width: 0;
+  min-height: 34px;
+  padding: 0 6px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: var(--muted);
+  font: 9px 'IBM Plex Mono';
+  letter-spacing: 0.08em;
+  text-align: center;
+}
+button.detail-tab {
+  cursor: pointer;
+}
+.detail-tab.active {
+  border-bottom-color: var(--green);
+  color: var(--green);
+}
+.detail-tab-placeholder {
+  display: block;
+}
+.detail-pane-tabs > .details-stack,
+.detail-pane-tabs > .detail-section {
+  margin-top: 0;
+}
 .detail-section {
   border-top: 1px solid var(--line);
   padding: 14px 4px;
@@ -1352,7 +1386,10 @@ select:focus-visible {
   position: relative;
   left: auto;
   top: auto;
-  transform: translate(var(--visibility-glyph-offset-x, 0px), var(--visibility-glyph-offset-y, 0px));
+  transform: translate(
+    var(--visibility-glyph-offset-x, 0px),
+    var(--visibility-glyph-offset-y, 0px)
+  );
 }
 .visibility-state-button > span:not(.layered-visibility-symbol) {
   min-width: 0;
@@ -1491,11 +1528,31 @@ select:focus-visible {
   row-gap: 2px;
   width: max-content;
 }
-.visibility-choice-sci1 { grid-column: 1; grid-row: 1; justify-self: end; }
-.visibility-choice-pol0 { grid-column: 2; grid-row: 1; justify-self: start; }
-.visibility-choice-sci2 { grid-column: 1; grid-row: 2; justify-self: end; }
-.visibility-choice-pol1 { grid-column: 2; grid-row: 2; justify-self: start; }
-.visibility-choice-pol2 { grid-column: 2; grid-row: 3; justify-self: start; }
+.visibility-choice-sci1 {
+  grid-column: 1;
+  grid-row: 1;
+  justify-self: end;
+}
+.visibility-choice-pol0 {
+  grid-column: 2;
+  grid-row: 1;
+  justify-self: start;
+}
+.visibility-choice-sci2 {
+  grid-column: 1;
+  grid-row: 2;
+  justify-self: end;
+}
+.visibility-choice-pol1 {
+  grid-column: 2;
+  grid-row: 2;
+  justify-self: start;
+}
+.visibility-choice-pol2 {
+  grid-column: 2;
+  grid-row: 3;
+  justify-self: start;
+}
 .vis-controls button {
   height: 50px;
 }

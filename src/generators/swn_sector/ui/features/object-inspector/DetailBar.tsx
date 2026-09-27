@@ -11,6 +11,7 @@ import type { EditDraft, Preview, EditableDetailField } from '../../application/
 import { formatAu } from '../../formatters';
 import { displayBulkComposition } from '../../../planet_presentation';
 import { resolvePortrait } from '../../../portrait_assets';
+import { useState } from 'react';
 
 function displayName(info: SelectableEntity | undefined, preview: Preview) {
   if (!info) return undefined;
@@ -33,6 +34,8 @@ function ContentText({ content }: { content: string }) {
 
 type StockSignals = {
   basic: string;
+  detailed: string;
+  politics: string;
   deep: string;
   gm: string;
 };
@@ -91,6 +94,8 @@ function planetStock(
   if (planet.InhabitedInfo === false) {
     return {
       basic,
+      detailed: '-',
+      politics: '-',
       deep: `Signals Detected: ${signalsDetected}`,
       gm: '-',
     };
@@ -98,6 +103,8 @@ function planetStock(
   const inhabited = planet.InhabitedInfo;
   return {
     basic,
+    detailed: '-',
+    politics: '-',
     deep: `Life, Native: ${planet.NativeBiosphere}\nLife, Terran: ${inhabited.TerranBiosphere}\nPopulation: ${inhabited.Population}\nTech Level: ${TECH_LEVEL[inhabited.TechLevel]} - ${inhabited.TechLevel}`,
     gm: inhabited.WorldTags.join(', '),
   };
@@ -110,6 +117,8 @@ function stockSignals(found: FoundObject, sector: Sector, preview: Preview): Sto
   if (found.kind === 'OtherCelestialObject') {
     return {
       basic: `${formatAu(found.object.Orbit.AU)} AU - ${objectTypeLabel(found.object.ObjectType)}`,
+      detailed: '-',
+      politics: '-',
       deep: `Signals Detected: ${associatedPoiCount(sector, found.containingSystem?.Id, found.object.Id)}`,
       gm: '-',
     };
@@ -117,6 +126,8 @@ function stockSignals(found: FoundObject, sector: Sector, preview: Preview): Sto
   if (found.kind === 'System') {
     return {
       basic: `${found.object.Star.StarType} Type`,
+      detailed: '-',
+      politics: '-',
       deep: '-',
       gm: '-',
     };
@@ -127,6 +138,8 @@ function stockSignals(found: FoundObject, sector: Sector, preview: Preview): Sto
       basic: systems
         ? `${systems[0].NiceName} <=> ${systems[1].NiceName}\nSpike Length: ${hexDistance(systems[0].HexLocation, systems[1].HexLocation)}`
         : '-',
+      detailed: '-',
+      politics: '-',
       deep: '-',
       gm: '-',
     };
@@ -134,11 +147,13 @@ function stockSignals(found: FoundObject, sector: Sector, preview: Preview): Sto
   if (found.kind === 'PointOfInterest') {
     return {
       basic: found.object.POIType,
+      detailed: '-',
+      politics: '-',
       deep: '-',
       gm: found.object.Intelligence.GM || '-',
     };
   }
-  return { basic: '-', deep: '-', gm: '-' };
+  return { basic: '-', detailed: '-', politics: '-', deep: '-', gm: '-' };
 }
 
 function StockField({ content }: { content: string }) {
@@ -298,6 +313,7 @@ function DetailBox({
   draft: EditDraft | null;
   setDraft: (update: (draft: EditDraft) => EditDraft) => void;
 }) {
+  const [activeTab, setActiveTab] = useState<'player' | 'gm'>('player');
   const edit = (field: EditableDetailField) => (value: string) =>
     setDraft((old) => ({
       ...old,
@@ -314,41 +330,86 @@ function DetailBox({
       </section>
     );
   return (
-    <div className="details-stack">
-      {(
-        [
-          ['BasicScan', 'Basic Scan'],
-          ['DetailedScan', 'Detailed Scan'],
-          ['PoliticsScan', 'Politics Scan'],
-          ['DeepPoliticsScan', 'Deep Politics Scan'],
-        ] as const
-      ).map(([field, title]) =>
-        preview === 'gm' || info.Visibility[field] ? (
-          <section className={`detail-section scan-${field.toLowerCase()}`} key={field}>
-            <h3>{title}</h3>
-            {field === 'BasicScan' && <StockField content={stock.basic} />}
-            {field === 'DeepPoliticsScan' && <StockField content={stock.deep} />}
-            {(field === 'BasicScan' || field === 'DeepPoliticsScan') && (
-              <div className="detail-small-divider" aria-hidden="true" />
-            )}
-            {preview === 'gm' && !locked ? (
-              <EditableText
-                className="detail-editable"
-                multiline
-                value={draftValue(draft, info, field)}
-                onChange={edit(field)}
-              />
-            ) : (
-              <p className="detail-section-description">
-                <ContentText content={info.Intelligence[field]} />
-              </p>
-            )}
-          </section>
-        ) : null,
-      )}
-      {preview === 'gm' && (
-        <section className="detail-section gm-note">
-          <h3>GMNote</h3>
+    <div className="detail-pane-tabs">
+      <div className="detail-tab-list" role="tablist" aria-label="Object information">
+        <button
+          className={`detail-tab${activeTab === 'player' ? ' active' : ''}`}
+          id="detail-tab-player"
+          type="button"
+          role="tab"
+          aria-selected={activeTab === 'player' || preview !== 'gm'}
+          aria-controls="detail-panel-player"
+          onClick={() => setActiveTab('player')}
+        >
+          SCAN INFO
+        </button>
+        {preview === 'gm' ? (
+          <button
+            className={`detail-tab${activeTab === 'gm' ? ' active' : ''}`}
+            id="detail-tab-gm"
+            type="button"
+            role="tab"
+            aria-selected={activeTab === 'gm'}
+            aria-controls="detail-panel-gm"
+            onClick={() => setActiveTab('gm')}
+          >
+            GM INFO
+          </button>
+        ) : (
+          <span className="detail-tab detail-tab-placeholder" aria-hidden="true" />
+        )}
+      </div>
+      {activeTab === 'player' || preview !== 'gm' ? (
+        <div
+          className="details-stack"
+          id="detail-panel-player"
+          role="tabpanel"
+          aria-labelledby="detail-tab-player"
+        >
+          {(
+            [
+              ['BasicScan', 'Basic Scan'],
+              ['DetailedScan', 'Detailed Scan'],
+              ['PoliticsScan', 'Politics Scan'],
+              ['DeepPoliticsScan', 'Deep Politics Scan'],
+            ] as const
+          ).map(([field, title]) =>
+            preview === 'gm' || info.Visibility[field] ? (
+              <section className={`detail-section scan-${field.toLowerCase()}`} key={field}>
+                <h3>{title}</h3>
+                {field === 'BasicScan' && <StockField content={stock.basic} />}
+                {field === 'DetailedScan' && <StockField content={stock.detailed} />}
+                {field === 'PoliticsScan' && <StockField content={stock.politics} />}
+                {field === 'DeepPoliticsScan' && <StockField content={stock.deep} />}
+                {(field === 'DetailedScan' || field === 'DeepPoliticsScan') && (
+                  <div className="detail-small-divider" aria-hidden="true" />
+                )}
+                {(field === 'DetailedScan' || field === 'DeepPoliticsScan') &&
+                preview === 'gm' &&
+                !locked ? (
+                  <EditableText
+                    className="detail-editable"
+                    multiline
+                    value={draftValue(draft, info, field)}
+                    onChange={edit(field)}
+                  />
+                ) : field === 'DetailedScan' || field === 'DeepPoliticsScan' ? (
+                  <p className="detail-section-description">
+                    <ContentText content={info.Intelligence[field]} />
+                  </p>
+                ) : null}
+              </section>
+            ) : null,
+          )}
+        </div>
+      ) : (
+        <section
+          className="detail-section gm-note"
+          id="detail-panel-gm"
+          role="tabpanel"
+          aria-labelledby="detail-tab-gm"
+        >
+          <h3>GM Information</h3>
           {found.kind !== 'PointOfInterest' && (
             <>
               <StockField content={stock.gm} />
