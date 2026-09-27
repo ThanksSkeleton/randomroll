@@ -14,7 +14,8 @@ import './style.css';
 const app = document.querySelector<HTMLElement>('#app');
 if (!app) throw new Error('Review root is missing');
 
-const STORAGE_KEY = 'swn-portrait-review-queue-v1';
+const STORAGE_KEY = 'swn-portrait-review-structure-poi-queue-v1';
+const TUNING_RESET_KEY = 'swn-portrait-review-structure-poi-tuning-reset-v1';
 type SourceStatus = { ready: boolean; error?: string };
 const sourceStatuses = new Map<string, SourceStatus>();
 let state = readState();
@@ -23,9 +24,14 @@ let message = '';
 
 function readState(): QueueState {
   const initial = initialQueueState();
+  const resetTunings = localStorage.getItem(TUNING_RESET_KEY) !== 'done';
 
   // Carry forward dial drafts from the previous category-at-a-time jig.
   for (const category of new Set(queue.map((item) => item.category))) {
+    if (resetTunings) {
+      localStorage.removeItem('swn-portrait-hsv-' + category.key);
+      continue;
+    }
     try {
       const old = JSON.parse(localStorage.getItem('swn-portrait-hsv-' + category.key) || 'null');
       for (const item of queue.filter((candidate) => candidate.category.key === category.key)) {
@@ -50,15 +56,21 @@ function readState(): QueueState {
       if (!stored) continue;
       if (stored.decision === 'accepted' || stored.decision === 'skipped')
         initial.entries[item.path]!.decision = stored.decision;
-      for (const variant of ['a', 'b'] as const) {
-        for (const channel of ['h', 's', 'v'] as const) {
-          const value = stored[variant]?.[channel];
-          if (validDial(channel, value)) initial.entries[item.path]![variant][channel] = value;
+      if (!resetTunings) {
+        for (const variant of ['a', 'b'] as const) {
+          for (const channel of ['h', 's', 'v'] as const) {
+            const value = stored[variant]?.[channel];
+            if (validDial(channel, value)) initial.entries[item.path]![variant][channel] = value;
+          }
         }
       }
     }
   } catch {
     // Keep usable defaults if saved queue data is malformed.
+  }
+  if (resetTunings) {
+    localStorage.setItem(TUNING_RESET_KEY, 'done');
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(initial));
   }
   return initial;
 }
@@ -306,7 +318,7 @@ function bind(): void {
     const url = URL.createObjectURL(blob);
     const anchor = document.createElement('a');
     anchor.href = url;
-    anchor.download = 'planet-hsv-manifest.json';
+    anchor.download = 'structure-poi-hsv-manifest.json';
     anchor.click();
     setTimeout(() => URL.revokeObjectURL(url), 0);
   });

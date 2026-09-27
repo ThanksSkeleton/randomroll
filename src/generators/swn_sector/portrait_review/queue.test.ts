@@ -2,27 +2,18 @@ import { describe, expect, it } from 'vitest';
 import { getTotalManifest, initialQueueState, queue, wrappedIndex } from './queue';
 
 describe('portrait review queue', () => {
-  it('walks all 66 sources in a stable order and wraps in both directions', () => {
-    expect(queue.slice(0, 9).map((item) => item.category.key + '/' + item.sourceId)).toEqual([
-      'mercurian/01',
-      'mercurian/02',
-      'mercurian/03',
-      'europan-water/01',
-      'europan-water/02',
-      'europan-water/03',
-      'europan-ice/01',
-      'europan-ice/02',
-      'europan-ice/03',
+  it('walks the structure and POI sources in a stable order and wraps both ways', () => {
+    expect([...new Set(queue.map((item) => item.category.key))]).toEqual([
+      'independent-station', 'deep-space-station', 'asteroid-base', 'remote-moon-base',
+      'ancient-orbital-ruin', 'research-base', 'asteroid-belt-poi', 'comet-base',
+      'comet-belt-poi', 'gas-mine', 'refueling-station',
     ]);
-    expect(queue).toHaveLength(66);
-    expect([...new Set(queue.slice(9).map((item) => item.category.key))]).toEqual([
-      'lunar', 'ioan', 'titanian', 'martian', 'venusian', 'jovian', 'neptunian',
-      'star-a', 'star-f', 'star-g', 'star-k', 'star-m', 'star-giant',
-      'star-white-dwarf', 'star-neutron-star', 'star-black-hole', 'asteroid-belt',
-      'kuiper-belt', 'gas-cloud',
+    expect(queue).toHaveLength(33);
+    expect(queue.slice(0, 3).map((item) => item.category.key + '/' + item.sourceId)).toEqual([
+      'independent-station/01', 'independent-station/02', 'independent-station/03',
     ]);
-    expect(wrappedIndex(0, -1, queue.length)).toBe(65);
-    expect(wrappedIndex(65, 1, queue.length)).toBe(0);
+    expect(wrappedIndex(0, -1, queue.length)).toBe(32);
+    expect(wrappedIndex(32, 1, queue.length)).toBe(0);
   });
 
   it('exports only accepted source paths and their two HSV settings', () => {

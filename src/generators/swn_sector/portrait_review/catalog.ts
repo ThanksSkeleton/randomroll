@@ -43,6 +43,17 @@ export const categories = [
   { key: 'asteroid-belt', label: 'Asteroid belt', initial: pendingSources() },
   { key: 'kuiper-belt', label: 'Kuiper belt', initial: pendingSources() },
   { key: 'gas-cloud', label: 'Gas cloud', initial: pendingSources() },
+  { key: 'independent-station', label: 'Independent station', initial: pendingSources() },
+  { key: 'deep-space-station', label: 'Deep-space station', initial: pendingSources() },
+  { key: 'asteroid-base', label: 'Asteroid base', initial: pendingSources() },
+  { key: 'remote-moon-base', label: 'Remote moon base', initial: pendingSources() },
+  { key: 'ancient-orbital-ruin', label: 'Ancient orbital ruin', initial: pendingSources() },
+  { key: 'research-base', label: 'Research base', initial: pendingSources() },
+  { key: 'asteroid-belt-poi', label: 'Asteroid belt POI', initial: pendingSources() },
+  { key: 'comet-base', label: 'Comet base', initial: pendingSources() },
+  { key: 'comet-belt-poi', label: 'Comet belt POI', initial: pendingSources() },
+  { key: 'gas-mine', label: 'Gas mine', initial: pendingSources() },
+  { key: 'refueling-station', label: 'Refueling station', initial: pendingSources() },
 ] as const;
 
 export type Category = (typeof categories)[number];

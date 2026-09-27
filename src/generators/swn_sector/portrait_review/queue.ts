@@ -7,14 +7,25 @@ export type QueueEntry = Tunings & { decision: Decision };
 export type QueueState = { cursor: number; entries: Record<string, QueueEntry> };
 export type TotalManifest = Record<string, { a: Tuning; b: Tuning }>;
 
-// Keep the original review set first, then continue through the expanded inventory.
-const originalOrder = ['mercurian', 'europan-water', 'europan-ice'];
-const originalCategories = originalOrder.map(
+// The second production batch contains the independent station and ten POI banks.
+const reviewCategoryKeys = [
+  'independent-station',
+  'deep-space-station',
+  'asteroid-base',
+  'remote-moon-base',
+  'ancient-orbital-ruin',
+  'research-base',
+  'asteroid-belt-poi',
+  'comet-base',
+  'comet-belt-poi',
+  'gas-mine',
+  'refueling-station',
+];
+const reviewCategories = reviewCategoryKeys.map(
   (key) => categories.find((category) => category.key === key)!,
 );
-const newCategories = categories.filter((category) => !originalOrder.includes(category.key));
 
-export const queue: QueueItem[] = [...originalCategories, ...newCategories].flatMap(
+export const queue: QueueItem[] = reviewCategories.flatMap(
   (category) =>
     category.initial.images.map((image) => ({
       category,
