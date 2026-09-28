@@ -10,6 +10,7 @@ import {
 import { STAR_TABLE } from './generation_rules';
 import { generateRoutes } from './generate_routes';
 import { generateCompleteSystem } from './generate_system';
+import { resolvePolitics } from './politics';
 
 export function generate(
   seed: string,
@@ -35,6 +36,10 @@ export function generate(
     });
   });
   const { Routes, RoutePortals } = generateRoutes(seed, Systems);
+  const politics = resolvePolitics(seed, Systems, Routes, RoutePortals);
+  for (const system of Systems)
+    for (const object of system.Objects)
+      object.ClaimedByPolityIds = politics.ClaimsByObjectId.get(object.Id) ?? [];
   const candidates = Systems.flatMap((system) => system.Objects)
     .filter(
       (object): object is Planet => object.Kind === 'Planet' && object.InhabitedInfo !== false,
@@ -95,6 +100,8 @@ export function generate(
     Systems,
     Routes,
     RoutePortals,
+    Polities: politics.Polities,
+    ConquestEvents: politics.ConquestEvents,
     PlayerShip: {
       Id: deterministicId(seed, 'player-ship'),
       ProceduralName: shipName,

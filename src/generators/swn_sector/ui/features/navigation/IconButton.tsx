@@ -5,6 +5,7 @@ export type SectorIcon =
   | 'gm-lock'
   | 'map-view'
   | 'move-ship'
+  | 'polity-overlay'
   | 'sector-view'
   | 'select-ship'
   | 'symbolic-view'
@@ -18,7 +19,7 @@ export type SectorIcon =
 
 const iconStyle = (icon: SectorIcon) =>
   ({
-    '--sector-icon': `url(${import.meta.env.BASE_URL}swn_sector/icons/${icon}.png)`,
+    '--sector-icon': `url(${import.meta.env.BASE_URL}swn_sector/icons/${icon === 'polity-overlay' ? 'flag.svg' : `${icon}.png`})`,
   }) as CSSProperties;
 
 export function Icon({ icon }: { icon: SectorIcon }) {

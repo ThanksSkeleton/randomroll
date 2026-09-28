@@ -50,7 +50,52 @@ export interface Sector {
   Systems: StarSystem[];
   Routes: Route[];
   RoutePortals: RoutePortal[];
+  Polities: Polity[];
+  /** Generated history retained for future GM-facing presentation. */
+  ConquestEvents: ConquestEvent[];
   PlayerShip: PlayerShip;
+}
+
+export interface Polity {
+  Id: Guid;
+  NiceName: string;
+  HomeworldId: Guid;
+  Attack: number;
+  Defense: number;
+  Projection: number;
+  Flag: PolityFlag;
+}
+
+export type PolityFlagColor =
+  | 'red'
+  | 'orange'
+  | 'gold'
+  | 'yellow'
+  | 'lime green'
+  | 'green'
+  | 'teal'
+  | 'light blue'
+  | 'blue'
+  | 'purple'
+  | 'pink'
+  | 'brown'
+  | 'gray'
+  | 'white';
+
+export interface PolityFlag {
+  FieldColor: PolityFlagColor;
+  CircleColor: PolityFlagColor;
+}
+
+export interface ConquestEvent {
+  Id: Guid;
+  AttackerPolityId: Guid;
+  DefenderPolityId: Guid;
+  TargetWorldId: Guid;
+  RouteDistance: number;
+  Attack: number;
+  Defense: number;
+  Outcome: 'CONQUEST' | 'DEFENSE';
 }
 
 export type StartingWorldMode = 'UNRESTRICTED' | 'TL4_PLUS' | 'TL4_PLUS_POP_GT_500';
@@ -120,6 +165,8 @@ export interface SystemObjectBase extends SelectableEntity {
   Orbit: Orbit;
   /** Authoritative thermal value used to constrain generated star-relative AU. */
   Temperature: Temperature;
+  /** Surviving simultaneous political claims after the initial politics pass. */
+  ClaimedByPolityIds: Guid[];
   Kind: 'Planet' | 'OtherCelestialObject';
 }
 

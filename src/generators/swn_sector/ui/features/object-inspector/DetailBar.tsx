@@ -12,6 +12,7 @@ import { formatAu } from '../../formatters';
 import { displayBulkComposition } from '../../../planet_presentation';
 import { resolvePortrait } from '../../../portrait_assets';
 import { useState } from 'react';
+import { PolityFlagList } from '../politics/PolityFlag';
 
 function displayName(info: SelectableEntity | undefined, preview: Preview) {
   if (!info) return undefined;
@@ -73,6 +74,25 @@ function objectTypeLabel(objectType: string) {
   return objectType.replace(/([a-z])([A-Z])/g, '$1 $2');
 }
 
+function polityClaims(sector: Sector, polityIds: readonly string[]) {
+  const names = polityIds
+    .map((id) => sector.Polities.find((polity) => polity.Id === id)?.NiceName)
+    .filter((name): name is string => name !== undefined);
+  return `ClaimedBy: ${names.length === 0 ? 'None' : names.join(', ')}`;
+}
+
+function politicalClaimIds(found: FoundObject, sector: Sector): string[] | undefined {
+  if (found.kind === 'Planet' || found.kind === 'OtherCelestialObject')
+    return found.object.ClaimedByPolityIds;
+  if (found.kind !== 'System') return undefined;
+  const ids = new Set(found.object.Objects.flatMap((object) => object.ClaimedByPolityIds));
+  return [...ids].sort((left, right) => {
+    const leftName = sector.Polities.find((polity) => polity.Id === left)?.NiceName ?? left;
+    const rightName = sector.Polities.find((polity) => polity.Id === right)?.NiceName ?? right;
+    return leftName.localeCompare(rightName) || left.localeCompare(right);
+  });
+}
+
 function planetStock(
   planet: Planet,
   sector: Sector,
@@ -95,7 +115,7 @@ function planetStock(
     return {
       basic,
       detailed: `Signals Detected: ${signalsDetected}`,
-      politics: '-',
+      politics: polityClaims(sector, planet.ClaimedByPolityIds),
       deep: '-',
       gm: '-',
     };
@@ -104,7 +124,7 @@ function planetStock(
   return {
     basic,
     detailed: `Life, Native: ${planet.NativeBiosphere}\nLife, Terran: ${inhabited.TerranBiosphere}\nPopulation: ${inhabited.Population}`,
-    politics: `Tech Level: ${TECH_LEVEL[inhabited.TechLevel]} - ${inhabited.TechLevel}`,
+    politics: `Tech Level: ${TECH_LEVEL[inhabited.TechLevel]} - ${inhabited.TechLevel}\n${polityClaims(sector, planet.ClaimedByPolityIds)}`,
     deep: '-',
     gm: inhabited.WorldTags.join(', '),
   };
@@ -118,16 +138,17 @@ function stockSignals(found: FoundObject, sector: Sector, preview: Preview): Sto
     return {
       basic: `${formatAu(found.object.Orbit.AU)} AU - ${objectTypeLabel(found.object.ObjectType)}`,
       detailed: `Signals Detected: ${associatedPoiCount(sector, found.containingSystem?.Id, found.object.Id)}`,
-      politics: '-',
+      politics: polityClaims(sector, found.object.ClaimedByPolityIds),
       deep: '-',
       gm: '-',
     };
   }
   if (found.kind === 'System') {
+    const claimIds = politicalClaimIds(found, sector) ?? [];
     return {
       basic: `${found.object.Star.StarType} Type`,
       detailed: '-',
-      politics: '-',
+      politics: polityClaims(sector, claimIds),
       deep: '-',
       gm: '-',
     };
@@ -317,6 +338,7 @@ function DetailBox({
   setDraft: (update: (draft: EditDraft) => EditDraft) => void;
 }) {
   const [activeTab, setActiveTab] = useState<'player' | 'gm'>('player');
+  const claimIds = politicalClaimIds(found, sector);
   const edit = (field: EditableDetailField) => (value: string) =>
     setDraft((old) => ({
       ...old,
@@ -382,7 +404,18 @@ function DetailBox({
                 <h3>{title}</h3>
                 {field === 'BasicScan' && <StockField content={stock.basic} />}
                 {field === 'DetailedScan' && <StockField content={stock.detailed} />}
-                {field === 'PoliticsScan' && <StockField content={stock.politics} />}
+                {field === 'PoliticsScan' && (
+                  <>
+                    <StockField content={stock.politics} />
+                    {claimIds !== undefined && (
+                      <PolityFlagList
+                        sector={sector}
+                        polityIds={claimIds}
+                        className="politics-scan-flags"
+                      />
+                    )}
+                  </>
+                )}
                 {field === 'DeepPoliticsScan' && <StockField content={stock.deep} />}
                 {(field === 'DetailedScan' || field === 'DeepPoliticsScan') && (
                   <div className="detail-small-divider" aria-hidden="true" />

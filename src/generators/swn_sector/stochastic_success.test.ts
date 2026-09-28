@@ -34,4 +34,4 @@ test('Stochastic Success', () => {
       `Seed ${seed} (${outputPath}) violated ${violations.length} invariant(s):\n${violations.map((violation) => `[${violation.RuleId}] ${violation.Message}`).join('\n')}`,
     ).toEqual([]);
   }
-});
+}, 15_000);

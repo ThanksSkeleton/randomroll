@@ -452,7 +452,12 @@ function generateSystemOnce(options: GenerateSystemOptions): StarSystem {
     Id: deterministicId(options.seed, options.entityPath),
     ProceduralName: name,
     NiceName: name,
-    Visibility: { BasicScan: false, DetailedScan: false, PoliticsScan: false, DeepPoliticsScan: false },
+    Visibility: {
+      BasicScan: false,
+      DetailedScan: false,
+      PoliticsScan: false,
+      DeepPoliticsScan: false,
+    },
     Intelligence: {
       InfoboxSummary: '-',
       BasicScan: '-',
@@ -466,7 +471,12 @@ function generateSystemOnce(options: GenerateSystemOptions): StarSystem {
       Id: deterministicId(options.seed, `${options.entityPath}:star`),
       ProceduralName: `${name} star`,
       NiceName: `${name} star`,
-      Visibility: { BasicScan: false, DetailedScan: false, PoliticsScan: false, DeepPoliticsScan: false },
+      Visibility: {
+        BasicScan: false,
+        DetailedScan: false,
+        PoliticsScan: false,
+        DeepPoliticsScan: false,
+      },
       Intelligence: {
         InfoboxSummary: '-',
         BasicScan: '-',
@@ -555,7 +565,12 @@ function makePoi(
     Id: deterministicId(seed, path),
     ProceduralName: temporaryName,
     NiceName: temporaryName,
-    Visibility: { BasicScan: false, DetailedScan: false, PoliticsScan: false, DeepPoliticsScan: false },
+    Visibility: {
+      BasicScan: false,
+      DetailedScan: false,
+      PoliticsScan: false,
+      DeepPoliticsScan: false,
+    },
     Intelligence: {
       InfoboxSummary: '-',
       BasicScan: '-',
@@ -627,7 +642,12 @@ export function populatePointsOfInterest(
         Id: deterministicId(seed, stationPath),
         ProceduralName: `Independent station ${stationPath}`,
         NiceName: `Independent station ${stationPath}`,
-        Visibility: { BasicScan: false, DetailedScan: false, PoliticsScan: false, DeepPoliticsScan: false },
+        Visibility: {
+          BasicScan: false,
+          DetailedScan: false,
+          PoliticsScan: false,
+          DeepPoliticsScan: false,
+        },
         Intelligence: {
           InfoboxSummary: '-',
           BasicScan: '-',
@@ -645,6 +665,7 @@ export function populatePointsOfInterest(
         ),
         // The final temperature is derived from the uniformly selected AU.
         Temperature: 'Cryogenic',
+        ClaimedByPolityIds: [],
         Orbit: {
           AU: 0,
           AngleDegrees: randomFor(seed, `${stationPath}:angle`)() * 360,

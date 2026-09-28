@@ -13,6 +13,7 @@ import {
 import { planetColorClass } from '../../../planet_presentation';
 import { starPresentationClass, starPresentationStyle } from '../../../star_presentation';
 import { StarGlyph } from './StarGlyph';
+import { PolityFlagList } from '../politics/PolityFlag';
 
 const TOP_DOWN_BOUNDARY_FILL = 0.88;
 const BELT_APPEARANCE = {
@@ -116,6 +117,7 @@ export function TopDown({
   select,
   preview,
   showTemperatureOverlay,
+  showPolityOverlay = false,
 }: {
   system: StarSystem;
   sector: Sector;
@@ -123,6 +125,7 @@ export function TopDown({
   select: (id: string) => void;
   preview: Preview;
   showTemperatureOverlay: boolean;
+  showPolityOverlay?: boolean;
 }) {
   const visibleDirectObjects = system.Objects.filter(
     (object) => !object.Orbit.ParentObjectId && visible(object.Id, sector, preview),
@@ -211,6 +214,15 @@ export function TopDown({
     system.PointsOfInterest.filter(
       (poi) => poi.ParentObjectId === parentId && visible(poi.Id, sector, preview),
     );
+  const polityFlags = (object: (typeof system.Objects)[number]) =>
+    showPolityOverlay &&
+    (preview === 'gm' || details(object.Id, sector)?.Visibility.PoliticsScan) ? (
+      <PolityFlagList
+        sector={sector}
+        polityIds={object.ClaimedByPolityIds}
+        className="polity-overlay-flags topdown-polity-flags"
+      />
+    ) : null;
   useEffect(() => {
     const shell = shellRef.current;
     if (!shell) return;
@@ -615,6 +627,7 @@ export function TopDown({
             return (
               <div key={p.Id}>
                 <div className="td-object" style={pp}>
+                  {polityFlags(p)}
                   <Selectable
                     id={p.Id}
                     selected={selected}
@@ -664,6 +677,7 @@ export function TopDown({
                   };
                   return (
                     <div className="td-object td-moon" style={mp} key={m.Id}>
+                      {polityFlags(m)}
                       <Selectable
                         id={m.Id}
                         selected={selected}
@@ -705,6 +719,7 @@ export function TopDown({
                 style={pp}
                 key={object.Id}
               >
+                {polityFlags(object)}
                 {!beltPoiHost && object.ObjectType !== 'GasCloud' && (
                   <Selectable
                     id={object.Id}

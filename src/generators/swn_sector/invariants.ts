@@ -47,6 +47,7 @@ import {
   TERRAN_BIOSPHERE_HAB,
   TERRAN_BIOSPHERE_HAB_REQUIRED,
 } from './tables';
+import { capabilityFor, POLITY_FLAG_COLORS } from './politics';
 
 export interface InvariantViolation {
   RuleId: string;
@@ -182,6 +183,7 @@ export function checkAllInvariants(value: unknown): InvariantViolation[] {
 
   validateRoutes(sector, systemsById, fail);
   validateRouteDependentTags(sector, fail);
+  validatePolitics(sector, fail);
 
   const allowedShipLocations = new Set(selectableIds);
   allowedShipLocations.delete(sector.PlayerShip.Id);
@@ -249,6 +251,84 @@ export function checkAllInvariants(value: unknown): InvariantViolation[] {
   return violations;
 }
 
+function validatePolitics(sector: Sector, fail: (ruleId: string, message: string) => void): void {
+  const inhabitedWorlds = sector.Systems.flatMap((system) =>
+    system.Objects.filter(
+      (object): object is Planet => object.Kind === 'Planet' && object.InhabitedInfo !== false,
+    ),
+  );
+  const inhabitedById = new Map(inhabitedWorlds.map((world) => [world.Id, world]));
+  const polityById = new Map(sector.Polities.map((polity) => [polity.Id, polity]));
+  if (polityById.size !== sector.Polities.length) fail('P1', 'Polity IDs must be unique.');
+  if (new Set(sector.Polities.map((polity) => polity.HomeworldId)).size !== sector.Polities.length)
+    fail('P1', 'Each polity must have a distinct homeworld.');
+  if (sector.Polities.length !== inhabitedWorlds.length)
+    fail('P1', 'Every inhabited world must produce exactly one polity.');
+
+  for (const polity of sector.Polities) {
+    const homeworld = inhabitedById.get(polity.HomeworldId);
+    if (!homeworld || homeworld.InhabitedInfo === false) {
+      fail('P1', `Polity ${polity.Id} has an invalid homeworld ${polity.HomeworldId}.`);
+      continue;
+    }
+    const expected = capabilityFor(
+      homeworld.InhabitedInfo.TechLevel,
+      homeworld.InhabitedInfo.Population,
+    );
+    if (
+      polity.Attack !== expected.Attack ||
+      polity.Defense !== expected.Defense ||
+      polity.Projection !== expected.Projection
+    )
+      fail('P2', `Polity ${polity.Id} has capability values inconsistent with its homeworld.`);
+    if (
+      !POLITY_FLAG_COLORS.includes(polity.Flag.FieldColor) ||
+      !POLITY_FLAG_COLORS.includes(polity.Flag.CircleColor) ||
+      polity.Flag.FieldColor === polity.Flag.CircleColor
+    )
+      fail('P6', `Polity ${polity.Id} has invalid flag colors.`);
+  }
+
+  for (const system of sector.Systems)
+    for (const object of system.Objects) {
+      if (new Set(object.ClaimedByPolityIds).size !== object.ClaimedByPolityIds.length)
+        fail('P3', `Object ${object.Id} contains duplicate political claims.`);
+      for (const polityId of object.ClaimedByPolityIds)
+        if (!polityById.has(polityId))
+          fail('P3', `Object ${object.Id} references missing polity ${polityId}.`);
+      const native = sector.Polities.find((polity) => polity.HomeworldId === object.Id);
+      if (
+        native &&
+        object.ClaimedByPolityIds.includes(native.Id) &&
+        (object.ClaimedByPolityIds.length !== 1 || object.ClaimedByPolityIds[0] !== native.Id)
+      )
+        fail('P4', `Native polity ${native.Id} must exclusively control its surviving homeworld.`);
+    }
+
+  const eventIds = new Set<string>();
+  for (const event of sector.ConquestEvents) {
+    if (eventIds.has(event.Id)) fail('P5', `Conquest event ID ${event.Id} is duplicated.`);
+    eventIds.add(event.Id);
+    const attacker = polityById.get(event.AttackerPolityId);
+    const defender = polityById.get(event.DefenderPolityId);
+    if (!attacker || !defender) {
+      fail('P5', `Conquest event ${event.Id} references a missing polity.`);
+      continue;
+    }
+    if (defender.HomeworldId !== event.TargetWorldId)
+      fail('P5', `Conquest event ${event.Id} does not target the defender's homeworld.`);
+    if (
+      event.Attack !== attacker.Attack ||
+      event.Defense !== defender.Defense ||
+      event.Outcome !== (event.Attack > event.Defense ? 'CONQUEST' : 'DEFENSE') ||
+      !Number.isInteger(event.RouteDistance) ||
+      event.RouteDistance < 0 ||
+      event.RouteDistance > attacker.Projection
+    )
+      fail('P5', `Conquest event ${event.Id} has inconsistent resolution data.`);
+  }
+}
+
 function validateCanonicalShape(
   value: unknown,
   fail: (ruleId: string, message: string) => void,
@@ -300,8 +380,16 @@ function validateCanonicalShape(
       (!visibility.DetailedScan || visibility.BasicScan) &&
       (!visibility.PoliticsScan || visibility.BasicScan) &&
       (!visibility.DeepPoliticsScan || visibility.PoliticsScan);
-    return validVisibility && ['InfoboxSummary', 'BasicScan', 'DetailedScan', 'PoliticsScan', 'DeepPoliticsScan', 'GM'].every((key) =>
-      string(intelligence[key], `${path}.Intelligence.${key}`),
+    return (
+      validVisibility &&
+      [
+        'InfoboxSummary',
+        'BasicScan',
+        'DetailedScan',
+        'PoliticsScan',
+        'DeepPoliticsScan',
+        'GM',
+      ].every((key) => string(intelligence[key], `${path}.Intelligence.${key}`))
     );
   };
   const orbit = (item: unknown, path: string): boolean =>
@@ -313,9 +401,13 @@ function validateCanonicalShape(
   const object = (item: unknown, path: string): boolean => {
     if (
       !selectable(item, path) ||
-      !required(item, ['Orbit', 'Temperature', 'Kind'], path) ||
+      !required(item, ['Orbit', 'Temperature', 'ClaimedByPolityIds', 'Kind'], path) ||
       !orbit(item.Orbit, `${path}.Orbit`) ||
       !string(item.Temperature, `${path}.Temperature`) ||
+      !array(item.ClaimedByPolityIds, `${path}.ClaimedByPolityIds`) ||
+      !item.ClaimedByPolityIds.every((id, index) =>
+        string(id, `${path}.ClaimedByPolityIds[${index}]`),
+      ) ||
       !string(item.Kind, `${path}.Kind`)
     )
       return false;
@@ -379,18 +471,24 @@ function validateCanonicalShape(
         'Systems',
         'Routes',
         'RoutePortals',
+        'Polities',
+        'ConquestEvents',
         'PlayerShip',
       ],
       'Sector',
     ) ||
     value.SchemaVersion !== 'merged-v2' ||
     !string(value.OriginalSeed, 'Sector.OriginalSeed') ||
-    !['UNRESTRICTED', 'TL4_PLUS', 'TL4_PLUS_POP_GT_500'].includes(String(value.StartingWorldMode)) ||
+    !['UNRESTRICTED', 'TL4_PLUS', 'TL4_PLUS_POP_GT_500'].includes(
+      String(value.StartingWorldMode),
+    ) ||
     !(value.StartingWorldId === null || string(value.StartingWorldId, 'Sector.StartingWorldId')) ||
     !string(value.SectorName, 'Sector.SectorName') ||
     !array(value.Systems, 'Sector.Systems') ||
     !array(value.Routes, 'Sector.Routes') ||
     !array(value.RoutePortals, 'Sector.RoutePortals') ||
+    !array(value.Polities, 'Sector.Polities') ||
+    !array(value.ConquestEvents, 'Sector.ConquestEvents') ||
     !selectable(value.PlayerShip, 'Sector.PlayerShip') ||
     !string(value.PlayerShip.CurrentLocationId, 'Sector.PlayerShip.CurrentLocationId')
   )
@@ -438,6 +536,57 @@ function validateCanonicalShape(
       !number(portal.BoundaryAngleDegrees, `Sector.RoutePortals[${index}].BoundaryAngleDegrees`)
     )
       return undefined;
+  for (const [index, polity] of value.Polities.entries()) {
+    const path = `Sector.Polities[${index}]`;
+    if (
+      !record(polity, path) ||
+      !required(
+        polity,
+        ['Id', 'NiceName', 'HomeworldId', 'Attack', 'Defense', 'Projection', 'Flag'],
+        path,
+      ) ||
+      !string(polity.Id, `${path}.Id`) ||
+      !string(polity.NiceName, `${path}.NiceName`) ||
+      !string(polity.HomeworldId, `${path}.HomeworldId`) ||
+      !number(polity.Attack, `${path}.Attack`) ||
+      !number(polity.Defense, `${path}.Defense`) ||
+      !number(polity.Projection, `${path}.Projection`) ||
+      !record(polity.Flag, `${path}.Flag`) ||
+      !required(polity.Flag, ['FieldColor', 'CircleColor'], `${path}.Flag`) ||
+      !string(polity.Flag.FieldColor, `${path}.Flag.FieldColor`) ||
+      !string(polity.Flag.CircleColor, `${path}.Flag.CircleColor`)
+    )
+      return undefined;
+  }
+  for (const [index, event] of value.ConquestEvents.entries()) {
+    const path = `Sector.ConquestEvents[${index}]`;
+    if (
+      !record(event, path) ||
+      !required(
+        event,
+        [
+          'Id',
+          'AttackerPolityId',
+          'DefenderPolityId',
+          'TargetWorldId',
+          'RouteDistance',
+          'Attack',
+          'Defense',
+          'Outcome',
+        ],
+        path,
+      ) ||
+      !string(event.Id, `${path}.Id`) ||
+      !string(event.AttackerPolityId, `${path}.AttackerPolityId`) ||
+      !string(event.DefenderPolityId, `${path}.DefenderPolityId`) ||
+      !string(event.TargetWorldId, `${path}.TargetWorldId`) ||
+      !number(event.RouteDistance, `${path}.RouteDistance`) ||
+      !number(event.Attack, `${path}.Attack`) ||
+      !number(event.Defense, `${path}.Defense`) ||
+      !['CONQUEST', 'DEFENSE'].includes(String(event.Outcome))
+    )
+      return undefined;
+  }
   return value as unknown as Sector;
 }
 
@@ -458,7 +607,11 @@ function checkNoUnknownSchemaProperties(
     'PortraitAssetId',
   ];
   const checkSelectable = (entity: SelectableEntity, path: string): void => {
-    check(entity.Visibility, ['BasicScan', 'DetailedScan', 'PoliticsScan', 'DeepPoliticsScan'], `${path}.Visibility`);
+    check(
+      entity.Visibility,
+      ['BasicScan', 'DetailedScan', 'PoliticsScan', 'DeepPoliticsScan'],
+      `${path}.Visibility`,
+    );
     check(
       entity.Intelligence,
       ['InfoboxSummary', 'BasicScan', 'DetailedScan', 'PoliticsScan', 'DeepPoliticsScan', 'GM'],
@@ -476,12 +629,37 @@ function checkNoUnknownSchemaProperties(
       'Systems',
       'Routes',
       'RoutePortals',
+      'Polities',
+      'ConquestEvents',
       'PlayerShip',
     ],
     'Sector',
   );
   checkSelectable(sector.PlayerShip, 'PlayerShip');
   check(sector.PlayerShip, [...selectable, 'CurrentLocationId'], 'PlayerShip');
+  for (const polity of sector.Polities)
+    check(
+      polity,
+      ['Id', 'NiceName', 'HomeworldId', 'Attack', 'Defense', 'Projection', 'Flag'],
+      `Polity ${polity.Id}`,
+    );
+  for (const polity of sector.Polities)
+    check(polity.Flag, ['FieldColor', 'CircleColor'], `Polity ${polity.Id}.Flag`);
+  for (const event of sector.ConquestEvents)
+    check(
+      event,
+      [
+        'Id',
+        'AttackerPolityId',
+        'DefenderPolityId',
+        'TargetWorldId',
+        'RouteDistance',
+        'Attack',
+        'Defense',
+        'Outcome',
+      ],
+      `ConquestEvent ${event.Id}`,
+    );
   for (const route of sector.Routes) {
     checkSelectable(route, `Route ${route.Id}`);
     check(route, [...selectable, 'PortalIds'], `Route ${route.Id}`);
@@ -521,6 +699,7 @@ function checkNoUnknownSchemaProperties(
             'TidallyLocked',
             'Atmosphere',
             'NativeBiosphere',
+            'ClaimedByPolityIds',
             'InhabitedInfo',
             'PortraitAssetId',
           ],
@@ -535,7 +714,7 @@ function checkNoUnknownSchemaProperties(
       } else
         check(
           object,
-          [...selectable, 'Orbit', 'Temperature', 'Kind', 'ObjectType'],
+          [...selectable, 'Orbit', 'Temperature', 'ClaimedByPolityIds', 'Kind', 'ObjectType'],
           `OtherCelestialObject ${object.Id}`,
         );
     }

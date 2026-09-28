@@ -387,7 +387,12 @@ export function generateInhabitedPlanet(options: InhabitedPlanetOptions): Planet
     Id: deterministicId(options.seed, options.entityPath),
     ProceduralName: name,
     NiceName: name,
-    Visibility: { BasicScan: false, DetailedScan: false, PoliticsScan: false, DeepPoliticsScan: false },
+    Visibility: {
+      BasicScan: false,
+      DetailedScan: false,
+      PoliticsScan: false,
+      DeepPoliticsScan: false,
+    },
     Intelligence: {
       InfoboxSummary: '-',
       BasicScan: '-',
@@ -405,6 +410,7 @@ export function generateInhabitedPlanet(options: InhabitedPlanetOptions): Planet
     TidallyLocked: options.orbit.ParentObjectId === null && options.starType === 'M-type',
     Atmosphere: profile.Atmosphere,
     NativeBiosphere: profile.NativeBiosphere,
+    ClaimedByPolityIds: [],
     InhabitedInfo: {
       TotalHab: totalHab,
       WorldTags: tags,

@@ -32,6 +32,7 @@ function objectKind(sector: Sector, id: string | null): string {
 export default function App() {
   const [application] = useState(createPrototypeApplication);
   const [showTemperatureOverlay, setShowTemperatureOverlay] = useState(false);
+  const [showPolityOverlay, setShowPolityOverlay] = useState(false);
   const [state, dispatch] = useReducer(appReducer, undefined, () =>
     createAppState(application.listSectors()),
   );
@@ -212,6 +213,9 @@ export default function App() {
                 showTemperatureOverlay={showTemperatureOverlay}
                 temperatureOverlayReady={view === 'system' && systemMode === 'topdown'}
                 onTemperatureOverlay={() => setShowTemperatureOverlay((current) => !current)}
+                showPolityOverlay={showPolityOverlay}
+                polityOverlayReady={view === 'system' || view === 'all'}
+                onPolityOverlay={() => setShowPolityOverlay((current) => !current)}
                 onMode={switchStageMode}
                 onSelectShip={() => setSelected(sector.PlayerShip.Id)}
                 onTravel={travelToSelectedSystem}
@@ -269,6 +273,7 @@ export default function App() {
                       preview={preview}
                       defaultOpen
                       showHeader={false}
+                      showPolityOverlay={showPolityOverlay}
                     />
                   }
                   topdown={
@@ -279,6 +284,7 @@ export default function App() {
                       select={setSelected}
                       preview={preview}
                       showTemperatureOverlay={showTemperatureOverlay}
+                      showPolityOverlay={showPolityOverlay}
                     />
                   }
                 />
@@ -295,6 +301,7 @@ export default function App() {
                       selectRoute={selectRoute}
                       preview={preview}
                       defaultOpen={false}
+                      showPolityOverlay={showPolityOverlay}
                     />
                   ))}
                 </div>

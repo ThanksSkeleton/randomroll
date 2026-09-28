@@ -139,7 +139,12 @@ export function generateTemplatePlanet(options: TemplatePlanetOptions): Planet {
     Id: deterministicId(options.seed, options.entityPath),
     ProceduralName: name,
     NiceName: name,
-    Visibility: { BasicScan: false, DetailedScan: false, PoliticsScan: false, DeepPoliticsScan: false },
+    Visibility: {
+      BasicScan: false,
+      DetailedScan: false,
+      PoliticsScan: false,
+      DeepPoliticsScan: false,
+    },
     Intelligence: {
       InfoboxSummary: '-',
       BasicScan: '-',
@@ -160,6 +165,7 @@ export function generateTemplatePlanet(options: TemplatePlanetOptions): Planet {
     TidallyLocked: options.orbit.ParentObjectId === null && options.starType === 'M-type',
     Atmosphere: facts.Atmosphere,
     NativeBiosphere: facts.NativeBiosphere,
+    ClaimedByPolityIds: [],
     InhabitedInfo: false,
   };
 }
@@ -194,7 +200,12 @@ export function generateTemplateOtherCelestialObject(options: {
     Id: deterministicId(options.seed, options.entityPath),
     ProceduralName: name,
     NiceName: name,
-    Visibility: { BasicScan: false, DetailedScan: false, PoliticsScan: false, DeepPoliticsScan: false },
+    Visibility: {
+      BasicScan: false,
+      DetailedScan: false,
+      PoliticsScan: false,
+      DeepPoliticsScan: false,
+    },
     Intelligence: {
       InfoboxSummary: '-',
       BasicScan: '-',
@@ -205,6 +216,7 @@ export function generateTemplateOtherCelestialObject(options: {
     },
     Orbit: options.orbit,
     Temperature: temperature,
+    ClaimedByPolityIds: [],
     Kind: 'OtherCelestialObject',
     ObjectType: options.template,
     PortraitAssetId: assignPortraitId(

@@ -37,6 +37,7 @@ function planet(id: string, parentObjectId: string | null, size: Planet['Size'])
     Atmosphere: 'Vacuum',
     Temperature: 'Cryogenic',
     NativeBiosphere: 'None',
+    ClaimedByPolityIds: [],
     InhabitedInfo: false,
   };
 }
@@ -46,6 +47,7 @@ function station(id: string, parentObjectId: string | null): OtherCelestialObjec
     ...entity(id),
     Kind: 'OtherCelestialObject',
     ObjectType: 'IndependentStation',
+    ClaimedByPolityIds: [],
     Temperature: 'Temperate',
     Orbit: {
       AU: parentObjectId === null ? 1.4 : 1,
@@ -73,6 +75,8 @@ function sector(objects: Array<Planet | OtherCelestialObject>): Sector {
     ],
     Routes: [],
     RoutePortals: [],
+    Polities: [],
+    ConquestEvents: [],
     PlayerShip: { ...entity('ship'), CurrentLocationId: 'system' },
   };
 }
@@ -91,6 +95,7 @@ describe('merged-sector independent stations', () => {
       ...entity('belt'),
       Kind: 'OtherCelestialObject',
       ObjectType: 'AsteroidBelt',
+      ClaimedByPolityIds: [],
       Temperature: 'Temperate',
       Orbit: { AU: 1, AngleDegrees: 0, ParentObjectId: null },
     };
@@ -159,6 +164,7 @@ describe('merged-sector independent stations', () => {
       ...entity('kuiper'),
       Kind: 'OtherCelestialObject',
       ObjectType: 'KuiperBelt',
+      ClaimedByPolityIds: [],
       Temperature: 'Temperate',
       Orbit: { AU: 2, AngleDegrees: 0, ParentObjectId: null },
     };
@@ -175,6 +181,7 @@ describe('merged-sector independent stations', () => {
       ...entity('asteroid'),
       Kind: 'OtherCelestialObject',
       ObjectType: 'AsteroidBelt',
+      ClaimedByPolityIds: [],
       Temperature: 'Furance',
       Orbit: { AU: 2, AngleDegrees: 0, ParentObjectId: null },
     };

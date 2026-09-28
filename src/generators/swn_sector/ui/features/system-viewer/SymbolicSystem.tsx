@@ -17,6 +17,7 @@ import {
 import { planetColorClass } from '../../../planet_presentation';
 import { starPresentationClass, starPresentationStyle } from '../../../star_presentation';
 import { StarGlyph } from './StarGlyph';
+import { PolityFlagList } from '../politics/PolityFlag';
 
 function visible(id: string, sector: Sector, preview: Preview) {
   return preview === 'gm' || isVisibleToPlayer(sector, id);
@@ -102,6 +103,7 @@ function WorldSymbol({
   selected,
   select,
   preview,
+  showPolityOverlay,
 }: {
   world: Planet;
   system: StarSystem;
@@ -109,6 +111,7 @@ function WorldSymbol({
   selected: string | null;
   select: (id: string) => void;
   preview: Preview;
+  showPolityOverlay: boolean;
 }) {
   const d = details(world.Id, sector);
   const techRating =
@@ -125,6 +128,13 @@ function WorldSymbol({
   const scale = world.Orbit.ParentObjectId ? 0.55 : (worldScale[world.Size.toLowerCase()] ?? 1);
   return (
     <div className={`world-unit ${world.Orbit.ParentObjectId ? 'moon-unit' : ''}`}>
+      {showPolityOverlay && (preview === 'gm' || d?.Visibility.PoliticsScan) && (
+        <PolityFlagList
+          sector={sector}
+          polityIds={world.ClaimedByPolityIds}
+          className="polity-overlay-flags symbolic-polity-flags"
+        />
+      )}
       <div className="orbital-tick" />
       <Selectable
         id={world.Id}
@@ -226,6 +236,7 @@ function OtherObjectSymbol({
   selected,
   select,
   preview,
+  showPolityOverlay,
 }: {
   object: OtherCelestialObject;
   system: StarSystem;
@@ -233,6 +244,7 @@ function OtherObjectSymbol({
   selected: string | null;
   select: (id: string) => void;
   preview: Preview;
+  showPolityOverlay: boolean;
 }) {
   const d = details(object.Id, sector);
   const label = displayName(d, preview) ?? object.ObjectType;
@@ -243,6 +255,13 @@ function OtherObjectSymbol({
 
   return (
     <div className="world-unit other-object-unit">
+      {showPolityOverlay && (preview === 'gm' || d?.Visibility.PoliticsScan) && (
+        <PolityFlagList
+          sector={sector}
+          polityIds={object.ClaimedByPolityIds}
+          className="polity-overlay-flags symbolic-polity-flags"
+        />
+      )}
       <div className="orbital-tick" />
       <Selectable
         id={object.Id}
@@ -303,6 +322,7 @@ export function SymbolicSystem({
   preview,
   defaultOpen: _defaultOpen,
   showHeader = true,
+  showPolityOverlay = false,
 }: {
   system: StarSystem;
   sector: Sector;
@@ -312,6 +332,7 @@ export function SymbolicSystem({
   preview: Preview;
   defaultOpen: boolean;
   showHeader?: boolean;
+  showPolityOverlay?: boolean;
 }) {
   const open = false;
   const worldPlanets = planets(system)
@@ -404,6 +425,7 @@ export function SymbolicSystem({
                           selected={selected}
                           select={select}
                           preview={preview}
+                          showPolityOverlay={showPolityOverlay}
                         />
                       </div>
                     ))}
@@ -419,6 +441,7 @@ export function SymbolicSystem({
                       selected={selected}
                       select={select}
                       preview={preview}
+                      showPolityOverlay={showPolityOverlay}
                     />
                   </div>
                 )}

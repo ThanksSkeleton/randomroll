@@ -17,7 +17,8 @@ The design deliberately remains simpler than the future faction system.
 - **Defense:** Ability to resist domination.
 - **Projection:** Maximum route distance at which the homeworld can attempt conquest. Projection `0` permits targets only within the same system.
 - **Route distance:** The smallest number of routes between two systems. Worlds in the same system have distance `0`.
-- **Conquest:** Assignment of a target to the attacking homeworld's polity by the one-time history pass.
+- **Claim:** A polity's surviving political presence on a system object after resolution.
+- **Conquest:** Removal of a homeworld's native polity by one or more foreign polities during the one-time history pass.
 
 Polities, star systems, and inhabited worlds are separate concepts. A polity may contain multiple worlds; a system may contain multiple inhabited worlds; system-level dominance does not automatically define every world's culture or identity.
 
@@ -51,9 +52,9 @@ The resulting matrix is:
 
 | TL | Population | Attack | Defense | Projection |
 | ---: | --- | ---: | ---: | ---: |
-| 0 | Any | 0 | 0 | 0 |
-| 1 | Any | 0 | 0 | 0 |
-| 2 | Any | 0 | 0 | 0 |
+| 0 | Any | 0 | 0 | -1 |
+| 1 | Any | 0 | 0 | -1 |
+| 2 | Any | 0 | 0 | -1 |
 | 3 | 500, 1m, several Million | 0 | 0 | 0 |
 | 3 | 100M, Billion | 1 | 1 | 0 |
 | 4 | 500 | 1 | 1 | 0 |
@@ -77,32 +78,39 @@ Before conquest resolution:
 - Every polity has exactly one capability-producing homeworld.
 - Each inhabited world's Attack, Defense, and Projection are derived from the matrix.
 - A world with Attack `0` cannot successfully conquer another world.
-- A world with Projection `0` may still target a different inhabited world in its own system.
+- A world with Projection `0` paints every system object in its own system.
+- A world with Projection `-1` paints only its own homeworld and no other object, even in its own system.
 - Culture, world names, and other local facts remain attached to worlds and are not replaced by polity membership.
 
-The polity naming scheme and whether multiple worlds may begin in the same polity are drill-down decisions. The simplest initial implementation is one polity per inhabited world before conquest.
+There is exactly one initial polity per inhabited world. Its initial name is the homeworld's `NiceName`, while relationships use stable IDs rather than that editable name.
 
-## Candidate targets
+Each initial polity also receives a deterministic generated flag. The flag is a 2:1 rectangle in one randomly selected canonical color with a centered circle in a different randomly selected canonical color. Black is excluded from generated polity colors. Every flag has a one-pixel white outline. Unclaimed space uses a special solid-black `None` flag.
 
-An attacker may consider a target only when:
+## Projection painting
 
-1. Attacker and target are different inhabited worlds.
-2. The target is not already part of the attacker's initial polity.
-3. The shortest route distance from attacker system to target system is less than or equal to the attacker's Projection.
-4. For Projection `0`, attacker and target are in the same system.
-5. The attacker's Attack is greater than zero.
+Every initial polity paints claims independently and simultaneously, before any resolution occurs:
+
+1. A polity always paints its own homeworld.
+2. Projection `-1` paints nothing else.
+3. For Projection `0` or greater, the polity paints every system object whose system's shortest route distance from the home system is less than or equal to Projection.
+4. Painted objects include inhabited and uninhabited planets and moons, asteroid belts, Kuiper belts, gas clouds, and independent stations.
+5. Stars, systems, routes, route portals, points of interest, and the player ship are not painted.
+6. Attack `0` does not prevent painting, though it cannot eliminate another polity.
 
 Physical hex distance and visual proximity are irrelevant. Only the generated route graph determines inter-system projection distance.
 
-## Battle rule
+## Simultaneous resolution
 
-For an eligible attacker and target:
+For every painted object, compare all painted polities against the original capability values of all other painted polities:
 
-- If `Attack > Defense`, the attacker can conquer the target.
-- If `Attack <= Defense`, the defender holds.
-- The defender therefore wins ties.
+- A polity is removed from that object if any opposing polity has `Attack >` its `Defense`.
+- `Attack <= Defense` does not remove the defending polity. Defense therefore wins ties.
+- All removals are evaluated against the complete initial painted set and applied simultaneously.
+- A non-homeworld object retains every surviving polity. Multiple survivors represent a contested claim.
+- A homeworld whose native polity survives is controlled exclusively by the native polity, even if foreign polities also survived the ordinary comparison.
+- If the native polity is removed, all surviving foreign polities remain. A defeated homeworld can therefore be contested by multiple invaders.
 
-Defense is the target homeworld's matrix value. It is not increased by other members of its polity unless a later specification explicitly adds such a rule.
+An object with no surviving or projected polity has no claim.
 
 ## Non-recursive conquest
 
@@ -111,37 +119,7 @@ Defense is the target homeworld's matrix value. It is not increased by other mem
 - A conquered system or world does not become a new origin point for route-distance calculation.
 - Conquest does not modify Attack, Defense, or Projection.
 - The pass runs to completion once during sector generation and does not run again automatically during campaign play.
-
-## Resolution decisions still required
-
-The source plan does not yet determine the following, and implementation must not choose them accidentally through collection order:
-
-### Conquest unit
-
-Choose whether a successful attack conquers:
-
-- Only the targeted inhabited world; or
-- Political control of the entire target system.
-
-This decision must explicitly cover systems containing multiple inhabited worlds. Regardless of the choice, local culture and world names remain attached to their worlds.
-
-### Multiple attackers
-
-Choose how to resolve two or more successful attackers against the same target. Candidate rules include highest Attack, greatest margin over Defense, shortest distance, or a deterministic random tie-break.
-
-### Resolution timing
-
-Choose whether all attacks are evaluated against the initial independent state and applied simultaneously, or processed in a declared deterministic order. Simultaneous evaluation best preserves the stated non-recursive behavior, but it is not yet approved.
-
-### Attacker choice
-
-Choose whether every capable homeworld attacks every beatable target, attacks one preferred target, or follows another target-priority rule.
-
-### Cycles and mutual conquest
-
-Define the result when two homeworlds can defeat one another, including whether both battle notes are retained and which polity survives.
-
-These are blocking drill-down decisions for the conquest algorithm.
+- A conquered polity retains claims projected from its original homeworld during the simultaneous painting pass. In particular, a conquered polity may retain a distant claim beyond its conqueror's projection range.
 
 ## Battle-history notes
 
@@ -155,11 +133,27 @@ At minimum, a note records:
 - Attack and Defense values.
 - Outcome: conquest or defense.
 
-The storage and exact prose format remain to be decided. Notes may be structured politics records rendered as prose or labeled text appended to an appropriate GMNote, but they must not overwrite human-authored GM text.
+The initial implementation stores these as structured internal conquest-event records. It does not yet render them in the UI and does not append to or overwrite human-authored GM text.
 
 ## Political scan
 
-Political information must be available through the existing intelligence/visibility UI, with the exact format still to be designed.
+Political control is available through constructed Politics 1 (`PoliticsScan`) output on every system object in this form:
+
+`ClaimedBy: <PolityName>, <PolityName>`
+
+An object without a surviving claim displays `ClaimedBy: None`.
+
+The corresponding polity flags appear with the constructed Politics 1 claim information. Selecting a system displays the union of every polity claiming at least one object in that system, without duplicates. This is a summary of object-level claims; it does not create a separate system claim.
+
+## Polity overlay
+
+The system viewer provides a `Polity Overlay` option alongside the existing view controls.
+
+- When active, every visible planet, moon, belt, cloud, and independent station displays its surviving claim flags in a vertical column above the object.
+- An unclaimed object displays the black `None` flag.
+- Hovering a generated flag displays its polity name; hovering the black flag displays `None`.
+- Player preview shows overlay flags only where Politics 1 is visible. GM preview may show all generated political claims.
+- The same persisted flag colors are used in Politics 1 and the overlay.
 
 The political presentation eventually needs to communicate:
 
@@ -168,14 +162,15 @@ The political presentation eventually needs to communicate:
 - Attack, Defense, and Projection to the GM.
 - Relevant conquest history to the GM.
 
-Which political facts appear at `BASIC_SCAN`, `CULTURE_PARTIAL`, and `CULTURE_FULL` is a drill-down decision. GM preview always has access to the complete political state.
+Further placement of capability and history facts in deeper scans remains a future presentation decision. GM preview always has access to constructed Politics 1.
 
-## Data-model impact
+## Data model
 
-Expected structured additions include:
+Structured political state includes:
 
 - Stable polity IDs and polity records.
 - Homeworld ID for each polity.
+- Two distinct non-black canonical flag colors for each polity.
 - Current polity/allegiance ID for each inhabited world.
 - Derived or persisted Attack, Defense, and Projection.
 - Narrow battle-history note records or a safe GMNote representation.
@@ -184,11 +179,11 @@ Polity membership must reference stable IDs rather than editable names. Derived 
 
 No faction records, faction assets, political turns, or general campaign event records are introduced in this step.
 
-## Acceptance criteria for the settled core
+## Acceptance criteria
 
-The following criteria are valid before the remaining resolution rules are chosen:
+The settled implementation must satisfy the following:
 
-1. Every inhabited world receives a polity/allegiance and matrix-derived capability.
+1. Every inhabited world creates exactly one polity named from its `NiceName` and receives matrix-derived capability.
 2. Every canonical TL and population category maps to the intended matrix row.
 3. `Postech with specialties` uses the TL4 row.
 4. Route distance uses the shortest path through `Route` endpoints and treats the same system as distance zero.
@@ -200,9 +195,18 @@ The following criteria are valid before the remaining resolution rules are chose
 10. The politics pass runs once and does not become an ongoing simulation.
 11. World culture and names survive changes in polity membership.
 12. Political state is stored through stable IDs and is available to GM preview.
-13. Battle-history output remains narrow and does not create a general event ledger.
-
-Final acceptance criteria must be added for conquest unit, target choice, competing attackers, timing, and cycles after those decisions are made.
+13. Battle-history output remains a narrow internal conquest-event log and does not create a general event ledger.
+14. Projection paints every system object in range and does not paint stars, POIs, routes, route portals, or the player ship.
+15. Resolution is simultaneous and independent of collection order.
+16. Every opposing polity whose Attack exceeds a polity's Defense removes that polity's claim.
+17. Multiple surviving claims remain contested on ordinary objects and on a defeated homeworld.
+18. A surviving native polity exclusively controls its own homeworld.
+19. A conquered polity retains any separately projected claims that survive resolution.
+20. Politics 1 displays `ClaimedBy` names or `None` for every system object.
+21. System Politics 1 displays the deduplicated union of polities claiming its objects.
+22. Every generated polity flag uses two distinct canonical non-black colors, a centered circle, and a one-pixel white outline.
+23. The black `None` flag represents an unclaimed object.
+24. The Polity Overlay renders claim flags in a vertical column above system objects and exposes polity names as flag tooltips.
 
 ## Future, not part of Step 4
 

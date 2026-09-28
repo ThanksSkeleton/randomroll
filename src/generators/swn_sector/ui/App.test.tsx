@@ -57,6 +57,24 @@ describe('prototype application workflows', () => {
     ).toBe('true');
   });
 
+  it('toggles the polity overlay for system objects', () => {
+    renderApp();
+    const overlayButton = screen.getByRole('button', { name: 'POLITY OVERLAY' });
+    expect(overlayButton).toHaveProperty('disabled', true);
+
+    fireEvent.click(firstSystemButton());
+    fireEvent.click(screen.getByRole('button', { name: /^SYSTEM$/ }));
+    expect(overlayButton).toHaveProperty('disabled', false);
+    expect(document.querySelector('.polity-overlay-flags')).toBeNull();
+
+    fireEvent.click(overlayButton);
+
+    expect(overlayButton.className).toContain('button-active');
+    expect(document.querySelectorAll('.polity-overlay-flags .polity-flag').length).toBeGreaterThan(
+      0,
+    );
+  });
+
   it('filters GM-only objects from player preview and hides GM controls', () => {
     renderApp();
     const firstSystemName = firstSystemButton().getAttribute('aria-label') ?? '';

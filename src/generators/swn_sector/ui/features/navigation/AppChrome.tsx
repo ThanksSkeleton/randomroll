@@ -65,6 +65,9 @@ export function StageNav({
   showTemperatureOverlay,
   temperatureOverlayReady,
   onTemperatureOverlay,
+  showPolityOverlay,
+  polityOverlayReady,
+  onPolityOverlay,
   onMode,
   onSelectShip,
   onTravel,
@@ -76,6 +79,9 @@ export function StageNav({
   showTemperatureOverlay: boolean;
   temperatureOverlayReady: boolean;
   onTemperatureOverlay: () => void;
+  showPolityOverlay: boolean;
+  polityOverlayReady: boolean;
+  onPolityOverlay: () => void;
   onMode: (mode: StageMode) => void;
   onSelectShip: () => void;
   onTravel: () => void;
@@ -157,6 +163,15 @@ export function StageNav({
           disabled={!temperatureOverlayReady}
           pressed={showTemperatureOverlay}
           onClick={onTemperatureOverlay}
+        />
+        <IconButton
+          icon="polity-overlay"
+          label="POLITY OVERLAY"
+          title="Polity Overlay"
+          className={`polity-sidebar-button ${showPolityOverlay ? 'button-active' : 'button-allowed'}`}
+          disabled={!polityOverlayReady}
+          pressed={showPolityOverlay}
+          onClick={onPolityOverlay}
         />
         <IconButton
           icon="select-ship"

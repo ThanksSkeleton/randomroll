@@ -2503,6 +2503,38 @@ select {
   color: #fff;
 }
 
+.polity-flag-list {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.polity-flag {
+  display: block;
+  width: 32px;
+  height: 16px;
+  flex: none;
+  filter: drop-shadow(0 1px 1px #000c);
+}
+.politics-scan-flags {
+  padding: 0 12px 10px;
+}
+.polity-overlay-flags {
+  position: absolute;
+  z-index: 40;
+  flex-direction: column;
+  gap: 2px;
+}
+.symbolic-polity-flags {
+  top: -4px;
+  left: 50%;
+  transform: translate(-50%, -100%);
+}
+.topdown-polity-flags {
+  bottom: 18px;
+  left: 0;
+  transform: translateX(-50%);
+}
+
 /* Reusable button-state vocabulary. */
 button.button-active {
   background: var(--green);

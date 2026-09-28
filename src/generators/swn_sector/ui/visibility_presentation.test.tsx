@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 
-import { cleanup, render } from '@testing-library/react';
+import { cleanup, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it } from 'vitest';
 import { generate } from '../generate';
 import type { Planet, Sector } from '../merged_schema';
@@ -41,6 +41,38 @@ function visiblePlanet(sector: Sector): Planet {
 }
 
 describe('scan visibility presentation', () => {
+  it('lists the union of object claimants in system Politics 1 with their flags', () => {
+    const sector = generate('VISIBILITY-SYSTEM-POLITICS');
+    const system = sector.Systems[0]!;
+    system.Visibility = {
+      BasicScan: true,
+      DetailedScan: false,
+      PoliticsScan: true,
+      DeepPoliticsScan: false,
+    };
+    for (const object of system.Objects) object.ClaimedByPolityIds = [];
+    system.Objects[0]!.ClaimedByPolityIds = [sector.Polities[0]!.Id];
+    system.Objects[1]!.ClaimedByPolityIds = [sector.Polities[1]!.Id, sector.Polities[0]!.Id];
+    const claimIds = [
+      ...new Set(system.Objects.flatMap((object) => object.ClaimedByPolityIds)),
+    ].sort((left, right) => {
+      const leftName = sector.Polities.find((polity) => polity.Id === left)!.NiceName;
+      const rightName = sector.Polities.find((polity) => polity.Id === right)!.NiceName;
+      return leftName.localeCompare(rightName) || left.localeCompare(right);
+    });
+    const names = claimIds.map(
+      (id) => sector.Polities.find((polity) => polity.Id === id)!.NiceName,
+    );
+
+    const view = renderDetail(sector, system.Id);
+
+    expect(
+      view.container.querySelector('.scan-politicsscan .detail-stock-content')?.textContent,
+    ).toBe(`ClaimedBy: ${names.join(', ')}`);
+    for (const name of names)
+      expect(screen.getByRole('img', { name: `${name} polity flag` })).toBeTruthy();
+  });
+
   it('uses Politics Scan for nice names and retains the procedural secondary name', () => {
     const sector = generate('VISIBILITY-NAMES');
     const planet = visiblePlanet(sector);
@@ -111,6 +143,42 @@ describe('scan visibility presentation', () => {
     expect(
       view.container.querySelector('.scan-deeppoliticsscan .detail-stock-content')?.textContent,
     ).toBe('-');
+    const names = object.ClaimedByPolityIds.map(
+      (id) => sector.Polities.find((polity) => polity.Id === id)!.NiceName,
+    );
+    expect(
+      view.container.querySelector('.scan-politicsscan .detail-stock-content')?.textContent,
+    ).toBe(`ClaimedBy: ${names.length === 0 ? 'None' : names.join(', ')}`);
+
+    object.ClaimedByPolityIds = sector.Polities.slice(0, 2).map((polity) => polity.Id);
+    view.rerender(
+      <DetailBar
+        sector={sector}
+        selectedId={object.Id}
+        preview="player"
+        locked={true}
+        draft={null}
+        setDraft={() => {}}
+      />,
+    );
+    expect(
+      view.container.querySelector('.scan-politicsscan .detail-stock-content')?.textContent,
+    ).toBe(`ClaimedBy: ${sector.Polities[0]!.NiceName}, ${sector.Polities[1]!.NiceName}`);
+
+    object.ClaimedByPolityIds = [];
+    view.rerender(
+      <DetailBar
+        sector={sector}
+        selectedId={object.Id}
+        preview="player"
+        locked={true}
+        draft={null}
+        setDraft={() => {}}
+      />,
+    );
+    expect(
+      view.container.querySelector('.scan-politicsscan .detail-stock-content')?.textContent,
+    ).toBe('ClaimedBy: None');
   });
 
   it("uses the route's Politics Scan for endpoint names", () => {
