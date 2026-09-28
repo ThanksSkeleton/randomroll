@@ -5,6 +5,8 @@ import {
   POI_TABLE,
   STAR_TABLE,
   TEMPERATURE_TABLE,
+  WORLD_TAG_DEFINITIONS,
+  WORLD_TAG_PROMPT_CATEGORIES,
   WORLD_TAG_TABLE,
   assertReviewedTableIntegrity,
   directOrbitAuBand,
@@ -22,6 +24,17 @@ test('reviewed tables adapt to canonical values without losing their weights', (
   expect(STAR_TABLE.reduce((sum, row) => sum + row.Weight, 0)).toBe(100);
   expect(WORLD_TAG_TABLE.map((row) => row.Value)).not.toContain('Primitive Aliens');
   expect(WORLD_TAG_TABLE.every((row) => CANONICAL_WORLD_TAGS.includes(row.Value))).toBe(true);
+  expect(WORLD_TAG_DEFINITIONS).toHaveLength(100);
+  expect(
+    WORLD_TAG_DEFINITIONS.every((tag) =>
+      WORLD_TAG_PROMPT_CATEGORIES.every(
+        (category) =>
+          Array.isArray(tag.prompts[category]) &&
+          tag.prompts[category].length > 0 &&
+          tag.prompts[category].every((prompt) => prompt.length > 0),
+      ),
+    ),
+  ).toBe(true);
   expect(POI_TABLE.map((row) => row.Value)).toContain('Deep-space station');
   expect(POI_TABLE.map((row) => row.Value)).toContain('Comet base');
   expect(POI_TABLE.map((row) => row.Value)).toContain('Comet belt');

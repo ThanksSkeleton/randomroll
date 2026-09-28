@@ -321,15 +321,43 @@ export const CANONICAL_WORLD_TAGS = [
   'Zombies',
 ] as const satisfies readonly WorldTag[];
 const CANONICAL_WORLD_TAG_SET = new Set<string>(CANONICAL_WORLD_TAGS);
-export const WORLD_TAG_TABLE: WeightedCategory<WorldTag>[] = (
-  rawWorldTags as { tags: Array<{ roll: number; tag: string }> }
-).tags
-  .filter((row) => !ALIEN_DEPENDENT_WORLD_TAGS.has(row.tag))
-  .map((row) => {
-    if (!CANONICAL_WORLD_TAG_SET.has(row.tag))
-      throw new Error(`Unknown canonical world tag ${row.tag}`);
-    return { Value: row.tag as WorldTag, Weight: 1 };
-  });
+export const WORLD_TAG_PROMPT_CATEGORIES = [
+  'enemies',
+  'friends',
+  'complications',
+  'things',
+  'places',
+] as const;
+export type WorldTagPromptCategory = (typeof WORLD_TAG_PROMPT_CATEGORIES)[number];
+export type WorldTagPromptLists = Record<WorldTagPromptCategory, readonly string[]>;
+export interface WorldTagDefinition {
+  roll: number;
+  tag: string;
+  description: string;
+  prompts: WorldTagPromptLists;
+}
+
+export const WORLD_TAG_DEFINITIONS: WorldTagDefinition[] = rawWorldTags.tags.map((row) => {
+  for (const category of WORLD_TAG_PROMPT_CATEGORIES) {
+    const prompts = row.prompts[category];
+    if (!Array.isArray(prompts) || prompts.length === 0 || prompts.some((prompt) => !prompt))
+      throw new Error(`World tag ${row.tag} has an invalid ${category} prompt list`);
+  }
+  return {
+    roll: row.roll,
+    tag: row.tag,
+    description: row.description,
+    prompts: row.prompts,
+  };
+});
+
+export const WORLD_TAG_TABLE: WeightedCategory<WorldTag>[] = WORLD_TAG_DEFINITIONS.filter(
+  (row) => !ALIEN_DEPENDENT_WORLD_TAGS.has(row.tag),
+).map((row) => {
+  if (!CANONICAL_WORLD_TAG_SET.has(row.tag))
+    throw new Error(`Unknown canonical world tag ${row.tag}`);
+  return { Value: row.tag as WorldTag, Weight: 1 };
+});
 export const POI_TABLE: WeightedCategory<PointOfInterestType>[] = (
   rawPointsOfInterest as { otherPoint: { rows: Array<{ point: string }> } }
 ).otherPoint.rows.map((row) => ({ Value: row.point as PointOfInterestType, Weight: 1 }));
