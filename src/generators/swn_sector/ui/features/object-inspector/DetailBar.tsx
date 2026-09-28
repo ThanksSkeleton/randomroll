@@ -5,6 +5,7 @@ import {
   findObject,
   objectKindLabel,
   routeSystems,
+  systemPoliticalClaimIds,
   type FoundObject,
 } from '../../domain/sector/selectors';
 import type { EditDraft, Preview, EditableDetailField } from '../../application/appState';
@@ -85,12 +86,7 @@ function politicalClaimIds(found: FoundObject, sector: Sector): string[] | undef
   if (found.kind === 'Planet' || found.kind === 'OtherCelestialObject')
     return found.object.ClaimedByPolityIds;
   if (found.kind !== 'System') return undefined;
-  const ids = new Set(found.object.Objects.flatMap((object) => object.ClaimedByPolityIds));
-  return [...ids].sort((left, right) => {
-    const leftName = sector.Polities.find((polity) => polity.Id === left)?.NiceName ?? left;
-    const rightName = sector.Polities.find((polity) => polity.Id === right)?.NiceName ?? right;
-    return leftName.localeCompare(rightName) || left.localeCompare(right);
-  });
+  return systemPoliticalClaimIds(found.object, sector);
 }
 
 function planetStock(

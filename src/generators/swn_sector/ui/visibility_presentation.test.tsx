@@ -270,4 +270,50 @@ describe('scan visibility presentation', () => {
     view.rerender(<HexMap sector={sector} selected={null} select={() => {}} preview="player" />);
     expect(view.getByRole('button', { name: 'System NICE SYSTEM' })).toBeTruthy();
   });
+
+  it('tints a system hex with the sorted Politics 1 claimant union', () => {
+    const sector = generate('VISIBILITY-MAP-POLITIES');
+    const system = sector.Systems[0]!;
+    system.Visibility.BasicScan = true;
+    system.Visibility.PoliticsScan = true;
+    for (const object of system.Objects) object.ClaimedByPolityIds = [];
+    const expected = sector.Polities.slice(0, 2).sort(
+      (left, right) =>
+        left.NiceName.localeCompare(right.NiceName) || left.Id.localeCompare(right.Id),
+    );
+    system.Objects[0]!.ClaimedByPolityIds = [expected[1]!.Id, expected[0]!.Id];
+
+    const view = render(
+      <HexMap
+        sector={sector}
+        selected={null}
+        select={() => {}}
+        preview="player"
+        showPolityOverlay
+      />,
+    );
+    const tintedHex = view.container.querySelector(`[data-system-id="${system.Id}"]`);
+
+    expect(tintedHex?.getAttribute('data-polities')).toBe(
+      expected.map((polity) => polity.NiceName).join(', '),
+    );
+    expect(
+      tintedHex?.querySelector<HTMLElement>('.hex-polity-tint')?.style.backgroundImage,
+    ).toContain('repeating-linear-gradient');
+    expect(tintedHex?.querySelector('.hex-polity-tint')?.tagName).toBe('DIV');
+
+    system.Visibility.PoliticsScan = false;
+    view.rerender(
+      <HexMap
+        sector={sector}
+        selected={null}
+        select={() => {}}
+        preview="player"
+        showPolityOverlay
+      />,
+    );
+    expect(
+      view.container.querySelector(`[data-system-id="${system.Id}"]`)?.className,
+    ).not.toContain('hex-polity-tinted');
+  });
 });

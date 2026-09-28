@@ -17,10 +17,14 @@ const FLAG_COLOR: Record<PolityFlagColor, string> = {
   white: '#ffffff',
 };
 
+export function polityFlagColorValue(color: string): string {
+  return FLAG_COLOR[color as PolityFlagColor] ?? color;
+}
+
 export function PolityFlag({ polity }: { polity?: Polity }) {
   const name = polity?.NiceName ?? 'None';
-  const fieldColor = polity ? FLAG_COLOR[polity.Flag.FieldColor] : '#000000';
-  const circleColor = polity ? FLAG_COLOR[polity.Flag.CircleColor] : '#000000';
+  const fieldColor = polity ? polityFlagColorValue(polity.Flag.FieldColor) : '#000000';
+  const circleColor = polity ? polityFlagColorValue(polity.Flag.CircleColor) : '#000000';
   return (
     <svg className="polity-flag" viewBox="0 0 32 16" role="img" aria-label={`${name} polity flag`}>
       <title>{name}</title>

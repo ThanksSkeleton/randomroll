@@ -60,9 +60,13 @@ export function validateSector(sector: Sector): string[] {
     if (!inhabitedIds.has(polity.HomeworldId))
       errors.push(`Polity ${polity.Id} has an invalid homeworld.`);
     else if (
-      !POLITY_FLAG_COLORS.includes(polity.Flag.FieldColor) ||
+      !/^#[0-9a-f]{6}$/i.test(polity.Flag.FieldColor) ||
       !POLITY_FLAG_COLORS.includes(polity.Flag.CircleColor) ||
-      polity.Flag.FieldColor === polity.Flag.CircleColor
+      polity.Flag.FieldColor === polity.Flag.CircleColor ||
+      sector.Polities.some(
+        (candidate) =>
+          candidate.Id !== polity.Id && candidate.Flag.FieldColor === polity.Flag.FieldColor,
+      )
     )
       errors.push(`Polity ${polity.Id} has invalid flag colors.`);
   for (const system of sector.Systems) {

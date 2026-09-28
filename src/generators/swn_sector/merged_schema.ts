@@ -83,7 +83,8 @@ export type PolityFlagColor =
   | 'white';
 
 export interface PolityFlag {
-  FieldColor: PolityFlagColor;
+  /** Generated CSS hex color. Field colors are unique within a sector. */
+  FieldColor: string;
   CircleColor: PolityFlagColor;
 }
 

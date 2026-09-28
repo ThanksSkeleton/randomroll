@@ -282,9 +282,13 @@ function validatePolitics(sector: Sector, fail: (ruleId: string, message: string
     )
       fail('P2', `Polity ${polity.Id} has capability values inconsistent with its homeworld.`);
     if (
-      !POLITY_FLAG_COLORS.includes(polity.Flag.FieldColor) ||
+      !/^#[0-9a-f]{6}$/i.test(polity.Flag.FieldColor) ||
       !POLITY_FLAG_COLORS.includes(polity.Flag.CircleColor) ||
-      polity.Flag.FieldColor === polity.Flag.CircleColor
+      polity.Flag.FieldColor === polity.Flag.CircleColor ||
+      sector.Polities.some(
+        (candidate) =>
+          candidate.Id !== polity.Id && candidate.Flag.FieldColor === polity.Flag.FieldColor,
+      )
     )
       fail('P6', `Polity ${polity.Id} has invalid flag colors.`);
   }

@@ -407,6 +407,14 @@ button.detail-tab {
   clip-path: inherit;
   background: #091015;
 }
+.hex-cell > .hex-polity-tint {
+  position: absolute;
+  inset: 1px;
+  z-index: 1;
+  margin: 0;
+  clip-path: inherit;
+  opacity: 0.34;
+}
 .hex-cell span {
   z-index: 1;
   align-self: start;

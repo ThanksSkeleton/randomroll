@@ -214,7 +214,7 @@ export default function App() {
                 temperatureOverlayReady={view === 'system' && systemMode === 'topdown'}
                 onTemperatureOverlay={() => setShowTemperatureOverlay((current) => !current)}
                 showPolityOverlay={showPolityOverlay}
-                polityOverlayReady={view === 'system' || view === 'all'}
+                polityOverlayReady={view === 'hex' || view === 'system' || view === 'all'}
                 onPolityOverlay={() => setShowPolityOverlay((current) => !current)}
                 onMode={switchStageMode}
                 onSelectShip={() => setSelected(sector.PlayerShip.Id)}
@@ -254,6 +254,7 @@ export default function App() {
                   selected={selected}
                   select={setSelected}
                   preview={preview}
+                  showPolityOverlay={showPolityOverlay}
                 />
               )}
               {view === 'system' && currentSystem && (

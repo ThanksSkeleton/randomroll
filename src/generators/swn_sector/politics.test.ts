@@ -175,6 +175,24 @@ describe('political capability matrix', () => {
 });
 
 describe('simultaneous political resolution', () => {
+  it('assigns unique body colors when polity count exceeds the old palette', () => {
+    const systems = Array.from({ length: 30 }, (_, index) => {
+      const suffix = String(index).padStart(2, '0');
+      return system(`system-${suffix}`, [
+        planet(`world-${suffix}`, `World ${suffix}`, {
+          TechLevel: 'Modern postech',
+          Population: 'Fewer than 500',
+        }),
+      ]);
+    });
+
+    const result = resolvePolitics('many-polities', systems, [], []);
+    const colors = result.Polities.map((polity) => polity.Flag.FieldColor);
+
+    expect(colors).toHaveLength(30);
+    expect(new Set(colors).size).toBe(colors.length);
+  });
+
   it('gives a surviving native exclusive control of its contested homeworld', () => {
     const alpha = planet('alpha', 'Alpha', {
       TechLevel: 'Modern postech',
@@ -231,10 +249,13 @@ describe('simultaneous political resolution', () => {
     expect(reordered.Polities.map((polity) => polity.Flag)).toEqual(
       result.Polities.map((polity) => polity.Flag),
     );
+    expect(new Set(result.Polities.map((polity) => polity.Flag.FieldColor)).size).toBe(
+      result.Polities.length,
+    );
     for (const polity of result.Polities) {
       expect(polity.Flag.FieldColor).not.toBe('black');
       expect(polity.Flag.CircleColor).not.toBe('black');
-      expect(polity.Flag.FieldColor).not.toBe(polity.Flag.CircleColor);
+      expect(polity.Flag.FieldColor).toMatch(/^#[0-9a-f]{6}$/);
     }
     expect(
       result.ConquestEvents.filter(

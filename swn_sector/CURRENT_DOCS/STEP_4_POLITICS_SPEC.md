@@ -84,7 +84,7 @@ Before conquest resolution:
 
 There is exactly one initial polity per inhabited world. Its initial name is the homeworld's `NiceName`, while relationships use stable IDs rather than that editable name.
 
-Each initial polity also receives a deterministic generated flag. The flag is a 2:1 rectangle in one randomly selected canonical color with a centered circle in a different randomly selected canonical color. Black is excluded from generated polity colors. Every flag has a one-pixel white outline. Unclaimed space uses a special solid-black `None` flag.
+Each initial polity also receives a deterministic generated flag. The flag is a 2:1 rectangle whose body color is unique across all polities in the sector, with a centered circle in a randomly selected canonical color. Black is excluded from generated polity colors. Every flag has a one-pixel white outline. Unclaimed space uses a special solid-black `None` flag.
 
 ## Projection painting
 

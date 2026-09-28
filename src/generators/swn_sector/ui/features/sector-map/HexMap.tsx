@@ -5,9 +5,11 @@ import {
   findDetails,
   isVisibleToPlayer,
   routeSystems,
+  systemPoliticalClaimIds,
 } from '../../domain/sector/selectors';
 import { starPresentationClass, starPresentationStyle } from '../../../star_presentation';
 import { StarGlyph } from '../system-viewer/StarGlyph';
+import { polityFlagColorValue } from '../politics/PolityFlag';
 
 const BAKED_HEXMAP = {
   hexSize: 106,
@@ -30,6 +32,17 @@ function position(x: number, y: number) {
     left: BAKED_HEXMAP.leftMargin + BAKED_HEXMAP.hexSize / 2 + (x - 1) * 84 * scale,
     top: BAKED_HEXMAP.topMargin + hexHeight / 2 + ((y - 1) * 98 + ((x - 1) % 2) * 49) * scale,
   };
+}
+
+function polityTint(colors: readonly string[]): string | undefined {
+  if (colors.length === 0) return undefined;
+  if (colors.length === 1) return polityFlagColorValue(colors[0]!);
+  const stripeWidth = 12;
+  const stops = colors.flatMap((color, index) => {
+    const resolved = polityFlagColorValue(color);
+    return [`${resolved} ${index * stripeWidth}px`, `${resolved} ${(index + 1) * stripeWidth}px`];
+  });
+  return `repeating-linear-gradient(135deg, ${stops.join(', ')})`;
 }
 function Selectable({
   id,
@@ -70,11 +83,13 @@ export function HexMap({
   selected,
   select,
   preview,
+  showPolityOverlay = false,
 }: {
   sector: Sector;
   selected: string | null;
   select: (id: string | null) => void;
   preview: Preview;
+  showPolityOverlay?: boolean;
 }) {
   const scale = BAKED_HEXMAP.hexSize / 112;
   const hexHeight = BAKED_HEXMAP.hexSize * (98 / 112);
@@ -116,16 +131,41 @@ export function HexMap({
         {Array.from({ length: 77 }, (_, i) => {
           const x = (i % 11) + 1,
             y = Math.floor(i / 11) + 1;
+          const system = sector.Systems.find(
+            (candidate) => candidate.HexLocation.Column === x && candidate.HexLocation.Row === y,
+          );
+          const showSystemClaims =
+            showPolityOverlay &&
+            system !== undefined &&
+            visible(system.Id, sector, preview) &&
+            (preview === 'gm' || system.Visibility.PoliticsScan);
+          const claimIds =
+            showSystemClaims && system ? systemPoliticalClaimIds(system, sector) : [];
+          const claimants = claimIds.flatMap((id) => {
+            const polity = sector.Polities.find((candidate) => candidate.Id === id);
+            return polity ? [polity] : [];
+          });
           return (
             <div
               key={i}
-              className="hex-cell"
+              className={`hex-cell ${claimants.length > 0 ? 'hex-polity-tinted' : ''}`}
+              data-system-id={system?.Id}
+              data-polities={claimants.map((polity) => polity.NiceName).join(', ') || undefined}
               style={{
                 ...position(x, y),
                 width: BAKED_HEXMAP.hexSize,
                 height: hexHeight,
               }}
-            />
+            >
+              {claimants.length > 0 && (
+                <div
+                  className="hex-polity-tint"
+                  style={{
+                    background: polityTint(claimants.map((polity) => polity.Flag.FieldColor)),
+                  }}
+                />
+              )}
+            </div>
           );
         })}
         {sector.Systems.filter((s) => visible(s.Id, sector, preview)).map((system) => {

@@ -57,17 +57,18 @@ describe('prototype application workflows', () => {
     ).toBe('true');
   });
 
-  it('toggles the polity overlay for system objects', () => {
+  it('toggles the polity overlay in the sector map and system views', () => {
     renderApp();
     const overlayButton = screen.getByRole('button', { name: 'POLITY OVERLAY' });
-    expect(overlayButton).toHaveProperty('disabled', true);
+    expect(overlayButton).toHaveProperty('disabled', false);
+    expect(document.querySelector('.hex-polity-tint')).toBeNull();
+
+    fireEvent.click(overlayButton);
+    expect(document.querySelectorAll('.hex-polity-tint').length).toBeGreaterThan(0);
 
     fireEvent.click(firstSystemButton());
     fireEvent.click(screen.getByRole('button', { name: /^SYSTEM$/ }));
     expect(overlayButton).toHaveProperty('disabled', false);
-    expect(document.querySelector('.polity-overlay-flags')).toBeNull();
-
-    fireEvent.click(overlayButton);
 
     expect(overlayButton.className).toContain('button-active');
     expect(document.querySelectorAll('.polity-overlay-flags .polity-flag').length).toBeGreaterThan(

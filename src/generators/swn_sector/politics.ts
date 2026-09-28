@@ -91,6 +91,27 @@ export interface PoliticsResult {
 
 type Homeworld = { world: Planet; system: StarSystem; polity: Polity };
 
+function componentToHex(value: number): string {
+  return Math.round(value * 255)
+    .toString(16)
+    .padStart(2, '0');
+}
+
+function hslToHex(hue: number, saturation = 0.72, lightness = 0.46): string {
+  const channel = (offset: number) => {
+    const k = (offset + hue / 30) % 12;
+    const chroma = saturation * Math.min(lightness, 1 - lightness);
+    return lightness - chroma * Math.max(-1, Math.min(k - 3, 9 - k, 1));
+  };
+  return `#${componentToHex(channel(0))}${componentToHex(channel(8))}${componentToHex(channel(4))}`;
+}
+
+function uniqueFieldColors(seed: string, count: number): string[] {
+  if (count === 0) return [];
+  const offset = randomFor(seed, 'polity-flag-field-colors')() * 360;
+  return Array.from({ length: count }, (_, index) => hslToHex(offset + (index * 360) / count));
+}
+
 /** Resolves one simultaneous, non-recursive initial politics pass. */
 export function resolvePolitics(
   seed: string,
@@ -104,12 +125,7 @@ export function resolvePolitics(
       if (object.Kind !== 'Planet' || object.InhabitedInfo === false) continue;
       const polityId = deterministicId(seed, `polity:${object.Id}`);
       const flagRandom = randomFor(seed, `polity-flag:${polityId}`);
-      const FieldColor = choose(flagRandom, POLITY_FLAG_COLORS, 'polity flag field colors');
-      const CircleColor = choose(
-        flagRandom,
-        POLITY_FLAG_COLORS.filter((color) => color !== FieldColor),
-        'polity flag circle colors',
-      );
+      const CircleColor = choose(flagRandom, POLITY_FLAG_COLORS, 'polity flag circle colors');
       homeworlds.push({
         world: object,
         system,
@@ -118,11 +134,15 @@ export function resolvePolitics(
           NiceName: object.NiceName,
           HomeworldId: object.Id,
           ...capabilityFor(object.InhabitedInfo.TechLevel, object.InhabitedInfo.Population),
-          Flag: { FieldColor, CircleColor },
+          Flag: { FieldColor: '', CircleColor },
         },
       });
     }
   homeworlds.sort((left, right) => left.polity.Id.localeCompare(right.polity.Id));
+  const fieldColors = uniqueFieldColors(seed, homeworlds.length);
+  homeworlds.forEach(({ polity }, index) => {
+    polity.Flag.FieldColor = fieldColors[index]!;
+  });
 
   const adjacency = routeAdjacency(systems, routes, routePortals);
   const distancesByPolityId = new Map(
