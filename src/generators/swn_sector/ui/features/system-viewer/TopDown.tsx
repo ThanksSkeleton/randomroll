@@ -45,8 +45,19 @@ function details(id: string, sector: Sector) {
 function displayName(info: ReturnType<typeof findDetails>, preview: Preview) {
   if (!info) return undefined;
   const preferredName =
-    preview === 'player' && !info.Visibility.DetailedScan ? info.ProceduralName : info.NiceName;
+    preview === 'player' && !info.Visibility.PoliticsScan ? info.ProceduralName : info.NiceName;
   return preferredName.trim() || info.ProceduralName;
+}
+function routeDestinationName(
+  destination: StarSystem,
+  route: Sector['Routes'][number],
+  preview: Preview,
+) {
+  const preferredName =
+    preview === 'gm' || route.Visibility.PoliticsScan
+      ? destination.NiceName
+      : destination.ProceduralName;
+  return preferredName.trim() || destination.ProceduralName;
 }
 function hexMapPosition(x: number, y: number) {
   return { left: 100 + (x - 1) * 84, top: 55 + (y - 1) * 98 + ((x - 1) % 2) * 49 };
@@ -379,8 +390,7 @@ export function TopDown({
           )}
           {routes.map(({ route, destination, angle }) => {
             const routePosition = pos(angle, spikeBoundaryRadius);
-            const destinationName =
-              displayName(details(destination.Id, sector), preview) ?? 'system';
+            const destinationName = routeDestinationName(destination, route, preview);
             return (
               <div key={route.Id} className="td-route" style={routePosition}>
                 <Selectable

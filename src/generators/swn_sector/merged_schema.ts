@@ -42,12 +42,18 @@ export interface Sector {
   SchemaVersion: 'merged-v2';
   /** Generation provenance; it is not a complete replay specification. */
   OriginalSeed: string;
+  /** Starting-world eligibility mode selected when this sector was generated. */
+  StartingWorldMode: StartingWorldMode;
+  /** Stable generated-world reference; null until starting-world selection runs. */
+  StartingWorldId: Guid | null;
   SectorName: string;
   Systems: StarSystem[];
   Routes: Route[];
   RoutePortals: RoutePortal[];
   PlayerShip: PlayerShip;
 }
+
+export type StartingWorldMode = 'UNRESTRICTED' | 'TL4_PLUS' | 'TL4_PLUS_POP_GT_500';
 
 export interface Route extends SelectableEntity {
   PortalIds: [Guid, Guid];

@@ -1,6 +1,6 @@
 import { createInitialSectors } from '../data';
 import { generate } from '../../generate';
-import type { Sector } from '../../merged_schema';
+import type { Sector, StartingWorldMode } from '../../merged_schema';
 
 export type LocalSession = { role: 'gm' };
 
@@ -25,8 +25,8 @@ export class PrototypeApplication {
     this.sectors = copy(initialSectors);
   }
 
-  generateSector(seed: string): Sector {
-    const generated = copy(generate(seed));
+  generateSector(seed: string, startingWorldMode: StartingWorldMode = 'UNRESTRICTED'): Sector {
+    const generated = copy(generate(seed, startingWorldMode));
     this.sectors = [...this.sectors, generated];
     return copy(generated);
   }

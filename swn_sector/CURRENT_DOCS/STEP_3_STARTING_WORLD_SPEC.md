@@ -4,14 +4,15 @@
 
 This step selects the campaign's starting inhabited world, places the player ship there, and establishes the initial player-visible neighborhood.
 
-It uses the existing entity-level visibility grants:
+It uses the existing entity-level visibility flags:
 
-- `BASIC_SCAN`
-- `CULTURE_1`
-- `CULTURE_II`
-- `NONE` when no grants are present
+- `BasicScan`
+- `DetailedScan`
+- `PoliticsScan`
+- `DeepPoliticsScan`
+- `NONE` when all four flags are `false`
 
-Grants are cumulative and independent: an entity may receive `BASIC_SCAN` together with a culture tier. This step changes visibility grants; it does not introduce a second knowledge model.
+Flags are cumulative subject to the existing dependencies: `DetailedScan` and `PoliticsScan` require `BasicScan`, and `DeepPoliticsScan` requires `PoliticsScan`. There are no separately serialized culture grants. In this document, the old `CULTURE_1` shorthand maps to `PoliticsScan`, and `CULTURE_II` maps to `DeepPoliticsScan`; a `DeepPoliticsScan` grant therefore also requires `PoliticsScan` and `BasicScan` to be enabled.
 
 ## Generation input
 
@@ -63,30 +64,36 @@ Let `S` be the system containing the selected starting world.
 
 ### 1. Reveal the starting system contents
 
-Grant the following entities in `S` both `BASIC_SCAN` and `CULTURE_II`:
+Grant the following entities in `S` `BasicScan`, `PoliticsScan`, and `DeepPoliticsScan`:
 
 - `S` itself.
 - `S.Star`.
 - Every planet and moon in `S.Objects`.
 - Every other celestial object in `S.Objects`.
-- Every POI in `S.PointsOfInterest`.
 
-Grant the player ship both `BASIC_SCAN` and `CULTURE_II`.
+Grant the player ship `BasicScan`, `PoliticsScan`, and `DeepPoliticsScan`.
+All POIs in the starting system remain `NONE`.
 
-“Everything in the starting system” includes objects that remain narratively mysterious; `BASIC_SCAN` controls which existing intelligence fields the player view exposes.
+“Everything in the starting system” includes objects that remain narratively mysterious; `BasicScan` controls player visibility, while each enabled flag controls its corresponding existing intelligence field.
 
 ### 2. Reveal directly connected routes
 
 For every route with one endpoint in `S`:
 
-- Set the `Route` to `BASIC_SCAN`.
-- Set both of that route's `RoutePortal` records to `BASIC_SCAN` so the complete known connection is represented consistently.
+- Set the `Route` to `BasicScan` and `PoliticsScan` (Politics 1).
+- Set both of that route's `RoutePortal` records to `BasicScan` so the complete known connection is represented consistently.
 
 ### 3. Reveal first-order neighboring systems
 
-For the system at the other endpoint of each revealed route, grant the neighboring `StarSystem` entity both `BASIC_SCAN` and `CULTURE_1`.
+For the system at the other endpoint of each revealed route, grant both `BasicScan` and `PoliticsScan` to every selectable entity located in that neighboring system:
 
-- Do not automatically reveal that neighboring system's star, planets, moons, other objects, or POIs.
+- The `StarSystem` entity itself.
+- Its star, planets, moons, and other celestial objects.
+- Its `RoutePortal` records.
+
+POIs in neighboring systems remain `NONE`.
+
+Do not reveal any `Route` entity unless that route is directly incident to the starting system. In particular, revealing a neighboring system's portal does not reveal the route attached to that portal.
 
 ### 4. Stop propagation
 
@@ -100,8 +107,8 @@ In graph terms, the result contains the full starting system, all incident route
 
 - GM preview continues to display sector truth and GM notes regardless of visibility.
 - Player preview continues to hide entities with no visibility grants.
-- `BASIC_SCAN` reveals basic scan information; `CULTURE_1` and `CULTURE_II` reveal their corresponding cultural information tiers. GM-only text remains hidden from players.
-- This step does not generate cultural information. It only establishes initial visibility values.
+- `BasicScan`, `DetailedScan`, `PoliticsScan`, and `DeepPoliticsScan` control the matching player information fields under the existing dependencies. GM-only text remains hidden from players.
+- This step does not generate Politics Scan or Deep Politics Scan information. It only establishes initial visibility flags.
 - Later GM visibility edits use the existing edit controls and do not recalculate this initial reveal.
 
 ## Data-model impact
@@ -133,15 +140,16 @@ No reroll state is added.
 5. Selection is deterministic for the same seed, sector contents, and mode.
 6. A mode with no eligible candidates fails clearly and never falls back silently.
 7. The ship's initial location is the selected world.
-8. Every selectable entity contained by the starting system receives both `BASIC_SCAN` and `CULTURE_II`.
-9. Every incident route and both of its portals receive `BASIC_SCAN`.
-10. Directly connected system records receive both `BASIC_SCAN` and `CULTURE_1` while their contained objects remain without visibility grants.
+8. The starting system, its star, all planets, moons, and other celestial objects receive `BasicScan`, `PoliticsScan`, and `DeepPoliticsScan`; its POIs remain `NONE`.
+9. Every incident route receives `BasicScan` and `PoliticsScan` (Politics 1); both of its portals receive `BasicScan`.
+10. Every non-route, non-POI entity located in a directly connected system receives both `BasicScan` and `PoliticsScan`; its POIs remain `NONE`, and routes beyond those incident to the starting system remain hidden.
 11. Second-order routes and systems remain `NONE` unless independently included by another settled rule.
 12. Moving the ship later does not repeat or reverse initial visibility assignment.
 13. GM and player previews continue to honor the existing visibility-level content rules.
 
 ## Drill-down decisions remaining
 
-- Default starting-world mode in the generation UI.
 - Final serialized names and location of the mode and starting-world ID.
 - Exact UI recovery flow after a no-candidate error.
+
+Implementation decision: the generation UI defaults to `UNRESTRICTED`.

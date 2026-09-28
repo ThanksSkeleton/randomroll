@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='29' fill='%23091211' stroke='%2378e3d0' stroke-width='4'/%3E%3Cpath d='M13 32s7-12 19-12 19 12 19 12-7 12-19 12S13 32 13 32Z' fill='none' stroke='%2378e3d0' stroke-width='4'/%3E%3Ccircle cx='32' cy='32' r='6' fill='%23f2c56b'/%3E%3C/svg%3E" />
+    <title>SWN Sector Visibility Audit</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --ink: #e8f0ef;
+        --muted: #9daead;
+        --paper: #091211;
+        --panel: #101d1b;
+        --panel-2: #152623;
+        --line: #29413d;
+        --cyan: #78e3d0;
+        --gold: #f2c56b;
+        --rose: #f08c8c;
+        --violet: #c3a6ff;
+        --green: #96d879;
+        --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        --sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+      * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
+      body {
+        margin: 0;
+        background:
+          radial-gradient(circle at 85% -10%, #173c37 0, transparent 34rem),
+          linear-gradient(180deg, #0b1614, var(--paper) 38rem);
+        color: var(--ink);
+        font-family: var(--sans);
+        line-height: 1.55;
+      }
+      a { color: var(--cyan); }
+      code, .code { font-family: var(--mono); color: #b8f2e8; }
+      code { font-size: .9em; }
+      .shell { width: min(1180px, calc(100% - 36px)); margin: 0 auto; }
+      header { padding: 76px 0 42px; border-bottom: 1px solid var(--line); }
+      .eyebrow { color: var(--cyan); font: 700 .76rem/1 var(--mono); letter-spacing: .16em; text-transform: uppercase; }
+      h1 { margin: 14px 0 14px; max-width: 900px; font-size: clamp(2.5rem, 6vw, 5.6rem); line-height: .94; letter-spacing: -.055em; }
+      .lede { max-width: 800px; margin: 0; color: #c3cfcd; font-size: 1.16rem; }
+      .stamp { margin-top: 24px; color: var(--muted); font: .78rem var(--mono); }
+      nav { position: sticky; top: 0; z-index: 5; background: color-mix(in srgb, var(--paper) 88%, transparent); border-bottom: 1px solid var(--line); backdrop-filter: blur(14px); }
+      nav .shell { display: flex; gap: 8px; padding: 10px 0; overflow-x: auto; }
+      nav a { flex: 0 0 auto; padding: 7px 11px; color: var(--muted); border: 1px solid transparent; border-radius: 999px; font: 700 .72rem var(--mono); text-decoration: none; text-transform: uppercase; }
+      nav a:hover { color: var(--ink); border-color: var(--line); }
+      main { padding: 24px 0 90px; }
+      section { scroll-margin-top: 72px; margin-top: 54px; }
+      h2 { margin: 0 0 18px; font-size: clamp(1.55rem, 3vw, 2.2rem); letter-spacing: -.025em; }
+      h3 { margin: 0 0 8px; font-size: 1.06rem; }
+      p { margin: 0 0 12px; }
+      .grid { display: grid; gap: 14px; }
+      .summary-grid { grid-template-columns: repeat(4, 1fr); margin-top: 30px; }
+      .card, .callout, details { background: linear-gradient(145deg, var(--panel-2), var(--panel)); border: 1px solid var(--line); border-radius: 12px; }
+      .card { padding: 20px; }
+      .metric { display: block; color: var(--gold); font-size: 2rem; font-weight: 800; line-height: 1; }
+      .metric-label { display: block; margin-top: 9px; color: var(--muted); font-size: .82rem; }
+      .callout { padding: 20px 22px; border-left: 4px solid var(--gold); }
+      .callout.danger { border-left-color: var(--rose); }
+      .callout.good { border-left-color: var(--green); }
+      .callout p:last-child, .card p:last-child { margin-bottom: 0; }
+      .state-flow { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 14px; margin: 24px 0; }
+      .state { padding: 20px; text-align: center; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; }
+      .state strong { display: block; margin-bottom: 5px; color: var(--cyan); }
+      .arrow { color: var(--muted); font-size: 1.6rem; }
+      .chips { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 10px; }
+      .chip { padding: 3px 8px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); font: .74rem var(--mono); }
+      .chip.on { color: #07110f; background: var(--cyan); border-color: var(--cyan); }
+      .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; }
+      table { width: 100%; border-collapse: collapse; background: #0d1917; font-size: .9rem; }
+      th { background: #172a26; color: #dce9e7; font: 700 .73rem var(--mono); text-align: left; text-transform: uppercase; letter-spacing: .06em; }
+      th, td { padding: 13px 14px; vertical-align: top; border-bottom: 1px solid var(--line); }
+      tr:last-child td { border-bottom: 0; }
+      tbody tr:hover { background: #13231f; }
+      .yes { color: var(--green); font-weight: 750; }
+      .no { color: var(--muted); }
+      .warn { color: var(--gold); font-weight: 750; }
+      .bad { color: var(--rose); font-weight: 750; }
+      .level-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .level { position: relative; overflow: hidden; padding: 22px; }
+      .level::after { content: attr(data-mark); position: absolute; right: 12px; top: -18px; color: #fff; opacity: .035; font: 900 6rem var(--mono); }
+      .level h3 { color: var(--cyan); }
+      .level ul, .finding ul { margin: 10px 0 0; padding-left: 19px; }
+      li + li { margin-top: 6px; }
+      .level .generated { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); }
+      .kicker { color: var(--muted); font: 700 .7rem var(--mono); letter-spacing: .08em; text-transform: uppercase; }
+      .findings { counter-reset: finding; }
+      .finding { position: relative; padding: 20px 22px 20px 68px; margin-top: 12px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; }
+      .finding::before { counter-increment: finding; content: counter(finding, decimal-leading-zero); position: absolute; left: 20px; color: var(--gold); font: 800 1.1rem var(--mono); }
+      .severity { display: inline-block; margin-left: 8px; padding: 2px 7px; border-radius: 999px; background: #4b2e20; color: #ffd5a2; font: 700 .65rem var(--mono); vertical-align: 2px; }
+      details { margin-top: 10px; }
+      summary { cursor: pointer; padding: 14px 17px; color: var(--cyan); font-weight: 700; }
+      details > div { padding: 0 17px 17px; color: #cbd5d3; }
+      .source-list { columns: 2; column-gap: 30px; }
+      .source-list li { break-inside: avoid; margin-bottom: 8px; }
+      .foot { margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--line); color: var(--muted); font-size: .82rem; }
+      @media (max-width: 800px) {
+        .summary-grid, .level-grid { grid-template-columns: 1fr; }
+        .state-flow { grid-template-columns: 1fr; }
+        .arrow { transform: rotate(90deg); text-align: center; }
+        .source-list { columns: 1; }
+      }
+      @media print {
+        :root { color-scheme: light; --ink: #14201e; --muted: #4e5e5b; --paper: #fff; --panel: #fff; --panel-2: #fff; --line: #bcc8c5; }
+        body { background: #fff; }
+        nav { display: none; }
+        header { padding-top: 24px; }
+        section { break-inside: avoid; margin-top: 30px; }
+        .card, .callout, details, .state, table { background: #fff; }
+        th { background: #eaf0ee; }
+        a { color: #075e50; text-decoration: none; }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="shell">
+        <div class="eyebrow">Implementation audit · swn_sector</div>
+        <h1>What “visibility” actually means</h1>
+        <p class="lede">A code-level inventory of every visibility flag, the UI surfaces it controls, the values generation supplies, and the places where the current display rules cross those boundaries.</p>
+        <p class="stamp">AUDITED 2026-09-27 · IMPLEMENTED merged-v2 MODEL · WORKTREE STATE (INCLUDING LOCAL CHANGES)</p>
+        <div class="grid summary-grid">
+          <div class="card"><span class="metric">4</span><span class="metric-label">independent boolean scan flags</span></div>
+          <div class="card"><span class="metric">7</span><span class="metric-label">valid combined states, including invisible</span></div>
+          <div class="card"><span class="metric">0</span><span class="metric-label">entities generated with Detailed Scan</span></div>
+          <div class="card"><span class="metric">3</span><span class="metric-label">tiers with substantive live-generated display data</span></div>
+        </div>
+      </div>
+    </header>
+
+    <nav aria-label="Report sections"><div class="shell">
+      <a href="#model">Model</a><a href="#initial">Initial grants</a><a href="#levels">Each level</a><a href="#matrix">Entity values</a><a href="#surfaces">UI surfaces</a><a href="#findings">Findings</a><a href="#sources">Sources</a>
+    </div></nav>
+
+    <main class="shell">
+      <section id="model">
+        <h2>1. The implemented model</h2>
+        <div class="callout good">
+          <h3>Visibility is no longer one ordered enum.</h3>
+          <p>Every selectable entity carries four booleans under <code>Visibility</code>: <code>BasicScan</code>, <code>DetailedScan</code>, <code>PoliticsScan</code>, and <code>DeepPoliticsScan</code>. “Invisible” means all four are false. Separately, every entity has string fields with the same four names under <code>Intelligence</code>, plus <code>InfoboxSummary</code> and <code>GM</code>.</p>
+        </div>
+        <div class="state-flow" aria-label="Visibility dependencies">
+          <div class="state"><strong>Invisible</strong><code>----</code><div class="chips"><span class="chip">no flags</span></div></div>
+          <div class="arrow">→</div>
+          <div class="state"><strong>Basic is the root</strong><code>B---</code><div class="chips"><span class="chip on">Basic</span><span class="chip">Detailed</span><span class="chip">Politics</span><span class="chip">Deep</span></div></div>
+        </div>
+        <p>Once Basic is on, Detailed is independently on/off. Politics has three states: off, Politics on, or Politics + Deep on. That produces six visible combinations plus the invisible state. The dependency rules are:</p>
+        <div class="chips"><span class="chip on">Detailed ⇒ Basic</span><span class="chip on">Politics ⇒ Basic</span><span class="chip on">Deep ⇒ Politics ⇒ Basic</span></div>
+        <p style="margin-top:14px">The UI’s six buttons are therefore not six mutually exclusive “levels.” They are one hide/show control, two science choices, and three politics choices. Several are highlighted at the same time to describe one combined state.</p>
+      </section>
+
+      <section id="initial">
+        <h2>2. What generation enables initially</h2>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Scope / entity</th><th>Basic</th><th>Detailed</th><th>Politics</th><th>Deep</th><th>Result</th></tr></thead>
+          <tbody>
+            <tr><td>Ordinary default for every generated selectable entity</td><td class="no">off</td><td class="no">off</td><td class="no">off</td><td class="no">off</td><td><code>----</code> invisible</td></tr>
+            <tr><td>Starting system record, its star, all planets/moons, and other celestial objects</td><td class="yes">on</td><td class="no">off</td><td class="yes">on</td><td class="yes">on</td><td><code>B-PX</code></td></tr>
+            <tr><td>Player ship</td><td class="yes">on</td><td class="no">off</td><td class="yes">on</td><td class="yes">on</td><td><code>B-PX</code></td></tr>
+            <tr><td>Routes incident to the starting system</td><td class="yes">on</td><td class="no">off</td><td class="yes">on</td><td class="no">off</td><td><code>B-P-</code> (Politics 1)</td></tr>
+            <tr><td>Both portals of each incident route</td><td class="yes">on</td><td class="no">off</td><td class="no">off</td><td class="no">off</td><td><code>B---</code>, unless upgraded by the neighbor rule</td></tr>
+            <tr><td>First-order neighboring system, star, objects, and every portal located there</td><td class="yes">on</td><td class="no">off</td><td class="yes">on</td><td class="no">off</td><td><code>B-P-</code></td></tr>
+            <tr><td>All points of interest, including those in the starting system</td><td class="no">off</td><td class="no">off</td><td class="no">off</td><td class="no">off</td><td><code>----</code> invisible</td></tr>
+          </tbody>
+        </table></div>
+        <details><summary>Concrete sanity check: generated seed DELTA-7734</summary><div>
+          <p>The original read-only audit run generated 23 systems and 28 routes. Under the current rule, its two incident routes are <code>B-P-</code> (Politics 1), while the two starting-side portals remain <code>B---</code>. The starting system had one system, one star, five planets, and the player ship at <code>B-PX</code>. Two neighbors contributed two systems, two stars, seven planets, three other objects, and seven portals at <code>B-P-</code>. No entity had Detailed Scan.</p>
+          <p>This example validates the algorithm; counts vary with the seed and graph.</p>
+        </div></details>
+      </section>
+
+      <section id="levels">
+        <h2>3. Each visibility flag: consumers and generated content</h2>
+        <div class="grid level-grid">
+          <article class="card level" data-mark="Ø">
+            <div class="kicker">implicit state</div><h3>Invisible · <code>----</code></h3>
+            <ul><li>Player maps and system views omit the entity because player inclusion is exactly <code>BasicScan</code>.</li><li>If an invisible selection survives long enough to reach the inspector, it displays <strong>RESTRICTED</strong>; switching to player preview also clears a hidden selection.</li><li>GM preview ignores visibility and continues to show and inspect it.</li></ul>
+            <p class="generated"><strong>Generated state:</strong> all generated entities start here before the starting-world reveal. All POIs remain here after that reveal.</p>
+          </article>
+          <article class="card level" data-mark="B">
+            <div class="kicker">root visibility</div><h3>Basic Scan · <code>BasicScan</code></h3>
+            <ul><li>Controls whether an entity exists at all in player map/system views.</li><li>Unlocks the player inspector and portrait artwork.</li><li>Shows the Basic Scan section and a live “stock” summary based on structural fields.</li><li>Uses the procedural name until Politics is enabled.</li></ul>
+            <p class="generated"><strong>Stored generated text:</strong> <code>Intelligence.BasicScan = "-"</code> for every entity. That field is not rendered by the inspector. Substantive Basic content is computed live; see the entity matrix below.</p>
+          </article>
+          <article class="card level" data-mark="D">
+            <div class="kicker">independent science branch</div><h3>Detailed Scan · <code>DetailedScan</code></h3>
+            <ul><li>Shows the Detailed Scan section and its stored editable text.</li><li>For inhabited planets, live stock shows native life, Terran life, and population band.</li><li>For uninhabited planets and other celestial objects, live stock shows the associated POI count (“Signals Detected”).</li><li>Does not affect names, entity inclusion, or portraits.</li></ul>
+            <p class="generated"><strong>Generated value:</strong> no entity receives this flag during generation. Stored <code>Intelligence.DetailedScan</code> is initialized to <code>-</code>, but the GM can edit it. Entity types without Detailed stock show <code>-</code>.</p>
+          </article>
+          <article class="card level" data-mark="P">
+            <div class="kicker">politics branch, stage 1</div><h3>Politics Scan · <code>PoliticsScan</code></h3>
+            <ul><li>Switches every player-facing entity name from <code>ProceduralName</code> to <code>NiceName</code>.</li><li>Where a secondary procedural label already exists, it remains visible beside/below the nice name.</li><li>Shows numeric and named technology level for inhabited planets and gates their symbolic technology rating.</li><li>A route’s own Politics flag controls whether its displayed endpoint names are nice or procedural.</li><li>Acts as the prerequisite for Deep Politics.</li></ul>
+            <p class="generated"><strong>Generated value:</strong> enabled on starting-system objects, the ship, directly incident routes (Politics 1), and first-order neighbor objects/portals. Stored <code>Intelligence.PoliticsScan</code> is initialized to <code>-</code> and is not rendered or editable in the inspector. Entity types without Politics stock show <code>-</code>.</p>
+          </article>
+          <article class="card level" data-mark="X">
+            <div class="kicker">politics branch, stage 2</div><h3>Deep Politics Scan · <code>DeepPoliticsScan</code></h3>
+            <ul><li>Shows the Deep Politics section.</li><li>Requires Politics, which in turn requires Basic.</li><li>Displays <code>-</code> as its currently empty stock value plus stored editable <code>Intelligence.DeepPoliticsScan</code>.</li></ul>
+            <p class="generated"><strong>Generated value:</strong> enabled only for the starting system’s system/star/objects and the ship. No entity type currently has substantive Deep stock; the tier remains available for upcoming political features.</p>
+          </article>
+          <article class="card level" data-mark="G">
+            <div class="kicker">not a visibility flag</div><h3>GM Information</h3>
+            <ul><li>Visible only on the inspector’s GM tab in GM preview, irrespective of scan flags.</li><li>For inhabited planets, live stock shows generated World Tags.</li><li>For POIs, the stored GM field contains generated detail-table rolls.</li><li>The stored GM field is editable for every entity.</li></ul>
+            <p class="generated"><strong>Generated stored text:</strong> <code>-</code> everywhere except POIs, whose <code>GM</code> text is one or more labeled rolled details.</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="matrix">
+        <h2>4. Live values displayed for each entity type</h2>
+        <p>The generator stores <code>-</code> in all four scan-text fields. The inspector instead derives the following <em>stock</em> strings at render time. “Stored text” is shown only in Detailed and Deep.</p>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Entity</th><th>Basic stock</th><th>Detailed stock</th><th>Politics stock</th><th>Deep stock</th><th>GM stock / stored generation</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Inhabited planet or moon</strong></td><td>AU, temperature, size, moon host, atmosphere, composition</td><td>Native life, Terran life, population band</td><td>Numeric + named tech level</td><td class="no">-</td><td>World Tags / stored <code>-</code></td></tr>
+            <tr><td><strong>Uninhabited planet or moon</strong></td><td>AU, temperature, size, moon host, atmosphere, composition</td><td>Count of associated POIs (“Signals Detected”)</td><td class="no">-</td><td class="no">-</td><td class="no">- / -</td></tr>
+            <tr><td><strong>Other celestial object</strong></td><td>AU and object type</td><td>Count of associated POIs (“Signals Detected”)</td><td class="no">-</td><td class="no">-</td><td class="no">- / -</td></tr>
+            <tr><td><strong>Star system</strong></td><td>Star type</td><td class="no">-</td><td class="no">-</td><td class="no">-</td><td class="no">- / -</td></tr>
+            <tr><td><strong>Route</strong></td><td>Both endpoint names and hex distance (“Spike Length”); endpoint names are procedural unless the route’s Politics flag is on</td><td class="no">-</td><td class="no">-</td><td class="no">-</td><td class="no">- / -</td></tr>
+            <tr><td><strong>Point of interest</strong></td><td>POI type</td><td class="no">-</td><td class="no">-</td><td class="no">-</td><td>No separate stock block / generated rolled detail text in stored <code>GM</code></td></tr>
+            <tr><td><strong>Star</strong></td><td class="no">-</td><td class="no">-</td><td class="no">-</td><td class="no">-</td><td class="no">- / -</td></tr>
+            <tr><td><strong>Route portal</strong></td><td class="no">-</td><td class="no">-</td><td class="no">-</td><td class="no">-</td><td class="no">- / -</td></tr>
+            <tr><td><strong>Player ship</strong></td><td class="no">-</td><td class="no">-</td><td class="no">-</td><td class="no">-</td><td class="no">- / -</td></tr>
+          </tbody>
+        </table></div>
+        <div class="callout" style="margin-top:14px">
+          <h3><code>InfoboxSummary</code> is separate and effectively dormant.</h3>
+          <p>It is initialized to <code>-</code> on every entity. It is referenced only by symbolic-system survey cards, but that component hard-codes <code>open = false</code>, so those cards never render in the current UI.</p>
+        </div>
+      </section>
+
+      <section id="surfaces">
+        <h2>5. Where the flags are consumed</h2>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Surface / behavior</th><th>Invisible / Basic</th><th>Detailed</th><th>Politics</th><th>Deep</th><th>GM behavior</th></tr></thead>
+          <tbody>
+            <tr><td>Sector hex map</td><td>Basic includes systems, routes, ship; routes also require both endpoint systems visible</td><td class="no">unused</td><td>Chooses procedural vs nice system name</td><td class="no">unused</td><td>Everything included; nice names</td></tr>
+            <tr><td>Top-down system view</td><td>Basic filters direct objects, moons, POIs, routes/destinations, portals, and ship</td><td class="no">unused for names</td><td>Chooses procedural vs nice labels; a route’s flag controls its destination name</td><td class="no">unused</td><td>Everything included; nice names</td></tr>
+            <tr><td>Symbolic system view</td><td>Basic filters worlds, other objects, POIs, routes, and ship</td><td>Gates population rating</td><td>Chooses nice names, retains secondary procedural names, gates technology rating; a route’s flag controls its destination name</td><td class="no">unused</td><td>Everything included; both names and all ratings</td></tr>
+            <tr><td>Inspector portrait</td><td>Basic required in player preview</td><td class="no">unused</td><td class="no">unused</td><td class="no">unused</td><td>Portrait shown regardless of flags</td></tr>
+            <tr><td>Inspector scan sections</td><td>No Basic → RESTRICTED; Basic shows stock block</td><td>Shows life/population or signal-count stock + stored text; otherwise <code>-</code></td><td>Shows tech-level stock for inhabited planets; otherwise <code>-</code>; stored text omitted</td><td>Shows stock <code>-</code> + stored text</td><td>All four scan sections shown regardless of flags</td></tr>
+            <tr><td>GM visibility controls</td><td>NO VIS / Sci 1 set or clear Basic and dependent flags</td><td>Sci 2 toggles Detailed while forcing Basic</td><td>Pol 0/1 manipulate Politics; politics controls disabled without Basic</td><td>Pol 2 forces Basic + Politics and toggles Deep</td><td>Controls only available through GM editing</td></tr>
+            <tr><td>Validation / mutation</td><td>Clearing Basic clears all descendants</td><td>Cannot be true without Basic</td><td>Cannot be true without Basic; clearing it clears Deep</td><td>Cannot be true without Politics</td><td>Not part of visibility validation</td></tr>
+          </tbody>
+        </table></div>
+      </section>
+
+      <section id="findings" class="findings">
+        <h2>6. Important consequences and remaining mismatches</h2>
+        <div class="finding"><h3>Basic and Politics stored text are dead in the inspector <span class="severity">implementation gap</span></h3><p><code>Intelligence.BasicScan</code> and <code>Intelligence.PoliticsScan</code> exist in the schema, edits layer, and validation, but the inspector renders only live stock for those sections. There is no editor or output for their stored strings. Detailed and Deep do render and edit their stored strings.</p></div>
+        <div class="finding"><h3>Route disclosure is intentionally route-local</h3><p>A route’s Politics flag—not either endpoint system’s flag—controls whether destination and endpoint names are nice or procedural. This avoids cross-entity visibility lookups and leaves consistency under GM control.</p></div>
+        <div class="finding"><h3>Symbolic ratings now follow the revised tiers</h3><p>Habitability remains visible at Basic, population requires Detailed, and technology requires Politics. Deep Politics has no live stock facts and remains open for upcoming political features.</p></div>
+        <div class="finding"><h3>First-order neighbor portals get broader knowledge than their routes</h3><p>Every portal physically located in a neighboring system receives Basic + Politics, even when its associated route is not incident to the starting system and remains invisible. This is valid under the spec, but it creates known portal records whose route is not drawn/known.</p></div>
+        <div class="finding"><h3>GM scan preview is “all tiers,” not “what the player sees”</h3><p>In GM preview the scan panel shows all four scan sections regardless of the entity’s flags. This is useful for editing, but the section list does not itself communicate which sections a player actually receives; that status lives in the separate visibility buttons.</p></div>
+        <div class="finding"><h3>Descriptions can expose exact visual facts at Basic</h3><p>Basic visibility renders entity glyphs and portraits based on actual type/category, and the inspector’s portrait alt description names the category. That may be intended, but it means the boundary is broader than the Basic text block alone.</p></div>
+      </section>
+
+      <section id="sources">
+        <h2>7. Code map</h2>
+        <ul class="source-list">
+          <li><code>merged_schema.ts:12–36, 335–361</code> — flags, text fields, selectable types, defaults</li>
+          <li><code>generate.ts:28–85</code> — starting-world selection and initial grants</li>
+          <li><code>generate_inhabited_planet.ts:389–399</code> — planet defaults</li>
+          <li><code>planet_templates.ts:140–205</code> — uninhabited planet/object defaults</li>
+          <li><code>generate_system.ts:447–478, 550–566, 621–640</code> — system/star/POI/station defaults and POI GM rolls</li>
+          <li><code>generate_routes.ts:61–111</code> — route and portal defaults</li>
+          <li><code>ui/domain/sector/visibility.ts:5–20</code> — inclusion root and dependencies</li>
+          <li><code>ui/domain/sector/operations.ts:17–39, 97–125</code> — flag mutation and text edits</li>
+          <li><code>ui/domain/sector/selectors.ts:131–134</code> — player visibility lookup</li>
+          <li><code>ui/features/object-inspector/DetailBar.tsx:16–156, 200–228, 315–435</code> — names, stock values, portraits, and section gating</li>
+          <li><code>ui/features/sector-editor/GMEditBar.tsx:14–105, 140–180</code> — six visibility controls</li>
+          <li><code>ui/features/sector-map/HexMap.tsx:18–24, 92–153</code> — sector map filtering and naming</li>
+          <li><code>ui/features/system-viewer/TopDown.tsx:39–49</code> and its <code>visible(...)</code> call sites — top-down filtering</li>
+          <li><code>ui/features/system-viewer/SymbolicSystem.tsx:21–35, 113–177, 292–499</code> — symbolic filtering, ratings, dormant summaries</li>
+          <li><code>ui/App.tsx:23–26, 53–57</code> — hidden selection clearing</li>
+          <li><code>invariants.ts:294–304</code> — canonical validation</li>
+        </ul>
+        <details><summary>Audit scope and interpretation</summary><div>
+          <p>This report treats the current TypeScript implementation as authoritative. Current specs were used to understand intent, but archived enum-era documents were not treated as current behavior. “Generated value” distinguishes serialized <code>Intelligence</code> strings from the live stock strings computed by the React inspector.</p>
+          <p>No application code was changed for this audit. The only deliverable is this standalone HTML file.</p>
+        </div></details>
+        <p class="foot">Standalone report: no external fonts, scripts, images, or network resources are required. Print styles are included.</p>
+      </section>
+    </main>
+  </body>
+</html>

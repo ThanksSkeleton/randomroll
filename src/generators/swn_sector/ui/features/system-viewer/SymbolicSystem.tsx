@@ -26,12 +26,12 @@ function details(id: string, sector: Sector) {
 }
 function displayName(info: ReturnType<typeof findDetails>, preview: Preview) {
   if (!info) return undefined;
-  return preview === 'player' && !info.Visibility.DetailedScan
+  return preview === 'player' && !info.Visibility.PoliticsScan
     ? info.ProceduralName
     : info.NiceName;
 }
 function showProceduralName(info: NonNullable<ReturnType<typeof findDetails>>, preview: Preview) {
-  return preview === 'gm' || info.Visibility.DetailedScan;
+  return preview === 'gm' || info.Visibility.PoliticsScan;
 }
 function ContentText({ content }: { content: string }) {
   return <>{content}</>;
@@ -166,30 +166,39 @@ function WorldSymbol({
             aria-label={`Habitability rating ${world.InhabitedInfo.TotalHab}`}
             title={`Habitability rating: ${world.InhabitedInfo.TotalHab}`}
           />
-          <span
-            className="summary-rating summary-rating-population"
-            role="img"
-            aria-label={`Population tier ${POPULATION_RATING[world.InhabitedInfo.Population]}: ${world.InhabitedInfo.Population}`}
-            title={`Population tier ${POPULATION_RATING[world.InhabitedInfo.Population]}: ${world.InhabitedInfo.Population}`}
-          >
-            {Array.from(
-              { length: POPULATION_RATING[world.InhabitedInfo.Population] },
-              (_, index) => (
-                <svg key={index} className="population-bust" viewBox="0 0 12 14" aria-hidden="true">
-                  <circle cx="6" cy="3.5" r="2.5" />
-                  <path d="M1 13v-1.2a5 5 0 0 1 10 0V13z" />
-                </svg>
-              ),
-            )}
-          </span>
-          <span
-            className={`summary-rating summary-rating-technology ${techRatingColorClass}`}
-            role="img"
-            aria-label={`Technology rating ${techRating}: ${world.InhabitedInfo.TechLevel}`}
-            title={`Technology rating: ${techRating} (${world.InhabitedInfo.TechLevel})`}
-          >
-            {techRating}
-          </span>
+          {(preview === 'gm' || d?.Visibility.DetailedScan) && (
+            <span
+              className="summary-rating summary-rating-population"
+              role="img"
+              aria-label={`Population tier ${POPULATION_RATING[world.InhabitedInfo.Population]}: ${world.InhabitedInfo.Population}`}
+              title={`Population tier ${POPULATION_RATING[world.InhabitedInfo.Population]}: ${world.InhabitedInfo.Population}`}
+            >
+              {Array.from(
+                { length: POPULATION_RATING[world.InhabitedInfo.Population] },
+                (_, index) => (
+                  <svg
+                    key={index}
+                    className="population-bust"
+                    viewBox="0 0 12 14"
+                    aria-hidden="true"
+                  >
+                    <circle cx="6" cy="3.5" r="2.5" />
+                    <path d="M1 13v-1.2a5 5 0 0 1 10 0V13z" />
+                  </svg>
+                ),
+              )}
+            </span>
+          )}
+          {(preview === 'gm' || d?.Visibility.PoliticsScan) && (
+            <span
+              className={`summary-rating summary-rating-technology ${techRatingColorClass}`}
+              role="img"
+              aria-label={`Technology rating ${techRating}: ${world.InhabitedInfo.TechLevel}`}
+              title={`Technology rating: ${techRating} (${world.InhabitedInfo.TechLevel})`}
+            >
+              {techRating}
+            </span>
+          )}
         </div>
       )}
       <div className="poi-list world-poi-list">
@@ -427,7 +436,11 @@ export function SymbolicSystem({
                     );
                     const otherId = other?.Id ?? '';
                     const otherName =
-                      displayName(details(otherId, sector), preview) ?? other?.Id ?? 'System';
+                      ((preview === 'gm' || route.Visibility.PoliticsScan
+                        ? other?.NiceName
+                        : other?.ProceduralName) ??
+                        otherId) ||
+                      'System';
                     return (
                       <Selectable
                         key={route.Id}

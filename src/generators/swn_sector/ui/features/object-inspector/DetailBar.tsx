@@ -15,12 +15,12 @@ import { useState } from 'react';
 
 function displayName(info: SelectableEntity | undefined, preview: Preview) {
   if (!info) return undefined;
-  return preview === 'player' && !info.Visibility.DetailedScan
+  return preview === 'player' && !info.Visibility.PoliticsScan
     ? info.ProceduralName
     : info.NiceName;
 }
 function showProceduralName(info: SelectableEntity, preview: Preview) {
-  return preview === 'gm' || info.Visibility.DetailedScan;
+  return preview === 'gm' || info.Visibility.PoliticsScan;
 }
 function draftValue(draft: EditDraft | null, info: SelectableEntity, field: EditableDetailField) {
   return (
@@ -94,18 +94,18 @@ function planetStock(
   if (planet.InhabitedInfo === false) {
     return {
       basic,
-      detailed: '-',
+      detailed: `Signals Detected: ${signalsDetected}`,
       politics: '-',
-      deep: `Signals Detected: ${signalsDetected}`,
+      deep: '-',
       gm: '-',
     };
   }
   const inhabited = planet.InhabitedInfo;
   return {
     basic,
-    detailed: '-',
-    politics: '-',
-    deep: `Life, Native: ${planet.NativeBiosphere}\nLife, Terran: ${inhabited.TerranBiosphere}\nPopulation: ${inhabited.Population}\nTech Level: ${TECH_LEVEL[inhabited.TechLevel]} - ${inhabited.TechLevel}`,
+    detailed: `Life, Native: ${planet.NativeBiosphere}\nLife, Terran: ${inhabited.TerranBiosphere}\nPopulation: ${inhabited.Population}`,
+    politics: `Tech Level: ${TECH_LEVEL[inhabited.TechLevel]} - ${inhabited.TechLevel}`,
+    deep: '-',
     gm: inhabited.WorldTags.join(', '),
   };
 }
@@ -117,9 +117,9 @@ function stockSignals(found: FoundObject, sector: Sector, preview: Preview): Sto
   if (found.kind === 'OtherCelestialObject') {
     return {
       basic: `${formatAu(found.object.Orbit.AU)} AU - ${objectTypeLabel(found.object.ObjectType)}`,
-      detailed: '-',
+      detailed: `Signals Detected: ${associatedPoiCount(sector, found.containingSystem?.Id, found.object.Id)}`,
       politics: '-',
-      deep: `Signals Detected: ${associatedPoiCount(sector, found.containingSystem?.Id, found.object.Id)}`,
+      deep: '-',
       gm: '-',
     };
   }
@@ -134,9 +134,12 @@ function stockSignals(found: FoundObject, sector: Sector, preview: Preview): Sto
   }
   if (found.kind === 'Route') {
     const systems = routeSystems(sector, found.object);
+    const showNiceNames = preview === 'gm' || found.object.Visibility.PoliticsScan;
+    const routeSystemName = (system: NonNullable<typeof systems>[number]) =>
+      showNiceNames ? system.NiceName : system.ProceduralName;
     return {
       basic: systems
-        ? `${systems[0].NiceName} <=> ${systems[1].NiceName}\nSpike Length: ${hexDistance(systems[0].HexLocation, systems[1].HexLocation)}`
+        ? `${routeSystemName(systems[0])} <=> ${routeSystemName(systems[1])}\nSpike Length: ${hexDistance(systems[0].HexLocation, systems[1].HexLocation)}`
         : '-',
       detailed: '-',
       politics: '-',

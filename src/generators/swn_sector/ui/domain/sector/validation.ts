@@ -6,6 +6,11 @@ export function validateSector(sector: Sector): string[] {
   const errors: string[] = [];
   if (!sector || !Array.isArray(sector.Systems) || !Array.isArray(sector.Routes) || !sector.PlayerShip)
     return ['Sector is missing required root collections or PlayerShip.'];
+  if (!['UNRESTRICTED', 'TL4_PLUS', 'TL4_PLUS_POP_GT_500'].includes(sector.StartingWorldMode))
+    errors.push('Sector.StartingWorldMode is invalid.');
+  if (sector.StartingWorldId !== null && !sector.Systems.some((system) =>
+    system.Objects.some((object) => object.Id === sector.StartingWorldId && object.Kind === 'Planet' && object.InhabitedInfo !== false),
+  )) errors.push('Sector.StartingWorldId must refer to an inhabited planet in the sector or be null.');
   const ids = getAllSelectableIds(sector);
   if (new Set(ids).size !== ids.length) errors.push('Selectable object IDs must be globally unique.');
   for (const entity of sector.Systems.flatMap((system) => [system, system.Star, ...system.Objects, ...system.PointsOfInterest]))

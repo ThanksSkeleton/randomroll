@@ -59,6 +59,8 @@ function sector(objects: Array<Planet | OtherCelestialObject>): Sector {
   return {
     SchemaVersion: 'merged-v2',
     OriginalSeed: 'test',
+    StartingWorldMode: 'UNRESTRICTED',
+    StartingWorldId: null,
     SectorName: 'Test',
     Systems: [
       {

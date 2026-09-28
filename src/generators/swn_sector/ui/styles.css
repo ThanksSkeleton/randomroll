@@ -1640,6 +1640,22 @@ select {
   width: 100%;
   margin-top: 12px;
 }
+.generation-error {
+  border-left: 2px solid var(--red);
+  padding: 10px 12px;
+  color: #ff9a9c;
+  background: #281316;
+  font: 11px 'IBM Plex Mono';
+  line-height: 1.5;
+}
+.starting-world-summary {
+  margin: 20px 0 0;
+  color: #90a4a6;
+  font: 11px 'IBM Plex Mono';
+}
+.starting-world-summary strong {
+  color: var(--green);
+}
 .generator-graphic {
   height: 230px;
   margin-top: 50px;

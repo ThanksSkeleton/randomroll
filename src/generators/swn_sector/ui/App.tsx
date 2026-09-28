@@ -176,8 +176,8 @@ export default function App() {
               if (application.loadSector(archiveIndex))
                 dispatch({ type: 'loadSector', index: archiveIndex });
             }}
-            generate={(seed) => {
-              application.generateSector(seed);
+            generate={(seed, mode) => {
+              application.generateSector(seed, mode);
               dispatch({
                 type: 'replaceSectors',
                 sectors: application.listSectors(),

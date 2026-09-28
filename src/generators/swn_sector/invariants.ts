@@ -373,6 +373,8 @@ function validateCanonicalShape(
       [
         'SchemaVersion',
         'OriginalSeed',
+        'StartingWorldMode',
+        'StartingWorldId',
         'SectorName',
         'Systems',
         'Routes',
@@ -383,6 +385,8 @@ function validateCanonicalShape(
     ) ||
     value.SchemaVersion !== 'merged-v2' ||
     !string(value.OriginalSeed, 'Sector.OriginalSeed') ||
+    !['UNRESTRICTED', 'TL4_PLUS', 'TL4_PLUS_POP_GT_500'].includes(String(value.StartingWorldMode)) ||
+    !(value.StartingWorldId === null || string(value.StartingWorldId, 'Sector.StartingWorldId')) ||
     !string(value.SectorName, 'Sector.SectorName') ||
     !array(value.Systems, 'Sector.Systems') ||
     !array(value.Routes, 'Sector.Routes') ||
@@ -466,6 +470,8 @@ function checkNoUnknownSchemaProperties(
     [
       'SchemaVersion',
       'OriginalSeed',
+      'StartingWorldMode',
+      'StartingWorldId',
       'SectorName',
       'Systems',
       'Routes',

@@ -102,7 +102,9 @@ describe('prototype application workflows', () => {
     renderApp();
     fireEvent.click(firstSystemButton());
 
-    const visibilityButtons = screen.getAllByRole('button', { name: /^VISIBILITY:/ });
+    const visibilityButtons = screen.getAllByRole('button', {
+      name: /^(NO VIS|Sci 1|Sci 2|Pol 0|Pol 1|Pol 2)$/,
+    });
     const currentVisibility = visibilityButtons.find((button) =>
       button.className.includes('button-active'),
     );
