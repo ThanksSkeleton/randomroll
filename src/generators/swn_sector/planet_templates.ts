@@ -162,7 +162,6 @@ export function generateTemplatePlanet(options: TemplatePlanetOptions): Planet {
     Size: facts.Size,
     BulkComposition: facts.BulkComposition,
     SurfaceWaterPresent: surfaceWaterPresent,
-    TidallyLocked: options.orbit.ParentObjectId === null && options.starType === 'M-type',
     Atmosphere: facts.Atmosphere,
     NativeBiosphere: facts.NativeBiosphere,
     ClaimedByPolityIds: [],

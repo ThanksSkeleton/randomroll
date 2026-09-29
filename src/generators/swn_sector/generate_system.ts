@@ -487,7 +487,6 @@ function generateSystemOnce(options: GenerateSystemOptions): StarSystem {
         GM: '-',
       },
       StarType: options.starType,
-      HabitabilityRating: options.starHabitability,
       PortraitAssetId: assignPortraitId(
         options.seed,
         deterministicId(options.seed, `${options.entityPath}:star`),

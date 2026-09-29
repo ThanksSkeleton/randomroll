@@ -1,13 +1,6 @@
 import { Fragment } from 'react';
 import type { Preview } from '../../application/appState';
-import type {
-  OtherCelestialObject,
-  Planet,
-  Population,
-  Sector,
-  StarSystem,
-} from '../../../merged_schema';
-import { TECH_LEVEL } from '../../../tables';
+import type { OtherCelestialObject, Planet, Sector, StarSystem } from '../../../merged_schema';
 import { hpoiVisible } from '../../../culture';
 import {
   findDetails,
@@ -15,7 +8,7 @@ import {
   planets,
   routeSystems,
 } from '../../domain/sector/selectors';
-import { planetColorClass } from '../../../planet_presentation';
+import { projectPlanet } from '../../../planet_projection';
 import { starPresentationClass, starPresentationStyle } from '../../../star_presentation';
 import { StarGlyph } from './StarGlyph';
 import { PolityFlagList } from '../politics/PolityFlag';
@@ -78,19 +71,6 @@ function Selectable({
     </button>
   );
 }
-const POPULATION_RATING: Record<Population, number> = {
-  'Fewer than 500': 1,
-  'Fewer than a million inhabitants': 2,
-  'Several million inhabitants': 3,
-  'Hundreds of millions of inhabitants': 4,
-  'Billions of inhabitants': 5,
-};
-const HABITABILITY_COLOR: Record<number, string> = {
-  0: '#858b90',
-  1: '#e34b4b',
-  2: '#e3c84b',
-  3: '#55c96b',
-};
 const worldScale: Record<string, number> = {
   mercury: 0.5,
   luna: 0.5,
@@ -122,14 +102,8 @@ function WorldSymbol({
   showPolityOverlay: boolean;
 }) {
   const d = details(world.Id, sector);
-  const techRating =
-    world.InhabitedInfo === false ? undefined : TECH_LEVEL[world.InhabitedInfo.TechLevel];
-  const techRatingColorClass =
-    techRating === 5
-      ? 'summary-rating-tech-purple'
-      : techRating === 4 || techRating === 4.1
-        ? 'summary-rating-tech-blue'
-        : 'summary-rating-tech-white';
+  const display = projectPlanet(sector, world.Id, { preview });
+  if (!display) return null;
   const pois = system.PointsOfInterest.filter(
     (p) => p.ParentObjectId === world.Id && visible(p.Id, sector, preview),
   );
@@ -156,7 +130,7 @@ function WorldSymbol({
       >
         <span
           style={{ '--scale': scale } as React.CSSProperties}
-          className={`orb ${planetColorClass(world)}`}
+          className={`orb ${display.colorClass}`}
         />
       </Selectable>
       {sector.PlayerShip.CurrentLocationId === world.Id &&
@@ -175,49 +149,40 @@ function WorldSymbol({
       {d && showProceduralName(d, preview) && (
         <small className="world-procedural-name">{d.ProceduralName}</small>
       )}
-      {world.InhabitedInfo !== false && (
+      {display.populationTier !== null && (
         <div className="summary-icons world-summary-icons" role="group" aria-label="World ratings">
           <span
             className="summary-rating summary-rating-habitability"
             style={{
-              backgroundColor:
-                HABITABILITY_COLOR[world.InhabitedInfo.TotalHab] ?? HABITABILITY_COLOR[0],
+              backgroundColor: display.habitabilityColor ?? undefined,
             }}
             role="img"
-            aria-label={`Habitability rating ${world.InhabitedInfo.TotalHab}`}
-            title={`Habitability rating: ${world.InhabitedInfo.TotalHab}`}
+            aria-label={`Habitability rating ${display.habitabilityRating}`}
+            title={`Habitability rating: ${display.habitabilityRating}`}
           />
           {(preview === 'gm' || d?.Visibility.DetailedScan) && (
             <span
               className="summary-rating summary-rating-population"
               role="img"
-              aria-label={`Population tier ${POPULATION_RATING[world.InhabitedInfo.Population]}: ${world.InhabitedInfo.Population}`}
-              title={`Population tier ${POPULATION_RATING[world.InhabitedInfo.Population]}: ${world.InhabitedInfo.Population}`}
+              aria-label={`Population tier ${display.populationTier}: ${display.population}`}
+              title={`Population tier ${display.populationTier}: ${display.population}`}
             >
-              {Array.from(
-                { length: POPULATION_RATING[world.InhabitedInfo.Population] },
-                (_, index) => (
-                  <svg
-                    key={index}
-                    className="population-bust"
-                    viewBox="0 0 12 14"
-                    aria-hidden="true"
-                  >
-                    <circle cx="6" cy="3.5" r="2.5" />
-                    <path d="M1 13v-1.2a5 5 0 0 1 10 0V13z" />
-                  </svg>
-                ),
-              )}
+              {Array.from({ length: display.populationTier ?? 0 }, (_, index) => (
+                <svg key={index} className="population-bust" viewBox="0 0 12 14" aria-hidden="true">
+                  <circle cx="6" cy="3.5" r="2.5" />
+                  <path d="M1 13v-1.2a5 5 0 0 1 10 0V13z" />
+                </svg>
+              ))}
             </span>
           )}
           {(preview === 'gm' || d?.Visibility.PoliticsScan) && (
             <span
-              className={`summary-rating summary-rating-technology ${techRatingColorClass}`}
+              className={`summary-rating summary-rating-technology ${display.technologyColorClass}`}
               role="img"
-              aria-label={`Technology rating ${techRating}: ${world.InhabitedInfo.TechLevel}`}
-              title={`Technology rating: ${techRating} (${world.InhabitedInfo.TechLevel})`}
+              aria-label={`Technology rating ${display.technologyRating}: ${display.technologyLevel}`}
+              title={`Technology rating: ${display.technologyRating} (${display.technologyLevel})`}
             >
-              {techRating}
+              {display.technologyRating}
             </span>
           )}
         </div>

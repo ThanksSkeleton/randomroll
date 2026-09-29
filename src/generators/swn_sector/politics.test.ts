@@ -47,14 +47,12 @@ function planet(
     Size: 'Earth',
     BulkComposition: 'Silicon',
     SurfaceWaterPresent: true,
-    TidallyLocked: false,
     Atmosphere: 'Breathable',
     NativeBiosphere: 'Significant',
     InhabitedInfo:
       inhabited === false
         ? false
         : {
-            TotalHab: 3,
             WorldTags: ['Alien Ruins', 'Anarchists'],
             TerranBiosphere: 'Significant',
             ...inhabited,
@@ -77,7 +75,7 @@ function system(id: string, objects: StarSystem['Objects']): StarSystem {
   return {
     ...entity(id),
     HexLocation: { Column: 1, Row: 1 },
-    Star: { ...entity(`${id}-star`), StarType: 'G-type', HabitabilityRating: 3 },
+    Star: { ...entity(`${id}-star`), StarType: 'G-type' },
     Objects: objects,
     PointsOfInterest: [],
     HabitablePointsOfInterest: [],

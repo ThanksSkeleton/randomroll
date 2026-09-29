@@ -15,7 +15,7 @@ describe('canonical sector data', () => {
     const first = createInitialSectors();
     expect(first).toEqual(createInitialSectors());
     for (const sector of first) {
-      expect(sector.SchemaVersion).toBe('merged-v3');
+      expect(sector.SchemaVersion).toBe('merged-v4');
       expect(sector.Systems.length).toBeGreaterThanOrEqual(20);
       expect(sector.Systems.length).toBeLessThanOrEqual(30);
       expect(new Set(getAllSelectableIds(sector)).size).toBe(getAllSelectableIds(sector).length);

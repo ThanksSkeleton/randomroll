@@ -1,6 +1,7 @@
 import { expect, test } from 'vitest';
 import { generateInhabitedPlanet } from './generate_inhabited_planet';
 import { directOrbitTemperatures } from './generation_rules';
+import { planetHabitability } from './planet_interpretation';
 
 function world(
   seed: string,
@@ -37,7 +38,7 @@ test('filters compact-remnant worlds to usable direct-orbit temperatures', () =>
   expect(directOrbitTemperatures('White dwarf')).toContain(planet.Temperature);
   expect(planet.Temperature).not.toBe('Temperate');
   expect(planet.InhabitedInfo).not.toBe(false);
-  expect(planet.InhabitedInfo === false ? undefined : planet.InhabitedInfo.TotalHab).toBe(0);
+  expect(planetHabitability(planet, 0)).toBe(0);
 });
 
 test('allows rank-2 population tags when star habitability is zero', () => {
@@ -51,7 +52,7 @@ test('allows rank-2 population tags when star habitability is zero', () => {
   });
   if (planet.InhabitedInfo === false) throw new Error('Expected inhabited information');
 
-  expect(planet.InhabitedInfo.TotalHab).toBe(0);
+  expect(planetHabitability(planet, 0)).toBe(0);
   expect(planet.InhabitedInfo.Population).toBe('Fewer than a million inhabitants');
 });
 
@@ -72,7 +73,7 @@ test('constructively generates the Tomb World and Abandoned Colony regression se
   const tomb = world('sol-profile-508', ['Tomb World', 'Abandoned Colony']);
   if (tomb.InhabitedInfo === false) throw new Error('Expected inhabited information');
 
-  expect(tomb.InhabitedInfo.TotalHab).toBeLessThanOrEqual(1);
+  expect(planetHabitability(tomb, 3)).toBeLessThanOrEqual(1);
   expect(tomb.InhabitedInfo.Population).toBe('Fewer than 500');
   expect(tomb.InhabitedInfo.TechLevel).toMatch(/[Pp]ostech|Pretech/);
 });

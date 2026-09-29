@@ -374,14 +374,6 @@ export function generateInhabitedPlanet(options: InhabitedPlanetOptions): Planet
   const surfaceWater =
     forcedWater ??
     randomFor(options.seed, `${profilePath}:water`)() >= SURFACE_WATER_PRESENT_MINIMUM_ROLL;
-  const totalHab = Math.min(
-    options.starHabitability,
-    ATMOSPHERE_HAB[profile.Atmosphere],
-    TEMPERATURE_HAB[profile.Temperature],
-    TERRAN_BIOSPHERE_HAB[profile.TerranBiosphere],
-    SIZE_HAB[profile.Size],
-    BULK_COMPOSITION_HAB[profile.BulkComposition],
-  );
   const name = options.name ?? `Inhabited world ${options.entityPath}`;
   return {
     Id: deterministicId(options.seed, options.entityPath),
@@ -407,12 +399,10 @@ export function generateInhabitedPlanet(options: InhabitedPlanetOptions): Planet
     Size: profile.Size,
     BulkComposition: profile.BulkComposition,
     SurfaceWaterPresent: surfaceWater,
-    TidallyLocked: options.orbit.ParentObjectId === null && options.starType === 'M-type',
     Atmosphere: profile.Atmosphere,
     NativeBiosphere: profile.NativeBiosphere,
     ClaimedByPolityIds: [],
     InhabitedInfo: {
-      TotalHab: totalHab,
       WorldTags: tags,
       TerranBiosphere: profile.TerranBiosphere,
       Population: profile.Population,

@@ -40,7 +40,7 @@ export interface SelectableEntity {
 }
 
 export interface Sector {
-  SchemaVersion: 'merged-v3';
+  SchemaVersion: 'merged-v4';
   /** Generation provenance; it is not a complete replay specification. */
   OriginalSeed: string;
   /** Starting-world eligibility mode selected when this sector was generated. */
@@ -147,7 +147,6 @@ export type StarType =
 
 export interface Star extends SelectableEntity {
   StarType: StarType;
-  HabitabilityRating: number;
 }
 
 export interface Orbit {
@@ -188,7 +187,6 @@ export interface Planet extends SystemObjectBase {
   Size: Size;
   BulkComposition: BulkComposition;
   SurfaceWaterPresent: boolean;
-  TidallyLocked: boolean;
   Atmosphere: Atmosphere;
   NativeBiosphere: NativeBiosphere;
   InhabitedInfo: InhabitedInfo | false;
@@ -357,7 +355,6 @@ export type BulkComposition =
   | 'Neptunian Gas';
 
 export interface InhabitedInfo {
-  TotalHab: number;
   WorldTags: [WorldTag, WorldTag];
   TerranBiosphere: TerranBiosphere;
   Population: Population;

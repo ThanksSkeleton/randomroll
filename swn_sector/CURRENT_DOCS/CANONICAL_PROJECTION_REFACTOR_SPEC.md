@@ -119,3 +119,13 @@ those areas and remove direct canonical-model consumption from the remaining
 UI. A button-triggered action such as world completion is allowed: the action
 must update canonical state through generation, followed by projection before
 the UI consumes the new result.
+
+## Implementation note
+
+This slice changes the in-memory sector contract from `merged-v3` to
+`merged-v4`. Generated sectors no longer carry `Star.HabitabilityRating`,
+`Planet.TidallyLocked`, or `Planet.InhabitedInfo.TotalHab`. The shared
+deterministic planet interpretation rules calculate these values from the
+remaining star and planet facts, and the planet projector exposes them to the
+covered views. Existing direct Base DTO reads outside this slice remain for
+the later cutover spec.

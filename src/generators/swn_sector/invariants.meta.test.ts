@@ -33,7 +33,6 @@ function planet(id: string, parentObjectId: string | null, size: Planet['Size'])
     BulkComposition:
       size === 'Jupiter' ? 'Jovian Gas' : size === 'Neptune' ? 'Neptunian Gas' : 'Silicon',
     SurfaceWaterPresent: false,
-    TidallyLocked: false,
     Atmosphere: 'Vacuum',
     Temperature: 'Cryogenic',
     NativeBiosphere: 'None',
@@ -59,7 +58,7 @@ function station(id: string, parentObjectId: string | null): OtherCelestialObjec
 
 function sector(objects: Array<Planet | OtherCelestialObject>): Sector {
   return {
-    SchemaVersion: 'merged-v3',
+    SchemaVersion: 'merged-v4',
     OriginalSeed: 'test',
     StartingWorldMode: 'UNRESTRICTED',
     StartingWorldId: null,
@@ -68,7 +67,7 @@ function sector(objects: Array<Planet | OtherCelestialObject>): Sector {
       {
         ...entity('system'),
         HexLocation: { Column: 1, Row: 1 },
-        Star: { ...entity('star'), StarType: 'G-type', HabitabilityRating: 3 },
+        Star: { ...entity('star'), StarType: 'G-type' },
         Objects: objects,
         PointsOfInterest: [],
         HabitablePointsOfInterest: [],
@@ -141,7 +140,6 @@ describe('merged-sector independent stations', () => {
   it('does not use inhabited status to decide POI host compatibility', () => {
     const terrestrial = planet('terrestrial', null, 'Earth');
     terrestrial.InhabitedInfo = {
-      TotalHab: 0,
       WorldTags: ['Abandoned Colony', 'Alien Ruins'],
       TerranBiosphere: 'None',
       Population: 'Fewer than 500',
@@ -213,7 +211,6 @@ describe('merged-sector independent stations', () => {
   it('requires rank-1 population for Tomb Worlds and Abandoned Colonies', () => {
     const world = planet('world', null, 'Earth');
     world.InhabitedInfo = {
-      TotalHab: 0,
       WorldTags: ['Tomb World', 'Abandoned Colony'],
       TerranBiosphere: 'None',
       Population: 'Fewer than a million inhabitants',
@@ -235,7 +232,6 @@ describe('merged-sector independent stations', () => {
     world.Atmosphere = 'Breathable';
     world.SurfaceWaterPresent = true;
     world.InhabitedInfo = {
-      TotalHab: 0,
       WorldTags: ['Desert World', 'Alien Ruins'],
       TerranBiosphere: 'None',
       Population: 'Fewer than 500',
@@ -251,12 +247,11 @@ describe('merged-sector independent stations', () => {
     ).toBe(true);
   });
 
-  it('includes star Hab in TotalHab instead of applying a separate star gate', () => {
+  it('includes star habitability when checking physical constraints', () => {
     const world = planet('world', null, 'Earth');
     world.Temperature = 'Temperate';
     world.Atmosphere = 'Breathable';
     world.InhabitedInfo = {
-      TotalHab: 1,
       WorldTags: ['Alien Ruins', 'Anarchists'],
       TerranBiosphere: 'Significant',
       Population: 'Fewer than 500',
@@ -265,7 +260,7 @@ describe('merged-sector independent stations', () => {
     world.Complete = false;
     world.Culture = null;
     const input = sector([world, planet('extra', null, 'Mars'), station('station', null)]);
-    input.Systems[0]!.Star.HabitabilityRating = 1;
+    input.Systems[0]!.Star.StarType = 'A-type';
 
     expect(checkAllInvariants(input).some((violation) => violation.RuleId === '2A-31')).toBe(false);
   });

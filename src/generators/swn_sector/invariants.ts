@@ -48,6 +48,7 @@ import {
   TERRAN_BIOSPHERE_HAB_REQUIRED,
 } from './tables';
 import { capabilityFor, POLITY_FLAG_COLORS } from './politics';
+import { planetHabitability, STAR_HABITABILITY } from './planet_interpretation';
 
 export interface InvariantViolation {
   RuleId: string;
@@ -471,7 +472,6 @@ function validateCanonicalShape(
           'Size',
           'BulkComposition',
           'SurfaceWaterPresent',
-          'TidallyLocked',
           'Atmosphere',
           'NativeBiosphere',
           'InhabitedInfo',
@@ -484,7 +484,6 @@ function validateCanonicalShape(
       !string(item.Size, `${path}.Size`) ||
       !string(item.BulkComposition, `${path}.BulkComposition`) ||
       typeof item.SurfaceWaterPresent !== 'boolean' ||
-      typeof item.TidallyLocked !== 'boolean' ||
       !string(item.Atmosphere, `${path}.Atmosphere`) ||
       !string(item.NativeBiosphere, `${path}.NativeBiosphere`)
     )
@@ -498,10 +497,9 @@ function validateCanonicalShape(
       record(item.InhabitedInfo, `${path}.InhabitedInfo`) &&
       required(
         item.InhabitedInfo,
-        ['TotalHab', 'WorldTags', 'TerranBiosphere', 'Population', 'TechLevel'],
+        ['WorldTags', 'TerranBiosphere', 'Population', 'TechLevel'],
         `${path}.InhabitedInfo`,
       ) &&
-      number(item.InhabitedInfo.TotalHab, `${path}.InhabitedInfo.TotalHab`) &&
       array(item.InhabitedInfo.WorldTags, `${path}.InhabitedInfo.WorldTags`) &&
       item.InhabitedInfo.WorldTags.length === 2 &&
       item.InhabitedInfo.WorldTags.every((tag, index) =>
@@ -531,7 +529,7 @@ function validateCanonicalShape(
       ],
       'Sector',
     ) ||
-    value.SchemaVersion !== 'merged-v3' ||
+    value.SchemaVersion !== 'merged-v4' ||
     !string(value.OriginalSeed, 'Sector.OriginalSeed') ||
     !['UNRESTRICTED', 'TL4_PLUS', 'TL4_PLUS_POP_GT_500'].includes(
       String(value.StartingWorldMode),
@@ -561,7 +559,6 @@ function validateCanonicalShape(
       !number(system.HexLocation.Row, `${path}.HexLocation.Row`) ||
       !selectable(system.Star, `${path}.Star`) ||
       !string(system.Star.StarType, `${path}.Star.StarType`) ||
-      !number(system.Star.HabitabilityRating, `${path}.Star.HabitabilityRating`) ||
       !array(system.Objects, `${path}.Objects`) ||
       !array(system.PointsOfInterest, `${path}.PointsOfInterest`) ||
       !array(system.HabitablePointsOfInterest, `${path}.HabitablePointsOfInterest`) ||
@@ -761,7 +758,7 @@ function checkNoUnknownSchemaProperties(
     );
     check(system.HexLocation, ['Column', 'Row'], `System ${system.Id}.HexLocation`);
     checkSelectable(system.Star, `Star ${system.Star.Id}`);
-    check(system.Star, [...selectable, 'StarType', 'HabitabilityRating'], `Star ${system.Star.Id}`);
+    check(system.Star, [...selectable, 'StarType'], `Star ${system.Star.Id}`);
     for (const object of system.Objects) {
       checkSelectable(object, `Object ${object.Id}`);
       check(object.Orbit, ['AU', 'AngleDegrees', 'ParentObjectId'], `Object ${object.Id}.Orbit`);
@@ -776,7 +773,6 @@ function checkNoUnknownSchemaProperties(
             'Size',
             'BulkComposition',
             'SurfaceWaterPresent',
-            'TidallyLocked',
             'Atmosphere',
             'NativeBiosphere',
             'ClaimedByPolityIds',
@@ -790,7 +786,7 @@ function checkNoUnknownSchemaProperties(
         if (object.InhabitedInfo !== false)
           check(
             object.InhabitedInfo,
-            ['TotalHab', 'WorldTags', 'TerranBiosphere', 'Population', 'TechLevel'],
+            ['WorldTags', 'TerranBiosphere', 'Population', 'TechLevel'],
             `Planet ${object.Id}.InhabitedInfo`,
           );
       } else
@@ -941,10 +937,6 @@ function validateObject(
       fail('2A-28c', `Water-composition planet ${planet.Id} lacks surface water.`);
   }
   if (planet.InhabitedInfo !== false) validateInhabitedPlanet(planet, system, fail);
-  const shouldBeTidallyLocked =
-    planet.Orbit.ParentObjectId === null && system.Star.StarType === 'M-type';
-  if (planet.TidallyLocked !== shouldBeTidallyLocked)
-    fail('C17', `Planet ${planet.Id} has incorrect tidal-locking state.`);
   if (parent !== undefined) {
     if (parent.Kind !== 'Planet') fail('B12', `Planet ${planet.Id} orbits a non-planet object.`);
     else {
@@ -974,11 +966,12 @@ function validateInhabitedPlanet(
   const [firstTag, secondTag] = inhabited.WorldTags;
   if (firstTag === secondTag)
     fail('2A-13', `Inhabited planet ${planet.Id} has duplicate world tags.`);
-  if (inhabited.TotalHab < POPULATION_HAB_REQUIRED[inhabited.Population])
+  const totalHab = planetHabitability(planet, STAR_HABITABILITY[system.Star.StarType])!;
+  if (totalHab < POPULATION_HAB_REQUIRED[inhabited.Population])
     fail('2A-22a', `Planet ${planet.Id} lacks habitability for its population.`);
-  if (inhabited.TotalHab < TECH_HAB_REQUIRED[inhabited.TechLevel])
+  if (totalHab < TECH_HAB_REQUIRED[inhabited.TechLevel])
     fail('2A-22b', `Planet ${planet.Id} lacks habitability for its technology.`);
-  if (inhabited.TotalHab < TERRAN_BIOSPHERE_HAB_REQUIRED[inhabited.TerranBiosphere])
+  if (totalHab < TERRAN_BIOSPHERE_HAB_REQUIRED[inhabited.TerranBiosphere])
     fail('2A-22c', `Planet ${planet.Id} lacks habitability for its Terran biosphere.`);
   const environmentalHab = Math.min(
     ATMOSPHERE_HAB[planet.Atmosphere],
@@ -987,12 +980,6 @@ function validateInhabitedPlanet(
     SIZE_HAB[planet.Size],
     BULK_COMPOSITION_HAB[planet.BulkComposition],
   );
-  const expectedTotalHab = Math.min(system.Star.HabitabilityRating, environmentalHab);
-  if (inhabited.TotalHab !== expectedTotalHab)
-    fail(
-      '2A-21b',
-      `Planet ${planet.Id} has TotalHab ${inhabited.TotalHab}; expected ${expectedTotalHab} from its star and physical facts.`,
-    );
   if (
     (firstTag === 'Oceanic World' ||
       firstTag === 'Seagoing Cities' ||

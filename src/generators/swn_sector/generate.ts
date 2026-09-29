@@ -12,6 +12,7 @@ import { generateRoutes } from './generate_routes';
 import { generateCompleteSystem } from './generate_system';
 import { resolvePolitics } from './politics';
 import { completeWorld, createHabitablePointsOfInterest } from './culture';
+import { STAR_HABITABILITY } from './planet_interpretation';
 
 export function generate(
   seed: string,
@@ -33,7 +34,7 @@ export function generate(
       entityPath: path,
       hexLocation,
       starType: star.Value as StarType,
-      starHabitability: star.Hab ?? 0,
+      starHabitability: STAR_HABITABILITY[star.Value],
     });
   });
   const { Routes, RoutePortals } = generateRoutes(seed, Systems);
@@ -94,7 +95,7 @@ export function generate(
   }
   const shipName = 'Player ship';
   const result: Sector = {
-    SchemaVersion: 'merged-v3',
+    SchemaVersion: 'merged-v4',
     OriginalSeed: seed,
     StartingWorldMode: startingWorldMode,
     SectorName: `Sector ${seed}`,

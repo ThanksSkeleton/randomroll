@@ -52,16 +52,6 @@ export const TECH_HAB_REQUIRED: Readonly<Record<InhabitedInfo['TechLevel'], numb
   'Pretech with surviving infrastructure': 0,
 };
 
-export const TECH_LEVEL: Readonly<Record<InhabitedInfo['TechLevel'], number>> = {
-  'Neolithic-level technology': 0,
-  'Medieval technology': 1,
-  'Early Industrial Age tech': 2,
-  'Tech like that of present-day Earth': 3,
-  'Modern postech': 4,
-  'Postech with specialties': 4.1,
-  'Pretech with surviving infrastructure': 5,
-};
-
 export const TERRAN_BIOSPHERE_HAB_REQUIRED: Readonly<
   Record<InhabitedInfo['TerranBiosphere'], number>
 > = {
@@ -99,63 +89,6 @@ export const POPULATION_RANGE: Readonly<
   'Several million inhabitants': [32, 75],
   'Hundreds of millions of inhabitants': [76, 94],
   'Billions of inhabitants': [95, 100],
-};
-
-export const ATMOSPHERE_HAB: Readonly<Record<Planet['Atmosphere'], number>> = {
-  Vacuum: 0,
-  Corrosive: 0,
-  Invasive: 0,
-  'Corrosive+Invasive': 0,
-  'Inert gas': 0,
-  'Breathable: Thin/Thick': 2,
-  Breathable: 3,
-};
-
-export const TEMPERATURE_HAB: Readonly<Record<Planet['Temperature'], number>> = {
-  Cryogenic: 0,
-  Deepfrozen: 1,
-  Polar: 1,
-  Subarctic: 2,
-  Boreal: 3,
-  Alpine: 3,
-  'Temperate (chilly)': 3,
-  Temperate: 3,
-  'Temperate (warm)': 3,
-  Mediterranean: 3,
-  Subtropical: 3,
-  Equatorial: 2,
-  Infernal: 1,
-  Scorching: 1,
-  Furance: 0,
-};
-
-export const TERRAN_BIOSPHERE_HAB: Readonly<Record<InhabitedInfo['TerranBiosphere'], number>> = {
-  None: 0,
-  Microbial: 1,
-  Limited: 2,
-  Significant: 3,
-  Engineered: 3,
-};
-
-export const SIZE_HAB: Readonly<Record<Planet['Size'], number>> = {
-  Luna: 1,
-  Mars: 2,
-  Earth: 3,
-  'Super-Earth': 2,
-  Neptune: 0,
-  Jupiter: 0,
-};
-
-export const BULK_COMPOSITION_HAB: Readonly<Record<Planet['BulkComposition'], number>> = {
-  Sulfur: 1,
-  Carbon: 1,
-  Magnesium: 1,
-  'Calcium-Aluminum': 1,
-  Iron: 1,
-  Water: 2,
-  Silicon: 3,
-  'Jovian Gas': 0,
-  'Neptunian Gas': 0,
 };
 
 export type StarAuWidths = {
@@ -231,3 +164,12 @@ export const STAR_AU_WIDTHS: Readonly<Record<StarType, StarAuWidths>> = {
     ToSystemEdge: 2.24,
   },
 };
+
+export {
+  TECH_LEVEL,
+  ATMOSPHERE_HAB,
+  TEMPERATURE_HAB,
+  TERRAN_BIOSPHERE_HAB,
+  SIZE_HAB,
+  BULK_COMPOSITION_HAB,
+} from './planet_interpretation';

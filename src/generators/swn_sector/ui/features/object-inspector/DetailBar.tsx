@@ -1,6 +1,5 @@
-import { TECH_LEVEL } from '../../../tables';
 import { hpoiProjection } from '../../../culture';
-import type { Planet, SelectableEntity, Sector } from '../../../merged_schema';
+import type { SelectableEntity, Sector } from '../../../merged_schema';
 import {
   findDetails,
   findObject,
@@ -11,7 +10,7 @@ import {
 } from '../../domain/sector/selectors';
 import type { EditDraft, Preview, EditableDetailField } from '../../application/appState';
 import { formatAu } from '../../formatters';
-import { displayBulkComposition } from '../../../planet_presentation';
+import { projectPlanet } from '../../../planet_projection';
 import { resolvePortrait } from '../../../portrait_assets';
 import { useState } from 'react';
 import { PolityFlagList } from '../politics/PolityFlag';
@@ -90,49 +89,9 @@ function politicalClaimIds(found: FoundObject, sector: Sector): string[] | undef
   return systemPoliticalClaimIds(found.object, sector);
 }
 
-function planetStock(
-  planet: Planet,
-  sector: Sector,
-  systemId: string | undefined,
-  preview: Preview,
-): StockSignals {
-  const host = planet.Orbit.ParentObjectId
-    ? sector.Systems.find((system) => system.Id === systemId)?.Objects.find(
-        (object): object is Planet =>
-          object.Kind === 'Planet' && object.Id === planet.Orbit.ParentObjectId,
-      )
-    : undefined;
-  const hostName = host
-    ? (displayName(findDetails(sector, host.Id), preview) ?? host.ProceduralName)
-    : undefined;
-  const moonFact = hostName ? `\nMoon of ${hostName}` : '';
-  const basic = `${formatAu(planet.Orbit.AU)} AU - ${planet.Temperature} - ${planet.Size}-Class${moonFact}\nAtmosphere: ${planet.Atmosphere} Composition: ${displayBulkComposition(planet.BulkComposition, planet.Temperature)}`;
-  const signalsDetected = associatedPoiCount(sector, systemId, planet.Id);
-  if (planet.InhabitedInfo === false) {
-    return {
-      basic,
-      detailed: `Signals Detected: ${signalsDetected}`,
-      politics: polityClaims(sector, planet.ClaimedByPolityIds),
-      deep: '-',
-      gm: '-',
-    };
-  }
-  const inhabited = planet.InhabitedInfo;
-  return {
-    basic,
-    detailed: `Life, Native: ${planet.NativeBiosphere}\nLife, Terran: ${inhabited.TerranBiosphere}\nPopulation: ${inhabited.Population}`,
-    politics: `Tech Level: ${TECH_LEVEL[inhabited.TechLevel]} - ${inhabited.TechLevel}\n${polityClaims(sector, planet.ClaimedByPolityIds)}`,
-    deep:
-      planet.Complete && planet.Culture
-        ? `Cultural Template: ${planet.Culture.culturalTemplate}\nOutsider Opinion: ${planet.Culture.outsiderOpinion}\nLaw Enforcement: ${planet.Culture.lawEnforcement.amount}; ${planet.Culture.lawEnforcement.style}; ${planet.Culture.lawEnforcement.specialLaw}\nBiggest Conflict: ${planet.Culture.biggestConflict.category}; ${planet.Culture.biggestConflict.details}`
-        : '-',
-    gm: inhabited.WorldTags.join(', '),
-  };
-}
-
 function stockSignals(found: FoundObject, sector: Sector, preview: Preview): StockSignals {
   if (found.kind === 'Planet') {
-    return planetStock(found.object, sector, found.containingSystem?.Id, preview);
+    return projectPlanet(sector, found.object.Id, { preview })!.stock;
   }
   if (found.kind === 'OtherCelestialObject') {
     return {
