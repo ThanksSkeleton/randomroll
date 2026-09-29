@@ -14,8 +14,8 @@ The initial page route is `/swn_culture/`. Its UI uses the repository's default 
 
 The generator exposes two public generation modes:
 
-1. Seed only: accepts a seed and randomly selects two World Tags before generating the culture.
-2. Predetermined tags plus seed: accepts exactly two World Tags and a seed, preserves those tags as inputs, and generates the rest of the culture from the seed.
+1. `generateSwnCulture(seed)`: accepts a seed and randomly selects two World Tags before generating the culture.
+2. `generateSwnCultureForTags(worldTags, seed)`: accepts exactly two World Tags and a seed, preserves those tags as inputs, and generates the rest of the culture from the seed.
 
 Both modes return the same culture result shape and normally generate exactly one culture. Tests may generate batches by repeatedly invoking either mode with distinct, deterministic child seeds; batch generation is test support, not a third production API.
 
@@ -33,6 +33,7 @@ The culture result contains the following Category I material, selected randomly
 
 - Cultural Template: selected from the supported name categories.
 - The selected template controls all generated personal names and place names in the result.
+- Homeworld: a top-level place name selected from the Cultural Template's place-name list.
 - The supported templates are exactly the ten SWN categories: Arabic, Chinese, English, Greek, Indian, Japanese, Latin, Nigerian, Russian, and Spanish.
 - The generic `US` name category is excluded.
 
@@ -54,22 +55,21 @@ Enemy and Friend each receive one personal name. The name's Male/Female table is
 
 Roll a top-level category, then roll its associated detail subtable:
 
-- Commodity -> Commodity Type
+- Commodity -> Commodity Type plus an independent Commodity Size roll: Bulk 25%, Small 75%
 - Special Tech -> Special Tech Type
 - Adventure Opportunity -> Adventure Opportunity Type
 
-These are new tables. Their values and weighting are intentionally deferred.
+The category roll is uniform. Each type roll is uniform within its populated table.
 
 ### Biggest conflict
 
-Roll a top-level category, then roll its associated detail subtable when one exists:
+Roll a 2d6 top-level category, then roll its associated detail subtable:
 
-- Class Conflict -> Class Conflict Details
-- Offworld Conflict -> Offworld Conflict Details
-- Local War -> Local War Details
-- Other Crisis -> no detail roll
+- 2–3: Offworld Conflict -> Offworld Conflict Details
+- 4–10: Class Conflict -> Class Conflict Details
+- 11–12: Local War -> Local War Details
 
-These are new tables. Their values and weighting are intentionally deferred.
+Each detail roll is uniform within its populated table.
 
 ### Outsider opinion
 
@@ -83,29 +83,31 @@ Unless specified otherwise, these three results are equally likely.
 
 ### Law enforcement
 
-- Law Enforcement Amount and Style
-- Special Laws -> Special Law Type
+- Law Enforcement Amount: 2d3
+- Law Enforcement Style: 2d4
+- Special Law: 2d6; `None` occupies results 4–10
 
-These are new tables. Their values and weighting are intentionally deferred. The relationship between the two rolls, including whether a world can have no special law, remains an open decision.
+All three are independent rolls.
 
 ### Major starport
 
 - Starport Type
 - Starport Name: selected from the place-name table for the Cultural Template
 
-Starport Type is a new table whose values and weighting are intentionally deferred.
+Starport Type is rolled on its 2d6 table.
 
 ### Planetary defenses
 
 This is an original extension rather than part of the cited book procedure. Generate one result for each field:
 
 - Orbiting Station Type
-- Smuggling Enforcement
-- Visa Enforcement
-- Patrol Boat Presence Amount
+- Orbiting Station Style
+- Trade and Smuggling Enforcement Amount
+- Customs and Visa Emphasis
+- Patrol Boat Presence
 - Planetary Gun Turrets
 
-These are new tables unless an existing project table is explicitly adopted later. Their values, weighting, and any dependencies between them are intentionally deferred.
+Orbiting Station Type, Orbiting Station Style, Trade and Smuggling Enforcement Amount, and Customs and Visa Emphasis use their specified 2d3 tables. The numbered 2–6 Patrol Boat Presence and Planetary Gun Turret tables are also treated as 2d3 tables. All defense rolls are independent.
 
 ## Category II: GM-created material
 
@@ -121,6 +123,9 @@ Generated table entries are raw prompts for the GM. Category II fields and edita
 
 ## Data and implementation constraints
 
+- The generator's new culture-specific tables live in `swn_culture/swn_culture_data.json`.
+- Each table is stored directly as data, without provenance, schema, status, file-reference, or annotation fields.
+- Place names are not duplicated in the culture data JSON. The generator uses `temp/swn_place_names.csv` directly, deriving the ten Cultural Template choices from its culture column and using the matching rows for Homeworld, Place, and Starport names.
 - Randomness must be seeded; production generation must not call `Math.random()`.
 - Both APIs must use one shared generation path after World Tags are resolved, preventing behavioral drift.
 - A culture result must retain its two effective World Tags so a seed-only result can be reproduced through the predetermined-tags API.
@@ -131,7 +136,7 @@ Generated table entries are raw prompts for the GM. Category II fields and edita
 - CSV/flat serialization is not part of the domain contract. The initial implementation may use deliberately flattened columns or JSON-encoded nested values, whichever is simpler and produces intelligible debug output.
 - Tests must cover same-version determinism, distinct random World Tags, supplied-tag preservation, membership of every result in its source table, exactly one prompt per source tag per component, the personal-name gender coin flip, cultural consistency of names, invalid supplied tags, and repeated/batch generation.
 
-## Proposed result shape (non-final)
+## Initial result shape
 
 This sketch makes the intended nesting concrete without freezing unresolved cardinalities or naming details:
 
@@ -139,6 +144,7 @@ This sketch makes the intended nesting concrete without freezing unresolved card
 type SwnCulture = {
   worldTags: [WorldTag, WorldTag];
   culturalTemplate: CultureNameCategory;
+  homeworld: string;
   adventureComponents: {
     enemy: NamedComponent;
     friend: NamedComponent;
@@ -146,18 +152,20 @@ type SwnCulture = {
     thing: TaggedComponent;
     place: TaggedComponent & { placeName: string };
   };
-  pcCaresAbout: { category: string; type: string };
-  biggestConflict:
-    | { category: 'Class Conflict' | 'Offworld Conflict' | 'Local War'; details: string }
-    | { category: 'Other Crisis' };
+  pcCaresAbout: { category: string; type: string; commoditySize: 'Bulk' | 'Small' | null };
+  biggestConflict: {
+    category: 'Class Conflict' | 'Offworld Conflict' | 'Local War';
+    details: string;
+  };
   outsiderOpinion: 'Comfortable' | 'Mistrust' | 'Hatred';
-  lawEnforcement: { amountAndStyle: string; specialLaw: string; specialLawType: string };
+  lawEnforcement: { amount: string; style: string; specialLaw: string };
   majorStarport: { type: string; name: string };
   planetaryDefenses: {
+    orbitingStationStyle: string;
     orbitingStationType: string;
-    smugglingEnforcement: string;
-    visaEnforcement: string;
-    patrolBoatPresenceAmount: string;
+    tradeAndSmugglingEnforcementAmount: string;
+    customsAndVisaEmphasis: string;
+    patrolBoatPresence: string;
     planetaryGunTurrets: string;
   };
 };
@@ -170,11 +178,8 @@ type NamedComponent = TaggedComponent & {
 };
 ```
 
-## Deferred decisions
+## Dice-table behavior
 
-In addition to the actual values and weights for all new tables, these behaviors will be decided when the placeholder table scaffolds are created:
-
-1. **Law-enforcement dependency.** Whether a Special Law is always generated, whether the amount/style roll can suppress it, and whether `Special Laws` is a separate roll from `Special Law Type`.
-2. **Planetary-defense dependency.** Whether the five defense fields are independent rolls or whether combinations are constrained.
+A dice table stores its die sizes and inclusive outcome ranges as data. Generation rolls each listed die, sums the results, and resolves the matching range. This preserves the non-uniform distributions of 2d3, 2d4, and 2d6 rather than treating the listed outcomes as equally likely.
 
 The project spelling is **Starport** everywhere, including property and display labels.

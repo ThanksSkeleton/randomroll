@@ -1,12 +1,26 @@
 import { expect, test } from 'vitest';
 import { randomUUID } from 'node:crypto';
-import { writeFileSync } from 'node:fs';
+import { readdirSync, statSync, unlinkSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { generate } from './generate';
 import { checkAllInvariants } from './invariants';
 
 const DEFAULT_SECTOR_COUNT = 20;
 const MAX_SECTOR_COUNT = 100;
+const MAX_ARTIFACT_COUNT = 20;
+const ARTIFACT_PREFIX = 'randomroll-stochastic-sector-';
+
+function pruneOldArtifacts(): void {
+  const artifacts = readdirSync('temp')
+    .filter((name) => name.startsWith(ARTIFACT_PREFIX) && name.endsWith('.json'))
+    .map((name) => ({ path: join('temp', name), modifiedAt: statSync(join('temp', name)).mtimeMs }))
+    .sort((a, b) => a.modifiedAt - b.modifiedAt);
+
+  while (artifacts.length > MAX_ARTIFACT_COUNT) {
+    const oldest = artifacts.shift();
+    if (oldest) unlinkSync(oldest.path);
+  }
+}
 
 function sectorCount(): number {
   const configured = process.env.STOCHASTIC_SUCCESS_SECTOR_COUNT;
@@ -27,6 +41,7 @@ test('Stochastic Success', () => {
     const sector = generate(seed);
     const outputPath = join('temp', `randomroll-stochastic-sector-${randomUUID()}.json`);
     writeFileSync(outputPath, `${JSON.stringify(sector, null, 2)}\n`, 'utf8');
+    pruneOldArtifacts();
     const violations = checkAllInvariants(sector);
 
     expect(

@@ -1,0 +1,188 @@
+{
+  "pc_cares_about_reasons": [
+    { "result": "Commodity", "type_table": "commodity_types" },
+    { "result": "Special Tech", "type_table": "special_tech_types" },
+    { "result": "Adventure Opportunity", "type_table": "adventure_opportunity_types" }
+  ],
+  "commodity_sizes": [
+    { "result": "Bulk", "weight": 25 },
+    { "result": "Small", "weight": 75 }
+  ],
+  "commodity_types": [
+    "Chemicals",
+    "Precious Consumer Goods and Art",
+    "NonSapient Living Organisms",
+    "Industrial Equipment",
+    "Weapons, Armor, or Drones",
+    "Ceremonial or Religous Goods",
+    "Medical Supplies or Cybernetics",
+    "Sapient Passengers",
+    "Luxury Foodstuffs",
+    "Vehicle Parts"
+  ],
+  "special_tech_types": [
+    "Computers",
+    "Sensors",
+    "Armor",
+    "Weapons",
+    "Medicine",
+    "Cybernetics",
+    "Manufacturing",
+    "Metadimensional Refining",
+    "Spike Drives",
+    "Genetic Modification",
+    "Drones",
+    "Colonization"
+  ],
+  "adventure_opportunity_types": [
+    "Go to a dangerous area and procure something",
+    "Go to a taboo area and procure something",
+    "Hired as bodyguards",
+    "Hired as assasins or bounty hunters",
+    "Smuggle Something From Here to Offworld",
+    "Smuggle Something From Offworld to Here",
+    "Relay a Message to a Faraway Place",
+    "Seek something or someone only the PCs know",
+    "Use PC's Special Technology Or Skills",
+    "Parlor Conversation with Xenophiles"
+  ],
+  "biggest_conflicts": {
+    "dice": [6, 6],
+    "outcomes": [
+      {
+        "min": 2,
+        "max": 3,
+        "result": "Offworld Conflict",
+        "details_table": "offworld_conflict_details"
+      },
+      {
+        "min": 4,
+        "max": 10,
+        "result": "Class Conflict",
+        "details_table": "class_conflict_details"
+      },
+      {
+        "min": 11,
+        "max": 12,
+        "result": "Local War",
+        "details_table": "local_war_details"
+      }
+    ]
+  },
+  "class_conflict_details": ["Political", "Religous or Cultural", "Economic", "Local/Regional"],
+  "offworld_conflict_details": [
+    "Unscrupulous Merchants",
+    "Religious or Cultural Differences",
+    "Fears of Domination"
+  ],
+  "local_war_details": [
+    "Guerillas / Terrorists",
+    "Conquest of Lesser Power - Jingoism",
+    "Cold War of Rivals",
+    "Hot War of Rivals",
+    "Civil War or Coup"
+  ],
+  "outsider_opinions": ["Comfortable", "Mistrust", "Hatred"],
+  "law_enforcement_amounts": {
+    "dice": [3, 3],
+    "outcomes": [
+      { "min": 2, "max": 2, "result": "Total Surveilance State" },
+      { "min": 3, "max": 3, "result": "Decent Policing" },
+      { "min": 4, "max": 4, "result": "Weak Policing" },
+      { "min": 5, "max": 5, "result": "Lawless Sub Areas" },
+      { "min": 6, "max": 6, "result": "Lawless" }
+    ]
+  },
+  "law_enforcement_styles": {
+    "dice": [4, 4],
+    "outcomes": [
+      { "min": 2, "max": 2, "result": "Undercover Agents" },
+      { "min": 3, "max": 3, "result": "Religious Police" },
+      { "min": 4, "max": 4, "result": "Incompetent and Corrupt Police" },
+      { "min": 5, "max": 5, "result": "Public and Proud Police" },
+      { "min": 6, "max": 6, "result": "Private Security" },
+      { "min": 7, "max": 7, "result": "Soldiers" },
+      { "min": 8, "max": 8, "result": "Citizen's Posse" }
+    ]
+  },
+  "special_laws": {
+    "dice": [6, 6],
+    "outcomes": [
+      { "min": 2, "max": 2, "result": "Taboo Areas" },
+      { "min": 3, "max": 3, "result": "Curfew" },
+      { "min": 4, "max": 10, "result": "None" },
+      { "min": 11, "max": 11, "result": "Special Citizens" },
+      { "min": 12, "max": 12, "result": "Contraband Searches" }
+    ]
+  },
+  "starport_types": {
+    "dice": [6, 6],
+    "outcomes": [
+      { "min": 2, "max": 2, "result": "Rural + Commute" },
+      { "min": 3, "max": 4, "result": "Central Hub (ancient, decaying)" },
+      { "min": 5, "max": 9, "result": "Central Hub (new)" },
+      { "min": 10, "max": 11, "result": "Isolated \"Spacetown\"" },
+      { "min": 12, "max": 12, "result": "Military Base" }
+    ]
+  },
+  "orbiting_station_styles": {
+    "dice": [3, 3],
+    "outcomes": [
+      { "min": 2, "max": 2, "result": "Generic and Mass Produced" },
+      { "min": 3, "max": 3, "result": "Ramshackle and Repurposed" },
+      { "min": 4, "max": 4, "result": "Ancient and Grand" },
+      { "min": 5, "max": 5, "result": "Brand New" },
+      { "min": 6, "max": 6, "result": "Culturaly Unique" }
+    ]
+  },
+  "orbiting_station_types": {
+    "dice": [3, 3],
+    "outcomes": [
+      { "min": 2, "max": 2, "result": "Military Fort" },
+      { "min": 3, "max": 3, "result": "Merchant Hub" },
+      { "min": 4, "max": 4, "result": "Induction/Visa Center" },
+      { "min": 5, "max": 5, "result": "Vacation/Tourist Spot" },
+      { "min": 6, "max": 6, "result": "Unrelated Industrial Purpose" }
+    ]
+  },
+  "trade_and_smuggling_enforcement_amounts": {
+    "dice": [3, 3],
+    "outcomes": [
+      { "min": 2, "max": 2, "result": "Exacting and Thourough" },
+      { "min": 3, "max": 3, "result": "Officially Flexible" },
+      { "min": 4, "max": 4, "result": "Incompetent or Sloppy" },
+      { "min": 5, "max": 5, "result": "Hopelessly Corrupt" },
+      { "min": 6, "max": 6, "result": "None" }
+    ]
+  },
+  "customs_and_visa_emphasis": {
+    "dice": [3, 3],
+    "outcomes": [
+      { "min": 2, "max": 2, "result": "Brutal Import Duties of Everything of Value" },
+      { "min": 3, "max": 3, "result": "Many Taboo Exports" },
+      { "min": 4, "max": 4, "result": "Many Taboo Imports" },
+      { "min": 5, "max": 5, "result": "Interested in PC history" },
+      { "min": 6, "max": 6, "result": "Ideological/Relgious Induction" }
+    ]
+  },
+  "patrol_boat_presence": {
+    "dice": [3, 3],
+    "outcomes": [
+      { "min": 2, "max": 2, "result": "Obscured or Hiding" },
+      { "min": 3, "max": 3, "result": "Showboating or in Formation" },
+      { "min": 4, "max": 4, "result": "Escorts / NPC Admirals" },
+      { "min": 5, "max": 5, "result": "Militarized Civilian Vessels" },
+      { "min": 6, "max": 6, "result": "None" }
+    ]
+  },
+  "planetary_gun_turrets": {
+    "dice": [3, 3],
+    "outcomes": [
+      { "min": 2, "max": 2, "result": "Exotic" },
+      { "min": 3, "max": 3, "result": "Potemkin" },
+      { "min": 4, "max": 4, "result": "Obsolete and Decaying" },
+      { "min": 5, "max": 5, "result": "Fighters and Patrol Boats Instead" },
+      { "min": 6, "max": 6, "result": "Impregnable" }
+    ]
+  }
+}
