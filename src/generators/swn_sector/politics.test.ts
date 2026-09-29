@@ -42,7 +42,6 @@ function planet(
     ...entity(id, niceName),
     Kind: 'Planet',
     Orbit: { AU: 1, AngleDegrees: 0, ParentObjectId: null },
-    Temperature: 'Temperate',
     ClaimedByPolityIds: [],
     Size: 'Earth',
     BulkComposition: 'Silicon',
@@ -66,7 +65,6 @@ function other(id: string, type: OtherCelestialObject['ObjectType']): OtherCeles
     Kind: 'OtherCelestialObject',
     ObjectType: type,
     Orbit: { AU: 2, AngleDegrees: 0, ParentObjectId: null },
-    Temperature: 'Cryogenic',
     ClaimedByPolityIds: [],
   };
 }
@@ -96,13 +94,11 @@ function connect(pairs: ReadonlyArray<readonly [string, string]>): {
     portals.push(
       {
         ...entity(leftPortalId),
-        RouteId: routeId,
         SystemId: left,
         BoundaryAngleDegrees: 0,
       },
       {
         ...entity(rightPortalId),
-        RouteId: routeId,
         SystemId: right,
         BoundaryAngleDegrees: 180,
       },

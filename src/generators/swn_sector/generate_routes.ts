@@ -70,7 +70,12 @@ export function generateRoutes(
       Id: routeId,
       ProceduralName: `Route ${index + 1}`,
       NiceName: `Route ${index + 1}`,
-      Visibility: { BasicScan: false, DetailedScan: false, PoliticsScan: false, DeepPoliticsScan: false },
+      Visibility: {
+        BasicScan: false,
+        DetailedScan: false,
+        PoliticsScan: false,
+        DeepPoliticsScan: false,
+      },
       Intelligence: {
         InfoboxSummary: '-',
         BasicScan: '-',
@@ -99,7 +104,12 @@ export function generateRoutes(
         Id: id,
         ProceduralName: `Portal ${side.NiceName}-${other.NiceName}`,
         NiceName: `Portal ${side.NiceName}-${other.NiceName}`,
-        Visibility: { BasicScan: false, DetailedScan: false, PoliticsScan: false, DeepPoliticsScan: false },
+        Visibility: {
+          BasicScan: false,
+          DetailedScan: false,
+          PoliticsScan: false,
+          DeepPoliticsScan: false,
+        },
         Intelligence: {
           InfoboxSummary: '-',
           BasicScan: '-',
@@ -108,7 +118,6 @@ export function generateRoutes(
           DeepPoliticsScan: '-',
           GM: '-',
         },
-        RouteId: routeId,
         SystemId: side.Id,
         BoundaryAngleDegrees: angle,
       });

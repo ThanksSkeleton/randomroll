@@ -1,4 +1,5 @@
-import type { Planet } from './merged_schema';
+import type { GeneratedPlanet as Planet } from './generation_model';
+import type { Temperature } from './merged_schema';
 import { assignPortraitId, portraitIdInCategory, type PortraitCategory } from './portrait_assets';
 import { displayBulkComposition } from './planet_presentation';
 
@@ -44,7 +45,7 @@ const templateCategories: Record<string, PlanetPortraitCategory> = {
 
 export function planetPortraitCategory(
   template: string,
-  temperature: Planet['Temperature'],
+  temperature: Temperature,
 ): PlanetPortraitCategory | undefined {
   if (template === 'Europan / Plutonic')
     return displayBulkComposition('Water', temperature) === 'Ice' ? 'europan-ice' : 'europan-water';

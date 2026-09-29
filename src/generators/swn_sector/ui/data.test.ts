@@ -15,7 +15,7 @@ describe('canonical sector data', () => {
     const first = createInitialSectors();
     expect(first).toEqual(createInitialSectors());
     for (const sector of first) {
-      expect(sector.SchemaVersion).toBe('merged-v4');
+      expect(sector.SchemaVersion).toBe('merged-v5');
       expect(sector.Systems.length).toBeGreaterThanOrEqual(20);
       expect(sector.Systems.length).toBeLessThanOrEqual(30);
       expect(new Set(getAllSelectableIds(sector)).size).toBe(getAllSelectableIds(sector).length);
@@ -27,7 +27,7 @@ describe('canonical sector data', () => {
   it('preserves richer generator fields', () => {
     const sector = generate('UI-CANONICAL-DATA');
     const object = sector.Systems.flatMap((system) => system.Objects)[0];
-    expect(object).toHaveProperty('Temperature');
+    expect(object).not.toHaveProperty('Temperature');
     expect(object).toHaveProperty('Orbit');
     expect(sector.Systems.some((system) => system.PointsOfInterest.length > 0)).toBe(true);
   });

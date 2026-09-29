@@ -1,3 +1,4 @@
+import { projectObjectKind } from '../object_kind_projection';
 import { useEffect, useMemo, useReducer, useState } from 'react';
 import { appReducer, createAppState } from './application/appState';
 import type { EditDraft, Preview, View } from './application/appState';
@@ -17,7 +18,6 @@ import {
   findContainingSystem,
   findObject,
   isVisibleToPlayer,
-  objectKindLabel,
   resolveTravelDestination,
 } from './domain/sector/selectors';
 import { createPrototypeApplication } from './application/prototypeApplication';
@@ -27,7 +27,7 @@ function isVisible(id: string, sector: Sector, preview: Preview) {
 }
 
 function objectKind(sector: Sector, id: string | null): string {
-  return objectKindLabel(sector, id);
+  return projectObjectKind(sector, id);
 }
 
 export default function App() {

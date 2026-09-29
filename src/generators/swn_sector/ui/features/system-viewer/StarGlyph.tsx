@@ -1,10 +1,7 @@
-import type { StarType } from '../../../merged_schema';
-import { starPresentation } from '../../../star_presentation';
+import type { StarDisplayDTO } from '../../../star_projection';
 
 /** Shared helper markup for the CSS star recipes. The button remains the glyph's host. */
-export function StarGlyph({ starType }: { starType: StarType }) {
-  const recipe = starPresentation(starType).recipe;
-
+export function StarGlyph({ recipe }: { recipe: StarDisplayDTO['recipe'] }) {
   if (recipe === 'a-type') {
     return (
       <span className="star-flare" aria-hidden="true">

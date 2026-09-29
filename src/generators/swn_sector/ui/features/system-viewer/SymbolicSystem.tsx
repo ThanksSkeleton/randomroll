@@ -2,14 +2,11 @@ import { Fragment } from 'react';
 import type { Preview } from '../../application/appState';
 import type { OtherCelestialObject, Planet, Sector, StarSystem } from '../../../merged_schema';
 import { hpoiVisible } from '../../../culture';
-import {
-  findDetails,
-  isVisibleToPlayer,
-  planets,
-  routeSystems,
-} from '../../domain/sector/selectors';
+import { findDetails, isVisibleToPlayer, planets } from '../../domain/sector/selectors';
 import { projectPlanet } from '../../../planet_projection';
-import { starPresentationClass, starPresentationStyle } from '../../../star_presentation';
+import { projectStar } from '../../../star_projection';
+import { projectRoute } from '../../../route_projection';
+import { projectObjectSpatial } from '../../../object_spatial_projection';
 import { StarGlyph } from './StarGlyph';
 import { PolityFlagList } from '../politics/PolityFlag';
 
@@ -238,7 +235,7 @@ function OtherObjectSymbol({
 }) {
   const d = details(object.Id, sector);
   const label = displayName(d, preview) ?? object.ObjectType;
-  const glyphClass = `other-object-glyph other-object-${object.ObjectType.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase()}`;
+  const glyphClass = `other-object-glyph ${projectObjectSpatial(sector, object.Id)?.glyphClass}`;
   const pois = system.PointsOfInterest.filter(
     (p) => p.ParentObjectId === object.Id && visible(p.Id, sector, preview),
   );
@@ -325,9 +322,10 @@ export function SymbolicSystem({
   showPolityOverlay?: boolean;
 }) {
   const open = false;
+  const spatialAu = (id: string) => projectObjectSpatial(sector, id)!.effectiveAu;
   const worldPlanets = planets(system)
     .filter((w) => !w.Orbit.ParentObjectId)
-    .sort((a, b) => a.Orbit.AU - b.Orbit.AU);
+    .sort((a, b) => spatialAu(a.Id) - spatialAu(b.Id));
   const families = worldPlanets
     .map((planet) =>
       [planet, ...planets(system).filter((moon) => moon.Orbit.ParentObjectId === planet.Id)].filter(
@@ -338,27 +336,28 @@ export function SymbolicSystem({
   const otherObjects = system.Objects.filter(
     (object): object is OtherCelestialObject =>
       object.Kind === 'OtherCelestialObject' && visible(object.Id, sector, preview),
-  ).sort((a, b) => a.Orbit.AU - b.Orbit.AU);
+  ).sort((a, b) => spatialAu(a.Id) - spatialAu(b.Id));
   const orbitals = [
     ...families.map((family) => ({
       kind: 'family' as const,
       key: family[0].Id,
-      au: family[0].Orbit.AU,
+      au: spatialAu(family[0].Id),
       family,
     })),
     ...otherObjects.map((object) => ({
       kind: 'other' as const,
       key: object.Id,
-      au: object.Orbit.AU,
+      au: spatialAu(object.Id),
       object,
     })),
   ].sort((left, right) => left.au - right.au);
   const routes = sector.Routes.filter(
     (route) =>
-      routeSystems(sector, route)?.some((candidate) => candidate.Id === system.Id) &&
+      projectRoute(sector, route.Id, preview)?.endpointSystemIds.includes(system.Id) &&
       visible(route.Id, sector, preview),
   );
   const systemD = details(system.Id, sector);
+  const starDisplay = projectStar(sector, system.Id)!;
   const shipAtSystem =
     sector.PlayerShip.CurrentLocationId === system.Star.Id &&
     visible(sector.PlayerShip.Id, sector, preview);
@@ -385,10 +384,10 @@ export function SymbolicSystem({
                 selected={selected}
                 onSelect={select}
                 label={`System ${displayName(systemD, preview) ?? 'System'}`}
-                className={`star-orb ${starPresentationClass(system.Star.StarType)}`}
-                style={starPresentationStyle(system.Star.StarType)}
+                className={`star-orb ${starDisplay.className}`}
+                style={starDisplay.styleTokens}
               >
-                <StarGlyph starType={system.Star.StarType} />
+                <StarGlyph recipe={starDisplay.recipe} />
               </Selectable>
             </div>
           </div>
@@ -444,16 +443,9 @@ export function SymbolicSystem({
               <div className="symbolic-column route-column">
                 <div className="route-unit">
                   {routes.map((route) => {
-                    const other = routeSystems(sector, route)?.find(
-                      (candidate) => candidate.Id !== system.Id,
-                    );
-                    const otherId = other?.Id ?? '';
-                    const otherName =
-                      ((preview === 'gm' || route.Visibility.PoliticsScan
-                        ? other?.NiceName
-                        : other?.ProceduralName) ??
-                        otherId) ||
-                      'System';
+                    const display = projectRoute(sector, route.Id, preview)!;
+                    const currentIndex = display.endpointSystemIds.indexOf(system.Id);
+                    const otherName = display.symbolicDestinations[1 - currentIndex];
                     return (
                       <Selectable
                         key={route.Id}

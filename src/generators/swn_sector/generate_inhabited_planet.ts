@@ -1,4 +1,5 @@
-import type { InhabitedInfo, Orbit, Planet, StarType, WorldTag } from './merged_schema';
+import type { InhabitedInfo, StarType, Temperature, WorldTag } from './merged_schema';
+import type { GeneratedOrbit as Orbit, GeneratedPlanet as Planet } from './generation_model';
 import { deterministicId, chooseWeighted, randomFor } from './generation_random';
 import {
   ATMOSPHERE_TABLE,
@@ -30,7 +31,7 @@ import { WORLD_TAG_CONSTRAINTS } from './generation_rules';
 
 type PhysicalProfile = {
   Atmosphere: Planet['Atmosphere'];
-  Temperature: Planet['Temperature'];
+  Temperature: Temperature;
   NativeBiosphere: Planet['NativeBiosphere'];
   TerranBiosphere: InhabitedInfo['TerranBiosphere'];
   Size: Planet['Size'];
@@ -47,7 +48,7 @@ export type InhabitedPlanetOptions = {
   orbit: Orbit;
   name?: string;
   forcedTags?: readonly [WorldTag, WorldTag];
-  allowedTemperatures?: readonly Planet['Temperature'][];
+  allowedTemperatures?: readonly Temperature[];
 };
 
 /** A d100-style roll succeeds for surface water on 75% of unconstrained worlds. */
@@ -179,7 +180,7 @@ function profileInvalidReason(
 function tagPairHasIntersection(
   tags: readonly WorldTag[],
   starHabitability?: number,
-  allowedTemperatures?: readonly Planet['Temperature'][],
+  allowedTemperatures?: readonly Temperature[],
 ): boolean {
   if (
     tagsRequire(tags, 'Desert World') &&
@@ -219,7 +220,7 @@ function selectTags(
   seed: string,
   path: string,
   starHabitability: number,
-  allowedTemperatures: readonly Planet['Temperature'][],
+  allowedTemperatures: readonly Temperature[],
   forcedTags?: readonly [WorldTag, WorldTag],
 ): [WorldTag, WorldTag] {
   if (forcedTags !== undefined) {

@@ -24,7 +24,6 @@ import type {
   SystemObject,
 } from './merged_schema';
 import {
-  directOrbitAuBand,
   isGasPlanet,
   isPoiHostCompatible,
   POI_TYPES,
@@ -43,12 +42,12 @@ import {
   TECH_HAB_REQUIRED,
   TECH_LEVEL,
   TEMPERATURE_HAB,
-  TEMPERATURE_RANK,
   TERRAN_BIOSPHERE_HAB,
   TERRAN_BIOSPHERE_HAB_REQUIRED,
 } from './tables';
 import { capabilityFor, POLITY_FLAG_COLORS } from './politics';
 import { planetHabitability, STAR_HABITABILITY } from './planet_interpretation';
+import { effectiveOrbit, temperatureForDirectOrbitAu } from './spatial_interpretation';
 
 export interface InvariantViolation {
   RuleId: string;
@@ -443,18 +442,22 @@ function validateCanonicalShape(
       ].every((key) => string(intelligence[key], `${path}.Intelligence.${key}`))
     );
   };
-  const orbit = (item: unknown, path: string): boolean =>
-    record(item, path) &&
-    required(item, ['AU', 'AngleDegrees', 'ParentObjectId'], path) &&
-    number(item.AU, `${path}.AU`) &&
-    number(item.AngleDegrees, `${path}.AngleDegrees`) &&
-    (item.ParentObjectId === null || string(item.ParentObjectId, `${path}.ParentObjectId`));
+  const orbit = (item: unknown, path: string): boolean => {
+    if (
+      !record(item, path) ||
+      !required(item, ['AngleDegrees', 'ParentObjectId'], path) ||
+      !number(item.AngleDegrees, `${path}.AngleDegrees`)
+    )
+      return false;
+    return item.ParentObjectId === null
+      ? required(item, ['AU'], path) && number(item.AU, `${path}.AU`)
+      : string(item.ParentObjectId, `${path}.ParentObjectId`);
+  };
   const object = (item: unknown, path: string): boolean => {
     if (
       !selectable(item, path) ||
-      !required(item, ['Orbit', 'Temperature', 'ClaimedByPolityIds', 'Kind'], path) ||
+      !required(item, ['Orbit', 'ClaimedByPolityIds', 'Kind'], path) ||
       !orbit(item.Orbit, `${path}.Orbit`) ||
-      !string(item.Temperature, `${path}.Temperature`) ||
       !array(item.ClaimedByPolityIds, `${path}.ClaimedByPolityIds`) ||
       !item.ClaimedByPolityIds.every((id, index) =>
         string(id, `${path}.ClaimedByPolityIds[${index}]`),
@@ -529,7 +532,7 @@ function validateCanonicalShape(
       ],
       'Sector',
     ) ||
-    value.SchemaVersion !== 'merged-v4' ||
+    value.SchemaVersion !== 'merged-v5' ||
     !string(value.OriginalSeed, 'Sector.OriginalSeed') ||
     !['UNRESTRICTED', 'TL4_PLUS', 'TL4_PLUS_POP_GT_500'].includes(
       String(value.StartingWorldMode),
@@ -601,7 +604,6 @@ function validateCanonicalShape(
   for (const [index, portal] of value.RoutePortals.entries())
     if (
       !selectable(portal, `Sector.RoutePortals[${index}]`) ||
-      !string(portal.RouteId, `Sector.RoutePortals[${index}].RouteId`) ||
       !string(portal.SystemId, `Sector.RoutePortals[${index}].SystemId`) ||
       !number(portal.BoundaryAngleDegrees, `Sector.RoutePortals[${index}].BoundaryAngleDegrees`)
     )
@@ -736,11 +738,7 @@ function checkNoUnknownSchemaProperties(
   }
   for (const portal of sector.RoutePortals) {
     checkSelectable(portal, `RoutePortal ${portal.Id}`);
-    check(
-      portal,
-      [...selectable, 'RouteId', 'SystemId', 'BoundaryAngleDegrees'],
-      `RoutePortal ${portal.Id}`,
-    );
+    check(portal, [...selectable, 'SystemId', 'BoundaryAngleDegrees'], `RoutePortal ${portal.Id}`);
   }
   for (const system of sector.Systems) {
     checkSelectable(system, `System ${system.Id}`);
@@ -761,14 +759,19 @@ function checkNoUnknownSchemaProperties(
     check(system.Star, [...selectable, 'StarType'], `Star ${system.Star.Id}`);
     for (const object of system.Objects) {
       checkSelectable(object, `Object ${object.Id}`);
-      check(object.Orbit, ['AU', 'AngleDegrees', 'ParentObjectId'], `Object ${object.Id}.Orbit`);
+      check(
+        object.Orbit,
+        object.Orbit.ParentObjectId === null
+          ? ['AU', 'AngleDegrees', 'ParentObjectId']
+          : ['AngleDegrees', 'ParentObjectId'],
+        `Object ${object.Id}.Orbit`,
+      );
       if (object.Kind === 'Planet') {
         check(
           object,
           [
             ...selectable,
             'Orbit',
-            'Temperature',
             'Kind',
             'Size',
             'BulkComposition',
@@ -792,7 +795,7 @@ function checkNoUnknownSchemaProperties(
       } else
         check(
           object,
-          [...selectable, 'Orbit', 'Temperature', 'ClaimedByPolityIds', 'Kind', 'ObjectType'],
+          [...selectable, 'Orbit', 'ClaimedByPolityIds', 'Kind', 'ObjectType'],
           `OtherCelestialObject ${object.Id}`,
         );
     }
@@ -838,22 +841,25 @@ function validateSystem(
   if (directObjects.length === 0) fail('B14', `System ${system.Id} has no direct-orbit object.`);
   const directAus = new Set<number>();
   for (const object of directObjects) {
-    if (!isFiniteNumber(object.Orbit.AU) || object.Orbit.AU < 0)
+    if (object.Orbit.ParentObjectId !== null) continue;
+    const au = object.Orbit.AU;
+    if (!isFiniteNumber(au) || au < 0)
       fail('B1', `Direct-orbit object ${object.Id} has invalid AU.`);
-    else if (directAus.has(object.Orbit.AU))
+    else if (directAus.has(au))
       fail('B5', `Direct-orbit object ${object.Id} shares an AU with another object.`);
-    else directAus.add(object.Orbit.AU);
-    const [minimum, maximum] = directOrbitAuBand(system.Star.StarType, object.Temperature);
-    if (object.Orbit.AU <= minimum || object.Orbit.AU >= maximum) {
-      fail(
-        object.Kind === 'Planet' && object.InhabitedInfo !== false ? 'C2' : 'F12',
-        `Direct object ${object.Id} has AU ${object.Orbit.AU} outside its exclusive temperature band (${minimum}, ${maximum}).`,
-      );
+    else directAus.add(au);
+    if (isFiniteNumber(au)) {
+      try {
+        temperatureForDirectOrbitAu(system.Star.StarType, au);
+      } catch {
+        fail(
+          object.Kind === 'Planet' && object.InhabitedInfo !== false ? 'C2' : 'F12',
+          `Direct object ${object.Id} has AU ${au} outside every exclusive temperature band.`,
+        );
+      }
     }
   }
   for (const object of system.Objects) {
-    if (!isFiniteNumber(object.Orbit.AU) || object.Orbit.AU < 0)
-      fail('B3', `Object ${object.Id} has invalid AU.`);
     if (
       !isFiniteNumber(object.Orbit.AngleDegrees) ||
       object.Orbit.AngleDegrees < 0 ||
@@ -884,20 +890,6 @@ function validateSystem(
   }
 
   for (const object of system.Objects) validateObject(object, objectsById, system, fail);
-  for (const left of directObjects)
-    for (const right of directObjects) {
-      if (
-        left.Kind === 'Planet' &&
-        right.Kind === 'Planet' &&
-        left.InhabitedInfo !== false &&
-        right.InhabitedInfo !== false &&
-        left.Id !== right.Id &&
-        TEMPERATURE_RANK[left.Temperature] > TEMPERATURE_RANK[right.Temperature] &&
-        left.Orbit.AU >= right.Orbit.AU
-      ) {
-        fail('C2', `Hotter direct planet ${left.Id} is not closer than ${right.Id}.`);
-      }
-    }
 }
 
 function validateObject(
@@ -909,7 +901,7 @@ function validateObject(
   const parent =
     object.Orbit.ParentObjectId === null ? undefined : objectsById.get(object.Orbit.ParentObjectId);
   if (object.Kind === 'OtherCelestialObject') {
-    validateOtherObject(object, parent, fail);
+    validateOtherObject(object, parent, effectiveOrbit(system, object.Id)?.temperature, fail);
     return;
   }
   const planet = object;
@@ -926,8 +918,8 @@ function validateObject(
   if (isGasPlanet(planet) && planet.InhabitedInfo !== false)
     fail('D12', `Gas giant ${planet.Id} is inhabited.`);
   if (
-    planet.Temperature === 'Cryogenic' ||
-    planet.Temperature === 'Furance' ||
+    effectiveOrbit(system, planet.Id)?.temperature === 'Cryogenic' ||
+    effectiveOrbit(system, planet.Id)?.temperature === 'Furance' ||
     planet.Atmosphere === 'Vacuum'
   ) {
     if (planet.SurfaceWaterPresent)
@@ -948,10 +940,6 @@ function validateObject(
         fail('B16', `Moon ${planet.Id} has a moon of its own.`);
       if (SIZE_RANK[planet.Size] >= SIZE_RANK[parent.Size])
         fail('B17', `Moon ${planet.Id} is not smaller than parent ${parent.Id}.`);
-      if (planet.Temperature !== parent.Temperature)
-        fail('B19', `Moon ${planet.Id} has a different temperature than parent ${parent.Id}.`);
-      if (planet.Orbit.AU !== parent.Orbit.AU)
-        fail('B20', `Moon ${planet.Id} has a different AU than parent ${parent.Id}.`);
     }
   }
 }
@@ -966,7 +954,13 @@ function validateInhabitedPlanet(
   const [firstTag, secondTag] = inhabited.WorldTags;
   if (firstTag === secondTag)
     fail('2A-13', `Inhabited planet ${planet.Id} has duplicate world tags.`);
-  const totalHab = planetHabitability(planet, STAR_HABITABILITY[system.Star.StarType])!;
+  const temperature = effectiveOrbit(system, planet.Id)?.temperature;
+  if (!temperature) return;
+  const totalHab = planetHabitability(
+    planet,
+    STAR_HABITABILITY[system.Star.StarType],
+    temperature,
+  )!;
   if (totalHab < POPULATION_HAB_REQUIRED[inhabited.Population])
     fail('2A-22a', `Planet ${planet.Id} lacks habitability for its population.`);
   if (totalHab < TECH_HAB_REQUIRED[inhabited.TechLevel])
@@ -975,7 +969,7 @@ function validateInhabitedPlanet(
     fail('2A-22c', `Planet ${planet.Id} lacks habitability for its Terran biosphere.`);
   const environmentalHab = Math.min(
     ATMOSPHERE_HAB[planet.Atmosphere],
-    TEMPERATURE_HAB[planet.Temperature],
+    TEMPERATURE_HAB[temperature],
     TERRAN_BIOSPHERE_HAB[inhabited.TerranBiosphere],
     SIZE_HAB[planet.Size],
     BULK_COMPOSITION_HAB[planet.BulkComposition],
@@ -1057,16 +1051,14 @@ function validateInhabitedPlanet(
 function validateOtherObject(
   object: OtherCelestialObject,
   parent: SystemObject | undefined,
+  temperature: import('./merged_schema').Temperature | undefined,
   fail: (ruleId: string, message: string) => void,
 ): void {
   if (
     (object.ObjectType === 'KuiperBelt' || object.ObjectType === 'GasCloud') &&
-    object.Temperature !== 'Cryogenic'
+    temperature !== 'Cryogenic'
   ) {
-    fail(
-      'F12',
-      `${object.ObjectType} ${object.Id} has incompatible temperature ${object.Temperature}.`,
-    );
+    fail('F12', `${object.ObjectType} ${object.Id} has incompatible temperature ${temperature}.`);
   }
   if (
     (object.ObjectType === 'AsteroidBelt' ||
@@ -1087,13 +1079,10 @@ function validateRoutes(
   fail: (ruleId: string, message: string) => void,
 ): void {
   const portalsById = new Map(sector.RoutePortals.map((portal) => [portal.Id, portal]));
-  const routeIds = new Set(sector.Routes.map((route) => route.Id));
   const ownedPortalIds = new Set<string>();
   const routePairs = new Set<string>();
   const systemPortalAngles = new Map<string, Set<number>>();
   for (const portal of sector.RoutePortals) {
-    if (!routeIds.has(portal.RouteId))
-      fail('G3', `Portal ${portal.Id} references missing route ${portal.RouteId}.`);
     if (!systemsById.has(portal.SystemId))
       fail('G2', `Portal ${portal.Id} references missing system ${portal.SystemId}.`);
     if (
@@ -1117,8 +1106,6 @@ function validateRoutes(
       continue;
     }
     for (const portal of [first, second]) {
-      if (portal.RouteId !== route.Id)
-        fail('G3', `Portal ${portal.Id} does not reciprocally reference route ${route.Id}.`);
       if (ownedPortalIds.has(portal.Id))
         fail('G3', `Portal ${portal.Id} belongs to more than one route.`);
       ownedPortalIds.add(portal.Id);

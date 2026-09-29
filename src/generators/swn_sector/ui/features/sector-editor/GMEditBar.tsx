@@ -5,7 +5,8 @@ import {
   relocatePlayerShip,
   updateObjectScanVisibility,
 } from '../../domain/sector/operations';
-import { findDetails, objectKindLabel } from '../../domain/sector/selectors';
+import { findDetails } from '../../domain/sector/selectors';
+import { projectObjectKind } from '../../../object_kind_projection';
 import type { EditDraft, View } from '../../application/appState';
 import { IconButton } from '../navigation/IconButton';
 import { LayeredVisibilitySymbol } from '../navigation/LayeredVisibilitySymbol';
@@ -131,7 +132,7 @@ export function GMEditBar({
   saveEdit: () => void;
 }) {
   const info = selected ? findDetails(sector, selected) : undefined;
-  const kind = objectKindLabel(sector, selected);
+  const kind = projectObjectKind(sector, selected);
   const move = () => {
     if (!selected || !canMove) return;
     const result = relocatePlayerShip(sector, selected);

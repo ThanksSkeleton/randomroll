@@ -95,7 +95,7 @@ export function generate(
   }
   const shipName = 'Player ship';
   const result: Sector = {
-    SchemaVersion: 'merged-v4',
+    SchemaVersion: 'merged-v5',
     OriginalSeed: seed,
     StartingWorldMode: startingWorldMode,
     SectorName: `Sector ${seed}`,

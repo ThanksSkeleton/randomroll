@@ -1,4 +1,4 @@
-import type { InhabitedInfo, Planet, StarType } from './merged_schema';
+import type { InhabitedInfo, Planet, StarType, Temperature } from './merged_schema';
 
 /** Deterministic interpretations of canonical planet and star facts. */
 export const STAR_HABITABILITY: Readonly<Record<StarType, number>> = {
@@ -31,12 +31,16 @@ export function formatPlanetAu(au: number): string {
   return String(Number(au.toPrecision(3)));
 }
 
-export function planetHabitability(planet: Planet, starHabitability: number): number | null {
+export function planetHabitability(
+  planet: Planet,
+  starHabitability: number,
+  temperature: Temperature,
+): number | null {
   if (planet.InhabitedInfo === false) return null;
   return Math.min(
     starHabitability,
     ATMOSPHERE_HAB[planet.Atmosphere],
-    TEMPERATURE_HAB[planet.Temperature],
+    TEMPERATURE_HAB[temperature],
     TERRAN_BIOSPHERE_HAB[planet.InhabitedInfo.TerranBiosphere],
     SIZE_HAB[planet.Size],
     BULK_COMPOSITION_HAB[planet.BulkComposition],
@@ -63,7 +67,7 @@ export const ATMOSPHERE_HAB: Readonly<Record<Planet['Atmosphere'], number>> = {
   Breathable: 3,
 };
 
-export const TEMPERATURE_HAB: Readonly<Record<Planet['Temperature'], number>> = {
+export const TEMPERATURE_HAB: Readonly<Record<Temperature, number>> = {
   Cryogenic: 0,
   Deepfrozen: 1,
   Polar: 1,

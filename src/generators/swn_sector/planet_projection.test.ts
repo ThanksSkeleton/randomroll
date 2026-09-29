@@ -3,6 +3,7 @@ import { generate } from './generate';
 import { projectPlanet } from './planet_projection';
 import { STAR_HABITABILITY } from './planet_interpretation';
 import { STAR_TABLE } from './generation_rules';
+import { directOrbitAuBand } from './spatial_interpretation';
 
 test('star interpretation agrees with the generation source', () => {
   for (const row of STAR_TABLE) expect(STAR_HABITABILITY[row.Value]).toBe(row.Hab);
@@ -26,7 +27,7 @@ test('projecting a planet is repeatable and leaves the sector unchanged', () => 
 
 test('generated sectors store only canonical planet and star facts', () => {
   const sector = generate('planet-projection-shape');
-  expect(sector.SchemaVersion).toBe('merged-v4');
+  expect(sector.SchemaVersion).toBe('merged-v5');
   for (const system of sector.Systems) {
     expect(system.Star).not.toHaveProperty('HabitabilityRating');
     for (const object of system.Objects) {
@@ -42,7 +43,9 @@ test('generated sectors store only canonical planet and star facts', () => {
 test('projects an uninhabited cold moon with the player-visible host name', () => {
   const sector = generate('planet-projection-moon');
   const system = sector.Systems.find((candidate) =>
-    candidate.Objects.some((object) => object.Kind === 'Planet' && object.Orbit.ParentObjectId === null),
+    candidate.Objects.some(
+      (object) => object.Kind === 'Planet' && object.Orbit.ParentObjectId === null,
+    ),
   );
   const host = system?.Objects.find(
     (object) => object.Kind === 'Planet' && object.Orbit.ParentObjectId === null,
@@ -51,13 +54,15 @@ test('projects an uninhabited cold moon with the player-visible host name', () =
   host.ProceduralName = 'HOST PROCEDURAL';
   host.NiceName = 'HOST NICE';
   host.Visibility.PoliticsScan = false;
+  if (host.Orbit.ParentObjectId !== null) throw new Error('Expected direct orbit');
+  const polarBand = directOrbitAuBand(system.Star.StarType, 'Polar');
+  host.Orbit.AU = (polarBand[0] + polarBand[1]) / 2;
   const moon = {
     ...host,
     Id: 'projection-moon',
     InhabitedInfo: false as const,
-    Orbit: { ...host.Orbit, ParentObjectId: host.Id },
+    Orbit: { AngleDegrees: host.Orbit.AngleDegrees, ParentObjectId: host.Id },
     BulkComposition: 'Water' as const,
-    Temperature: 'Polar' as const,
   };
   system.Objects.push(moon);
 

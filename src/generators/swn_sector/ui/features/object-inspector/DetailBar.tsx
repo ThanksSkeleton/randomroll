@@ -3,14 +3,15 @@ import type { SelectableEntity, Sector } from '../../../merged_schema';
 import {
   findDetails,
   findObject,
-  objectKindLabel,
-  routeSystems,
   systemPoliticalClaimIds,
   type FoundObject,
 } from '../../domain/sector/selectors';
 import type { EditDraft, Preview, EditableDetailField } from '../../application/appState';
-import { formatAu } from '../../formatters';
 import { projectPlanet } from '../../../planet_projection';
+import { projectRoute, owningRoute } from '../../../route_projection';
+import { projectObjectKind, projectOtherObjectTypeLabel } from '../../../object_kind_projection';
+import { projectObjectSpatial } from '../../../object_spatial_projection';
+import { projectSystemSpatial } from '../../../system_spatial_projection';
 import { resolvePortrait } from '../../../portrait_assets';
 import { useState } from 'react';
 import { PolityFlagList } from '../politics/PolityFlag';
@@ -42,37 +43,12 @@ type StockSignals = {
   gm: string;
 };
 
-function hexDistance(
-  first: { Column: number; Row: number },
-  second: { Column: number; Row: number },
-) {
-  const firstQ = first.Column - 1;
-  const secondQ = second.Column - 1;
-  const firstR = first.Row - 1 - Math.floor(firstQ / 2);
-  const secondR = second.Row - 1 - Math.floor(secondQ / 2);
-  const firstX = firstQ;
-  const firstZ = firstR;
-  const firstY = -firstX - firstZ;
-  const secondX = secondQ;
-  const secondZ = secondR;
-  const secondY = -secondX - secondZ;
-  return Math.max(
-    Math.abs(firstX - secondX),
-    Math.abs(firstY - secondY),
-    Math.abs(firstZ - secondZ),
-  );
-}
-
 function associatedPoiCount(sector: Sector, systemId: string | undefined, objectId: string) {
   return (
     sector.Systems.find((system) => system.Id === systemId)?.PointsOfInterest.filter(
       (poi) => poi.ParentObjectId === objectId,
     ).length ?? 0
   );
-}
-
-function objectTypeLabel(objectType: string) {
-  return objectType.replace(/([a-z])([A-Z])/g, '$1 $2');
 }
 
 function polityClaims(sector: Sector, polityIds: readonly string[]) {
@@ -95,7 +71,7 @@ function stockSignals(found: FoundObject, sector: Sector, preview: Preview): Sto
   }
   if (found.kind === 'OtherCelestialObject') {
     return {
-      basic: `${formatAu(found.object.Orbit.AU)} AU - ${objectTypeLabel(found.object.ObjectType)}`,
+      basic: projectObjectSpatial(sector, found.object.Id)?.inspectorBasic ?? '-',
       detailed: `Signals Detected: ${associatedPoiCount(sector, found.containingSystem?.Id, found.object.Id)}`,
       politics: polityClaims(sector, found.object.ClaimedByPolityIds),
       deep: '-',
@@ -105,7 +81,7 @@ function stockSignals(found: FoundObject, sector: Sector, preview: Preview): Sto
   if (found.kind === 'System') {
     const claimIds = politicalClaimIds(found, sector) ?? [];
     return {
-      basic: `${found.object.Star.StarType} Type`,
+      basic: projectSystemSpatial(sector, found.object.Id)?.inspectorBasic ?? '-',
       detailed: '-',
       politics: polityClaims(sector, claimIds),
       deep: '-',
@@ -113,14 +89,8 @@ function stockSignals(found: FoundObject, sector: Sector, preview: Preview): Sto
     };
   }
   if (found.kind === 'Route') {
-    const systems = routeSystems(sector, found.object);
-    const showNiceNames = preview === 'gm' || found.object.Visibility.PoliticsScan;
-    const routeSystemName = (system: NonNullable<typeof systems>[number]) =>
-      showNiceNames ? system.NiceName : system.ProceduralName;
     return {
-      basic: systems
-        ? `${routeSystemName(systems[0])} <=> ${routeSystemName(systems[1])}\nSpike Length: ${hexDistance(systems[0].HexLocation, systems[1].HexLocation)}`
-        : '-',
+      basic: projectRoute(sector, found.object.Id, preview)?.inspectorBasic ?? '-',
       detailed: '-',
       politics: '-',
       deep: '-',
@@ -207,10 +177,10 @@ export function DetailBar({
 }) {
   const info = selectedId ? findDetails(sector, selectedId) : undefined;
   const found = selectedId ? findObject(sector, selectedId) : undefined;
-  const kind = objectKindLabel(sector, selectedId);
+  const kind = projectObjectKind(sector, selectedId);
   const portraitId =
     found?.kind === 'RoutePortal'
-      ? sector.Routes.find((route) => route.Id === found.object.RouteId)?.PortraitAssetId
+      ? owningRoute(sector, found.object.Id)?.PortraitAssetId
       : found?.kind === 'System'
         ? found.object.Star.PortraitAssetId
         : found?.object.PortraitAssetId;
@@ -236,7 +206,7 @@ export function DetailBar({
           : found?.kind === 'HabitablePointOfInterest'
             ? `${found.object.HPOIType} habitable point of interest`
             : found?.kind === 'OtherCelestialObject'
-              ? objectTypeLabel(found.object.ObjectType)
+              ? projectOtherObjectTypeLabel(found.object.ObjectType)
               : (found?.kind ?? 'object');
   return (
     <aside className="detail-bar">

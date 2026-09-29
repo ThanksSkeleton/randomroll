@@ -8,6 +8,7 @@ import {
   STAR_HABITABILITY,
   TECH_LEVEL,
 } from './planet_interpretation';
+import { projectObjectSpatial } from './object_spatial_projection';
 
 export type PlanetStockText = {
   basic: string;
@@ -72,9 +73,11 @@ export function projectPlanet(
     (object): object is Planet => object.Kind === 'Planet' && object.Id === planetId,
   );
   if (!system || !planet) return undefined;
+  const spatial = projectObjectSpatial(sector, planetId);
+  if (!spatial) return undefined;
 
   const starHabitability = STAR_HABITABILITY[system.Star.StarType];
-  const habitabilityRating = planetHabitability(planet, starHabitability);
+  const habitabilityRating = planetHabitability(planet, starHabitability, spatial.temperature);
   const inhabited = planet.InhabitedInfo;
   const populationTier = inhabited === false ? null : POPULATION_TIER[inhabited.Population];
   const technologyRating = inhabited === false ? null : TECH_LEVEL[inhabited.TechLevel];
@@ -82,8 +85,8 @@ export function projectPlanet(
     ? visibleName(sector, planet.Orbit.ParentObjectId, context.preview)
     : undefined;
   const moonFact = hostName ? `\nMoon of ${hostName}` : '';
-  const displayedComposition = displayBulkComposition(planet.BulkComposition, planet.Temperature);
-  const basic = `${formatPlanetAu(planet.Orbit.AU)} AU - ${planet.Temperature} - ${planet.Size}-Class${moonFact}\nAtmosphere: ${planet.Atmosphere} Composition: ${displayedComposition}`;
+  const displayedComposition = displayBulkComposition(planet.BulkComposition, spatial.temperature);
+  const basic = `${formatPlanetAu(spatial.effectiveAu)} AU - ${spatial.temperature} - ${planet.Size}-Class${moonFact}\nAtmosphere: ${planet.Atmosphere} Composition: ${displayedComposition}`;
   const claim = claimText(sector, planet);
   const signalsDetected = system.PointsOfInterest.filter(
     (poi) => poi.ParentObjectId === planet.Id,

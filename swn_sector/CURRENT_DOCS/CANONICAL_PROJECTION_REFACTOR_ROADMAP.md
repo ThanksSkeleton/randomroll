@@ -6,8 +6,9 @@ This document covers the **whole SWN_SECTOR architecture refactor** described
 in [Canonical Generation and Projection Architecture](../../temp/canonical-generation-projection-architecture.md)
 and its [toy example](../../temp/canonical-generation-projection-toy-example.md).
 It sketches the smaller implementation specs needed to get there. The
-[first planet slice](CANONICAL_PROJECTION_REFACTOR_SPEC.md) is already specified
-in detail; the other sub-specs below are proposed scopes, not completed specs.
+[first planet slice](CANONICAL_PROJECTION_REFACTOR_SPEC.md) and
+[part 2](CANONICAL_PROJECTION_REFACTOR_PART_2_SPEC.md) are implemented;
+the remaining sub-specs below are proposed scopes, not completed specs.
 
 This roadmap is about data ownership and dependency direction. It does not
 prescribe a folder reorganization.
@@ -52,9 +53,9 @@ text for the symbolic view and planet inspector. Then remove the demonstrably
 derived `TotalHab`, `TidallyLocked`, and `HabitabilityRating` fields from the
 canonical schema. This is a vertical slice, not a claim of whole-app compliance.
 
-### 2. Stars, systems, spatial facts, and routes — spec to write
+### 2. Stars, systems, spatial facts, and routes — implemented
 
-Project star presentation, orbital and system boundaries, temperature bands,
+Implement [part 2](CANONICAL_PROJECTION_REFACTOR_PART_2_SPEC.md): project star presentation, orbital and system boundaries, temperature bands,
 route lengths, endpoint descriptions, object-kind labels, and system-level
 summaries. Cover the hex map, top-down and symbolic system views, and route
 inspector. Audit stored route and spatial fields one by one: keep random

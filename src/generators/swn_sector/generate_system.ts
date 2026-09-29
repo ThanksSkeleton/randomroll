@@ -1,13 +1,11 @@
+import type { HexLocation, PointOfInterest, PointOfInterestType, StarType } from './merged_schema';
 import type {
-  HexLocation,
-  OtherCelestialObject,
-  PointOfInterest,
-  PointOfInterestType,
-  Planet,
-  StarSystem,
-  StarType,
-  SystemObject,
-} from './merged_schema';
+  GeneratedOtherCelestialObject as OtherCelestialObject,
+  GeneratedPlanet as Planet,
+  GeneratedStarSystem as StarSystem,
+  GeneratedSystemObject as SystemObject,
+} from './generation_model';
+import { canonicalSystem } from './generation_model';
 import {
   choose,
   chooseWeighted,
@@ -511,7 +509,9 @@ export function generateSystem(options: GenerateSystemOptions): StarSystem {
 }
 
 /** Builds the complete system output, including POIs, under one retry budget. */
-export function generateCompleteSystem(options: GenerateSystemOptions): StarSystem {
+export function generateCompleteSystem(
+  options: GenerateSystemOptions,
+): import('./merged_schema').StarSystem {
   const system = retrySystemGeneration(options.seed, options.entityPath, (attemptSeed) => {
     const attemptOptions = { ...options, seed: attemptSeed };
     return populatePointsOfInterest(
@@ -520,7 +520,7 @@ export function generateCompleteSystem(options: GenerateSystemOptions): StarSyst
       generateSystemOnce(attemptOptions),
     );
   });
-  return applyGeneratedNames(options.seed, options.entityPath, system);
+  return canonicalSystem(applyGeneratedNames(options.seed, options.entityPath, system));
 }
 
 function rollPoiDetail(

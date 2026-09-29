@@ -96,7 +96,10 @@ export function validateSector(sector: Sector): string[] {
   }
   const portalIds = new Set(sector.RoutePortals.map((portal) => portal.Id));
   for (const portal of sector.RoutePortals)
-    if (!systemIds.has(portal.SystemId) || !portal.RouteId)
+    if (
+      !systemIds.has(portal.SystemId) ||
+      sector.Routes.filter((route) => route.PortalIds.includes(portal.Id)).length !== 1
+    )
       errors.push(`Portal ${portal.Id} has invalid references.`);
   for (const route of sector.Routes) {
     if (route.PortalIds.some((id) => !portalIds.has(id)))

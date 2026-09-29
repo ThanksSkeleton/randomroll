@@ -4,10 +4,10 @@ import {
   findContainingSystem,
   findDetails,
   isVisibleToPlayer,
-  routeSystems,
   systemPoliticalClaimIds,
 } from '../../domain/sector/selectors';
-import { starPresentationClass, starPresentationStyle } from '../../../star_presentation';
+import { projectStar } from '../../../star_projection';
+import { projectRoute } from '../../../route_projection';
 import { StarGlyph } from '../system-viewer/StarGlyph';
 import { polityFlagColorValue } from '../politics/PolityFlag';
 
@@ -105,13 +105,12 @@ export function HexMap({
       >
         <svg className="routes" viewBox={`0 0 ${mapWidth} ${mapHeight}`}>
           {sector.Routes.filter((r) => visible(r.Id, sector, preview)).map((route) => {
-            const endpoints = routeSystems(sector, route);
-            const a = endpoints?.[0],
-              b = endpoints?.[1];
-            if (!a || !b || !visible(a.Id, sector, preview) || !visible(b.Id, sector, preview))
+            const display = projectRoute(sector, route.Id, preview);
+            if (!display || !display.endpointSystemIds.every((id) => visible(id, sector, preview)))
               return null;
-            const p1 = position(a.HexLocation.Column, a.HexLocation.Row),
-              p2 = position(b.HexLocation.Column, b.HexLocation.Row);
+            const [a, b] = display.endpointHexes;
+            const p1 = position(a.Column, a.Row),
+              p2 = position(b.Column, b.Row);
             return (
               <line
                 key={route.Id}
@@ -170,6 +169,7 @@ export function HexMap({
         })}
         {sector.Systems.filter((s) => visible(s.Id, sector, preview)).map((system) => {
           const p = position(system.HexLocation.Column, system.HexLocation.Row);
+          const starDisplay = projectStar(sector, system.Id)!;
           const label = name(system.Id, sector, preview) ?? 'System';
           const shipHere =
             findContainingSystem(sector, sector.PlayerShip.CurrentLocationId)?.Id === system.Id &&
@@ -178,16 +178,16 @@ export function HexMap({
             <div
               className="system-pin"
               key={system.Id}
-              style={{ ...p, ...starPresentationStyle(system.Star.StarType) }}
+              style={{ ...p, ...starDisplay.styleTokens }}
             >
               <Selectable
                 id={system.Id}
                 selected={selected}
                 onSelect={select}
                 label={`System ${label}`}
-                className={`star-pin ${starPresentationClass(system.Star.StarType)}`}
+                className={`star-pin ${starDisplay.className}`}
               >
-                <StarGlyph starType={system.Star.StarType} />
+                <StarGlyph recipe={starDisplay.recipe} />
               </Selectable>
               <label className="system-name-label system-map-caption">
                 <strong>{label}</strong>

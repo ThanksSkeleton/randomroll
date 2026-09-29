@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { checkAllInvariants } from './invariants';
 import type { OtherCelestialObject, Planet, Sector, SelectableEntity } from './merged_schema';
+import { directOrbitAuBand } from './spatial_interpretation';
 
 function entity(id: string): SelectableEntity {
   return {
@@ -28,13 +29,15 @@ function planet(id: string, parentObjectId: string | null, size: Planet['Size'])
   return {
     ...entity(id),
     Kind: 'Planet',
-    Orbit: { AU: parentObjectId === null ? 1 : 1, AngleDegrees: 0, ParentObjectId: parentObjectId },
+    Orbit:
+      parentObjectId === null
+        ? { AU: 1, AngleDegrees: 0, ParentObjectId: null }
+        : { AngleDegrees: 0, ParentObjectId: parentObjectId },
     Size: size,
     BulkComposition:
       size === 'Jupiter' ? 'Jovian Gas' : size === 'Neptune' ? 'Neptunian Gas' : 'Silicon',
     SurfaceWaterPresent: false,
     Atmosphere: 'Vacuum',
-    Temperature: 'Cryogenic',
     NativeBiosphere: 'None',
     ClaimedByPolityIds: [],
     InhabitedInfo: false,
@@ -47,18 +50,16 @@ function station(id: string, parentObjectId: string | null): OtherCelestialObjec
     Kind: 'OtherCelestialObject',
     ObjectType: 'IndependentStation',
     ClaimedByPolityIds: [],
-    Temperature: 'Temperate',
-    Orbit: {
-      AU: parentObjectId === null ? 1.4 : 1,
-      AngleDegrees: 45,
-      ParentObjectId: parentObjectId,
-    },
+    Orbit:
+      parentObjectId === null
+        ? { AU: 1.4, AngleDegrees: 45, ParentObjectId: null }
+        : { AngleDegrees: 45, ParentObjectId: parentObjectId },
   };
 }
 
 function sector(objects: Array<Planet | OtherCelestialObject>): Sector {
   return {
-    SchemaVersion: 'merged-v4',
+    SchemaVersion: 'merged-v5',
     OriginalSeed: 'test',
     StartingWorldMode: 'UNRESTRICTED',
     StartingWorldId: null,
@@ -96,7 +97,6 @@ describe('merged-sector independent stations', () => {
       Kind: 'OtherCelestialObject',
       ObjectType: 'AsteroidBelt',
       ClaimedByPolityIds: [],
-      Temperature: 'Temperate',
       Orbit: { AU: 1, AngleDegrees: 0, ParentObjectId: null },
     };
     const result = checkAllInvariants(sector([belt, station('station', belt.Id)]));
@@ -166,39 +166,16 @@ describe('merged-sector independent stations', () => {
       Kind: 'OtherCelestialObject',
       ObjectType: 'KuiperBelt',
       ClaimedByPolityIds: [],
-      Temperature: 'Temperate',
-      Orbit: { AU: 2, AngleDegrees: 0, ParentObjectId: null },
+      Orbit: { AU: 1.2, AngleDegrees: 0, ParentObjectId: null },
     };
 
-    expect(
-      checkAllInvariants(sector([planet('planet', null, 'Earth'), kuiper])).some(
-        (violation) => violation.RuleId === 'F12',
-      ),
-    ).toBe(true);
-  });
-
-  it('uses other-object temperature in direct-orbit ordering', () => {
-    const asteroid: OtherCelestialObject = {
-      ...entity('asteroid'),
-      Kind: 'OtherCelestialObject',
-      ObjectType: 'AsteroidBelt',
-      ClaimedByPolityIds: [],
-      Temperature: 'Furance',
-      Orbit: { AU: 2, AngleDegrees: 0, ParentObjectId: null },
-    };
-    const coldPlanet = planet('planet', null, 'Earth');
-    coldPlanet.Temperature = 'Cryogenic';
-
-    expect(
-      checkAllInvariants(sector([asteroid, coldPlanet])).some(
-        (violation) => violation.RuleId === 'F12',
-      ),
-    ).toBe(true);
+    const violations = checkAllInvariants(sector([planet('planet', null, 'Earth'), kuiper]));
+    expect(violations.some((violation) => violation.RuleId === 'F12')).toBe(true);
   });
 
   it('treats temperature-band endpoints as exclusive', () => {
     const volcanic = planet('planet', null, 'Earth');
-    volcanic.Temperature = 'Furance';
+    if (volcanic.Orbit.ParentObjectId !== null) throw new Error('Expected direct orbit');
     volcanic.Orbit.AU = 0.086; // G-type FromStar boundary
 
     expect(
@@ -228,7 +205,9 @@ describe('merged-sector independent stations', () => {
 
   it('rejects surface water on a Desert World', () => {
     const world = planet('world', null, 'Earth');
-    world.Temperature = 'Temperate';
+    if (world.Orbit.ParentObjectId !== null) throw new Error('Expected direct orbit');
+    const band = directOrbitAuBand('G-type', 'Temperate');
+    world.Orbit.AU = (band[0] + band[1]) / 2;
     world.Atmosphere = 'Breathable';
     world.SurfaceWaterPresent = true;
     world.InhabitedInfo = {
@@ -249,7 +228,9 @@ describe('merged-sector independent stations', () => {
 
   it('includes star habitability when checking physical constraints', () => {
     const world = planet('world', null, 'Earth');
-    world.Temperature = 'Temperate';
+    if (world.Orbit.ParentObjectId !== null) throw new Error('Expected direct orbit');
+    const band = directOrbitAuBand('G-type', 'Temperate');
+    world.Orbit.AU = (band[0] + band[1]) / 2;
     world.Atmosphere = 'Breathable';
     world.InhabitedInfo = {
       WorldTags: ['Alien Ruins', 'Anarchists'],

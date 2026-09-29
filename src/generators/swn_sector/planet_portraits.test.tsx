@@ -193,14 +193,18 @@ describe('sector portrait assets', () => {
   });
 
   it('shows a route portrait when inspecting either its route or portal at basic visibility', () => {
-    const routePortal = sector.RoutePortals.find((portal) => portal.RouteId === route.Id)!;
+    const routePortal = sector.RoutePortals.find((portal) => route.PortalIds.includes(portal.Id))!;
     const visibleSector = {
       ...sector,
       Routes: sector.Routes.map((item) =>
-        item.Id === route.Id ? { ...item, Visibility: { ...item.Visibility, BasicScan: true } } : item,
+        item.Id === route.Id
+          ? { ...item, Visibility: { ...item.Visibility, BasicScan: true } }
+          : item,
       ),
       RoutePortals: sector.RoutePortals.map((item) =>
-        item.Id === routePortal.Id ? { ...item, Visibility: { ...item.Visibility, BasicScan: true } } : item,
+        item.Id === routePortal.Id
+          ? { ...item, Visibility: { ...item.Visibility, BasicScan: true } }
+          : item,
       ),
     };
     const { container, rerender } = render(

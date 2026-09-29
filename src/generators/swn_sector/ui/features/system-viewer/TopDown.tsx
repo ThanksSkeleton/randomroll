@@ -2,17 +2,18 @@ import { useEffect, useRef, useState } from 'react';
 import { hpoiVisible } from '../../../culture';
 import type { Preview } from '../../application/appState';
 import type { OtherCelestialObject, Sector, StarSystem } from '../../../merged_schema';
-import { normalTemperatureAuBand, systemEdgeAu } from '../../../generation_rules';
+import { projectSystemSpatial } from '../../../system_spatial_projection';
 import {
   areAdjacentHexes,
   findDetails,
   isVisibleToPlayer,
   planets,
-  routeHasEndpointInSystem,
-  routeSystems,
 } from '../../domain/sector/selectors';
-import { planetColorClass } from '../../../planet_presentation';
-import { starPresentationClass, starPresentationStyle } from '../../../star_presentation';
+import { projectPlanet } from '../../../planet_projection';
+import { projectStar } from '../../../star_projection';
+import { projectRoute } from '../../../route_projection';
+import { projectObjectSpatial } from '../../../object_spatial_projection';
+import { projectOtherObjectGlyphClass } from '../../../object_kind_projection';
 import { StarGlyph } from './StarGlyph';
 import { PolityFlagList } from '../politics/PolityFlag';
 
@@ -62,17 +63,6 @@ function displayName(info: ReturnType<typeof findDetails>, preview: Preview) {
     preview === 'player' && !info.Visibility.PoliticsScan ? info.ProceduralName : info.NiceName;
   return preferredName.trim() || info.ProceduralName;
 }
-function routeDestinationName(
-  destination: StarSystem,
-  route: Sector['Routes'][number],
-  preview: Preview,
-) {
-  const preferredName =
-    preview === 'gm' || route.Visibility.PoliticsScan
-      ? destination.NiceName
-      : destination.ProceduralName;
-  return preferredName.trim() || destination.ProceduralName;
-}
 function hexMapPosition(x: number, y: number) {
   return { left: 100 + (x - 1) * 84, top: 55 + (y - 1) * 98 + ((x - 1) % 2) * 49 };
 }
@@ -114,7 +104,7 @@ function Selectable({
 }
 
 function OtherObjectGlyph({ object }: { object: OtherCelestialObject }) {
-  const glyphClass = `other-object-glyph td-other-object-glyph other-object-${object.ObjectType.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase()}`;
+  const glyphClass = `other-object-glyph td-other-object-glyph ${projectOtherObjectGlyphClass(object.ObjectType)}`;
   return (
     <span className={glyphClass} aria-hidden="true">
       {(object.ObjectType === 'AsteroidBelt' || object.ObjectType === 'KuiperBelt') &&
@@ -140,6 +130,7 @@ export function TopDown({
   showTemperatureOverlay: boolean;
   showPolityOverlay?: boolean;
 }) {
+  const spatialAu = (id: string) => projectObjectSpatial(sector, id)!.effectiveAu;
   const visibleDirectObjects = system.Objects.filter(
     (object) => !object.Orbit.ParentObjectId && visible(object.Id, sector, preview),
   );
@@ -158,13 +149,13 @@ export function TopDown({
   const hexHeight = (hexWidth * 98) / 112;
   const systemSize = mapSize * BAKED_TOP_DOWN.systemDetailScale;
   const spikeBoundaryRadius = (systemSize / 2) * TOP_DOWN_BOUNDARY_FILL;
-  const pixelsPerAu = spikeBoundaryRadius / systemEdgeAu(system.Star.StarType);
-  const [normalTemperatureInnerAu, normalTemperatureOuterAu] = normalTemperatureAuBand(
-    system.Star.StarType,
-  );
+  const spatial = projectSystemSpatial(sector, system.Id)!;
+  const starDisplay = projectStar(sector, system.Id)!;
+  const pixelsPerAu = spikeBoundaryRadius / spatial.systemEdgeAu;
+  const [normalTemperatureInnerAu, normalTemperatureOuterAu] = spatial.normalTemperatureAuBand;
   const normalTemperatureInnerRadius = normalTemperatureInnerAu * pixelsPerAu;
   const normalTemperatureOuterRadius = normalTemperatureOuterAu * pixelsPerAu;
-  const isRemnantStar = normalTemperatureInnerAu === normalTemperatureOuterAu;
+  const isRemnantStar = spatial.normalTemperatureBandEmpty;
   const topDownStyle = {
     '--td-route-width': `${BAKED_TOP_DOWN.routeWidth}px`,
     '--td-route-length': `${BAKED_TOP_DOWN.routeLength}px`,
@@ -181,9 +172,11 @@ export function TopDown({
   const orbitDashArray = `${(orbitDashPeriod * BAKED_TOP_DOWN.orbitDutyCycle) / 100} ${(orbitDashPeriod * (100 - BAKED_TOP_DOWN.orbitDutyCycle)) / 100}`;
   const routes = sector.Routes.flatMap((route) => {
     if (!visible(route.Id, sector, preview)) return [];
-    if (!routeHasEndpointInSystem(sector, route, system.Id)) return [];
-    const destination = routeSystems(sector, route)?.find(
-      (candidate) => candidate.Id !== system.Id,
+    const projected = projectRoute(sector, route.Id, preview);
+    const currentIndex = projected?.endpointSystemIds.indexOf(system.Id) ?? -1;
+    if (!projected || currentIndex < 0) return [];
+    const destination = sector.Systems.find(
+      (candidate) => candidate.Id === projected.endpointSystemIds[1 - currentIndex],
     );
     if (!destination || !visible(destination.Id, sector, preview)) return [];
     const from = hexMapPosition(system.HexLocation.Column, system.HexLocation.Row);
@@ -191,7 +184,7 @@ export function TopDown({
     return [
       {
         route,
-        destination,
+        destinationName: projected.topDownDestinations[1 - currentIndex],
         angle: (Math.atan2(to.top - from.top, to.left - from.left) * 180) / Math.PI,
       },
     ];
@@ -274,7 +267,7 @@ export function TopDown({
           {visibleOtherObjects
             .filter((object) => object.ObjectType === 'GasCloud')
             .map((object) => {
-              const innerRadius = object.Orbit.AU * pixelsPerAu;
+              const innerRadius = spatialAu(object.Id) * pixelsPerAu;
               const shellCenterX = shellSize.width / 2;
               const shellCenterY = shellSize.height / 2;
               const hex = hexPoints({ left: shellCenterX, top: shellCenterY });
@@ -417,9 +410,8 @@ export function TopDown({
               )}
             </svg>
           )}
-          {routes.map(({ route, destination, angle }) => {
+          {routes.map(({ route, destinationName, angle }) => {
             const routePosition = pos(angle, spikeBoundaryRadius);
-            const destinationName = routeDestinationName(destination, route, preview);
             return (
               <div key={route.Id} className="td-route" style={routePosition}>
                 <Selectable
@@ -443,7 +435,7 @@ export function TopDown({
                 object.ObjectType === 'GasCloud')
             )
               return null;
-            const orbitRadius = object.Orbit.AU * pixelsPerAu;
+            const orbitRadius = spatialAu(object.Id) * pixelsPerAu;
             return (
               <svg
                 key={`orbit-${object.Id}`}
@@ -475,13 +467,13 @@ export function TopDown({
             )
             // Paint outer bands first so an inner belt remains the topmost hit target
             // wherever their cosmetic widths overlap.
-            .sort((left, right) => right.Orbit.AU - left.Orbit.AU)
+            .sort((left, right) => spatialAu(right.Id) - spatialAu(left.Id))
             .map((object) => {
               const settings =
                 object.ObjectType === 'AsteroidBelt'
                   ? BELT_APPEARANCE.asteroid
                   : BELT_APPEARANCE.kuiper;
-              const radius = object.Orbit.AU * pixelsPerAu;
+              const radius = spatialAu(object.Id) * pixelsPerAu;
               const outerRadius = radius + settings.widthPx / 2;
               const innerRadius = Math.max(0, radius - settings.widthPx / 2);
               const diameter = outerRadius * 2;
@@ -585,10 +577,10 @@ export function TopDown({
               selected={selected}
               onSelect={select}
               label={`System ${displayName(details(system.Id, sector), preview) ?? 'System'}`}
-              className={`td-star-button ${starPresentationClass(system.Star.StarType)}`}
-              style={starPresentationStyle(system.Star.StarType)}
+              className={`td-star-button ${starDisplay.className}`}
+              style={starDisplay.styleTokens}
             >
-              <StarGlyph starType={system.Star.StarType} />
+              <StarGlyph recipe={starDisplay.recipe} />
             </Selectable>
             {objectPois(system.Star.Id).length > 0 && (
               <div className="topdown-poi-list">
@@ -636,7 +628,7 @@ export function TopDown({
             );
           })}
           {visiblePlanets.map((p) => {
-            const pp = pos(p.Orbit.AngleDegrees, p.Orbit.AU * pixelsPerAu);
+            const pp = pos(p.Orbit.AngleDegrees, spatialAu(p.Id) * pixelsPerAu);
             const planetName = displayName(details(p.Id, sector), preview);
             const moons = planets(system).filter(
               (m) => m.Orbit.ParentObjectId === p.Id && visible(m.Id, sector, preview),
@@ -651,7 +643,9 @@ export function TopDown({
                     onSelect={select}
                     label={planetName ?? 'Planet'}
                   >
-                    <span className={`td-planet ${planetColorClass(p)}`} />
+                    <span
+                      className={`td-planet ${projectPlanet(sector, p.Id, { preview })!.colorClass}`}
+                    />
                   </Selectable>
                   <label className="topdown-planet-caption">
                     {moons.length === 0 && <strong>{planetName}</strong>}
@@ -701,7 +695,7 @@ export function TopDown({
                         onSelect={select}
                         label={displayName(details(m.Id, sector), preview) ?? 'Moon'}
                       >
-                        <span className={planetColorClass(m)} />
+                        <span className={projectPlanet(sector, m.Id, { preview })!.colorClass} />
                       </Selectable>
                       {sector.PlayerShip.CurrentLocationId === m.Id &&
                         visible(sector.PlayerShip.Id, sector, preview) && (
@@ -725,7 +719,7 @@ export function TopDown({
             );
           })}
           {visibleOtherObjects.map((object) => {
-            const pp = pos(object.Orbit.AngleDegrees, object.Orbit.AU * pixelsPerAu);
+            const pp = pos(object.Orbit.AngleDegrees, spatialAu(object.Id) * pixelsPerAu);
             const objectName = displayName(details(object.Id, sector), preview);
             const beltPoiHost =
               object.ObjectType === 'AsteroidBelt' || object.ObjectType === 'KuiperBelt';
@@ -772,7 +766,10 @@ export function TopDown({
                 )}
                 {radialPoiHost &&
                   objectPois(object.Id).map((poi) => {
-                    const absolutePosition = pos(poi.AngleDegrees, object.Orbit.AU * pixelsPerAu);
+                    const absolutePosition = pos(
+                      poi.AngleDegrees,
+                      spatialAu(object.Id) * pixelsPerAu,
+                    );
                     const poiPosition = {
                       left: absolutePosition.left - pp.left,
                       top: absolutePosition.top - pp.top,

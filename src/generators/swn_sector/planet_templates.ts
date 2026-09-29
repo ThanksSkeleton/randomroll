@@ -1,10 +1,9 @@
+import type { OtherCelestialObjectType, StarType, Temperature } from './merged_schema';
 import type {
-  Orbit,
-  OtherCelestialObject,
-  OtherCelestialObjectType,
-  Planet,
-  StarType,
-} from './merged_schema';
+  GeneratedOrbit as Orbit,
+  GeneratedPlanet as Planet,
+  GeneratedOtherCelestialObject as OtherCelestialObject,
+} from './generation_model';
 import { choose, deterministicId, randomFor } from './generation_random';
 import { directOrbitTemperatures } from './generation_rules';
 import { assignPlanetPortraitId, planetPortraitCategory } from './planet_portraits';
@@ -28,7 +27,7 @@ export type TemplatePlanetOptions = {
   orbit: Orbit;
   template: ExtraPlanetTemplate;
   /** Used by callers that will derive temperature after choosing AU. */
-  temperature?: Planet['Temperature'];
+  temperature?: Temperature;
 };
 
 export type OtherCelestialObjectTemplate = Extract<
@@ -176,7 +175,7 @@ export function generateTemplateOtherCelestialObject(options: {
   orbit: Orbit;
   template: OtherCelestialObjectTemplate;
   /** Used by callers that will derive temperature after choosing AU. */
-  temperature?: Planet['Temperature'];
+  temperature?: Temperature;
 }): OtherCelestialObject {
   const allowedTemperatures = directOrbitTemperatures(options.starType).filter((temperature) =>
     options.template === 'AsteroidBelt'

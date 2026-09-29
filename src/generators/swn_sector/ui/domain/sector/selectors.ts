@@ -155,18 +155,6 @@ export function isVisibleToPlayer(sector: Sector, id: Guid): boolean {
   const visibility = objectDetails(sector, id)?.Visibility;
   return visibility ? hasAnyScan(visibility) : false;
 }
-export function objectKindLabel(sector: Sector, id: Guid | null): string {
-  if (!id) return '';
-  const found = findObject(sector, id);
-  if (!found) return '';
-  if (found.kind === 'PlayerShip') return 'PLAYER SHIP';
-  if (found.kind === 'PointOfInterest') return 'POINT OF INTEREST';
-  if (found.kind === 'HabitablePointOfInterest') return found.object.HPOIType.toUpperCase();
-  if (found.kind === 'RoutePortal') return 'ROUTE PORTAL';
-  if (found.kind === 'Planet')
-    return (found.object as Planet).Orbit.ParentObjectId ? 'MOON' : 'WORLD';
-  return found.kind.toUpperCase();
-}
 export function resolveTravelDestination(sector: Sector, routeId: Guid, contextSystemId: Guid) {
   const route = sector.Routes.find((candidate) => candidate.Id === routeId);
   const systems = route && routeSystems(sector, route);

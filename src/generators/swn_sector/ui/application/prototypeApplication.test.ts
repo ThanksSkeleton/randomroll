@@ -22,7 +22,7 @@ describe('PrototypeApplication', () => {
 
     expect(generated).toEqual(generate('DELTA-7734'));
     expect(generated.OriginalSeed).toBe('DELTA-7734');
-    expect(generated.Systems[0].Objects[0].Temperature).toBeDefined();
+    expect(generated.Systems[0].Objects[0]).not.toHaveProperty('Temperature');
     expect(generated.RoutePortals.length).toBeGreaterThan(0);
     expect(validateSector(generated)).toEqual([]);
     expect(application.listSectors()).toHaveLength(3);

@@ -1,4 +1,3 @@
-import type { CSSProperties } from 'react';
 import type { StarType } from './merged_schema';
 
 export type StarColor =
@@ -112,7 +111,7 @@ export function starPresentationClass(starType: StarType): string {
   return `star-symbol star-color-${presentation.color} star-recipe-${presentation.recipe}`;
 }
 
-export function starPresentationStyle(starType: StarType): CSSProperties {
+export function starPresentationStyle(starType: StarType): Record<string, string> {
   const presentation = starPresentation(starType);
   return {
     '--star-size-scale': String(presentation.size / GIANT_STAR_SIZE),
@@ -122,5 +121,5 @@ export function starPresentationStyle(starType: StarType): CSSProperties {
     '--star-rim': presentation.rim,
     '--star-spike-scale': String(presentation.spikeScale ?? 0.54),
     '--star-spike-width': `${126 * (presentation.spikeScale ?? 0.54)}%`,
-  } as CSSProperties;
+  };
 }

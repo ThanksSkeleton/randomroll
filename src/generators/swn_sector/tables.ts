@@ -1,22 +1,4 @@
-import type { InhabitedInfo, Planet, StarType } from './merged_schema';
-
-export const TEMPERATURE_RANK: Readonly<Record<Planet['Temperature'], number>> = {
-  Cryogenic: 1,
-  Deepfrozen: 2,
-  Polar: 3,
-  Subarctic: 4,
-  Boreal: 5,
-  Alpine: 6,
-  'Temperate (chilly)': 7,
-  Temperate: 8,
-  'Temperate (warm)': 9,
-  Mediterranean: 10,
-  Subtropical: 11,
-  Equatorial: 12,
-  Infernal: 13,
-  Scorching: 14,
-  Furance: 15,
-};
+import type { InhabitedInfo, Planet } from './merged_schema';
 
 export const SIZE_RANK: Readonly<Record<Planet['Size'], number>> = {
   Luna: 1,
@@ -91,80 +73,6 @@ export const POPULATION_RANGE: Readonly<
   'Billions of inhabitants': [95, 100],
 };
 
-export type StarAuWidths = {
-  FromStar: number;
-  ExtremeHotRange: number;
-  ExtremeColdRange: number;
-  NormalRange: number;
-  ToSystemEdge: number;
-};
-
-export const STAR_AU_WIDTHS: Readonly<Record<StarType, StarAuWidths>> = {
-  'A-type': {
-    FromStar: 0.273,
-    ExtremeHotRange: 2.73,
-    ExtremeColdRange: 8.19,
-    NormalRange: 2.28,
-    ToSystemEdge: 2.02,
-  },
-  'F-type': {
-    FromStar: 0.111,
-    ExtremeHotRange: 1.11,
-    ExtremeColdRange: 3.34,
-    NormalRange: 0.928,
-    ToSystemEdge: 0.823,
-  },
-  'G-type': {
-    FromStar: 0.086,
-    ExtremeHotRange: 0.864,
-    ExtremeColdRange: 2.59,
-    NormalRange: 0.72,
-    ToSystemEdge: 0.639,
-  },
-  'K-type': {
-    FromStar: 0.036,
-    ExtremeHotRange: 0.36,
-    ExtremeColdRange: 1.08,
-    NormalRange: 0.3,
-    ToSystemEdge: 0.266,
-  },
-  'M-type': {
-    FromStar: 0.0227,
-    ExtremeHotRange: 0.227,
-    ExtremeColdRange: 0.682,
-    NormalRange: 0.189,
-    ToSystemEdge: 0.168,
-  },
-  Giant: {
-    FromStar: 0.535,
-    ExtremeHotRange: 5.35,
-    ExtremeColdRange: 16.06,
-    NormalRange: 4.46,
-    ToSystemEdge: 3.96,
-  },
-  'White dwarf': {
-    FromStar: 0.303,
-    ExtremeHotRange: 4.295,
-    ExtremeColdRange: 10.355,
-    NormalRange: 0,
-    ToSystemEdge: 2.24,
-  },
-  'Neutron star': {
-    FromStar: 0.303,
-    ExtremeHotRange: 4.295,
-    ExtremeColdRange: 10.355,
-    NormalRange: 0,
-    ToSystemEdge: 2.24,
-  },
-  'Stellar-mass black hole': {
-    FromStar: 0.303,
-    ExtremeHotRange: 4.295,
-    ExtremeColdRange: 10.355,
-    NormalRange: 0,
-    ToSystemEdge: 2.24,
-  },
-};
-
 export {
   TECH_LEVEL,
   ATMOSPHERE_HAB,
@@ -173,3 +81,6 @@ export {
   SIZE_HAB,
   BULK_COMPOSITION_HAB,
 } from './planet_interpretation';
+
+export { TEMPERATURE_RANK, STAR_AU_WIDTHS } from './spatial_interpretation';
+export type { StarAuWidths } from './spatial_interpretation';

@@ -9,82 +9,23 @@ import type {
   PointOfInterestType,
   StarType,
   SystemObject,
+  Temperature,
   WorldTag,
 } from './merged_schema';
-import { STAR_AU_WIDTHS, TEMPERATURE_RANK } from './tables';
-export const NORMAL_TEMPERATURES_HOT_TO_COLD: readonly Planet['Temperature'][] = [
-  'Scorching',
-  'Infernal',
-  'Equatorial',
-  'Subtropical',
-  'Mediterranean',
-  'Temperate (warm)',
-  'Temperate',
-  'Temperate (chilly)',
-  'Alpine',
-  'Boreal',
-  'Subarctic',
-  'Polar',
-  'Deepfrozen',
-];
-export function directOrbitAuBand(
-  starType: StarType,
-  temperature: Planet['Temperature'],
-): readonly [number, number] {
-  const widths = STAR_AU_WIDTHS[starType];
-  const hotEnd = widths.FromStar + widths.ExtremeHotRange;
-  const normalEnd = hotEnd + widths.NormalRange;
-  if (temperature === 'Furance') return [widths.FromStar, hotEnd];
-  if (temperature === 'Cryogenic') return [normalEnd, normalEnd + widths.ExtremeColdRange];
-  const index = NORMAL_TEMPERATURES_HOT_TO_COLD.indexOf(temperature);
-  if (index < 0) throw new Error(`No AU band for temperature ${temperature}`);
-  const width = widths.NormalRange / NORMAL_TEMPERATURES_HOT_TO_COLD.length;
-  return [hotEnd + index * width, hotEnd + (index + 1) * width];
-}
-export function directOrbitTemperatures(starType: StarType): Planet['Temperature'][] {
-  return (Object.keys(TEMPERATURE_RANK) as Planet['Temperature'][]).filter((temperature) => {
-    const [minimum, maximum] = directOrbitAuBand(starType, temperature);
-    return maximum > minimum;
-  });
-}
-
-/** The continuous AU interval available to direct-orbit objects. */
-export function directOrbitAuRange(starType: StarType): readonly [number, number] {
-  const widths = STAR_AU_WIDTHS[starType];
-  const minimum = widths.FromStar;
-  const maximum = minimum + widths.ExtremeHotRange + widths.NormalRange + widths.ExtremeColdRange;
-  return [minimum, maximum];
-}
-
-/** Resolves a direct-orbit AU into the detailed temperature band containing it. */
-export function temperatureForDirectOrbitAu(starType: StarType, au: number): Planet['Temperature'] {
-  const temperature = directOrbitTemperatures(starType).find((candidate) => {
-    const [bandMinimum, bandMaximum] = directOrbitAuBand(starType, candidate);
-    return au > bandMinimum && au < bandMaximum;
-  });
-  if (temperature === undefined)
-    throw new Error(`No direct-orbit temperature band contains ${starType} AU ${au}`);
-  return temperature;
-}
-
-/** Returns the AU boundaries enclosing all normal temperatures. */
-export function normalTemperatureAuBand(starType: StarType): readonly [number, number] {
-  const widths = STAR_AU_WIDTHS[starType];
-  const inner = widths.FromStar + widths.ExtremeHotRange;
-  return [inner, inner + widths.NormalRange];
-}
-
-/** The outer system boundary implied by System_AU_Width.csv. */
-export function systemEdgeAu(starType: StarType): number {
-  const widths = STAR_AU_WIDTHS[starType];
-  return (
-    widths.FromStar +
-    widths.ExtremeHotRange +
-    widths.NormalRange +
-    widths.ExtremeColdRange +
-    widths.ToSystemEdge
-  );
-}
+import {
+  directOrbitAuBand,
+  directOrbitTemperatures,
+  STAR_AU_WIDTHS,
+} from './spatial_interpretation';
+export {
+  NORMAL_TEMPERATURES_HOT_TO_COLD,
+  directOrbitAuBand,
+  directOrbitTemperatures,
+  directOrbitAuRange,
+  temperatureForDirectOrbitAu,
+  normalTemperatureAuBand,
+  systemEdgeAu,
+} from './spatial_interpretation';
 
 export type TagConstraint = {
   tag: string;
@@ -176,7 +117,7 @@ function table(id: string): RawRow[] {
   if (match === undefined) throw new Error(`Missing reviewed table ${id}`);
   return match.rows;
 }
-const TEMPERATURE_VARIANTS: readonly Planet['Temperature'][] = [
+const TEMPERATURE_VARIANTS: readonly Temperature[] = [
   'Temperate (chilly)',
   'Temperate',
   'Temperate (warm)',
@@ -192,7 +133,7 @@ export const ATMOSPHERE_TABLE = adaptRows(
   (result) => result as Planet['Atmosphere'],
 );
 export const TEMPERATURE_TABLE = adaptRows(table('temperature'), (result, index) =>
-  result === 'Temperate' ? TEMPERATURE_VARIANTS[index - 10]! : (result as Planet['Temperature']),
+  result === 'Temperate' ? TEMPERATURE_VARIANTS[index - 10]! : (result as Temperature),
 );
 export const NATIVE_BIOSPHERE_TABLE = adaptRows(
   table('native_biosphere'),

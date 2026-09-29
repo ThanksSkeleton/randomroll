@@ -2,7 +2,7 @@
  * Canonical merged SWN sector schema.
  *
  * This is the Phase 1 design contract from SCHEMA_COMPARISON.html. It is
- * deliberately independent of the current V4 generator representation:
+ * deliberately independent of the generator's working representation:
  * generation rolls, slot wrappers, orbital-zone categories, and ingress /
  * egress regions are implementation details and are not part of this model.
  */
@@ -40,7 +40,7 @@ export interface SelectableEntity {
 }
 
 export interface Sector {
-  SchemaVersion: 'merged-v4';
+  SchemaVersion: 'merged-v5';
   /** Generation provenance; it is not a complete replay specification. */
   OriginalSeed: string;
   /** Starting-world eligibility mode selected when this sector was generated. */
@@ -108,7 +108,6 @@ export interface Route extends SelectableEntity {
 
 /** One end of a route, located on its system's derived boundary. */
 export interface RoutePortal extends SelectableEntity {
-  RouteId: Guid;
   SystemId: Guid;
   /** Inclusive at 0; exclusive at 360. */
   BoundaryAngleDegrees: number;
@@ -149,24 +148,26 @@ export interface Star extends SelectableEntity {
   StarType: StarType;
 }
 
-export interface Orbit {
-  /**
-   * Generated star-relative distance. For direct orbits, a randomized
-   * temperature- and star-constrained placement roll selects this value.
-   * A moon inherits its parent planet's value; no separate moon-to-planet
-   * distance is modeled.
-   */
-  AU: number;
+interface OrbitPosition {
   /** Inclusive at 0; exclusive at 360. */
   AngleDegrees: number;
-  /** Null means a direct orbit of the system's star. */
-  ParentObjectId: Guid | null;
 }
+
+/** Randomized star-relative AU; only direct orbits store it. */
+export interface DirectOrbit extends OrbitPosition {
+  AU: number;
+  ParentObjectId: null;
+}
+
+/** A moon inherits its parent planet's AU. */
+export interface MoonOrbit extends OrbitPosition {
+  ParentObjectId: Guid;
+}
+
+export type Orbit = DirectOrbit | MoonOrbit;
 
 export interface SystemObjectBase extends SelectableEntity {
   Orbit: Orbit;
-  /** Authoritative thermal value used to constrain generated star-relative AU. */
-  Temperature: Temperature;
   /** Surviving simultaneous political claims after the initial politics pass. */
   ClaimedByPolityIds: Guid[];
   Kind: 'Planet' | 'OtherCelestialObject';
