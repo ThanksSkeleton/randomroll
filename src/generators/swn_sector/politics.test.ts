@@ -80,6 +80,7 @@ function system(id: string, objects: StarSystem['Objects']): StarSystem {
     Star: { ...entity(`${id}-star`), StarType: 'G-type', HabitabilityRating: 3 },
     Objects: objects,
     PointsOfInterest: [],
+    HabitablePointsOfInterest: [],
   };
 }
 

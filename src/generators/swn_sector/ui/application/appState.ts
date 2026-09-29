@@ -1,15 +1,10 @@
 import type { Sector } from '../../merged_schema';
 
-export type View = 'hex' | 'system' | 'all' | 'sectors';
+export type View = 'hex' | 'system' | 'all' | 'sectors' | 'culture';
 export type Preview = 'gm' | 'player';
 export type SystemMode = 'symbolic' | 'topdown';
 export type EditableDetailField =
-  | 'NiceName'
-  | 'BasicScan'
-  | 'DetailedScan'
-  | 'PoliticsScan'
-  | 'DeepPoliticsScan'
-  | 'GM';
+  'NiceName' | 'BasicScan' | 'DetailedScan' | 'PoliticsScan' | 'DeepPoliticsScan' | 'GM';
 export type EditDraft = {
   sectorName: string;
   details: Record<string, Partial<Record<EditableDetailField, string>>>;
@@ -74,7 +69,8 @@ export function appReducer(state: AppState, action: AppAction): AppState {
       return { ...state, selectedId: action.id, routeContextSystemId: action.contextSystemId };
     case 'changePreview': {
       const playerRestricted =
-        action.preview === 'player' && (state.view === 'all' || state.view === 'sectors');
+        action.preview === 'player' &&
+        (state.view === 'all' || state.view === 'sectors' || state.view === 'culture');
       if (playerRestricted)
         return {
           ...clearNavigation(state),

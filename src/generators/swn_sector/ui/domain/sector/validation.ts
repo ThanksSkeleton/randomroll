@@ -38,6 +38,7 @@ export function validateSector(sector: Sector): string[] {
     system.Star,
     ...system.Objects,
     ...system.PointsOfInterest,
+    ...system.HabitablePointsOfInterest,
   ]))
     if (!isValidScanVisibility(entity.Visibility))
       errors.push(`Invalid scan visibility for ${entity.Id}.`);
@@ -83,6 +84,15 @@ export function validateSector(sector: Sector): string[] {
     }
     for (const poi of system.PointsOfInterest)
       if (!localIds.has(poi.ParentObjectId)) errors.push(`POI ${poi.Id} has an invalid parent.`);
+    for (const hpoi of system.HabitablePointsOfInterest) {
+      if (
+        !inhabitedIds.has(hpoi.ParentWorldId) ||
+        !system.Objects.some((object) => object.Id === hpoi.ParentWorldId)
+      )
+        errors.push(`HPOI ${hpoi.Id} has an invalid parent.`);
+      if (hpoi.HPOIType === 'Garrison' && !polityIds.has(hpoi.AssignedPolityId ?? ''))
+        errors.push(`Garrison ${hpoi.Id} has an invalid polity.`);
+    }
   }
   const portalIds = new Set(sector.RoutePortals.map((portal) => portal.Id));
   for (const portal of sector.RoutePortals)

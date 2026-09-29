@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { hpoiVisible } from '../../../culture';
 import type { Preview } from '../../application/appState';
 import type { OtherCelestialObject, Sector, StarSystem } from '../../../merged_schema';
 import { normalTemperatureAuBand, systemEdgeAu } from '../../../generation_rules';
@@ -14,6 +15,18 @@ import { planetColorClass } from '../../../planet_presentation';
 import { starPresentationClass, starPresentationStyle } from '../../../star_presentation';
 import { StarGlyph } from './StarGlyph';
 import { PolityFlagList } from '../politics/PolityFlag';
+
+const HPOI_MARKERS = {
+  'Orbital Station': '◈',
+  Starport: '✦',
+  'Planetary Defenses': '⬡',
+  Garrison: '▣',
+} as const;
+function poiMarker(
+  poi: StarSystem['PointsOfInterest'][number] | StarSystem['HabitablePointsOfInterest'][number],
+) {
+  return 'HPOIType' in poi ? HPOI_MARKERS[poi.HPOIType] : '◆';
+}
 
 const TOP_DOWN_BOUNDARY_FILL = 0.88;
 const BELT_APPEARANCE = {
@@ -210,10 +223,14 @@ export function TopDown({
     const halfHeight = hexHeight / 2;
     return `${point.left - halfWidth / 2},${point.top - halfHeight} ${point.left + halfWidth / 2},${point.top - halfHeight} ${point.left + halfWidth},${point.top} ${point.left + halfWidth / 2},${point.top + halfHeight} ${point.left - halfWidth / 2},${point.top + halfHeight} ${point.left - halfWidth},${point.top}`;
   };
-  const objectPois = (parentId: string) =>
-    system.PointsOfInterest.filter(
+  const objectPois = (parentId: string) => [
+    ...system.PointsOfInterest.filter(
       (poi) => poi.ParentObjectId === parentId && visible(poi.Id, sector, preview),
-    );
+    ),
+    ...system.HabitablePointsOfInterest.filter(
+      (poi) => poi.ParentWorldId === parentId && hpoiVisible(sector, poi, preview),
+    ),
+  ];
   const polityFlags = (object: (typeof system.Objects)[number]) =>
     showPolityOverlay &&
     (preview === 'gm' || details(object.Id, sector)?.Visibility.PoliticsScan) ? (
@@ -585,7 +602,7 @@ export function TopDown({
                     title={displayName(details(poi.Id, sector), preview) ?? 'POI'}
                     className="topdown-poi"
                   >
-                    ◆
+                    {poiMarker(poi)}
                   </Selectable>
                 ))}
               </div>
@@ -651,7 +668,7 @@ export function TopDown({
                           title={displayName(details(poi.Id, sector), preview) ?? 'POI'}
                           className="topdown-poi"
                         >
-                          ◆
+                          {poiMarker(poi)}
                         </Selectable>
                       ))}
                     </div>
@@ -748,7 +765,7 @@ export function TopDown({
                         title={displayName(details(poi.Id, sector), preview) ?? 'POI'}
                         className="topdown-poi"
                       >
-                        ◆
+                        {poiMarker(poi)}
                       </Selectable>
                     ))}
                   </div>
@@ -770,7 +787,7 @@ export function TopDown({
                           title={displayName(details(poi.Id, sector), preview) ?? 'POI'}
                           className="topdown-poi"
                         >
-                          ◆
+                          {poiMarker(poi)}
                         </Selectable>
                       </div>
                     );

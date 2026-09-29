@@ -270,6 +270,7 @@ function applyGeneratedNames(seed: string, entityPath: string, system: StarSyste
     },
     Objects: objects,
     PointsOfInterest: pointsOfInterest,
+    HabitablePointsOfInterest: [],
   };
 }
 
@@ -498,6 +499,7 @@ function generateSystemOnce(options: GenerateSystemOptions): StarSystem {
         left.Orbit.AU - right.Orbit.AU || (left.Orbit.ParentObjectId === null ? -1 : 1),
     ),
     PointsOfInterest: [],
+    HabitablePointsOfInterest: [],
   };
 }
 
@@ -711,5 +713,6 @@ export function populatePointsOfInterest(
           left.Orbit.AU - right.Orbit.AU || (left.Orbit.ParentObjectId === null ? -1 : 1),
       ),
     PointsOfInterest: pois,
+    HabitablePointsOfInterest: [],
   };
 }

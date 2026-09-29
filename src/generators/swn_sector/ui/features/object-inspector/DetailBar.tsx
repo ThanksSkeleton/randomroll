@@ -1,4 +1,5 @@
 import { TECH_LEVEL } from '../../../tables';
+import { hpoiProjection } from '../../../culture';
 import type { Planet, SelectableEntity, Sector } from '../../../merged_schema';
 import {
   findDetails,
@@ -121,7 +122,10 @@ function planetStock(
     basic,
     detailed: `Life, Native: ${planet.NativeBiosphere}\nLife, Terran: ${inhabited.TerranBiosphere}\nPopulation: ${inhabited.Population}`,
     politics: `Tech Level: ${TECH_LEVEL[inhabited.TechLevel]} - ${inhabited.TechLevel}\n${polityClaims(sector, planet.ClaimedByPolityIds)}`,
-    deep: '-',
+    deep:
+      planet.Complete && planet.Culture
+        ? `Cultural Template: ${planet.Culture.culturalTemplate}\nOutsider Opinion: ${planet.Culture.outsiderOpinion}\nLaw Enforcement: ${planet.Culture.lawEnforcement.amount}; ${planet.Culture.lawEnforcement.style}; ${planet.Culture.lawEnforcement.specialLaw}\nBiggest Conflict: ${planet.Culture.biggestConflict.category}; ${planet.Culture.biggestConflict.details}`
+        : '-',
     gm: inhabited.WorldTags.join(', '),
   };
 }
@@ -171,6 +175,31 @@ function stockSignals(found: FoundObject, sector: Sector, preview: Preview): Sto
       politics: '-',
       deep: '-',
       gm: found.object.Intelligence.GM || '-',
+    };
+  }
+  if (found.kind === 'HabitablePointOfInterest') {
+    const projected = hpoiProjection(sector, found.object);
+    const field = (name: string) => projected.fields.find(([label]) => label === name)?.[1];
+    const physical = projected.fields.filter(
+      ([name]) =>
+        !['Trade and Smuggling Enforcement Amount', 'Customs and Visa Emphasis'].includes(name),
+    );
+    return {
+      basic: found.object.HPOIType,
+      detailed: physical.map(([name, value]) => `${name}: ${value}`).join('\n') || '-',
+      politics: polityClaims(sector, projected.polityIds),
+      deep:
+        [
+          field('Trade and Smuggling Enforcement Amount') &&
+            `Trade and Smuggling Enforcement Amount: ${field('Trade and Smuggling Enforcement Amount')}`,
+          field('Customs and Visa Emphasis') &&
+            `Customs and Visa Emphasis: ${field('Customs and Visa Emphasis')}`,
+        ]
+          .filter(Boolean)
+          .join('\n') || '-',
+      gm:
+        `${projected.reason ? `NONE: ${projected.reason}\n` : ''}${projected.fields.map(([name, value]) => `${name}: ${value}`).join('\n')}` ||
+        '-',
     };
   }
   return { basic: '-', detailed: '-', politics: '-', deep: '-', gm: '-' };
@@ -233,6 +262,8 @@ export function DetailBar({
   const portraitName = displayName(info, preview) ?? info?.ProceduralName ?? 'object';
   const showNoData =
     found?.kind === 'PlayerShip' ||
+    (found?.kind === 'HabitablePointOfInterest' &&
+      (preview === 'gm' || found.object.Visibility.BasicScan)) ||
     (found?.kind === 'Planet' &&
       found.object.InhabitedInfo !== false &&
       (preview === 'gm' || found.object.Visibility.BasicScan));
@@ -243,9 +274,11 @@ export function DetailBar({
         ? 'uninhabited planet'
         : found?.kind === 'PointOfInterest'
           ? `${found.object.POIType} point of interest`
-          : found?.kind === 'OtherCelestialObject'
-            ? objectTypeLabel(found.object.ObjectType)
-            : (found?.kind ?? 'object');
+          : found?.kind === 'HabitablePointOfInterest'
+            ? `${found.object.HPOIType} habitable point of interest`
+            : found?.kind === 'OtherCelestialObject'
+              ? objectTypeLabel(found.object.ObjectType)
+              : (found?.kind ?? 'object');
   return (
     <aside className="detail-bar">
       {!info || !found ? (
@@ -334,7 +367,10 @@ function DetailBox({
   setDraft: (update: (draft: EditDraft) => EditDraft) => void;
 }) {
   const [activeTab, setActiveTab] = useState<'player' | 'gm'>('player');
-  const claimIds = politicalClaimIds(found, sector);
+  const claimIds =
+    found.kind === 'HabitablePointOfInterest'
+      ? hpoiProjection(sector, found.object).polityIds
+      : politicalClaimIds(found, sector);
   const edit = (field: EditableDetailField) => (value: string) =>
     setDraft((old) => ({
       ...old,
@@ -448,6 +484,14 @@ function DetailBox({
               <div className="detail-small-divider" aria-hidden="true" />
             </>
           )}
+          {found.kind === 'Planet' &&
+            found.object.InhabitedInfo !== false &&
+            found.object.Complete &&
+            found.object.Culture && (
+              <pre className="detail-section-description">
+                {JSON.stringify(found.object.Culture, null, 2)}
+              </pre>
+            )}
           {!locked ? (
             <EditableText
               className="detail-editable"

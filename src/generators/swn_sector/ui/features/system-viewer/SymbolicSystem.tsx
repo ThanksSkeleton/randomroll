@@ -8,6 +8,7 @@ import type {
   StarSystem,
 } from '../../../merged_schema';
 import { TECH_LEVEL } from '../../../tables';
+import { hpoiVisible } from '../../../culture';
 import {
   findDetails,
   isVisibleToPlayer,
@@ -18,6 +19,13 @@ import { planetColorClass } from '../../../planet_presentation';
 import { starPresentationClass, starPresentationStyle } from '../../../star_presentation';
 import { StarGlyph } from './StarGlyph';
 import { PolityFlagList } from '../politics/PolityFlag';
+
+const HPOI_MARKERS = {
+  'Orbital Station': '◈',
+  Starport: '✦',
+  'Planetary Defenses': '⬡',
+  Garrison: '▣',
+} as const;
 
 function visible(id: string, sector: Sector, preview: Preview) {
   return preview === 'gm' || isVisibleToPlayer(sector, id);
@@ -125,6 +133,9 @@ function WorldSymbol({
   const pois = system.PointsOfInterest.filter(
     (p) => p.ParentObjectId === world.Id && visible(p.Id, sector, preview),
   );
+  const hpois = system.HabitablePointsOfInterest.filter(
+    (p) => p.ParentWorldId === world.Id && hpoiVisible(sector, p, preview),
+  );
   const scale = world.Orbit.ParentObjectId ? 0.55 : (worldScale[world.Size.toLowerCase()] ?? 1);
   return (
     <div className={`world-unit ${world.Orbit.ParentObjectId ? 'moon-unit' : ''}`}>
@@ -222,6 +233,20 @@ function WorldSymbol({
             className="poi world-poi"
           >
             <span className="poi-marker">◆</span>
+          </Selectable>
+        ))}
+        {hpois.map((p) => (
+          <Selectable
+            key={p.Id}
+            id={p.Id}
+            selected={selected}
+            onSelect={select}
+            label={p.HPOIType}
+            className="poi world-poi hpoi"
+          >
+            <span className="poi-marker" title={p.HPOIType}>
+              {HPOI_MARKERS[p.HPOIType]}
+            </span>
           </Selectable>
         ))}
       </div>

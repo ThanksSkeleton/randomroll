@@ -65,6 +65,7 @@ function allSelectables(sector: Sector): SelectableEntity[] {
       system.Star,
       ...system.Objects,
       ...system.PointsOfInterest,
+      ...system.HabitablePointsOfInterest,
     ]),
     ...sector.Routes,
     ...sector.RoutePortals,
@@ -197,6 +198,51 @@ export function checkAllInvariants(value: unknown): InvariantViolation[] {
   // A POI parent can only be an object in the same system, never another entity kind.
   for (const system of sector.Systems) {
     const objectsById = new Map(system.Objects.map((object) => [object.Id, object]));
+    for (const object of system.Objects) {
+      if (object.Kind !== 'Planet' || object.InhabitedInfo === false) continue;
+      if (object.Complete !== Boolean(object.Culture))
+        fail('CULTURE', `World ${object.Id} has inconsistent Complete and Culture values.`);
+      if (
+        object.Culture &&
+        (object.Culture.worldTags?.[0] !== object.InhabitedInfo.WorldTags[0] ||
+          object.Culture.worldTags?.[1] !== object.InhabitedInfo.WorldTags[1])
+      )
+        fail('CULTURE', `World ${object.Id} culture tags differ from its World Tags.`);
+      const hpois = system.HabitablePointsOfInterest.filter(
+        (hpoi) => hpoi.ParentWorldId === object.Id,
+      );
+      for (const type of ['Orbital Station', 'Starport', 'Planetary Defenses'] as const)
+        if (
+          hpois.filter((hpoi) => hpoi.HPOIType === type && hpoi.AssignedPolityId === null)
+            .length !== 1
+        )
+          fail('HPOI', `World ${object.Id} requires one ${type} HPOI.`);
+      const garrisons = hpois.filter((hpoi) => hpoi.HPOIType === 'Garrison');
+      if (
+        garrisons.length !== object.ClaimedByPolityIds.length ||
+        garrisons.some(
+          (hpoi) =>
+            !hpoi.AssignedPolityId || !object.ClaimedByPolityIds.includes(hpoi.AssignedPolityId),
+        ) ||
+        new Set(garrisons.map((hpoi) => hpoi.AssignedPolityId)).size !== garrisons.length
+      )
+        fail('HPOI', `World ${object.Id} Garrisons do not match its surviving claims.`);
+    }
+    for (const hpoi of system.HabitablePointsOfInterest) {
+      const parent = objectsById.get(hpoi.ParentWorldId);
+      if (!parent || parent.Kind !== 'Planet' || parent.InhabitedInfo === false)
+        fail('HPOI', `HPOI ${hpoi.Id} has no inhabited parent in its system.`);
+      if (
+        !['Orbital Station', 'Starport', 'Planetary Defenses', 'Garrison'].includes(hpoi.HPOIType)
+      )
+        fail('HPOI', `HPOI ${hpoi.Id} has an unknown type.`);
+      if (hpoi.HPOIType !== 'Garrison' && hpoi.AssignedPolityId !== null)
+        fail('HPOI', `HPOI ${hpoi.Id} has an unexpected polity assignment.`);
+      if (!isFiniteNumber(hpoi.AngleDegrees) || hpoi.AngleDegrees < 0 || hpoi.AngleDegrees >= 360)
+        fail('HPOI', `HPOI ${hpoi.Id} has an invalid angle.`);
+      if (hpoi.PortraitAssetId !== undefined)
+        fail('HPOI', `HPOI ${hpoi.Id} must use NO DATA portrait.`);
+    }
     for (const poi of system.PointsOfInterest) {
       const parent = objectsById.get(poi.ParentObjectId);
       if (parent === undefined) {
@@ -443,8 +489,12 @@ function validateCanonicalShape(
       !string(item.NativeBiosphere, `${path}.NativeBiosphere`)
     )
       return invalid(path, 'a complete Planet');
-    if (item.InhabitedInfo === false) return true;
+    if (item.InhabitedInfo === false)
+      return item.Complete === undefined && item.Culture === undefined;
     return (
+      required(item, ['Complete', 'Culture'], path) &&
+      typeof item.Complete === 'boolean' &&
+      (item.Complete ? record(item.Culture, `${path}.Culture`) : item.Culture === null) &&
       record(item.InhabitedInfo, `${path}.InhabitedInfo`) &&
       required(
         item.InhabitedInfo,
@@ -481,7 +531,7 @@ function validateCanonicalShape(
       ],
       'Sector',
     ) ||
-    value.SchemaVersion !== 'merged-v2' ||
+    value.SchemaVersion !== 'merged-v3' ||
     !string(value.OriginalSeed, 'Sector.OriginalSeed') ||
     !['UNRESTRICTED', 'TL4_PLUS', 'TL4_PLUS_POP_GT_500'].includes(
       String(value.StartingWorldMode),
@@ -501,7 +551,11 @@ function validateCanonicalShape(
     const path = `Sector.Systems[${index}]`;
     if (
       !selectable(system, path) ||
-      !required(system, ['HexLocation', 'Star', 'Objects', 'PointsOfInterest'], path) ||
+      !required(
+        system,
+        ['HexLocation', 'Star', 'Objects', 'PointsOfInterest', 'HabitablePointsOfInterest'],
+        path,
+      ) ||
       !record(system.HexLocation, `${path}.HexLocation`) ||
       !number(system.HexLocation.Column, `${path}.HexLocation.Column`) ||
       !number(system.HexLocation.Row, `${path}.HexLocation.Row`) ||
@@ -510,6 +564,7 @@ function validateCanonicalShape(
       !number(system.Star.HabitabilityRating, `${path}.Star.HabitabilityRating`) ||
       !array(system.Objects, `${path}.Objects`) ||
       !array(system.PointsOfInterest, `${path}.PointsOfInterest`) ||
+      !array(system.HabitablePointsOfInterest, `${path}.HabitablePointsOfInterest`) ||
       !system.Objects.every((item, objectIndex) => object(item, `${path}.Objects[${objectIndex}]`))
     )
       return undefined;
@@ -521,6 +576,20 @@ function validateCanonicalShape(
         !number(poi.AngleDegrees, `${path}.PointsOfInterest[${poiIndex}].AngleDegrees`)
       )
         return undefined;
+    for (const [hpoiIndex, hpoi] of system.HabitablePointsOfInterest.entries()) {
+      const hpoiPath = `${path}.HabitablePointsOfInterest[${hpoiIndex}]`;
+      if (
+        !selectable(hpoi, hpoiPath) ||
+        !string(hpoi.ParentWorldId, `${hpoiPath}.ParentWorldId`) ||
+        !string(hpoi.HPOIType, `${hpoiPath}.HPOIType`) ||
+        !(
+          hpoi.AssignedPolityId === null ||
+          string(hpoi.AssignedPolityId, `${hpoiPath}.AssignedPolityId`)
+        ) ||
+        !number(hpoi.AngleDegrees, `${hpoiPath}.AngleDegrees`)
+      )
+        return undefined;
+    }
   }
   for (const [index, route] of value.Routes.entries())
     if (
@@ -680,7 +749,14 @@ function checkNoUnknownSchemaProperties(
     checkSelectable(system, `System ${system.Id}`);
     check(
       system,
-      [...selectable, 'HexLocation', 'Star', 'Objects', 'PointsOfInterest'],
+      [
+        ...selectable,
+        'HexLocation',
+        'Star',
+        'Objects',
+        'PointsOfInterest',
+        'HabitablePointsOfInterest',
+      ],
       `System ${system.Id}`,
     );
     check(system.HexLocation, ['Column', 'Row'], `System ${system.Id}.HexLocation`);
@@ -705,6 +781,8 @@ function checkNoUnknownSchemaProperties(
             'NativeBiosphere',
             'ClaimedByPolityIds',
             'InhabitedInfo',
+            'Complete',
+            'Culture',
             'PortraitAssetId',
           ],
           `Planet ${object.Id}`,
@@ -725,6 +803,14 @@ function checkNoUnknownSchemaProperties(
     for (const poi of system.PointsOfInterest) {
       checkSelectable(poi, `POI ${poi.Id}`);
       check(poi, [...selectable, 'ParentObjectId', 'POIType', 'AngleDegrees'], `POI ${poi.Id}`);
+    }
+    for (const hpoi of system.HabitablePointsOfInterest) {
+      checkSelectable(hpoi, `HPOI ${hpoi.Id}`);
+      check(
+        hpoi,
+        [...selectable, 'ParentWorldId', 'HPOIType', 'AssignedPolityId', 'AngleDegrees'],
+        `HPOI ${hpoi.Id}`,
+      );
     }
   }
 }

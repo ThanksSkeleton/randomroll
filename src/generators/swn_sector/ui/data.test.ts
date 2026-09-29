@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import { generate } from '../generate';
-import { createInitialSectors, findContainingSystem, findObject, getAllSelectableIds, validateSector } from './data';
+import {
+  createInitialSectors,
+  findContainingSystem,
+  findObject,
+  getAllSelectableIds,
+  validateSector,
+} from './data';
 import { objectEntries, routePortals } from './domain/sector/selectors';
 import { updateObjectScanVisibility } from './domain/sector/operations';
 
@@ -9,7 +15,7 @@ describe('canonical sector data', () => {
     const first = createInitialSectors();
     expect(first).toEqual(createInitialSectors());
     for (const sector of first) {
-      expect(sector.SchemaVersion).toBe('merged-v2');
+      expect(sector.SchemaVersion).toBe('merged-v3');
       expect(sector.Systems.length).toBeGreaterThanOrEqual(20);
       expect(sector.Systems.length).toBeLessThanOrEqual(30);
       expect(new Set(getAllSelectableIds(sector)).size).toBe(getAllSelectableIds(sector).length);
@@ -42,13 +48,15 @@ describe('canonical sector data', () => {
   it('indexes systems, stars, objects, POIs, route portals, routes, and the ship', () => {
     const sector = generate('UI-SELECTABLE-GRAPH');
     const entries = objectEntries(sector);
-    expect(entries).toEqual(expect.arrayContaining([
-      expect.objectContaining({ kind: 'System' }),
-      expect.objectContaining({ kind: 'Star' }),
-      expect.objectContaining({ kind: 'RoutePortal' }),
-      expect.objectContaining({ kind: 'Route' }),
-      expect.objectContaining({ kind: 'PlayerShip' }),
-    ]));
+    expect(entries).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ kind: 'System' }),
+        expect.objectContaining({ kind: 'Star' }),
+        expect.objectContaining({ kind: 'RoutePortal' }),
+        expect.objectContaining({ kind: 'Route' }),
+        expect.objectContaining({ kind: 'PlayerShip' }),
+      ]),
+    );
     for (const portal of sector.RoutePortals)
       expect(findContainingSystem(sector, portal.Id)?.Id).toBe(portal.SystemId);
     for (const route of sector.Routes) expect(routePortals(sector, route)).toBeDefined();

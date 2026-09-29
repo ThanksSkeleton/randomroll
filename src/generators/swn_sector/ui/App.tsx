@@ -4,6 +4,7 @@ import type { EditDraft, Preview, View } from './application/appState';
 import { AppChrome, StageNav } from './features/navigation/AppChrome';
 import type { StageMode } from './features/navigation/AppChrome';
 import { SectorArchive } from './features/sector-archive/SectorArchive';
+import { CultureScreen } from './features/culture/CultureScreen';
 import { DetailBar as FeatureDetailBar } from './features/object-inspector/DetailBar';
 import { GMEditBar as FeatureGMEditBar } from './features/sector-editor/GMEditBar';
 import { HexMap as FeatureHexMap } from './features/sector-map/HexMap';
@@ -167,7 +168,15 @@ export default function App() {
   return (
     <div className={`app ${preview === 'player' ? 'player-mode' : ''}`}>
       <AppChrome view={view} preview={preview} setPreview={setPreviewMode} go={go} />
-      {view === 'sectors' ? (
+      {view === 'culture' && preview === 'gm' && isGmSession ? (
+        <CultureScreen
+          sector={sector}
+          onChange={(next) => {
+            const saved = application.saveSector(activeIndex, next);
+            if (saved) dispatch({ type: 'replaceSectors', sectors: saved });
+          }}
+        />
+      ) : view === 'sectors' ? (
         <main className="workspace no-inspector">
           <SectorArchive
             sectors={sectors}

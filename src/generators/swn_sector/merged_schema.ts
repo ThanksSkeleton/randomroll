@@ -8,6 +8,7 @@
  */
 
 export type Guid = string;
+import type { SwnCulture } from '../swn_culture/swn_culture_impl';
 
 /** Independent scan availability. Valid states require BasicScan for all other
  * scans, and PoliticsScan for DeepPoliticsScan. */
@@ -39,7 +40,7 @@ export interface SelectableEntity {
 }
 
 export interface Sector {
-  SchemaVersion: 'merged-v2';
+  SchemaVersion: 'merged-v3';
   /** Generation provenance; it is not a complete replay specification. */
   OriginalSeed: string;
   /** Starting-world eligibility mode selected when this sector was generated. */
@@ -130,6 +131,7 @@ export interface StarSystem extends SelectableEntity {
   Star: Star;
   Objects: SystemObject[];
   PointsOfInterest: PointOfInterest[];
+  HabitablePointsOfInterest: HabitablePointOfInterest[];
 }
 
 export type StarType =
@@ -190,6 +192,9 @@ export interface Planet extends SystemObjectBase {
   Atmosphere: Atmosphere;
   NativeBiosphere: NativeBiosphere;
   InhabitedInfo: InhabitedInfo | false;
+  /** Set on inhabited worlds after the culture pass or an explicit GM completion. */
+  Complete?: boolean;
+  Culture?: SwnCulture | null;
 }
 
 export type WorldTag =
@@ -380,6 +385,17 @@ export interface PointOfInterest extends SelectableEntity {
   AngleDegrees: number;
 }
 
+export type HabitablePointOfInterestType =
+  'Orbital Station' | 'Starport' | 'Planetary Defenses' | 'Garrison';
+
+export interface HabitablePointOfInterest extends SelectableEntity {
+  ParentWorldId: Guid;
+  HPOIType: HabitablePointOfInterestType;
+  /** One surviving claimant for Garrisons; null for other HPOIs. */
+  AssignedPolityId: Guid | null;
+  AngleDegrees: number;
+}
+
 /** Every entity that may be selected, inspected, or given visibility. */
 export type SelectableObject =
   | StarSystem
@@ -387,6 +403,7 @@ export type SelectableObject =
   | Planet
   | OtherCelestialObject
   | PointOfInterest
+  | HabitablePointOfInterest
   | RoutePortal
   | Route
   | PlayerShip;
@@ -397,6 +414,7 @@ export type SelectableObjectKind =
   | 'Planet'
   | 'OtherCelestialObject'
   | 'PointOfInterest'
+  | 'HabitablePointOfInterest'
   | 'RoutePortal'
   | 'Route'
   | 'PlayerShip';

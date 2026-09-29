@@ -137,7 +137,12 @@ export function GMEditBar({
     const result = relocatePlayerShip(sector, selected);
     if (result.ok) mutate(result.value);
   };
-  const renderVisibilityChoice = ({ key, label, marks, crossedOut }: (typeof VISIBILITY_CHOICES)[number]) => {
+  const renderVisibilityChoice = ({
+    key,
+    label,
+    marks,
+    crossedOut,
+  }: (typeof VISIBILITY_CHOICES)[number]) => {
     const active = info ? isChoiceActive(key, info.Visibility) : false;
     return (
       <button
@@ -149,11 +154,14 @@ export function GMEditBar({
         disabled={
           locked ||
           !info ||
-          ((key === 'pol0' || key === 'pol1' || key === 'pol2') &&
-            !info.Visibility.BasicScan)
+          ((key === 'pol0' || key === 'pol1' || key === 'pol2') && !info.Visibility.BasicScan)
         }
         className={`visibility-state-button visibility-choice-${key} icon-button ${active ? 'button-active' : 'button-allowed'}`}
-        style={{ '--visibility-button-width': `${VISIBILITY_GLYPH_SETTINGS[key].buttonWidth}px` } as CSSProperties}
+        style={
+          {
+            '--visibility-button-width': `${VISIBILITY_GLYPH_SETTINGS[key].buttonWidth}px`,
+          } as CSSProperties
+        }
         onClick={() => {
           if (!selected || !info) return;
           const target = toggleChoice(key, info.Visibility);
@@ -222,8 +230,14 @@ export function GMEditBar({
           icon="delete-target"
           label="⌫ DELETE TARGET"
           title="Delete Target"
-          className={`danger delete-target-button ${!locked && Boolean(selected) && kind !== 'PLAYER SHIP' && kind !== 'STAR' ? 'button-scary-allowed' : 'button-disabled'}`}
-          disabled={locked || !selected || kind === 'PLAYER SHIP' || kind === 'STAR'}
+          className={`danger delete-target-button ${!locked && Boolean(selected) && kind !== 'PLAYER SHIP' && kind !== 'STAR' && !['ORBITAL STATION', 'STARPORT', 'PLANETARY DEFENSES', 'GARRISON'].includes(kind) ? 'button-scary-allowed' : 'button-disabled'}`}
+          disabled={
+            locked ||
+            !selected ||
+            kind === 'PLAYER SHIP' ||
+            kind === 'STAR' ||
+            ['ORBITAL STATION', 'STARPORT', 'PLANETARY DEFENSES', 'GARRISON'].includes(kind)
+          }
           onClick={() => {
             if (!selected) return;
             const result = deleteSectorObject(sector, selected);

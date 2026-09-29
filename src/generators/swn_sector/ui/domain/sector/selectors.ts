@@ -1,6 +1,8 @@
 import { hasAnyScan } from './visibility';
+import { hpoiVisible } from '../../../culture';
 import type {
   Guid,
+  HabitablePointOfInterest,
   HexLocation,
   OtherCelestialObject,
   Planet,
@@ -20,6 +22,11 @@ export type FoundObject =
   | { object: Planet; kind: 'Planet'; containingSystem?: StarSystem }
   | { object: OtherCelestialObject; kind: 'OtherCelestialObject'; containingSystem?: StarSystem }
   | { object: PointOfInterest; kind: 'PointOfInterest'; containingSystem?: StarSystem }
+  | {
+      object: HabitablePointOfInterest;
+      kind: 'HabitablePointOfInterest';
+      containingSystem?: StarSystem;
+    }
   | { object: RoutePortal; kind: 'RoutePortal'; containingSystem?: StarSystem }
   | { object: Route; kind: 'Route'; containingSystem?: StarSystem }
   | { object: PlayerShip; kind: 'PlayerShip'; containingSystem?: StarSystem };
@@ -95,6 +102,8 @@ export function objectEntries(sector: Sector): FoundObject[] {
     }
     for (const poi of system.PointsOfInterest)
       entries.push({ object: poi, kind: 'PointOfInterest', containingSystem: system });
+    for (const hpoi of system.HabitablePointsOfInterest)
+      entries.push({ object: hpoi, kind: 'HabitablePointOfInterest', containingSystem: system });
   }
   for (const portal of sector.RoutePortals) {
     entries.push({
@@ -121,7 +130,8 @@ export function containingSystem(sector: Sector, id: Guid): StarSystem | undefin
       system.Id === id ||
       system.Star.Id === id ||
       system.Objects.some((object) => object.Id === id) ||
-      system.PointsOfInterest.some((poi) => poi.Id === id)
+      system.PointsOfInterest.some((poi) => poi.Id === id) ||
+      system.HabitablePointsOfInterest.some((poi) => poi.Id === id)
     )
       return system;
   }
@@ -139,6 +149,9 @@ export function objectDetails(sector: Sector, id: Guid) {
 }
 export const findDetails = objectDetails;
 export function isVisibleToPlayer(sector: Sector, id: Guid): boolean {
+  const found = findObject(sector, id);
+  if (found?.kind === 'HabitablePointOfInterest')
+    return hpoiVisible(sector, found.object, 'player');
   const visibility = objectDetails(sector, id)?.Visibility;
   return visibility ? hasAnyScan(visibility) : false;
 }
@@ -148,6 +161,7 @@ export function objectKindLabel(sector: Sector, id: Guid | null): string {
   if (!found) return '';
   if (found.kind === 'PlayerShip') return 'PLAYER SHIP';
   if (found.kind === 'PointOfInterest') return 'POINT OF INTEREST';
+  if (found.kind === 'HabitablePointOfInterest') return found.object.HPOIType.toUpperCase();
   if (found.kind === 'RoutePortal') return 'ROUTE PORTAL';
   if (found.kind === 'Planet')
     return (found.object as Planet).Orbit.ParentObjectId ? 'MOON' : 'WORLD';

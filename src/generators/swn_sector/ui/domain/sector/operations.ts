@@ -3,15 +3,14 @@ import type { Guid, ScanVisibility, Sector } from '../../../merged_schema';
 import { containingSystem, findObject, routePortals } from './selectors';
 
 export type SectorOperationFailure =
-  | 'object-not-found'
-  | 'invalid-visibility'
-  | 'deletion-prohibited'
-  | 'move-prohibited';
+  'object-not-found' | 'invalid-visibility' | 'deletion-prohibited' | 'move-prohibited';
 export type SectorOperationResult<T> =
-  | { ok: true; value: T }
-  | { ok: false; reason: SectorOperationFailure };
+  { ok: true; value: T } | { ok: false; reason: SectorOperationFailure };
 const success = <T>(value: T): SectorOperationResult<T> => ({ ok: true, value });
-const failure = <T>(reason: SectorOperationFailure): SectorOperationResult<T> => ({ ok: false, reason });
+const failure = <T>(reason: SectorOperationFailure): SectorOperationResult<T> => ({
+  ok: false,
+  reason,
+});
 const copySector = (sector: Sector): Sector => structuredClone(sector);
 
 export function updateObjectScanVisibility(
@@ -51,18 +50,27 @@ export function relocatePlayerShip(sector: Sector, targetId: Guid): SectorOperat
 
 export function deleteSectorObject(sector: Sector, id: Guid): SectorOperationResult<Sector> {
   const found = findObject(sector, id);
-  if (!found || found.kind === 'PlayerShip' || found.kind === 'Star')
+  if (
+    !found ||
+    found.kind === 'PlayerShip' ||
+    found.kind === 'Star' ||
+    found.kind === 'HabitablePointOfInterest'
+  )
     return failure('deletion-prohibited');
   const next = copySector(sector);
   const removed = new Set<Guid>([id]);
   const systemId = found.containingSystem?.Id;
   const system = systemId ? next.Systems.find((candidate) => candidate.Id === systemId) : undefined;
   if (found.kind === 'System') {
-    if (next.Systems.length <= 1 || containingSystem(next, next.PlayerShip.CurrentLocationId)?.Id === id)
+    if (
+      next.Systems.length <= 1 ||
+      containingSystem(next, next.PlayerShip.CurrentLocationId)?.Id === id
+    )
       return failure('deletion-prohibited');
     const source = next.Systems.find((candidate) => candidate.Id === id)!;
     for (const object of source.Objects) removed.add(object.Id);
     for (const poi of source.PointsOfInterest) removed.add(poi.Id);
+    for (const hpoi of source.HabitablePointsOfInterest) removed.add(hpoi.Id);
     for (const portal of next.RoutePortals) if (portal.SystemId === id) removed.add(portal.Id);
     for (const route of next.Routes) {
       const portals = routePortals(next, route);
@@ -73,13 +81,17 @@ export function deleteSectorObject(sector: Sector, id: Guid): SectorOperationRes
     next.Routes = next.Routes.filter((route) => !removed.has(route.Id));
   } else if (found.kind === 'Planet' || found.kind === 'OtherCelestialObject') {
     if (!system) return failure('deletion-prohibited');
-    const childIds = system.Objects
-      .filter((object) => object.Orbit.ParentObjectId === id)
-      .map((object) => object.Id);
+    const childIds = system.Objects.filter((object) => object.Orbit.ParentObjectId === id).map(
+      (object) => object.Id,
+    );
     childIds.forEach((childId) => removed.add(childId));
-    for (const poi of system.PointsOfInterest) if (removed.has(poi.ParentObjectId)) removed.add(poi.Id);
+    for (const poi of system.PointsOfInterest)
+      if (removed.has(poi.ParentObjectId)) removed.add(poi.Id);
     system.Objects = system.Objects.filter((object) => !removed.has(object.Id));
     system.PointsOfInterest = system.PointsOfInterest.filter((poi) => !removed.has(poi.Id));
+    system.HabitablePointsOfInterest = system.HabitablePointsOfInterest.filter(
+      (poi) => !removed.has(poi.ParentWorldId),
+    );
   } else if (found.kind === 'PointOfInterest') {
     if (!system) return failure('deletion-prohibited');
     system.PointsOfInterest = system.PointsOfInterest.filter((poi) => poi.Id !== id);

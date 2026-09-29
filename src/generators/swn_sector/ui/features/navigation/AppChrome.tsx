@@ -21,7 +21,7 @@ export function AppChrome({
         {preview === 'gm' && (
           <>
             <button
-              className={`nav-item nav-item-sector ${view !== 'sectors' ? 'button-active' : 'button-allowed'}`}
+              className={`nav-item nav-item-sector ${view !== 'sectors' && view !== 'culture' ? 'button-active' : 'button-allowed'}`}
               onClick={() => go('hex')}
             >
               SECTOR
@@ -31,6 +31,12 @@ export function AppChrome({
               onClick={() => go('sectors')}
             >
               SECTOR ARCHIVE
+            </button>
+            <button
+              className={`nav-item ${view === 'culture' ? 'button-active' : 'button-allowed'}`}
+              onClick={() => go('culture')}
+            >
+              CULTURE
             </button>
           </>
         )}

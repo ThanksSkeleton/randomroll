@@ -11,6 +11,7 @@ import { STAR_TABLE } from './generation_rules';
 import { generateRoutes } from './generate_routes';
 import { generateCompleteSystem } from './generate_system';
 import { resolvePolitics } from './politics';
+import { completeWorld, createHabitablePointsOfInterest } from './culture';
 
 export function generate(
   seed: string,
@@ -92,8 +93,8 @@ export function generate(
       if (portal.SystemId === system.Id) setVisibility(portal, neighborVisibility);
   }
   const shipName = 'Player ship';
-  return {
-    SchemaVersion: 'merged-v2',
+  const result: Sector = {
+    SchemaVersion: 'merged-v3',
     OriginalSeed: seed,
     StartingWorldMode: startingWorldMode,
     SectorName: `Sector ${seed}`,
@@ -119,6 +120,20 @@ export function generate(
     },
     StartingWorldId: startingWorld.Id,
   };
+  for (const system of result.Systems) {
+    system.HabitablePointsOfInterest = createHabitablePointsOfInterest(seed, system);
+    for (const object of system.Objects) {
+      if (object.Kind !== 'Planet' || object.InhabitedInfo === false) continue;
+      object.Complete = false;
+      object.Culture = null;
+    }
+  }
+  let completed = result;
+  for (const system of result.Systems)
+    for (const object of system.Objects)
+      if (object.Kind === 'Planet' && object.InhabitedInfo !== false && object.Visibility.BasicScan)
+        completed = completeWorld(completed, object.Id);
+  return completed;
 }
 
 function eligibleStartingWorld(planet: Planet, mode: StartingWorldMode): boolean {

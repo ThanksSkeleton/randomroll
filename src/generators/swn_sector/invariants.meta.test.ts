@@ -59,7 +59,7 @@ function station(id: string, parentObjectId: string | null): OtherCelestialObjec
 
 function sector(objects: Array<Planet | OtherCelestialObject>): Sector {
   return {
-    SchemaVersion: 'merged-v2',
+    SchemaVersion: 'merged-v3',
     OriginalSeed: 'test',
     StartingWorldMode: 'UNRESTRICTED',
     StartingWorldId: null,
@@ -71,6 +71,7 @@ function sector(objects: Array<Planet | OtherCelestialObject>): Sector {
         Star: { ...entity('star'), StarType: 'G-type', HabitabilityRating: 3 },
         Objects: objects,
         PointsOfInterest: [],
+        HabitablePointsOfInterest: [],
       },
     ],
     Routes: [],
@@ -146,6 +147,8 @@ describe('merged-sector independent stations', () => {
       Population: 'Fewer than 500',
       TechLevel: 'Modern postech',
     };
+    terrestrial.Complete = false;
+    terrestrial.Culture = null;
     const input = sector([terrestrial, planet('extra', null, 'Mars'), station('station', null)]);
     input.Systems[0]!.PointsOfInterest.push({
       ...entity('poi'),
@@ -216,6 +219,8 @@ describe('merged-sector independent stations', () => {
       Population: 'Fewer than a million inhabitants',
       TechLevel: 'Modern postech',
     };
+    world.Complete = false;
+    world.Culture = null;
 
     expect(
       checkAllInvariants(
@@ -236,6 +241,8 @@ describe('merged-sector independent stations', () => {
       Population: 'Fewer than 500',
       TechLevel: 'Modern postech',
     };
+    world.Complete = false;
+    world.Culture = null;
 
     expect(
       checkAllInvariants(
@@ -255,6 +262,8 @@ describe('merged-sector independent stations', () => {
       Population: 'Fewer than 500',
       TechLevel: 'Modern postech',
     };
+    world.Complete = false;
+    world.Culture = null;
     const input = sector([world, planet('extra', null, 'Mars'), station('station', null)]);
     input.Systems[0]!.Star.HabitabilityRating = 1;
 
