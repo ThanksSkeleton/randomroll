@@ -6,12 +6,15 @@ This document covers the **whole SWN_SECTOR architecture refactor** described
 in [Canonical Generation and Projection Architecture](../../temp/canonical-generation-projection-architecture.md)
 and its [toy example](../../temp/canonical-generation-projection-toy-example.md).
 It sketches the smaller implementation specs needed to get there. The
-[first planet slice](CANONICAL_PROJECTION_REFACTOR_SPEC.md) and
-[part 2](CANONICAL_PROJECTION_REFACTOR_PART_2_SPEC.md) are implemented;
-the remaining sub-specs below are proposed scopes, not completed specs.
+[first planet slice](CANONICAL_PROJECTION_REFACTOR_SPEC.md),
+[part 2](CANONICAL_PROJECTION_REFACTOR_PART_2_SPEC.md), and the
+[organization step](CANONICAL_PROJECTION_REFACTOR_PART_3_ORGANIZATION_SPEC.md)
+are implemented; the remaining sub-specs below are proposed scopes, not
+completed specs.
 
-This roadmap is about data ownership and dependency direction. It does not
-prescribe a folder reorganization.
+This roadmap also implements the architecture's Project Organization rule:
+file location must make each architectural category visible. The organization
+step follows the existing slices and precedes more domain work.
 
 ## Target contract
 
@@ -63,7 +66,34 @@ placements and independently generated relationships; move values determined
 by canonical coordinates, star type, or linked entities into projection.
 Remove UI imports of generation-rule tables for these display calculations.
 
-### 3. Politics, culture, and points of interest — spec to write
+### 3. Project organization — implemented
+
+Implement [part 3](CANONICAL_PROJECTION_REFACTOR_PART_3_ORGANIZATION_SPEC.md):
+move the existing SWN sector code into category directories under
+`src/generators/swn_sector/`, using the architecture's `Data/Raw`,
+`Data/Projection`, `Generator`, `BaseDTO`, `Projector`, `DisplayDTO`, and `UI`
+categories. Keep supporting helpers, validation, serialization, and composition
+in clearly named supporting locations. The exact names may follow repository
+conventions, but a file's category must be clear from its path.
+
+The implementation spec should inventory every source file and generation-data
+file, assign it a target category, and identify modules that need splitting.
+In particular, separate raw generation tables from deterministic projection
+tables, place the canonical sector types in `BaseDTO`, and give Display DTO
+contracts their own category rather than leaving them inside
+projector modules. Remove compatibility re-exports that continue to expose
+projection rules through generation-table modules. Update imports, entry points,
+tests, and data paths. Document any shared deterministic rules used by both
+generation and projection so neither layer imports the other's DTO or UI code.
+
+This step is a structural migration: generated Base DTO values and projected
+output should remain the same. Accept it when the file inventory has no
+unassigned architectural modules, the app and type checks pass, and existing
+fixed-seed generation and projection tests still pass. Record legacy
+dependencies reserved for later sub-specs with their owner in the implementation
+spec.
+
+### 4. Politics, culture, and points of interest — spec to write
 
 Distinguish resolved generated events and culture choices from values that can
 be calculated from them. Project polity capability interpretations, claim
@@ -73,18 +103,20 @@ historical outcomes canonical when other canonical facts cannot reconstruct
 them. Make world completion an application command that generates a new Base
 DTO and then projects it; rendering must not call generation directly.
 
-### 4. Disclosure, names, and assets — spec to write
+### 5. Disclosure, names, and assets — spec to write
 
 Define a single projection contract for GM versus player output and the four
 scan levels. Visibility grants, independently editable names, and authored
 intelligence remain canonical; the chosen visible name, redacted text, labels,
-and asset URLs belong in the Display DTO. Preserve randomly selected portrait
-IDs as canonical outcomes, while resolving their source paths and styles in
-projection. Cover the inspector, maps, system views, culture screen, and any
-other UI that currently makes its own disclosure decisions. Specify how a
-missing or invalid asset is represented in the Display DTO.
+and asset URLs belong in the Display DTO. The
+[portrait index slice](CANONICAL_PROJECTION_PORTRAIT_INDEX_SPEC.md) already
+stores the random zero-based `PortraitIndex` as canonical and resolves its
+category, source path, and style in projection. Complete the remaining asset
+and visibility contract here. Cover the inspector, maps, system views, culture
+screen, and any other UI that currently makes its own disclosure decisions.
+Specify how a missing or invalid asset is represented in the Display DTO.
 
-### 5. Application cutover and canonical audit — spec to write
+### 6. Application cutover and canonical audit — spec to write
 
 Make the application's read boundary return a complete Display Sector DTO for
 the current view, while commands accept IDs and explicit edits to canonical
@@ -110,7 +142,9 @@ sub-spec should address external migration only if persistence is introduced.
 5. Fixed-seed generation and key GM/player workflows retain their intended
    behavior, with deliberate schema changes documented in the relevant
    sub-spec.
+6. Architectural source and data files live in category locations; shared
+   support files have explicit homes, and imports preserve dependency direction.
 
-Until sub-spec 5 is complete, individual slices may still coexist with legacy
+Until sub-spec 6 is complete, individual slices may still coexist with legacy
 UI reads of the canonical sector. Each slice must identify its remaining
 direct reads so that the final cutover has an explicit checklist.

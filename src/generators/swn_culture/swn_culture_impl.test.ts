@@ -1,8 +1,8 @@
 import { expect, test } from 'vitest';
 import rawCultureData from '../../../swn_culture/swn_culture_data.json';
 import rawNames from '../../table_data/names.json';
-import { WORLD_TAG_DEFINITIONS, WORLD_TAG_TABLE } from '../swn_sector/generation_rules';
-import type { WorldTag } from '../swn_sector/merged_schema';
+import { WORLD_TAG_DEFINITIONS, WORLD_TAG_TABLE } from '../swn_sector/Generator/generation_rules';
+import type { WorldTag } from '../swn_sector/BaseDTO/merged_schema';
 import {
   SWN_CULTURAL_TEMPLATES,
   SWN_PLACE_NAMES,

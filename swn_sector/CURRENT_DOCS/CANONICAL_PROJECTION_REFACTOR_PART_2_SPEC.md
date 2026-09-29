@@ -3,6 +3,7 @@
 ## Status and intent
 
 This is sub-spec 2 of the [canonical projection refactor roadmap](CANONICAL_PROJECTION_REFACTOR_ROADMAP.md). It follows the planet slice and started from the in-memory `merged-v4` sector contract. Implementation now emits `merged-v5`. It covers star presentation, system geometry and summaries, orbital temperature interpretation, route geometry and descriptions, and object-kind labels. It covers the hex map, top-down and symbolic system views, the object inspector, and shared labels used by the app and GM editor.
+Later update: the portrait index slice replaces canonical `PortraitAssetId` with `PortraitIndex` in `merged-v6`; the original part 2 contract and fixed-seed comparison below describe `merged-v5`.
 
 The slice has two reviewable stages. First, introduce pure read models and move covered derivations out of UI code. Then remove fields proven reconstructable from the canonical sector. Keep layout calculations and interaction in UI. The whole-app Display Sector DTO and unified disclosure policy belong to later sub-specs.
 
@@ -23,9 +24,9 @@ The slice has two reviewable stages. First, introduce pure read models and move 
 | Route endpoint systems, hex distance, destination labels, route inspector text | Project | Derived by resolving portal and system IDs and applying the current hex-distance and name rules. |
 | `OtherCelestialObject.ObjectType`, planet `Kind`, POI type and parent IDs | Keep in Base | Generated kinds and relationships. Human-readable kind labels and glyph classes are projected. |
 | `PointOfInterest.AngleDegrees` | Keep in Base | Generated angle. Rendering coordinates remain layout calculations. |
-| `ConquestEvent.RouteDistance` | Defer to sub-spec 3 | It records a historical political outcome; decide its historical semantics alongside conquest events. Do not equate it silently with the present route graph. |
+| `ConquestEvent.RouteDistance` | Defer to sub-spec 4 | It records a historical political outcome; decide its historical semantics alongside conquest events. Do not equate it silently with the present route graph. |
 
-An entity's `NiceName`, `ProceduralName`, `Visibility`, `Intelligence`, and `PortraitAssetId` remain as defined in `merged-v4` during this slice. Part 4 owns their final disclosure and asset contract. A generated portal's initial name may be reconstructed from other names, but an independently edited name must remain canonical until the names audit in part 4.
+An entity's `NiceName`, `ProceduralName`, `Visibility`, `Intelligence`, and `PortraitAssetId` remain as defined in `merged-v4` during this slice. Part 5 owns their final disclosure and asset contract. A generated portal's initial name may be reconstructed from other names, but an independently edited name must remain canonical until the names audit in part 5.
 
 ## Projection contracts
 
@@ -37,7 +38,7 @@ Use named, pure read models or equivalent types for the covered content. A proje
 
 `SystemSpatialDisplayDTO` exposes copied `systemId` and `HexLocation`, the derived system edge AU, direct-orbit AU interval, normal-temperature inner and outer AU, whether the normal band is empty, and the detailed nonempty temperature bands. The UI converts AU to pixels using its measured viewport. It must not call `normalTemperatureAuBand`, `systemEdgeAu`, or raw generation tables itself.
 
-`SystemSummaryDisplayDTO` supplies the existing inspector Basic stock line (`<StarType> Type`) and the star facts needed by map and system views. Any route and object counts shown later must be calculated here. The current Politics stock claim list is owned by sub-spec 3; keep its present behavior during this slice.
+`SystemSummaryDisplayDTO` supplies the existing inspector Basic stock line (`<StarType> Type`) and the star facts needed by map and system views. Any route and object counts shown later must be calculated here. The current Politics stock claim list is owned by sub-spec 4; keep its present behavior during this slice.
 
 ### Objects and orbit interpretation
 
@@ -45,13 +46,13 @@ Use named, pure read models or equivalent types for the covered content. A proje
 
 It also supplies existing generated labels for world versus moon and for `OtherCelestialObject` subtypes, plus the existing Basic inspector AU/type text for non-planet objects. Planet display projection from part 1 must consume effective temperature and AU without rebuilding a synthetic canonical `Planet` or making the generator depend on a UI read model. Existing planet color and composition behavior must remain the same.
 
-`ObjectKindDisplayDTO` (or a shared field on the entity read model) replaces `objectKindLabel` for the covered inspector header, app selection label, and GM edit header. Preserve the current uppercase labels, including `WORLD`, `MOON`, `ROUTE PORTAL`, `POINT OF INTEREST`, and HPOI subtype. The eventual full label and visibility contract remains part 4.
+`ObjectKindDisplayDTO` (or a shared field on the entity read model) replaces `objectKindLabel` for the covered inspector header, app selection label, and GM edit header. Preserve the current uppercase labels, including `WORLD`, `MOON`, `ROUTE PORTAL`, `POINT OF INTEREST`, and HPOI subtype. The eventual full label and visibility contract remains part 5.
 
 ### Routes
 
 `RouteDisplayDTO` exposes route ID, the two ordered portal IDs, resolved endpoint system IDs, current endpoint hexes, integer hex distance, and the existing Basic inspector text. The hex-distance function must reproduce the current odd-column offset coordinate calculation in `DetailBar.tsx`; do not substitute the Euclidean distance used only to choose candidate route edges during generation. Resolve the owning route of a portal by `Route.PortalIds` membership after `RoutePortal.RouteId` is removed.
 
-For labels, preserve each view's present rule until part 4: the route inspector and top-down destination use the **route's** Politics scan to choose nice versus procedural endpoint names; symbolic route labels use their current fallback; map labels use the system's visible-name rule. The projector receives the preview explicitly and returns the relevant strings. It does not grant or revoke scan visibility. The map and views still filter visible items with their current checks during this slice.
+For labels, preserve each view's present rule until part 5: the route inspector and top-down destination use the **route's** Politics scan to choose nice versus procedural endpoint names; symbolic route labels use their current fallback; map labels use the system's visible-name rule. The projector receives the preview explicitly and returns the relevant strings. It does not grant or revoke scan visibility. The map and views still filter visible items with their current checks during this slice.
 
 Project route endpoint relationships for the hex map, top-down route markers, and symbolic destinations. The UI still computes line endpoints, rotation, and spacing from projected coordinates and its own layout constants. Projection provides a star-type-derived portal boundary AU; the stored portal angle remains the directional input.
 
@@ -90,4 +91,4 @@ Project route endpoint relationships for the hex map, top-down route markers, an
 
 ## Direct Base reads left for later slices
 
-This slice permits direct UI reads for scan filtering, names and authored intelligence, polity overlays and claims, POIs/HPOIs and culture, portrait resolution, player-ship state, and edit commands. List any further direct reads found during implementation in the part 5 cutover checklist. Part 4 will unify visibility and naming rules; part 3 will own political summaries. This slice must not change either behavior accidentally.
+This slice permits direct UI reads for scan filtering, names and authored intelligence, polity overlays and claims, POIs/HPOIs and culture, portrait resolution, player-ship state, and edit commands. List any further direct reads found during implementation in the part 6 cutover checklist. Part 5 will unify visibility and naming rules; part 4 will own political summaries. This slice must not change either behavior accidentally.

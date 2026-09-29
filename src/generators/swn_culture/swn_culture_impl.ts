@@ -7,8 +7,8 @@ import {
   WORLD_TAG_DEFINITIONS,
   WORLD_TAG_TABLE,
   type WorldTagPromptCategory,
-} from '../swn_sector/generation_rules';
-import type { WorldTag } from '../swn_sector/merged_schema';
+} from '../swn_sector/Generator/generation_rules';
+import type { WorldTag } from '../swn_sector/BaseDTO/merged_schema';
 
 type PcReasonTypeTable = 'commodity_types' | 'special_tech_types' | 'adventure_opportunity_types';
 type ConflictDetailsTable =
@@ -51,45 +51,12 @@ type CultureData = {
   planetary_gun_turrets: DiceTable;
 };
 
-export type SwnCultureGender = 'Male' | 'Female';
-export type SwnCulturePrompt = { prompt: string; sourceTag: WorldTag };
-export type SwnCultureTaggedComponent = {
-  prompts: [SwnCulturePrompt, SwnCulturePrompt];
-};
-export type SwnCultureNamedComponent = SwnCultureTaggedComponent & {
-  name: string;
-  gender: SwnCultureGender;
-};
-
-export type SwnCulture = {
-  worldTags: [WorldTag, WorldTag];
-  culturalTemplate: string;
-  homeworld: string;
-  adventureComponents: {
-    enemy: SwnCultureNamedComponent;
-    friend: SwnCultureNamedComponent;
-    complication: SwnCultureTaggedComponent;
-    thing: SwnCultureTaggedComponent;
-    place: SwnCultureTaggedComponent & { placeName: string };
-  };
-  pcCaresAbout: { category: string; type: string; commoditySize: string | null };
-  biggestConflict: { category: string; details: string };
-  outsiderOpinion: string;
-  lawEnforcement: {
-    amount: string;
-    style: string;
-    specialLaw: string;
-  };
-  majorStarport: { type: string; name: string };
-  planetaryDefenses: {
-    orbitingStationStyle: string;
-    orbitingStationType: string;
-    tradeAndSmugglingEnforcementAmount: string;
-    customsAndVisaEmphasis: string;
-    patrolBoatPresence: string;
-    planetaryGunTurrets: string;
-  };
-};
+import type {
+  SwnCulture,
+  SwnCultureGender,
+  SwnCultureNamedComponent,
+  SwnCulturePrompt,
+} from '../swn_sector/BaseDTO/culture';
 
 const cultureData = rawCultureData as CultureData;
 const availableWorldTagSet = new Set<WorldTag>(WORLD_TAG_TABLE.map((row) => row.Value));

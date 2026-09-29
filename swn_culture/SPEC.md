@@ -19,7 +19,7 @@ The generator exposes two public generation modes:
 
 Both modes return the same culture result shape and normally generate exactly one culture. Tests may generate batches by repeatedly invoking either mode with distinct, deterministic child seeds; batch generation is test support, not a third production API.
 
-The seed-only mode must choose two distinct World Tags from the sector generator's filtered `WORLD_TAG_TABLE`. World Tag data comes from the existing canonical `swn_sector/world_tags.json` table; this generator must not maintain a divergent copy.
+The seed-only mode must choose two distinct World Tags from the sector generator's filtered `WORLD_TAG_TABLE`. World Tag data comes from the existing canonical `src/generators/swn_sector/Data/Raw/world_tags.json` table; this generator must not maintain a divergent copy.
 
 The predetermined-tags mode accepts exactly two canonical World Tags. Unknown values fail validation. Because callers control these inputs, duplicate supplied tags are accepted and their order is preserved; neither behavior is otherwise part of the generator's semantic contract.
 
@@ -39,7 +39,7 @@ The culture result contains the following Category I material, selected randomly
 
 ### Adventure components
 
-All component prompts come from the two selected or supplied World Tags in `swn_sector/world_tags.json`.
+All component prompts come from the two selected or supplied World Tags in `src/generators/swn_sector/Data/Raw/world_tags.json`.
 
 - One Enemy component plus a culturally matching personal name
 - One Friend component plus a culturally matching personal name
