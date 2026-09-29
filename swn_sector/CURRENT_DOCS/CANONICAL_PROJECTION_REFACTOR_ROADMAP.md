@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This document covers the **whole SWN_SECTOR architecture refactor** described
+This document covers the active SWN_SECTOR generation and projection refactor described
 in [Canonical Generation and Projection Architecture](../../temp/canonical-generation-projection-architecture.md)
 and its [toy example](../../temp/canonical-generation-projection-toy-example.md).
 It sketches the smaller implementation specs needed to get there. The
@@ -10,7 +10,8 @@ It sketches the smaller implementation specs needed to get there. The
 [part 2](CANONICAL_PROJECTION_REFACTOR_PART_2_SPEC.md), and the
 [organization step](CANONICAL_PROJECTION_REFACTOR_PART_3_ORGANIZATION_SPEC.md)
 and [part 4](CANONICAL_PROJECTION_REFACTOR_PART_4_POLITICS_CULTURE_POI_SPEC.md)
-are implemented; parts 5 and 6 remain proposed scopes.
+are implemented. Part 5 is explicitly deferred and is not a prerequisite for
+part 6; part 6 remains proposed.
 
 This roadmap also implements the architecture's Project Organization rule:
 file location must make each architectural category visible. The organization
@@ -30,9 +31,10 @@ raw generation data -> generator/action -> Base Sector DTO
 - The Base DTO stores generated outcomes, independent editable facts, and
   campaign state. It excludes generation tables, weights, deterministic
   interpretations, and display-only fields.
-- A Display DTO may copy canonical values and add calculated values, content,
-  labels, assets, and visibility-specific read models. It is never saved as
-  canonical state.
+- The active plan uses one shared Display DTO. It may copy canonical values,
+  including GM-only facts, and add calculated values, content, labels, and
+  assets. It is never saved as canonical state. The player preview remains a UI
+  presentation mode, not an access-control or data-redaction boundary.
 - Projection is deterministic and side-effect free. The UI renders Display
   DTOs and handles interaction; it does not infer domain or content facts.
 - A user action may run generation after initial sector creation. It updates
@@ -103,37 +105,40 @@ historical outcomes canonical when other canonical facts cannot reconstruct
 them. Make world completion an application command that generates a new Base
 DTO and then projects it; rendering must not call generation directly.
 
-### 5. Disclosure, names, and assets — spec to write
+### 5. Disclosure, names, and assets — deferred; do not implement in this refactor
 
-Define a single projection contract for GM versus player output and the four
-scan levels. Visibility grants, independently editable names, and authored
-intelligence remain canonical; the chosen visible name, redacted text, labels,
-and asset URLs belong in the Display DTO. The
-[portrait index slice](CANONICAL_PROJECTION_PORTRAIT_INDEX_SPEC.md) already
-stores the random zero-based `PortraitIndex` as canonical and resolves its
-category, source path, and style in projection. Complete the remaining asset
-and visibility contract here. Cover the inspector, maps, system views, culture
-screen, and any other UI that currently makes its own disclosure decisions.
-Specify how a missing or invalid asset is represented in the Display DTO.
+The [deferred Part 5 document](DEFERRED_PART_5_DISCLOSURE_NAMES_ASSETS.md)
+records the possible future work. The current project will not create separate
+GM and player DTOs, enforce player-safe redaction in projection, or make the
+player preview a security boundary. Existing preview, scan, name, and asset
+presentation behavior may continue. The completed
+[portrait index slice](CANONICAL_PROJECTION_PORTRAIT_INDEX_SPEC.md) remains in
+place. Do not silently move the deferred disclosure work into part 6.
 
 ### 6. Application cutover and canonical audit — spec to write
 
-Make the application's read boundary return a complete Display Sector DTO for
-the current view, while commands accept IDs and explicit edits to canonical
-state. Remove direct Base DTO imports and domain/content derivation from UI
-components. Audit every remaining Base DTO field against the rule: **if the
+Make the application's read boundary return one shared Display Sector DTO,
+while commands accept IDs and explicit edits to canonical state. Remove direct
+Base DTO imports and domain/content derivation from UI components, except for
+the existing GM/player preview, scan, and visible-name presentation decisions
+explicitly deferred in part 5. The shared DTO may contain GM-only data; no
+player-safe payload or redaction guarantee is required. Audit every remaining
+Base DTO field against the rule: **if the
 same value can be reconstructed from other Base fields plus deterministic
 projection data, remove it**. Classify generation provenance and schema
 metadata explicitly. Update validation and any schema version affected by
 removed fields. The present prototype stores sectors only in memory, so this
 sub-spec should address external migration only if persistence is introduced.
 
-## Completion criteria for the whole refactor
+## Completion criteria for the active refactor
 
-1. Every UI read goes through the Display DTO; UI actions update canonical
-   state through application commands and receive a newly projected result.
+1. Every UI read goes through the shared Display DTO; UI actions update
+   canonical state through application commands and receive a newly projected
+   result. The DTO may contain GM-only data in either preview mode.
 2. No UI component imports raw generation tables or derives domain/content
-   facts from the Base DTO.
+   facts from the Base DTO. Existing preview, scan, and visible-name
+   presentation decisions are an explicit exception until deferred part 5 is
+   separately authorized.
 3. No random selection occurs in projection or rendering. Re-projecting the
    same Base DTO with the same projection data yields equal output without
    changing the Base DTO.
@@ -141,10 +146,13 @@ sub-spec should address external migration only if persistence is introduced.
    or presentation values; the field audit records any disputed exceptions.
 5. Fixed-seed generation and key GM/player workflows retain their intended
    behavior, with deliberate schema changes documented in the relevant
-   sub-spec.
+   sub-spec. Player preview is a display convenience, not a confidentiality
+   guarantee.
 6. Architectural source and data files live in category locations; shared
    support files have explicit homes, and imports preserve dependency direction.
 
 Until sub-spec 6 is complete, individual slices may still coexist with legacy
 UI reads of the canonical sector. Each slice must identify its remaining
-direct reads so that the final cutover has an explicit checklist.
+direct reads so that the final cutover has an explicit checklist. Part 6's
+checklist excludes the deferred disclosure contract; completion of the active
+refactor does not imply completion of part 5.

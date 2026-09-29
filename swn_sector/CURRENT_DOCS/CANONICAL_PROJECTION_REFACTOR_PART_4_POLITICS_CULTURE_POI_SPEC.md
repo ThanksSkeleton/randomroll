@@ -4,13 +4,13 @@
 
 This is sub-spec 4 of the [canonical projection refactor roadmap](CANONICAL_PROJECTION_REFACTOR_ROADMAP.md). The slice is implemented. It migrated the in-memory Base sector from `merged-v6` to `merged-v7` after project organization.
 
-This slice moves political interpretation, culture presentation, world-tag descriptions, and POI/HPOI stock content behind named Display DTOs. It also routes world completion through the application. Preserve the current generated sector and GM/player behavior except for the explicitly removed reconstructable Base fields. Part 5 owns the unified disclosure, name, flag-asset, and scan policy. Part 6 owns the complete application-wide Display Sector DTO boundary.
+This slice moves political interpretation, culture presentation, world-tag descriptions, and POI/HPOI stock content behind named Display DTOs. It also routes world completion through the application. Preserve the current generated sector and GM/player behavior except for the explicitly removed reconstructable Base fields. The unified disclosure, name, flag-asset, and scan policy is now [deferred Part 5](DEFERRED_PART_5_DISCLOSURE_NAMES_ASSETS.md). Part 6 owns the shared application-wide Display Sector DTO boundary.
 
 ## Base DTO field decisions
 
 | Field or relationship | Decision | Reason |
 | --- | --- | --- |
-| `Polity.Id`, `HomeworldId`, `NiceName`, `Flag` | Keep | Identity and homeworld association are generated facts. Names may be edited independently; flag colors are random choices. Name and asset presentation are audited in part 5. |
+| `Polity.Id`, `HomeworldId`, `NiceName`, `Flag` | Keep | Identity and homeworld association are generated facts. Names may be edited independently; flag colors are random choices. Name and asset presentation are reserved for deferred Part 5. |
 | `Polity.Attack`, `Defense`, `Projection` | Remove | `capabilityFor(homeworld.InhabitedInfo.TechLevel, Population)` uniquely reconstructs all three. Compute them in projection and in the generator's temporary politics working record. |
 | `SystemObject.ClaimedByPolityIds` and their order | Keep | These are surviving simultaneous claims, including conquest results. Do not recompute them from the current route graph or polity capabilities. |
 | `ConquestEvent.Id`, attacker/defender/target IDs, `RouteDistance`, `Attack`, `Defense` | Keep | An event records a resolved attempt and its generation-time distance and capability snapshots. Later changes to homeworld facts or routes must not rewrite that history. `RouteDistance` is route-hop distance at resolution, not the hex distance from part 2. |
@@ -52,7 +52,7 @@ Add named types in `DisplayDTO/dto.ts` and pure projectors under `Projector/`. A
 
 Add `PrototypeApplication.completeWorld(index, worldId)` as the only UI-facing completion operation. It validates the sector index and inhabited world ID, invokes the existing `Generator/culture.ts` action, stores the returned Base sector, and returns the fresh canonical sector plus its projected culture/politics/POI read results (or a clear failure). Repeating completion is idempotent and must not reroll culture. The application must not expose a path where a render calls `completeWorld`.
 
-`CultureScreen` receives projected culture and polity rows plus an `onCompleteWorld(worldId)` command callback. `App` wires that callback to `PrototypeApplication`, then updates its in-memory sector state with the returned Base result and renders newly projected DTOs. Keep the culture tab GM-only as it currently is; part 5 defines a unified disclosure contract.
+`CultureScreen` receives projected culture and polity rows plus an `onCompleteWorld(worldId)` command callback. `App` wires that callback to `PrototypeApplication`, then updates its in-memory sector state with the returned Base result and renders newly projected DTOs. Keep the culture tab GM-only as it currently is; a unified disclosure contract is deferred.
 
 Move covered display derivations out of `CultureScreen`, `DetailBar`, `HexMap`, `SymbolicSystem`, and `TopDown`: claim unions and text, world-tag descriptions, HPOI presence/field text, POI stock labels/counts, and claimant flag data come from projectors. Layout, expanding drawers, click handling, and the existing overlay toggle remain UI concerns. `UI/domain/sector/selectors.ts` must no longer own `systemPoliticalClaimIds`; `UI/domain/sector/validation.ts` must call the domain validation boundary for flag colors rather than import `Data/Raw/polity_flag_colors.ts`.
 
@@ -84,7 +84,7 @@ Before removing fields, compare fixed-seed `merged-v6` sectors with `merged-v7` 
 
 ## Direct Base reads left for later slices
 
-This slice may leave UI reads of `Sector` for navigation, layout coordinates, scan filtering, names, authored intelligence, flag rendering, portrait assets, player-ship state and edit drafts. Part 5 will resolve disclosure, names and assets; part 6 will replace the remaining UI Base-sector read boundary. List any additional direct reads discovered during implementation in the part 6 checklist.
+This slice may leave UI reads of `Sector` for navigation, layout coordinates, scan filtering, names, authored intelligence, flag rendering, portrait assets, player-ship state and edit drafts. Disclosure, names, and remaining assets are deferred; part 6 will replace the remaining UI Base-sector read boundary with one shared DTO. List any additional direct reads discovered during implementation in the part 6 checklist.
 
 ## Implementation evidence
 

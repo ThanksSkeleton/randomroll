@@ -51,7 +51,7 @@ No generated fields, version, random draw sequence, or display strings were inte
 
 ## Known legacy dependencies for later sub-specs
 
-The structural migration leaves existing application behavior in place. Sub-spec 4 owns the politics and culture projection cutover, sub-spec 5 owns unified disclosure, and sub-spec 6 owns the complete Display Sector DTO boundary. In particular:
+The structural migration leaves existing application behavior in place. Sub-spec 4 owns the politics and culture projection cutover, unified disclosure is now deferred in [Part 5](DEFERRED_PART_5_DISCLOSURE_NAMES_ASSETS.md), and sub-spec 6 owns the shared Display Sector DTO boundary. In particular:
 
 - `UI/features/culture/CultureScreen.tsx` still invokes the world-completion generator action and reads world-tag definitions from `Generator/generation_rules.ts`. Sub-spec 4 should route the action through the application boundary and project tag descriptions.
 - `UI/domain/sector/validation.ts` still reads the raw polity flag-color set. Sub-spec 4 should place that check behind the domain validation boundary as politics moves to projection.

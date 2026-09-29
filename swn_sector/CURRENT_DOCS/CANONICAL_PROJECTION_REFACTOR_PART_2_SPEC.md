@@ -4,6 +4,7 @@
 
 This is sub-spec 2 of the [canonical projection refactor roadmap](CANONICAL_PROJECTION_REFACTOR_ROADMAP.md). It follows the planet slice and started from the in-memory `merged-v4` sector contract. Implementation now emits `merged-v5`. It covers star presentation, system geometry and summaries, orbital temperature interpretation, route geometry and descriptions, and object-kind labels. It covers the hex map, top-down and symbolic system views, the object inspector, and shared labels used by the app and GM editor.
 Later update: the portrait index slice replaces canonical `PortraitAssetId` with `PortraitIndex` in `merged-v6`; the original part 2 contract and fixed-seed comparison below describe `merged-v5`.
+Scheduling update: references below to future Part 5 work are historical; [Part 5 is deferred](DEFERRED_PART_5_DISCLOSURE_NAMES_ASSETS.md) and is not part of the active refactor.
 
 The slice has two reviewable stages. First, introduce pure read models and move covered derivations out of UI code. Then remove fields proven reconstructable from the canonical sector. Keep layout calculations and interaction in UI. The whole-app Display Sector DTO and unified disclosure policy belong to later sub-specs.
 
