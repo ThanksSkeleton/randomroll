@@ -10,7 +10,7 @@ import type {
 import { choose, deterministicId, randomFor } from './generation_random';
 
 import { POLITY_FLAG_COLORS } from '../Data/Raw/polity_flag_colors';
-import { capabilityFor } from '../Helpers/Domain/politics_interpretation';
+import { capabilityFor, type Capability } from '../Helpers/Domain/politics_interpretation';
 
 export interface PoliticsResult {
   Polities: Polity[];
@@ -18,7 +18,8 @@ export interface PoliticsResult {
   ClaimsByObjectId: Map<Guid, Guid[]>;
 }
 
-type Homeworld = { world: Planet; system: StarSystem; polity: Polity };
+type ResolvedPolity = Polity & Capability;
+type Homeworld = { world: Planet; system: StarSystem; polity: ResolvedPolity };
 
 function componentToHex(value: number): string {
   return Math.round(value * 255)
@@ -77,7 +78,7 @@ export function resolvePolitics(
   const distancesByPolityId = new Map(
     homeworlds.map(({ polity, system }) => [polity.Id, routeDistances(system.Id, adjacency)]),
   );
-  const paintedByObjectId = new Map<Guid, Polity[]>();
+  const paintedByObjectId = new Map<Guid, ResolvedPolity[]>();
   for (const system of systems)
     for (const object of system.Objects) {
       const painted = homeworlds
@@ -130,14 +131,18 @@ export function resolvePolitics(
         RouteDistance: distance,
         Attack: attacker.Attack,
         Defense: defender.polity.Defense,
-        Outcome: attacker.Attack > defender.polity.Defense ? 'CONQUEST' : 'DEFENSE',
       });
     }
   }
   ConquestEvents.sort((left, right) => left.Id.localeCompare(right.Id));
 
   return {
-    Polities: homeworlds.map(({ polity }) => polity),
+    Polities: homeworlds.map(({ polity }) => ({
+      Id: polity.Id,
+      NiceName: polity.NiceName,
+      HomeworldId: polity.HomeworldId,
+      Flag: polity.Flag,
+    })),
     ConquestEvents,
     ClaimsByObjectId,
   };

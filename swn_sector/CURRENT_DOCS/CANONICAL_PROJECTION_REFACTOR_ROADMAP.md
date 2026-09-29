@@ -9,8 +9,8 @@ It sketches the smaller implementation specs needed to get there. The
 [first planet slice](CANONICAL_PROJECTION_REFACTOR_SPEC.md),
 [part 2](CANONICAL_PROJECTION_REFACTOR_PART_2_SPEC.md), and the
 [organization step](CANONICAL_PROJECTION_REFACTOR_PART_3_ORGANIZATION_SPEC.md)
-are implemented; the remaining sub-specs below are proposed scopes, not
-completed specs.
+and [part 4](CANONICAL_PROJECTION_REFACTOR_PART_4_POLITICS_CULTURE_POI_SPEC.md)
+are implemented; parts 5 and 6 remain proposed scopes.
 
 This roadmap also implements the architecture's Project Organization rule:
 file location must make each architectural category visible. The organization
@@ -93,9 +93,9 @@ fixed-seed generation and projection tests still pass. Record legacy
 dependencies reserved for later sub-specs with their owner in the implementation
 spec.
 
-### 4. Politics, culture, and points of interest — spec to write
+### 4. Politics, culture, and points of interest — implemented
 
-Distinguish resolved generated events and culture choices from values that can
+Implement [part 4](CANONICAL_PROJECTION_REFACTOR_PART_4_POLITICS_CULTURE_POI_SPEC.md): distinguish resolved generated events and culture choices from values that can
 be calculated from them. Project polity capability interpretations, claim
 summaries, conquest explanations, world-tag descriptions, culture display, and
 habitable-POI presence and text. Keep randomly selected culture content and

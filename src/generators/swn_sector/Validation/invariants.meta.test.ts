@@ -64,7 +64,7 @@ function station(id: string, parentObjectId: string | null): OtherCelestialObjec
 
 function sector(objects: Array<Planet | OtherCelestialObject>): Sector {
   return {
-    SchemaVersion: 'merged-v6',
+    SchemaVersion: 'merged-v7',
     OriginalSeed: 'test',
     StartingWorldMode: 'UNRESTRICTED',
     StartingWorldId: null,
@@ -150,7 +150,6 @@ describe('merged-sector independent stations', () => {
       Population: 'Fewer than 500',
       TechLevel: 'Modern postech',
     };
-    terrestrial.Complete = false;
     terrestrial.Culture = null;
     const input = sector([terrestrial, planet('extra', null, 'Mars'), station('station', null)]);
     input.Systems[0]!.PointsOfInterest.push({
@@ -198,7 +197,6 @@ describe('merged-sector independent stations', () => {
       Population: 'Fewer than a million inhabitants',
       TechLevel: 'Modern postech',
     };
-    world.Complete = false;
     world.Culture = null;
 
     expect(
@@ -221,7 +219,6 @@ describe('merged-sector independent stations', () => {
       Population: 'Fewer than 500',
       TechLevel: 'Modern postech',
     };
-    world.Complete = false;
     world.Culture = null;
 
     expect(
@@ -243,7 +240,6 @@ describe('merged-sector independent stations', () => {
       Population: 'Fewer than 500',
       TechLevel: 'Modern postech',
     };
-    world.Complete = false;
     world.Culture = null;
     const input = sector([world, planet('extra', null, 'Mars'), station('station', null)]);
     input.Systems[0]!.Star.StarType = 'A-type';

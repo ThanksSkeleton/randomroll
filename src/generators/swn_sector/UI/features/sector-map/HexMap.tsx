@@ -4,10 +4,10 @@ import {
   findContainingSystem,
   findDetails,
   isVisibleToPlayer,
-  systemPoliticalClaimIds,
 } from '../../domain/sector/selectors';
 import { projectStar } from '../../../Projector/star_projection';
 import { projectRoute } from '../../../Projector/route_projection';
+import { projectClaims } from '../../../Projector/politics_projection';
 import { StarGlyph } from '../system-viewer/StarGlyph';
 import { polityFlagColorValue } from '../politics/PolityFlag';
 
@@ -139,7 +139,7 @@ export function HexMap({
             visible(system.Id, sector, preview) &&
             (preview === 'gm' || system.Visibility.PoliticsScan);
           const claimIds =
-            showSystemClaims && system ? systemPoliticalClaimIds(system, sector) : [];
+            showSystemClaims && system ? (projectClaims(sector, system)?.claimantIds ?? []) : [];
           const claimants = claimIds.flatMap((id) => {
             const polity = sector.Polities.find((candidate) => candidate.Id === id);
             return polity ? [polity] : [];

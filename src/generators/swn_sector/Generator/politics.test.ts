@@ -204,9 +204,10 @@ describe('simultaneous political resolution', () => {
     const result = resolvePolitics('native-tie', systems, routes, portals);
 
     expect(claims(result, alpha.Id)).toEqual(['Alpha']);
-    expect(result.ConquestEvents.find((event) => event.TargetWorldId === alpha.Id)?.Outcome).toBe(
-      'DEFENSE',
-    );
+    expect(
+      result.ConquestEvents.find((event) => event.TargetWorldId === alpha.Id)?.Attack! >
+        result.ConquestEvents.find((event) => event.TargetWorldId === alpha.Id)?.Defense!,
+    ).toBe(false);
   });
 
   it('keeps multiple foreign victors tied on a defeated homeworld', () => {
@@ -255,7 +256,7 @@ describe('simultaneous political resolution', () => {
     }
     expect(
       result.ConquestEvents.filter(
-        (event) => event.TargetWorldId === alpha.Id && event.Outcome === 'CONQUEST',
+        (event) => event.TargetWorldId === alpha.Id && event.Attack > event.Defense,
       ),
     ).toHaveLength(2);
   });

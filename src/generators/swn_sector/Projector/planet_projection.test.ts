@@ -27,7 +27,7 @@ test('projecting a planet is repeatable and leaves the sector unchanged', () => 
 
 test('generated sectors store only canonical planet and star facts', () => {
   const sector = generate('planet-projection-shape');
-  expect(sector.SchemaVersion).toBe('merged-v6');
+  expect(sector.SchemaVersion).toBe('merged-v7');
   for (const system of sector.Systems) {
     expect(system.Star).not.toHaveProperty('HabitabilityRating');
     for (const object of system.Objects) {

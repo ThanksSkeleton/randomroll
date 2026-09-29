@@ -1,11 +1,8 @@
-import { hpoiProjection } from '../../../Projector/culture_projection';
+import { projectHabitablePoi } from '../../../Projector/culture_projection';
+import { projectClaims } from '../../../Projector/politics_projection';
+import { projectPoi, projectPoiCount } from '../../../Projector/poi_projection';
 import type { SelectableEntity, Sector } from '../../../BaseDTO/merged_schema';
-import {
-  findDetails,
-  findObject,
-  systemPoliticalClaimIds,
-  type FoundObject,
-} from '../../domain/sector/selectors';
+import { findDetails, findObject, type FoundObject } from '../../domain/sector/selectors';
 import type { EditDraft, Preview, EditableDetailField } from '../../application/appState';
 import { projectPlanet } from '../../../Projector/planet_projection';
 import { projectRoute } from '../../../Projector/route_projection';
@@ -46,26 +43,11 @@ type StockSignals = {
   gm: string;
 };
 
-function associatedPoiCount(sector: Sector, systemId: string | undefined, objectId: string) {
-  return (
-    sector.Systems.find((system) => system.Id === systemId)?.PointsOfInterest.filter(
-      (poi) => poi.ParentObjectId === objectId,
-    ).length ?? 0
-  );
-}
-
-function polityClaims(sector: Sector, polityIds: readonly string[]) {
-  const names = polityIds
-    .map((id) => sector.Polities.find((polity) => polity.Id === id)?.NiceName)
-    .filter((name): name is string => name !== undefined);
-  return `ClaimedBy: ${names.length === 0 ? 'None' : names.join(', ')}`;
-}
-
 function politicalClaimIds(found: FoundObject, sector: Sector): string[] | undefined {
   if (found.kind === 'Planet' || found.kind === 'OtherCelestialObject')
-    return found.object.ClaimedByPolityIds;
+    return projectClaims(sector, found.object)?.claimantIds;
   if (found.kind !== 'System') return undefined;
-  return systemPoliticalClaimIds(found.object, sector);
+  return projectClaims(sector, found.object)?.claimantIds;
 }
 
 function stockSignals(found: FoundObject, sector: Sector, preview: Preview): StockSignals {
@@ -75,18 +57,17 @@ function stockSignals(found: FoundObject, sector: Sector, preview: Preview): Sto
   if (found.kind === 'OtherCelestialObject') {
     return {
       basic: projectObjectSpatial(sector, found.object.Id)?.inspectorBasic ?? '-',
-      detailed: `Signals Detected: ${associatedPoiCount(sector, found.containingSystem?.Id, found.object.Id)}`,
-      politics: polityClaims(sector, found.object.ClaimedByPolityIds),
+      detailed: `Signals Detected: ${projectPoiCount(sector, found.containingSystem?.Id ?? '', found.object.Id) ?? 0}`,
+      politics: projectClaims(sector, found.object)?.stockText ?? '-',
       deep: '-',
       gm: '-',
     };
   }
   if (found.kind === 'System') {
-    const claimIds = politicalClaimIds(found, sector) ?? [];
     return {
       basic: projectSystemSpatial(sector, found.object.Id)?.inspectorBasic ?? '-',
       detailed: '-',
-      politics: polityClaims(sector, claimIds),
+      politics: projectClaims(sector, found.object)?.stockText ?? '-',
       deep: '-',
       gm: '-',
     };
@@ -102,7 +83,7 @@ function stockSignals(found: FoundObject, sector: Sector, preview: Preview): Sto
   }
   if (found.kind === 'PointOfInterest') {
     return {
-      basic: found.object.POIType,
+      basic: projectPoi(sector, found.object.Id)?.inspectorBasic ?? '-',
       detailed: '-',
       politics: '-',
       deep: '-',
@@ -110,29 +91,15 @@ function stockSignals(found: FoundObject, sector: Sector, preview: Preview): Sto
     };
   }
   if (found.kind === 'HabitablePointOfInterest') {
-    const projected = hpoiProjection(sector, found.object);
-    const field = (name: string) => projected.fields.find(([label]) => label === name)?.[1];
-    const physical = projected.fields.filter(
-      ([name]) =>
-        !['Trade and Smuggling Enforcement Amount', 'Customs and Visa Emphasis'].includes(name),
+    return (
+      projectHabitablePoi(sector, found.object.Id)?.stock ?? {
+        basic: '-',
+        detailed: '-',
+        politics: '-',
+        deep: '-',
+        gm: '-',
+      }
     );
-    return {
-      basic: found.object.HPOIType,
-      detailed: physical.map(([name, value]) => `${name}: ${value}`).join('\n') || '-',
-      politics: polityClaims(sector, projected.polityIds),
-      deep:
-        [
-          field('Trade and Smuggling Enforcement Amount') &&
-            `Trade and Smuggling Enforcement Amount: ${field('Trade and Smuggling Enforcement Amount')}`,
-          field('Customs and Visa Emphasis') &&
-            `Customs and Visa Emphasis: ${field('Customs and Visa Emphasis')}`,
-        ]
-          .filter(Boolean)
-          .join('\n') || '-',
-      gm:
-        `${projected.reason ? `NONE: ${projected.reason}\n` : ''}${projected.fields.map(([name, value]) => `${name}: ${value}`).join('\n')}` ||
-        '-',
-    };
   }
   return { basic: '-', detailed: '-', politics: '-', deep: '-', gm: '-' };
 }
@@ -198,9 +165,9 @@ export function DetailBar({
       : found?.kind === 'Planet'
         ? 'uninhabited planet'
         : found?.kind === 'PointOfInterest'
-          ? `${found.object.POIType} point of interest`
+          ? `${projectPoi(sector, found.object.Id)?.typeLabel ?? 'POI'} point of interest`
           : found?.kind === 'HabitablePointOfInterest'
-            ? `${found.object.HPOIType} habitable point of interest`
+            ? `${projectHabitablePoi(sector, found.object.Id)?.typeLabel ?? 'HPOI'} habitable point of interest`
             : found?.kind === 'OtherCelestialObject'
               ? projectOtherObjectTypeLabel(found.object.ObjectType)
               : (found?.kind ?? 'object');
@@ -294,7 +261,7 @@ function DetailBox({
   const [activeTab, setActiveTab] = useState<'player' | 'gm'>('player');
   const claimIds =
     found.kind === 'HabitablePointOfInterest'
-      ? hpoiProjection(sector, found.object).polityIds
+      ? projectHabitablePoi(sector, found.object.Id)?.polityIds
       : politicalClaimIds(found, sector);
   const edit = (field: EditableDetailField) => (value: string) =>
     setDraft((old) => ({
@@ -411,7 +378,7 @@ function DetailBox({
           )}
           {found.kind === 'Planet' &&
             found.object.InhabitedInfo !== false &&
-            found.object.Complete &&
+            found.object.Culture &&
             found.object.Culture && (
               <pre className="detail-section-description">
                 {JSON.stringify(found.object.Culture, null, 2)}

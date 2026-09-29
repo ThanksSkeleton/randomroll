@@ -33,8 +33,7 @@ import {
   TEMPERATURE_HAB,
   TERRAN_BIOSPHERE_HAB,
 } from '../Helpers/Domain/planet_interpretation';
-import { capabilityFor } from '../Helpers/Domain/politics_interpretation';
-import { POLITY_FLAG_COLORS } from '../Data/Raw/polity_flag_colors';
+import { validPolityFlag } from './politics';
 import { planetHabitability, STAR_HABITABILITY } from '../Helpers/Domain/planet_interpretation';
 import {
   effectiveOrbit,
@@ -172,14 +171,6 @@ export function checkAllInvariants(value: unknown): InvariantViolation[] {
     const objectsById = new Map(system.Objects.map((object) => [object.Id, object]));
     for (const object of system.Objects) {
       if (object.Kind !== 'Planet' || object.InhabitedInfo === false) continue;
-      if (object.Complete !== Boolean(object.Culture))
-        fail('CULTURE', `World ${object.Id} has inconsistent Complete and Culture values.`);
-      if (
-        object.Culture &&
-        (object.Culture.worldTags?.[0] !== object.InhabitedInfo.WorldTags[0] ||
-          object.Culture.worldTags?.[1] !== object.InhabitedInfo.WorldTags[1])
-      )
-        fail('CULTURE', `World ${object.Id} culture tags differ from its World Tags.`);
       const hpois = system.HabitablePointsOfInterest.filter(
         (hpoi) => hpoi.ParentWorldId === object.Id,
       );
@@ -191,14 +182,10 @@ export function checkAllInvariants(value: unknown): InvariantViolation[] {
           fail('HPOI', `World ${object.Id} requires one ${type} HPOI.`);
       const garrisons = hpois.filter((hpoi) => hpoi.HPOIType === 'Garrison');
       if (
-        garrisons.length !== object.ClaimedByPolityIds.length ||
-        garrisons.some(
-          (hpoi) =>
-            !hpoi.AssignedPolityId || !object.ClaimedByPolityIds.includes(hpoi.AssignedPolityId),
-        ) ||
+        garrisons.some((hpoi) => !hpoi.AssignedPolityId) ||
         new Set(garrisons.map((hpoi) => hpoi.AssignedPolityId)).size !== garrisons.length
       )
-        fail('HPOI', `World ${object.Id} Garrisons do not match its surviving claims.`);
+        fail('HPOI', `World ${object.Id} has invalid Garrison assignments.`);
     }
     for (const hpoi of system.HabitablePointsOfInterest) {
       const parent = objectsById.get(hpoi.ParentWorldId);
@@ -210,6 +197,11 @@ export function checkAllInvariants(value: unknown): InvariantViolation[] {
         fail('HPOI', `HPOI ${hpoi.Id} has an unknown type.`);
       if (hpoi.HPOIType !== 'Garrison' && hpoi.AssignedPolityId !== null)
         fail('HPOI', `HPOI ${hpoi.Id} has an unexpected polity assignment.`);
+      if (
+        hpoi.HPOIType === 'Garrison' &&
+        !sector.Polities.some((polity) => polity.Id === hpoi.AssignedPolityId)
+      )
+        fail('HPOI', `HPOI ${hpoi.Id} has a missing assigned polity.`);
       if (!isFiniteNumber(hpoi.AngleDegrees) || hpoi.AngleDegrees < 0 || hpoi.AngleDegrees >= 360)
         fail('HPOI', `HPOI ${hpoi.Id} has an invalid angle.`);
       if (hpoi.PortraitIndex !== undefined)
@@ -289,25 +281,7 @@ function validatePolitics(sector: Sector, fail: (ruleId: string, message: string
       fail('P1', `Polity ${polity.Id} has an invalid homeworld ${polity.HomeworldId}.`);
       continue;
     }
-    const expected = capabilityFor(
-      homeworld.InhabitedInfo.TechLevel,
-      homeworld.InhabitedInfo.Population,
-    );
-    if (
-      polity.Attack !== expected.Attack ||
-      polity.Defense !== expected.Defense ||
-      polity.Projection !== expected.Projection
-    )
-      fail('P2', `Polity ${polity.Id} has capability values inconsistent with its homeworld.`);
-    if (
-      !/^#[0-9a-f]{6}$/i.test(polity.Flag.FieldColor) ||
-      !POLITY_FLAG_COLORS.includes(polity.Flag.CircleColor) ||
-      polity.Flag.FieldColor === polity.Flag.CircleColor ||
-      sector.Polities.some(
-        (candidate) =>
-          candidate.Id !== polity.Id && candidate.Flag.FieldColor === polity.Flag.FieldColor,
-      )
-    )
+    if (!validPolityFlag(polity, sector.Polities))
       fail('P6', `Polity ${polity.Id} has invalid flag colors.`);
   }
 
@@ -340,12 +314,12 @@ function validatePolitics(sector: Sector, fail: (ruleId: string, message: string
     if (defender.HomeworldId !== event.TargetWorldId)
       fail('P5', `Conquest event ${event.Id} does not target the defender's homeworld.`);
     if (
-      event.Attack !== attacker.Attack ||
-      event.Defense !== defender.Defense ||
-      event.Outcome !== (event.Attack > event.Defense ? 'CONQUEST' : 'DEFENSE') ||
+      !Number.isInteger(event.Attack) ||
+      event.Attack < 0 ||
+      !Number.isInteger(event.Defense) ||
+      event.Defense < 0 ||
       !Number.isInteger(event.RouteDistance) ||
-      event.RouteDistance < 0 ||
-      event.RouteDistance > attacker.Projection
+      event.RouteDistance < 0
     )
       fail('P5', `Conquest event ${event.Id} has inconsistent resolution data.`);
   }
@@ -373,6 +347,88 @@ function validateCanonicalShape(
     keys: readonly string[],
     path: string,
   ): boolean => keys.every((key) => key in item || invalid(`${path}.${key}`, 'present'));
+  const culture = (item: unknown, path: string): boolean => {
+    if (
+      !record(item, path) ||
+      !required(
+        item,
+        [
+          'culturalTemplate',
+          'homeworld',
+          'adventureComponents',
+          'pcCaresAbout',
+          'biggestConflict',
+          'outsiderOpinion',
+          'lawEnforcement',
+          'majorStarport',
+          'planetaryDefenses',
+        ],
+        path,
+      ) ||
+      !record(item.adventureComponents, `${path}.adventureComponents`)
+    )
+      return false;
+    if (
+      !string(item.culturalTemplate, `${path}.culturalTemplate`) ||
+      !string(item.homeworld, `${path}.homeworld`) ||
+      !string(item.outsiderOpinion, `${path}.outsiderOpinion`)
+    )
+      return false;
+    for (const kind of ['enemy', 'friend', 'complication', 'thing', 'place']) {
+      const component = item.adventureComponents[kind];
+      const componentPath = `${path}.adventureComponents.${kind}`;
+      if (
+        !record(component, componentPath) ||
+        !array(component.prompts, `${componentPath}.prompts`) ||
+        component.prompts.length !== 2
+      )
+        return false;
+      for (const [index, prompt] of component.prompts.entries())
+        if (
+          !record(prompt, `${componentPath}.prompts[${index}]`) ||
+          !string(prompt.prompt, `${componentPath}.prompts[${index}].prompt`)
+        )
+          return false;
+      if (kind === 'enemy' || kind === 'friend')
+        if (
+          !string(component.name, `${componentPath}.name`) ||
+          !string(component.gender, `${componentPath}.gender`)
+        )
+          return false;
+      if (kind === 'place' && !string(component.placeName, `${componentPath}.placeName`))
+        return false;
+    }
+    const fields: Record<string, string[]> = {
+      pcCaresAbout: ['category', 'type'],
+      biggestConflict: ['category', 'details'],
+      lawEnforcement: ['amount', 'style', 'specialLaw'],
+      majorStarport: ['type', 'name'],
+      planetaryDefenses: [
+        'orbitingStationStyle',
+        'orbitingStationType',
+        'tradeAndSmugglingEnforcementAmount',
+        'customsAndVisaEmphasis',
+        'patrolBoatPresence',
+        'planetaryGunTurrets',
+      ],
+    };
+    for (const [key, names] of Object.entries(fields)) {
+      const section = item[key];
+      if (!record(section, `${path}.${key}`) || !required(section, names, `${path}.${key}`))
+        return false;
+      for (const name of names) if (!string(section[name], `${path}.${key}.${name}`)) return false;
+    }
+    const caresAbout = item.pcCaresAbout as Record<string, unknown>;
+    if (
+      !required(caresAbout, ['commoditySize'], `${path}.pcCaresAbout`) ||
+      !(
+        caresAbout.commoditySize === null ||
+        string(caresAbout.commoditySize, `${path}.pcCaresAbout.commoditySize`)
+      )
+    )
+      return false;
+    return true;
+  };
   const selectable = (item: unknown, path: string): item is Record<string, unknown> => {
     if (
       !record(item, path) ||
@@ -460,12 +516,10 @@ function validateCanonicalShape(
       !string(item.NativeBiosphere, `${path}.NativeBiosphere`)
     )
       return invalid(path, 'a complete Planet');
-    if (item.InhabitedInfo === false)
-      return item.Complete === undefined && item.Culture === undefined;
+    if (item.InhabitedInfo === false) return item.Culture === undefined;
     return (
-      required(item, ['Complete', 'Culture'], path) &&
-      typeof item.Complete === 'boolean' &&
-      (item.Complete ? record(item.Culture, `${path}.Culture`) : item.Culture === null) &&
+      required(item, ['Culture'], path) &&
+      (item.Culture === null || culture(item.Culture, `${path}.Culture`)) &&
       record(item.InhabitedInfo, `${path}.InhabitedInfo`) &&
       required(
         item.InhabitedInfo,
@@ -501,7 +555,7 @@ function validateCanonicalShape(
       ],
       'Sector',
     ) ||
-    value.SchemaVersion !== 'merged-v6' ||
+    value.SchemaVersion !== 'merged-v7' ||
     !string(value.OriginalSeed, 'Sector.OriginalSeed') ||
     !['UNRESTRICTED', 'TL4_PLUS', 'TL4_PLUS_POP_GT_500'].includes(
       String(value.StartingWorldMode),
@@ -581,17 +635,10 @@ function validateCanonicalShape(
     const path = `Sector.Polities[${index}]`;
     if (
       !record(polity, path) ||
-      !required(
-        polity,
-        ['Id', 'NiceName', 'HomeworldId', 'Attack', 'Defense', 'Projection', 'Flag'],
-        path,
-      ) ||
+      !required(polity, ['Id', 'NiceName', 'HomeworldId', 'Flag'], path) ||
       !string(polity.Id, `${path}.Id`) ||
       !string(polity.NiceName, `${path}.NiceName`) ||
       !string(polity.HomeworldId, `${path}.HomeworldId`) ||
-      !number(polity.Attack, `${path}.Attack`) ||
-      !number(polity.Defense, `${path}.Defense`) ||
-      !number(polity.Projection, `${path}.Projection`) ||
       !record(polity.Flag, `${path}.Flag`) ||
       !required(polity.Flag, ['FieldColor', 'CircleColor'], `${path}.Flag`) ||
       !string(polity.Flag.FieldColor, `${path}.Flag.FieldColor`) ||
@@ -613,7 +660,6 @@ function validateCanonicalShape(
           'RouteDistance',
           'Attack',
           'Defense',
-          'Outcome',
         ],
         path,
       ) ||
@@ -623,8 +669,7 @@ function validateCanonicalShape(
       !string(event.TargetWorldId, `${path}.TargetWorldId`) ||
       !number(event.RouteDistance, `${path}.RouteDistance`) ||
       !number(event.Attack, `${path}.Attack`) ||
-      !number(event.Defense, `${path}.Defense`) ||
-      !['CONQUEST', 'DEFENSE'].includes(String(event.Outcome))
+      !number(event.Defense, `${path}.Defense`)
     )
       return undefined;
   }
@@ -679,11 +724,7 @@ function checkNoUnknownSchemaProperties(
   checkSelectable(sector.PlayerShip, 'PlayerShip');
   check(sector.PlayerShip, [...selectable, 'CurrentLocationId'], 'PlayerShip');
   for (const polity of sector.Polities)
-    check(
-      polity,
-      ['Id', 'NiceName', 'HomeworldId', 'Attack', 'Defense', 'Projection', 'Flag'],
-      `Polity ${polity.Id}`,
-    );
+    check(polity, ['Id', 'NiceName', 'HomeworldId', 'Flag'], `Polity ${polity.Id}`);
   for (const polity of sector.Polities)
     check(polity.Flag, ['FieldColor', 'CircleColor'], `Polity ${polity.Id}.Flag`);
   for (const event of sector.ConquestEvents)
@@ -697,7 +738,6 @@ function checkNoUnknownSchemaProperties(
         'RouteDistance',
         'Attack',
         'Defense',
-        'Outcome',
       ],
       `ConquestEvent ${event.Id}`,
     );
@@ -749,7 +789,6 @@ function checkNoUnknownSchemaProperties(
             'NativeBiosphere',
             'ClaimedByPolityIds',
             'InhabitedInfo',
-            'Complete',
             'Culture',
             'PortraitIndex',
           ],
@@ -761,6 +800,62 @@ function checkNoUnknownSchemaProperties(
             ['WorldTags', 'TerranBiosphere', 'Population', 'TechLevel'],
             `Planet ${object.Id}.InhabitedInfo`,
           );
+        if (object.Culture) {
+          const culture = object.Culture;
+          const path = `Planet ${object.Id}.Culture`;
+          check(
+            culture,
+            [
+              'culturalTemplate',
+              'homeworld',
+              'adventureComponents',
+              'pcCaresAbout',
+              'biggestConflict',
+              'outsiderOpinion',
+              'lawEnforcement',
+              'majorStarport',
+              'planetaryDefenses',
+            ],
+            path,
+          );
+          check(
+            culture.adventureComponents,
+            ['enemy', 'friend', 'complication', 'thing', 'place'],
+            `${path}.adventureComponents`,
+          );
+          for (const [key, fields] of [
+            ['pcCaresAbout', ['category', 'type', 'commoditySize']],
+            ['biggestConflict', ['category', 'details']],
+            ['lawEnforcement', ['amount', 'style', 'specialLaw']],
+            ['majorStarport', ['type', 'name']],
+            [
+              'planetaryDefenses',
+              [
+                'orbitingStationStyle',
+                'orbitingStationType',
+                'tradeAndSmugglingEnforcementAmount',
+                'customsAndVisaEmphasis',
+                'patrolBoatPresence',
+                'planetaryGunTurrets',
+              ],
+            ],
+          ] as const)
+            check(culture[key], fields, `${path}.${key}`);
+          for (const [kind, component] of Object.entries(culture.adventureComponents)) {
+            const componentPath = `${path}.adventureComponents.${kind}`;
+            check(
+              component,
+              kind === 'enemy' || kind === 'friend'
+                ? ['name', 'gender', 'prompts']
+                : kind === 'place'
+                  ? ['placeName', 'prompts']
+                  : ['prompts'],
+              componentPath,
+            );
+            for (const prompt of component.prompts)
+              check(prompt, ['prompt'], `${componentPath}.prompt`);
+          }
+        }
       } else
         check(
           object,

@@ -11,6 +11,8 @@ import {
 } from '../Helpers/Domain/planet_interpretation';
 import { displayBulkComposition } from '../Helpers/Domain/composition_interpretation';
 import { projectObjectSpatial } from './object_spatial_projection';
+import { projectClaims } from './politics_projection';
+import { projectPoiCount } from './poi_projection';
 
 const HABITABILITY_COLOR: Readonly<Record<number, string>> = {
   0: '#858b90',
@@ -28,13 +30,6 @@ function visibleName(sector: Sector, id: string, preview: 'gm' | 'player'): stri
       : object.NiceName;
   }
   return undefined;
-}
-
-function claimText(sector: Sector, planet: Planet): string {
-  const names = planet.ClaimedByPolityIds.map(
-    (id) => sector.Polities.find((polity) => polity.Id === id)?.NiceName,
-  ).filter((name): name is string => name !== undefined);
-  return `ClaimedBy: ${names.length === 0 ? 'None' : names.join(', ')}`;
 }
 
 /** Project one canonical planet for the symbolic view and object inspector. */
@@ -64,10 +59,8 @@ export function projectPlanet(
   const moonFact = hostName ? `\nMoon of ${hostName}` : '';
   const displayedComposition = displayBulkComposition(planet.BulkComposition, spatial.temperature);
   const basic = `${formatPlanetAu(spatial.effectiveAu)} AU - ${spatial.temperature} - ${planet.Size}-Class${moonFact}\nAtmosphere: ${planet.Atmosphere} Composition: ${displayedComposition}`;
-  const claim = claimText(sector, planet);
-  const signalsDetected = system.PointsOfInterest.filter(
-    (poi) => poi.ParentObjectId === planet.Id,
-  ).length;
+  const claim = projectClaims(sector, planet)?.stockText ?? 'ClaimedBy: None';
+  const signalsDetected = projectPoiCount(sector, system.Id, planet.Id) ?? 0;
   const stock: PlanetStockText =
     inhabited === false
       ? {
@@ -81,10 +74,9 @@ export function projectPlanet(
           basic,
           detailed: `Life, Native: ${planet.NativeBiosphere}\nLife, Terran: ${inhabited.TerranBiosphere}\nPopulation: ${inhabited.Population}`,
           politics: `Tech Level: ${technologyRating} - ${inhabited.TechLevel}\n${claim}`,
-          deep:
-            planet.Complete && planet.Culture
-              ? `Cultural Template: ${planet.Culture.culturalTemplate}\nOutsider Opinion: ${planet.Culture.outsiderOpinion}\nLaw Enforcement: ${planet.Culture.lawEnforcement.amount}; ${planet.Culture.lawEnforcement.style}; ${planet.Culture.lawEnforcement.specialLaw}\nBiggest Conflict: ${planet.Culture.biggestConflict.category}; ${planet.Culture.biggestConflict.details}`
-              : '-',
+          deep: planet.Culture
+            ? `Cultural Template: ${planet.Culture.culturalTemplate}\nOutsider Opinion: ${planet.Culture.outsiderOpinion}\nLaw Enforcement: ${planet.Culture.lawEnforcement.amount}; ${planet.Culture.lawEnforcement.style}; ${planet.Culture.lawEnforcement.specialLaw}\nBiggest Conflict: ${planet.Culture.biggestConflict.category}; ${planet.Culture.biggestConflict.details}`
+            : '-',
           gm: inhabited.WorldTags.join(', '),
         };
   return {

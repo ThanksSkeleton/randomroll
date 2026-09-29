@@ -3,15 +3,18 @@
 import { cleanup, fireEvent, render } from '@testing-library/react';
 import { afterEach, expect, test } from 'vitest';
 import { generate } from '../../../Generator/generate';
-import { WORLD_TAG_DEFINITIONS } from '../../../Generator/generation_rules';
+import { projectCultureScreen } from '../../../Projector/culture_projection';
+import { projectWorldTag } from '../../../Projector/world_tag_projection';
 import { CultureScreen } from './CultureScreen';
-import type { Planet } from '../../../BaseDTO/merged_schema';
+import type { Planet, WorldTag } from '../../../BaseDTO/merged_schema';
 
 afterEach(cleanup);
 
 test('culture tab puts complete worlds first and keeps HPOIs closed', () => {
   const sector = generate('culture-screen-layout');
-  const { container } = render(<CultureScreen sector={sector} onChange={() => {}} />);
+  const { container } = render(
+    <CultureScreen display={projectCultureScreen(sector)!} onCompleteWorld={() => {}} />,
+  );
   const cards = [...container.querySelectorAll('.culture-world')];
   expect(cards.length).toBeGreaterThan(1);
   const statuses = cards.map((card) =>
@@ -25,9 +28,7 @@ test('culture tab puts complete worlds first and keeps HPOIs closed', () => {
   const boxes = first.querySelectorAll('.culture-tag-box');
   expect(boxes).toHaveLength(2);
   const firstTag = boxes[0]!.querySelector('h5')!.textContent!;
-  expect(boxes[0]!.textContent).toContain(
-    WORLD_TAG_DEFINITIONS.find((tag) => tag.tag === firstTag)!.description,
-  );
+  expect(boxes[0]!.textContent).toContain(projectWorldTag(firstTag as WorldTag).description);
   expect(first.querySelector('.culture-polity-name .polity-flag')).not.toBeNull();
   const drawer = first.querySelector('details.culture-hpoi-drawer') as HTMLDetailsElement;
   expect(drawer.open).toBe(false);
@@ -47,11 +48,14 @@ test('polity overview ranks current polities by inhabited-world count', () => {
   for (const world of worlds.slice(1, 4)) world.ClaimedByPolityIds = [largest!.Id];
   for (const world of worlds.slice(4, 6)) world.ClaimedByPolityIds = [second!.Id];
   sector.StartingWorldId = worlds[2]!.Id;
-  worlds[0]!.Complete = false;
-  worlds[1]!.Complete = true;
-  worlds[2]!.Complete = true;
-  worlds[3]!.Complete = false;
-  const { container } = render(<CultureScreen sector={sector} onChange={() => {}} />);
+  const sampleCulture = structuredClone(worlds.find((world) => world.Culture)!.Culture);
+  worlds[0]!.Culture = null;
+  worlds[1]!.Culture = structuredClone(sampleCulture);
+  worlds[2]!.Culture = structuredClone(sampleCulture);
+  worlds[3]!.Culture = null;
+  const { container } = render(
+    <CultureScreen display={projectCultureScreen(sector)!} onCompleteWorld={() => {}} />,
+  );
   const rows = [...container.querySelectorAll('.culture-polity-table tbody tr')];
   expect(rows).toHaveLength(worlds.length);
   const rowWorldIds = rows.map((row) => row.querySelector('a')?.getAttribute('href'));

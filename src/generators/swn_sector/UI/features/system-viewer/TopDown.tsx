@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { hpoiVisible } from '../../../Projector/culture_projection';
+import { projectClaims } from '../../../Projector/politics_projection';
+import { projectHabitablePoi } from '../../../Projector/culture_projection';
 import type { Preview } from '../../application/appState';
 import type { OtherCelestialObject, Sector, StarSystem } from '../../../BaseDTO/merged_schema';
 import { projectSystemSpatial } from '../../../Projector/system_spatial_projection';
@@ -17,16 +19,11 @@ import { projectOtherObjectGlyphClass } from '../../../Projector/object_kind_pro
 import { StarGlyph } from './StarGlyph';
 import { PolityFlagList } from '../politics/PolityFlag';
 
-const HPOI_MARKERS = {
-  'Orbital Station': '◈',
-  Starport: '✦',
-  'Planetary Defenses': '⬡',
-  Garrison: '▣',
-} as const;
 function poiMarker(
+  sector: Sector,
   poi: StarSystem['PointsOfInterest'][number] | StarSystem['HabitablePointsOfInterest'][number],
 ) {
-  return 'HPOIType' in poi ? HPOI_MARKERS[poi.HPOIType] : '◆';
+  return 'HPOIType' in poi ? (projectHabitablePoi(sector, poi.Id)?.marker ?? '◆') : '◆';
 }
 
 const TOP_DOWN_BOUNDARY_FILL = 0.88;
@@ -229,7 +226,7 @@ export function TopDown({
     (preview === 'gm' || details(object.Id, sector)?.Visibility.PoliticsScan) ? (
       <PolityFlagList
         sector={sector}
-        polityIds={object.ClaimedByPolityIds}
+        polityIds={projectClaims(sector, object)?.claimantIds ?? []}
         className="polity-overlay-flags topdown-polity-flags"
       />
     ) : null;
@@ -594,7 +591,7 @@ export function TopDown({
                     title={displayName(details(poi.Id, sector), preview) ?? 'POI'}
                     className="topdown-poi"
                   >
-                    {poiMarker(poi)}
+                    {poiMarker(sector, poi)}
                   </Selectable>
                 ))}
               </div>
@@ -662,7 +659,7 @@ export function TopDown({
                           title={displayName(details(poi.Id, sector), preview) ?? 'POI'}
                           className="topdown-poi"
                         >
-                          {poiMarker(poi)}
+                          {poiMarker(sector, poi)}
                         </Selectable>
                       ))}
                     </div>
@@ -759,7 +756,7 @@ export function TopDown({
                         title={displayName(details(poi.Id, sector), preview) ?? 'POI'}
                         className="topdown-poi"
                       >
-                        {poiMarker(poi)}
+                        {poiMarker(sector, poi)}
                       </Selectable>
                     ))}
                   </div>
@@ -784,7 +781,7 @@ export function TopDown({
                           title={displayName(details(poi.Id, sector), preview) ?? 'POI'}
                           className="topdown-poi"
                         >
-                          {poiMarker(poi)}
+                          {poiMarker(sector, poi)}
                         </Selectable>
                       </div>
                     );

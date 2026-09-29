@@ -1,4 +1,6 @@
 import type { Polity, PolityFlagColor, Sector } from '../../../BaseDTO/merged_schema';
+import type { PolityDisplayDTO } from '../../../DisplayDTO/dto';
+import { projectPolity } from '../../../Projector/politics_projection';
 
 const FLAG_COLOR: Record<PolityFlagColor, string> = {
   red: '#e53935',
@@ -21,7 +23,11 @@ export function polityFlagColorValue(color: string): string {
   return FLAG_COLOR[color as PolityFlagColor] ?? color;
 }
 
-export function PolityFlag({ polity }: { polity?: Polity }) {
+export function PolityFlag({
+  polity,
+}: {
+  polity?: Pick<Polity, 'NiceName' | 'Flag'> | PolityDisplayDTO;
+}) {
   const name = polity?.NiceName ?? 'None';
   const fieldColor = polity ? polityFlagColorValue(polity.Flag.FieldColor) : '#000000';
   const circleColor = polity ? polityFlagColorValue(polity.Flag.CircleColor) : '#000000';
@@ -44,7 +50,7 @@ export function PolityFlagList({
   className?: string;
 }) {
   const polities = polityIds.flatMap((id) => {
-    const polity = sector.Polities.find((candidate) => candidate.Id === id);
+    const polity = projectPolity(sector, id);
     return polity ? [polity] : [];
   });
   return (
@@ -52,7 +58,7 @@ export function PolityFlagList({
       {polities.length === 0 ? (
         <PolityFlag />
       ) : (
-        polities.map((polity) => <PolityFlag key={polity.Id} polity={polity} />)
+        polities.map((polity) => <PolityFlag key={polity.id} polity={polity} />)
       )}
     </div>
   );

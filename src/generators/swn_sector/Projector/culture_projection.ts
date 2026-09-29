@@ -4,11 +4,27 @@ import type {
   Planet,
   Sector,
 } from '../BaseDTO/merged_schema';
+import type { SwnCulture } from '../BaseDTO/culture';
+import type {
+  CultureScreenDisplayDTO,
+  CultureWorldDisplayDTO,
+  HabitablePoiDisplayDTO,
+  PolityDisplayDTO,
+} from '../DisplayDTO/dto';
 import { TECH_LEVEL } from '../Helpers/Domain/planet_interpretation';
+import { projectClaims, projectPolity } from './politics_projection';
+import { projectWorldTag } from './world_tag_projection';
+import { HPOI_MARKER } from '../Data/Projection/poi_presentation';
 
 export function hpoiWorld(sector: Sector, hpoi: HabitablePointOfInterest): Planet | undefined {
-  return sector.Systems.flatMap((system) => system.Objects).find(
-    (object): object is Planet => object.Kind === 'Planet' && object.Id === hpoi.ParentWorldId,
+  const system = sector.Systems.find((candidate) =>
+    candidate.HabitablePointsOfInterest.some((item) => item.Id === hpoi.Id),
+  );
+  return system?.Objects.find(
+    (object): object is Planet =>
+      object.Kind === 'Planet' &&
+      object.Id === hpoi.ParentWorldId &&
+      object.InhabitedInfo !== false,
   );
 }
 
@@ -42,8 +58,7 @@ export function hpoiProjection(
       reason = 'Assigned polity below TL 4';
   } else if (world.ClaimedByPolityIds.length > 1) reason = 'Contested world';
   else if (TECH_LEVEL[world.InhabitedInfo.TechLevel] < 4) reason = 'Original polity below TL 4';
-  if (!world.Complete || !world.Culture)
-    return { absent: reason !== null, reason, fields: [], polityIds };
+  if (!world.Culture) return { absent: reason !== null, reason, fields: [], polityIds };
   const culture = world.Culture;
   let fields: [string, string][];
   switch (hpoi.HPOIType) {
@@ -79,9 +94,27 @@ export function hpoiProjection(
   return { absent: reason !== null, reason, fields, polityIds };
 }
 
-export function displayedWorldCulture(sector: Sector, world: Planet): typeof world.Culture {
+export function displayedWorldCulture(sector: Sector, world: Planet): SwnCulture | null {
   if (!world.Culture) return null;
-  const display = structuredClone(world.Culture);
+  if (world.InhabitedInfo === false) return null;
+  const tags = world.InhabitedInfo.WorldTags;
+  const selected = structuredClone(world.Culture);
+  const display = {
+    ...selected,
+    worldTags: [...tags] as [(typeof tags)[0], (typeof tags)[1]],
+    adventureComponents: Object.fromEntries(
+      Object.entries(selected.adventureComponents).map(([kind, component]) => [
+        kind,
+        {
+          ...component,
+          prompts: component.prompts.map(({ prompt }, index) => ({
+            prompt,
+            sourceTag: tags[index]!,
+          })),
+        },
+      ]),
+    ) as SwnCulture['adventureComponents'],
+  };
   const hpois = sector.Systems.flatMap((system) => system.HabitablePointsOfInterest).filter(
     (hpoi) => hpoi.ParentWorldId === world.Id,
   );
@@ -144,4 +177,131 @@ export function hpoiVisible(
   if (projection.absent) return false;
   if (preview === 'gm') return true;
   return hpoi.Visibility.BasicScan && Boolean(hpoiWorld(sector, hpoi)?.Visibility.BasicScan);
+}
+
+export function projectHabitablePoi(
+  sector: Sector,
+  id: string,
+): HabitablePoiDisplayDTO | undefined {
+  const hpoi = sector.Systems.flatMap((system) => system.HabitablePointsOfInterest).find(
+    (candidate) => candidate.Id === id,
+  );
+  if (!hpoi || !hpoiWorld(sector, hpoi)) return undefined;
+  const result = hpoiProjection(sector, hpoi);
+  const assignedPolity = hpoi.AssignedPolityId
+    ? projectPolity(sector, hpoi.AssignedPolityId)
+    : null;
+  if (hpoi.AssignedPolityId && !assignedPolity) return undefined;
+  const claims = result.polityIds.map((polityId) => projectPolity(sector, polityId));
+  if (claims.some((polity) => !polity)) return undefined;
+  const field = (name: string) => result.fields.find(([label]) => label === name)?.[1];
+  const physical = result.fields.filter(
+    ([name]) =>
+      !['Trade and Smuggling Enforcement Amount', 'Customs and Visa Emphasis'].includes(name),
+  );
+  const names = (claims as PolityDisplayDTO[]).map((polity) => polity.NiceName);
+  return {
+    id: hpoi.Id,
+    typeLabel: hpoi.HPOIType,
+    marker: HPOI_MARKER[hpoi.HPOIType],
+    hostId: hpoi.ParentWorldId,
+    assignedPolity: assignedPolity ?? null,
+    ...result,
+    stock: {
+      basic: hpoi.HPOIType,
+      detailed: physical.map(([name, value]) => `${name}: ${value}`).join('\n') || '-',
+      politics: `ClaimedBy: ${names.length ? names.join(', ') : 'None'}`,
+      deep:
+        [
+          field('Trade and Smuggling Enforcement Amount') &&
+            `Trade and Smuggling Enforcement Amount: ${field('Trade and Smuggling Enforcement Amount')}`,
+          field('Customs and Visa Emphasis') &&
+            `Customs and Visa Emphasis: ${field('Customs and Visa Emphasis')}`,
+        ]
+          .filter(Boolean)
+          .join('\n') || '-',
+      gm:
+        `${result.reason ? `NONE: ${result.reason}\n` : ''}${result.fields.map(([name, value]) => `${name}: ${value}`).join('\n')}` ||
+        '-',
+    },
+  };
+}
+
+export function projectCultureWorld(
+  sector: Sector,
+  worldId: string,
+): CultureWorldDisplayDTO | undefined {
+  const system = sector.Systems.find((candidate) =>
+    candidate.Objects.some((object) => object.Id === worldId),
+  );
+  const world = system?.Objects.find((object) => object.Id === worldId);
+  if (!system || !world || world.Kind !== 'Planet' || world.InhabitedInfo === false)
+    return undefined;
+  const claims = projectClaims(sector, world);
+  if (!claims) return undefined;
+  const original = sector.Polities.find((polity) => polity.HomeworldId === worldId);
+  const originalPolity = original ? projectPolity(sector, original.Id) : null;
+  if (original && !originalPolity) return undefined;
+  const hpois = system.HabitablePointsOfInterest.filter(
+    (hpoi) => hpoi.ParentWorldId === worldId,
+  ).map((hpoi) => projectHabitablePoi(sector, hpoi.Id));
+  if (hpois.some((hpoi) => !hpoi)) return undefined;
+  return {
+    id: world.Id,
+    name: world.NiceName,
+    systemName: system.NiceName,
+    kindLabel: world.Orbit.ParentObjectId ? 'Moon' : 'Planet',
+    complete: Boolean(world.Culture),
+    startingWorld: sector.StartingWorldId === world.Id,
+    techLevel: world.InhabitedInfo.TechLevel,
+    population: world.InhabitedInfo.Population,
+    tags: world.InhabitedInfo.WorldTags.map(projectWorldTag) as CultureWorldDisplayDTO['tags'],
+    originalPolity: originalPolity ?? null,
+    claims,
+    culture: displayedWorldCulture(sector, world),
+    hpois: hpois as HabitablePoiDisplayDTO[],
+  };
+}
+
+export function projectCultureScreen(sector: Sector): CultureScreenDisplayDTO | undefined {
+  const worldIds = sector.Systems.flatMap((system) =>
+    system.Objects.filter(
+      (object) => object.Kind === 'Planet' && object.InhabitedInfo !== false,
+    ).map((object) => object.Id),
+  );
+  const worlds = worldIds.map((id) => projectCultureWorld(sector, id));
+  if (worlds.some((world) => !world)) return undefined;
+  const present = worlds as CultureWorldDisplayDTO[];
+  const counts = new Map<string, number>();
+  for (const world of present)
+    for (const id of new Set(world.claims.claimantIds)) counts.set(id, (counts.get(id) ?? 0) + 1);
+  const compare = (a: PolityDisplayDTO, b: PolityDisplayDTO) =>
+    (counts.get(b.id) ?? 0) - (counts.get(a.id) ?? 0) ||
+    a.NiceName.localeCompare(b.NiceName) ||
+    a.id.localeCompare(b.id);
+  const overview = present
+    .map((world) => ({
+      worldId: world.id,
+      worldName: world.name,
+      startingWorld: world.startingWorld,
+      complete: world.complete,
+      originalPolity: world.originalPolity,
+      currentPolities: [...world.claims.claimants].sort(compare),
+    }))
+    .sort(
+      (a, b) =>
+        (b.currentPolities[0] ? (counts.get(b.currentPolities[0].id) ?? 0) : 0) -
+          (a.currentPolities[0] ? (counts.get(a.currentPolities[0].id) ?? 0) : 0) ||
+        Number(b.startingWorld) - Number(a.startingWorld) ||
+        Number(b.complete) - Number(a.complete) ||
+        (a.currentPolities[0]?.NiceName ?? 'None').localeCompare(
+          b.currentPolities[0]?.NiceName ?? 'None',
+        ) ||
+        a.worldName.localeCompare(b.worldName) ||
+        a.worldId.localeCompare(b.worldId),
+    );
+  return {
+    worlds: present.sort((a, b) => Number(b.complete) - Number(a.complete)),
+    overview,
+  };
 }

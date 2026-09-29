@@ -95,7 +95,7 @@ export function generate(
   }
   const shipName = 'Player ship';
   const result: Sector = {
-    SchemaVersion: 'merged-v6',
+    SchemaVersion: 'merged-v7',
     OriginalSeed: seed,
     StartingWorldMode: startingWorldMode,
     SectorName: `Sector ${seed}`,
@@ -125,7 +125,6 @@ export function generate(
     system.HabitablePointsOfInterest = createHabitablePointsOfInterest(seed, system);
     for (const object of system.Objects) {
       if (object.Kind !== 'Planet' || object.InhabitedInfo === false) continue;
-      object.Complete = false;
       object.Culture = null;
     }
   }

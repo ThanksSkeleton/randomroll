@@ -208,7 +208,6 @@ export type WorldTagPromptLists = Record<WorldTagPromptCategory, readonly string
 export interface WorldTagDefinition {
   roll: number;
   tag: string;
-  description: string;
   prompts: WorldTagPromptLists;
 }
 
@@ -221,7 +220,6 @@ export const WORLD_TAG_DEFINITIONS: WorldTagDefinition[] = rawWorldTags.tags.map
   return {
     roll: row.roll,
     tag: row.tag,
-    description: row.description,
     prompts: row.prompts,
   };
 });

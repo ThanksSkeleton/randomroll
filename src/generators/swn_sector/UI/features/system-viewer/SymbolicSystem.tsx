@@ -7,6 +7,8 @@ import type {
   StarSystem,
 } from '../../../BaseDTO/merged_schema';
 import { hpoiVisible } from '../../../Projector/culture_projection';
+import { projectHabitablePoi } from '../../../Projector/culture_projection';
+import { projectClaims } from '../../../Projector/politics_projection';
 import { findDetails, isVisibleToPlayer, planets } from '../../domain/sector/selectors';
 import { projectPlanet } from '../../../Projector/planet_projection';
 import { projectStar } from '../../../Projector/star_projection';
@@ -14,13 +16,6 @@ import { projectRoute } from '../../../Projector/route_projection';
 import { projectObjectSpatial } from '../../../Projector/object_spatial_projection';
 import { StarGlyph } from './StarGlyph';
 import { PolityFlagList } from '../politics/PolityFlag';
-
-const HPOI_MARKERS = {
-  'Orbital Station': '◈',
-  Starport: '✦',
-  'Planetary Defenses': '⬡',
-  Garrison: '▣',
-} as const;
 
 function visible(id: string, sector: Sector, preview: Preview) {
   return preview === 'gm' || isVisibleToPlayer(sector, id);
@@ -118,7 +113,7 @@ function WorldSymbol({
       {showPolityOverlay && (preview === 'gm' || d?.Visibility.PoliticsScan) && (
         <PolityFlagList
           sector={sector}
-          polityIds={world.ClaimedByPolityIds}
+          polityIds={projectClaims(sector, world)?.claimantIds ?? []}
           className="polity-overlay-flags symbolic-polity-flags"
         />
       )}
@@ -208,11 +203,14 @@ function WorldSymbol({
             id={p.Id}
             selected={selected}
             onSelect={select}
-            label={p.HPOIType}
+            label={projectHabitablePoi(sector, p.Id)?.typeLabel ?? 'HPOI'}
             className="poi world-poi hpoi"
           >
-            <span className="poi-marker" title={p.HPOIType}>
-              {HPOI_MARKERS[p.HPOIType]}
+            <span
+              className="poi-marker"
+              title={projectHabitablePoi(sector, p.Id)?.typeLabel ?? 'HPOI'}
+            >
+              {projectHabitablePoi(sector, p.Id)?.marker}
             </span>
           </Selectable>
         ))}
@@ -250,7 +248,7 @@ function OtherObjectSymbol({
       {showPolityOverlay && (preview === 'gm' || d?.Visibility.PoliticsScan) && (
         <PolityFlagList
           sector={sector}
-          polityIds={object.ClaimedByPolityIds}
+          polityIds={projectClaims(sector, object)?.claimantIds ?? []}
           className="polity-overlay-flags symbolic-polity-flags"
         />
       )}

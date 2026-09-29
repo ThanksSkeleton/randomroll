@@ -2,6 +2,8 @@ import { createHash } from 'node:crypto';
 import { expect, test } from 'vitest';
 import { generate } from './generate';
 import { projectPortrait } from '../Projector/portrait_projection';
+import { projectPolity } from '../Projector/politics_projection';
+import type { WorldTag } from '../BaseDTO/merged_schema';
 
 const EXPECTED: Record<string, string> = {
   'sector-one-seed': 'd450b8e7ed53451af36fd47677cb191ad100a218c8cd33fe1b4b24af12670dbb',
@@ -12,7 +14,7 @@ const EXPECTED: Record<string, string> = {
 test('fixed seed canonical output retains earlier choices through portrait projection', () => {
   for (const [seed, expected] of Object.entries(EXPECTED)) {
     const sector = generate(seed);
-    expect(sector.SchemaVersion).toBe('merged-v6');
+    expect(sector.SchemaVersion).toBe('merged-v7');
     for (const system of sector.Systems)
       for (const object of system.Objects) {
         expect(object).not.toHaveProperty('Temperature');
@@ -20,19 +22,69 @@ test('fixed seed canonical output retains earlier choices through portrait proje
         if (orbit.ParentObjectId !== null) expect(orbit).not.toHaveProperty('AU');
       }
     for (const portal of sector.RoutePortals) expect(portal).not.toHaveProperty('RouteId');
-    const priorShape = (value: unknown): unknown => {
-      if (Array.isArray(value)) return value.map(priorShape);
+    const priorShape = (value: unknown, tags?: [WorldTag, WorldTag]): unknown => {
+      if (Array.isArray(value)) return value.map((item) => priorShape(item, tags));
       if (value === null || typeof value !== 'object') return value;
+      const record = value as Record<string, unknown>;
+      if ('HomeworldId' in record && 'Flag' in record) {
+        const polity = projectPolity(sector, record.Id as string)!;
+        return {
+          Id: record.Id,
+          NiceName: record.NiceName,
+          HomeworldId: record.HomeworldId,
+          Attack: polity.attack,
+          Defense: polity.defense,
+          Projection: polity.projection,
+          Flag: priorShape(record.Flag),
+        };
+      }
+      if ('AttackerPolityId' in record) {
+        return {
+          ...Object.fromEntries(
+            Object.entries(record).map(([key, item]) => [key, priorShape(item)]),
+          ),
+          Outcome: (record.Attack as number) > (record.Defense as number) ? 'CONQUEST' : 'DEFENSE',
+        };
+      }
+      if ('adventureComponents' in record && tags) {
+        return {
+          worldTags: tags,
+          ...Object.fromEntries(
+            Object.entries(record).map(([key, item]) => [key, priorShape(item, tags)]),
+          ),
+        };
+      }
+      if ('prompts' in record && tags) {
+        return Object.fromEntries(
+          Object.entries(record).map(([key, item]) => [
+            key,
+            key === 'prompts'
+              ? (item as Array<{ prompt: string }>).map((prompt, index) => ({
+                  prompt: prompt.prompt,
+                  sourceTag: tags[index],
+                }))
+              : priorShape(item, tags),
+          ]),
+        );
+      }
       return Object.fromEntries(
-        Object.entries(value).map(([key, item]) => {
-          if (key === 'SchemaVersion') return [key, 'merged-v5'];
+        Object.entries(value).flatMap(([key, item]) => {
+          if (key === 'SchemaVersion') return [[key, 'merged-v5']];
           if (key === 'PortraitIndex') {
             const entity = value as { Id: string };
             const projected = projectPortrait(sector, entity.Id, 'gm', '');
             expect(projected?.portraitIndex).toBe(item);
-            return ['PortraitAssetId', projected?.variantId];
+            return [['PortraitAssetId', projected?.variantId]];
           }
-          return [key, priorShape(item)];
+          if (key === 'Culture' && record.Kind === 'Planet') {
+            const worldTags = (record.InhabitedInfo as { WorldTags?: [WorldTag, WorldTag] })
+              .WorldTags;
+            return [
+              ['Complete', Boolean(item)],
+              [key, priorShape(item, worldTags)],
+            ];
+          }
+          return [[key, priorShape(item, tags)]];
         }),
       );
     };

@@ -48,14 +48,6 @@ export function systemObjects(system: StarSystem): SystemObject[] {
 }
 
 /** The Politics 1 claimant list for a system: unioned and sorted by polity name. */
-export function systemPoliticalClaimIds(system: StarSystem, sector: Sector): Guid[] {
-  const ids = new Set(system.Objects.flatMap((object) => object.ClaimedByPolityIds));
-  return [...ids].sort((left, right) => {
-    const leftName = sector.Polities.find((polity) => polity.Id === left)?.NiceName ?? left;
-    const rightName = sector.Polities.find((polity) => polity.Id === right)?.NiceName ?? right;
-    return leftName.localeCompare(rightName) || left.localeCompare(right);
-  });
-}
 export function planets(system: StarSystem): Planet[] {
   return system.Objects.filter((object): object is Planet => object.Kind === 'Planet');
 }

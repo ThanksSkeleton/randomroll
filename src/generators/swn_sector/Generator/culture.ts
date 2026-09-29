@@ -1,4 +1,5 @@
 import { generateSwnCultureForTags } from '../../swn_culture/swn_culture_impl';
+import type { SectorCulture } from '../BaseDTO/culture';
 import type {
   HabitablePointOfInterest,
   HabitablePointOfInterestType,
@@ -67,13 +68,23 @@ export function completeWorld(sector: Sector, worldId: string): Sector {
       object.Id === worldId && object.Kind === 'Planet' && object.InhabitedInfo !== false,
   );
   if (!world) throw new Error('Only an inhabited world can be completed.');
-  if (world.Complete) return sector;
+  if (world.Culture) return sector;
   const inhabited = world.InhabitedInfo;
   if (inhabited === false) throw new Error('Only an inhabited world can be completed.');
-  world.Culture = generateSwnCultureForTags(
+  const generated = generateSwnCultureForTags(
     inhabited.WorldTags,
     `${sector.OriginalSeed}:world-culture:${world.Id}`,
   );
-  world.Complete = true;
+  const { worldTags: _worldTags, ...selected } = generated;
+  selected.adventureComponents = Object.fromEntries(
+    Object.entries(selected.adventureComponents).map(([kind, component]) => [
+      kind,
+      {
+        ...component,
+        prompts: component.prompts.map(({ prompt }) => ({ prompt })),
+      },
+    ]),
+  ) as typeof selected.adventureComponents;
+  world.Culture = selected as SectorCulture;
   return next;
 }

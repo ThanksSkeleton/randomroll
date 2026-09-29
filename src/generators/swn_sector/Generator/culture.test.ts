@@ -11,21 +11,22 @@ test('initial completion follows world visibility and later completion is stable
   );
   expect(worlds.length).toBeGreaterThan(0);
   for (const world of worlds) {
-    expect(world.Complete).toBe(world.Visibility.BasicScan);
-    expect(Boolean(world.Culture)).toBe(world.Complete);
+    expect(Boolean(world.Culture)).toBe(world.Visibility.BasicScan);
+    expect(world.Culture === null).toBe(!world.Visibility.BasicScan);
     const hpois = sector.Systems.flatMap((system) => system.HabitablePointsOfInterest).filter(
       (hpoi) => hpoi.ParentWorldId === world.Id,
     );
     expect(hpois.length).toBe(3 + world.ClaimedByPolityIds.length);
     expect(hpois.every((hpoi) => !hpoi.Visibility.BasicScan)).toBe(true);
   }
-  const incomplete = worlds.find((world) => !world.Complete)!;
+  const incomplete = worlds.find((world) => !world.Culture)!;
   expect(incomplete).toBeDefined();
   const completed = completeWorld(sector, incomplete.Id);
   const filled = completed.Systems.flatMap((system) => system.Objects).find(
     (object) => object.Id === incomplete.Id,
   ) as Planet;
-  expect(filled.Culture?.worldTags).toEqual(
+  expect(filled.Culture).not.toBeNull();
+  expect(filled.InhabitedInfo && filled.InhabitedInfo.WorldTags).toEqual(
     incomplete.InhabitedInfo && incomplete.InhabitedInfo.WorldTags,
   );
   expect(filled.Visibility).toEqual(incomplete.Visibility);
@@ -51,7 +52,7 @@ test('contested worlds suppress infrastructure and assign one garrison per claim
           ? {
               ...system,
               Objects: system.Objects.map((object) =>
-                object.Id === world.Id ? { ...world, Complete: false, Culture: null } : object,
+                object.Id === world.Id ? { ...world, Culture: null } : object,
               ),
             }
           : candidate,

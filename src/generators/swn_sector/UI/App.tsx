@@ -21,6 +21,7 @@ import {
   resolveTravelDestination,
 } from './domain/sector/selectors';
 import { createPrototypeApplication } from '../Composition/prototypeApplication';
+import { projectCultureScreen } from '../Projector/culture_projection';
 
 function isVisible(id: string, sector: Sector, preview: Preview) {
   return preview === 'gm' || isVisibleToPlayer(sector, id);
@@ -170,10 +171,10 @@ export default function App() {
       <AppChrome view={view} preview={preview} setPreview={setPreviewMode} go={go} />
       {view === 'culture' && preview === 'gm' && isGmSession ? (
         <CultureScreen
-          sector={sector}
-          onChange={(next) => {
-            const saved = application.saveSector(activeIndex, next);
-            if (saved) dispatch({ type: 'replaceSectors', sectors: saved });
+          display={projectCultureScreen(sector)!}
+          onCompleteWorld={(worldId) => {
+            const result = application.completeWorld(activeIndex, worldId);
+            if (result.ok) dispatch({ type: 'updateSector', sector: result.sector });
           }}
         />
       ) : view === 'sectors' ? (

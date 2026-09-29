@@ -1,6 +1,6 @@
 import { isValidScanVisibility } from './visibility';
 import type { Sector } from '../../../BaseDTO/merged_schema';
-import { POLITY_FLAG_COLORS } from '../../../Data/Raw/polity_flag_colors';
+import { validPolityFlag } from '../../../Validation/politics';
 import { containingSystem, getAllSelectableIds, routePortals } from './selectors';
 
 export function validateSector(sector: Sector): string[] {
@@ -60,15 +60,7 @@ export function validateSector(sector: Sector): string[] {
   for (const polity of sector.Polities)
     if (!inhabitedIds.has(polity.HomeworldId))
       errors.push(`Polity ${polity.Id} has an invalid homeworld.`);
-    else if (
-      !/^#[0-9a-f]{6}$/i.test(polity.Flag.FieldColor) ||
-      !POLITY_FLAG_COLORS.includes(polity.Flag.CircleColor) ||
-      polity.Flag.FieldColor === polity.Flag.CircleColor ||
-      sector.Polities.some(
-        (candidate) =>
-          candidate.Id !== polity.Id && candidate.Flag.FieldColor === polity.Flag.FieldColor,
-      )
-    )
+    else if (!validPolityFlag(polity, sector.Polities))
       errors.push(`Polity ${polity.Id} has invalid flag colors.`);
   for (const system of sector.Systems) {
     const localIds = new Set([
@@ -81,6 +73,12 @@ export function validateSector(sector: Sector): string[] {
         errors.push(`Object ${object.Id} has an invalid parent.`);
       if (object.ClaimedByPolityIds.some((id) => !polityIds.has(id)))
         errors.push(`Object ${object.Id} has an invalid political claim.`);
+      if (
+        object.Kind === 'Planet' &&
+        ((object.InhabitedInfo === false && object.Culture !== undefined) ||
+          (object.InhabitedInfo !== false && object.Culture === undefined))
+      )
+        errors.push(`World ${object.Id} has invalid culture state.`);
     }
     for (const poi of system.PointsOfInterest)
       if (!localIds.has(poi.ParentObjectId)) errors.push(`POI ${poi.Id} has an invalid parent.`);
@@ -113,6 +111,15 @@ export function validateSector(sector: Sector): string[] {
       !inhabitedIds.has(event.TargetWorldId)
     )
       errors.push(`Conquest event ${event.Id} has invalid references.`);
+    else if (
+      !Number.isInteger(event.Attack) ||
+      event.Attack < 0 ||
+      !Number.isInteger(event.Defense) ||
+      event.Defense < 0 ||
+      !Number.isInteger(event.RouteDistance) ||
+      event.RouteDistance < 0
+    )
+      errors.push(`Conquest event ${event.Id} has invalid historical snapshots.`);
   if (!containingSystem(sector, sector.PlayerShip.CurrentLocationId))
     errors.push('PlayerShip.CurrentLocationId must refer to a system-contained location.');
   return errors;

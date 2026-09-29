@@ -9,9 +9,6 @@ const polity: Polity = {
   Id: 'polity',
   NiceName: 'Azure Republic',
   HomeworldId: 'world',
-  Attack: 2,
-  Defense: 3,
-  Projection: 1,
   Flag: { FieldColor: 'light blue', CircleColor: 'gold' },
 };
 

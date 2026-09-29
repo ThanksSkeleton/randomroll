@@ -2,6 +2,7 @@ import type { WorldTag } from './merged_schema';
 
 export type SwnCultureGender = 'Male' | 'Female';
 export type SwnCulturePrompt = { prompt: string; sourceTag: WorldTag };
+export type SectorCulturePrompt = Pick<SwnCulturePrompt, 'prompt'>;
 export type SwnCultureTaggedComponent = {
   prompts: [SwnCulturePrompt, SwnCulturePrompt];
 };
@@ -37,5 +38,15 @@ export type SwnCulture = {
     customsAndVisaEmphasis: string;
     patrolBoatPresence: string;
     planetaryGunTurrets: string;
+  };
+};
+
+/** Selected facts only; tags and prompt sources come from the inhabited world. */
+export type SectorCulture = Omit<SwnCulture, 'worldTags' | 'adventureComponents'> & {
+  adventureComponents: {
+    [K in keyof SwnCulture['adventureComponents']]: Omit<
+      SwnCulture['adventureComponents'][K],
+      'prompts'
+    > & { prompts: [SectorCulturePrompt, SectorCulturePrompt] };
   };
 };

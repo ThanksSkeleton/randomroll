@@ -8,7 +8,7 @@
  */
 
 export type Guid = string;
-import type { SwnCulture } from './culture';
+import type { SectorCulture } from './culture';
 
 /** Independent scan availability. Valid states require BasicScan for all other
  * scans, and PoliticsScan for DeepPoliticsScan. */
@@ -40,7 +40,7 @@ export interface SelectableEntity {
 }
 
 export interface Sector {
-  SchemaVersion: 'merged-v6';
+  SchemaVersion: 'merged-v7';
   /** Generation provenance; it is not a complete replay specification. */
   OriginalSeed: string;
   /** Starting-world eligibility mode selected when this sector was generated. */
@@ -61,9 +61,6 @@ export interface Polity {
   Id: Guid;
   NiceName: string;
   HomeworldId: Guid;
-  Attack: number;
-  Defense: number;
-  Projection: number;
   Flag: PolityFlag;
 }
 
@@ -97,7 +94,6 @@ export interface ConquestEvent {
   RouteDistance: number;
   Attack: number;
   Defense: number;
-  Outcome: 'CONQUEST' | 'DEFENSE';
 }
 
 export type StartingWorldMode = 'UNRESTRICTED' | 'TL4_PLUS' | 'TL4_PLUS_POP_GT_500';
@@ -191,9 +187,8 @@ export interface Planet extends SystemObjectBase {
   Atmosphere: Atmosphere;
   NativeBiosphere: NativeBiosphere;
   InhabitedInfo: InhabitedInfo | false;
-  /** Set on inhabited worlds after the culture pass or an explicit GM completion. */
-  Complete?: boolean;
-  Culture?: SwnCulture | null;
+  /** Non-null after the culture pass or explicit GM completion. */
+  Culture?: SectorCulture | null;
 }
 
 export type WorldTag =
