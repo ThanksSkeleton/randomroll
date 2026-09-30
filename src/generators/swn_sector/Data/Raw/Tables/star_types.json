@@ -1,0 +1,46 @@
+{
+  "dice": "d100",
+  "tables": [
+    {
+      "id": "star_type",
+      "rows": [
+        {
+          "roll": "01-04",
+          "result": "A-type"
+        },
+        {
+          "roll": "05-16",
+          "result": "F-type"
+        },
+        {
+          "roll": "17-46",
+          "result": "G-type"
+        },
+        {
+          "roll": "47-76",
+          "result": "K-type"
+        },
+        {
+          "roll": "77-88",
+          "result": "M-type"
+        },
+        {
+          "roll": "89-92",
+          "result": "Giant"
+        },
+        {
+          "roll": "93-96",
+          "result": "White dwarf"
+        },
+        {
+          "roll": "97-98",
+          "result": "Neutron star"
+        },
+        {
+          "roll": "99-100",
+          "result": "Stellar-mass black hole"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "worldAttributes": {
+    "source": {
+      "derivedFrom": "world_attributes.json",
+      "createdOn": "2026-09-12"
+    },
+    "conversion": {
+      "method": "Original 2d6 and 2d8 probabilities were apportioned to integer d100 bands by largest remainder. Where ordinary nearest-percent rounding would total 101, the central result is rounded down so each table totals exactly 100.",
+      "rowOrder": "Increasing hab rating within each table. d100 bands are reassigned into contiguous Hab cutoffs; every roll at or above a table's Hab 3 cutoff has Hab 3."
+    }
+  },
+  "starTypes": {
+    "file": "temp/Stars_Table.txt",
+    "extractedOn": "2026-09-12"
+  },
+  "pointsOfInterest": {
+    "document": "Stars Without Number: Revised Edition — Free Edition",
+    "file": "temp/StarsWithoutNumberRevised-FreeEdition-122917.pdf",
+    "pdfPages": "133–175",
+    "printedPages": "129–171",
+    "extractedOn": "2026-09-12"
+  },
+  "extraWorlds": "V3 extra-world archetype table supplied by the user"
+}

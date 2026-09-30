@@ -12,7 +12,7 @@ import type {
   StarSystem,
   SystemObject,
 } from '../BaseDTO/merged_schema';
-import { POI_TYPES, WORLD_TAG_CONSTRAINTS } from '../Data/Raw/generation_constraints';
+import { POI_TYPES, WORLD_TAG_CONSTRAINTS } from './generation_constraints';
 import { isGasPlanet, isPoiHostCompatible } from '../Shared/poi_host_interpretation';
 import {
   ATMOSPHERE_MAX_PERCENTILE,
@@ -23,7 +23,7 @@ import {
   SIZE_RANK,
   TECH_HAB_REQUIRED,
   TERRAN_BIOSPHERE_HAB_REQUIRED,
-} from '../Data/Raw/tables';
+} from './data_tables';
 import {
   ATMOSPHERE_HAB,
   BULK_COMPOSITION_HAB,

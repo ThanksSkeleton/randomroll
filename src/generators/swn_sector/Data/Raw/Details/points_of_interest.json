@@ -1,0 +1,86 @@
+{
+  "extraWorlds": {
+    "archetypes": {
+      "Mercurian": {
+        "description": "Metal-rich, airless",
+        "category": "TerrestrialPlanet"
+      },
+      "Europan / Plutonic": {
+        "description": "Ice/water-rich",
+        "category": "TerrestrialPlanet"
+      },
+      "Lunar": {
+        "description": "Rocky, airless",
+        "category": "TerrestrialPlanet"
+      },
+      "Ioan": {
+        "description": "Volcanic rocky",
+        "category": "TerrestrialPlanet"
+      },
+      "Titanian": {
+        "description": "Hydrocarbon/organic-rich volatile world",
+        "category": "TerrestrialPlanet"
+      },
+      "Martian": {
+        "description": "Small rocky world with a thin atmosphere",
+        "category": "TerrestrialPlanet"
+      },
+      "Venusian": {
+        "description": "Earth-sized rocky world with a massive atmosphere",
+        "category": "TerrestrialPlanet"
+      },
+      "Jovian": {
+        "description": "H/He gas giant",
+        "category": "GasGiant"
+      },
+      "Neptunian": {
+        "description": "Volatile-rich ice giant",
+        "category": "GasGiant"
+      },
+      "KupierBelt": {
+        "description": "KupierBelt",
+        "category": "OtherObject"
+      },
+      "AsteroidBelt": {
+        "description": "AsteroidBelt",
+        "category": "OtherObject"
+      },
+      "GasCloud": {
+        "description": "GasCloud",
+        "category": "OtherObject"
+      }
+    }
+  },
+  "otherPoints": {
+    "Deep-space station": {
+      "locationType": "OwnOrbit"
+    },
+    "Asteroid base": {
+      "locationType": "AsteroidBelt"
+    },
+    "Remote moon base": {
+      "locationType": "Any NonPrimary Terrestrial Planet"
+    },
+    "Ancient orbital ruin": {
+      "locationType": "Any NonPrimary Planet"
+    },
+    "Research base": {
+      "locationType": "Any NonPrimary Planet"
+    },
+    "Asteroid belt": {
+      "locationType": "AsteroidBelt"
+    },
+    "Gas Mine": {
+      "locationType": "GasGiant Planet or GasCloud"
+    },
+    "Refueling station": {
+      "locationType": "GasGiant Planet or GasCloud"
+    },
+    "Comet base": {
+      "locationType": "KuiperBelt"
+    },
+    "Comet belt": {
+      "locationType": "KuiperBelt"
+    }
+  }
+}

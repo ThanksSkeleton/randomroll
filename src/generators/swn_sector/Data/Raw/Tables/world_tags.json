@@ -1,0 +1,405 @@
+{
+  "dice": "d100",
+  "rows": [
+    {
+      "roll": 1,
+      "result": "Abandoned Colony"
+    },
+    {
+      "roll": 2,
+      "result": "Alien Ruins"
+    },
+    {
+      "roll": 3,
+      "result": "Altered Humanity"
+    },
+    {
+      "roll": 4,
+      "result": "Anarchists"
+    },
+    {
+      "roll": 5,
+      "result": "Anthropomorphs"
+    },
+    {
+      "roll": 6,
+      "result": "Area 51"
+    },
+    {
+      "roll": 7,
+      "result": "Badlands World"
+    },
+    {
+      "roll": 8,
+      "result": "Battleground"
+    },
+    {
+      "roll": 9,
+      "result": "Beastmasters"
+    },
+    {
+      "roll": 10,
+      "result": "Bubble Cities"
+    },
+    {
+      "roll": 11,
+      "result": "Cheap Life"
+    },
+    {
+      "roll": 12,
+      "result": "Civil War"
+    },
+    {
+      "roll": 13,
+      "result": "Cold War"
+    },
+    {
+      "roll": 14,
+      "result": "Colonized Population"
+    },
+    {
+      "roll": 15,
+      "result": "Cultural Power"
+    },
+    {
+      "roll": 16,
+      "result": "Cybercommunists"
+    },
+    {
+      "roll": 17,
+      "result": "Cyborgs"
+    },
+    {
+      "roll": 18,
+      "result": "Cyclical Doom"
+    },
+    {
+      "roll": 19,
+      "result": "Desert World"
+    },
+    {
+      "roll": 20,
+      "result": "Doomed World"
+    },
+    {
+      "roll": 21,
+      "result": "Dying Race"
+    },
+    {
+      "roll": 22,
+      "result": "Eugenic Cult"
+    },
+    {
+      "roll": 23,
+      "result": "Exchange Consulate"
+    },
+    {
+      "roll": 24,
+      "result": "Fallen Hegemon"
+    },
+    {
+      "roll": 25,
+      "result": "Feral World"
+    },
+    {
+      "roll": 26,
+      "result": "Flying Cities"
+    },
+    {
+      "roll": 27,
+      "result": "Forbidden Tech"
+    },
+    {
+      "roll": 28,
+      "result": "Former Warriors"
+    },
+    {
+      "roll": 29,
+      "result": "Freak Geology"
+    },
+    {
+      "roll": 30,
+      "result": "Freak Weather"
+    },
+    {
+      "roll": 31,
+      "result": "Friendly Foe"
+    },
+    {
+      "roll": 32,
+      "result": "Gold Rush"
+    },
+    {
+      "roll": 33,
+      "result": "Great Work"
+    },
+    {
+      "roll": 34,
+      "result": "Hatred"
+    },
+    {
+      "roll": 35,
+      "result": "Heavy Industry"
+    },
+    {
+      "roll": 36,
+      "result": "Heavy Mining"
+    },
+    {
+      "roll": 37,
+      "result": "Hivemind"
+    },
+    {
+      "roll": 38,
+      "result": "Holy War"
+    },
+    {
+      "roll": 39,
+      "result": "Hostile Biosphere"
+    },
+    {
+      "roll": 40,
+      "result": "Hostile Space"
+    },
+    {
+      "roll": 41,
+      "result": "Immortals"
+    },
+    {
+      "roll": 42,
+      "result": "Local Specialty"
+    },
+    {
+      "roll": 43,
+      "result": "Local Tech"
+    },
+    {
+      "roll": 44,
+      "result": "Major Spaceyard"
+    },
+    {
+      "roll": 45,
+      "result": "Mandarinate"
+    },
+    {
+      "roll": 46,
+      "result": "Mandate Base"
+    },
+    {
+      "roll": 47,
+      "result": "Maneaters"
+    },
+    {
+      "roll": 48,
+      "result": "Megacorps"
+    },
+    {
+      "roll": 49,
+      "result": "Mercenaries"
+    },
+    {
+      "roll": 50,
+      "result": "Minimal Contact"
+    },
+    {
+      "roll": 51,
+      "result": "Misandry/Misogyny"
+    },
+    {
+      "roll": 52,
+      "result": "Night World"
+    },
+    {
+      "roll": 53,
+      "result": "Nomads"
+    },
+    {
+      "roll": 54,
+      "result": "Oceanic World"
+    },
+    {
+      "roll": 55,
+      "result": "Out of Contact"
+    },
+    {
+      "roll": 56,
+      "result": "Outpost World"
+    },
+    {
+      "roll": 57,
+      "result": "Perimeter Agency"
+    },
+    {
+      "roll": 58,
+      "result": "Pilgrimage Site"
+    },
+    {
+      "roll": 59,
+      "result": "Pleasure World"
+    },
+    {
+      "roll": 60,
+      "result": "Police State"
+    },
+    {
+      "roll": 61,
+      "result": "Post-Scarcity"
+    },
+    {
+      "roll": 62,
+      "result": "Preceptor Archive"
+    },
+    {
+      "roll": 63,
+      "result": "Pretech Cultists"
+    },
+    {
+      "roll": 64,
+      "result": "Primitive Aliens"
+    },
+    {
+      "roll": 65,
+      "result": "Prison Planet"
+    },
+    {
+      "roll": 66,
+      "result": "Psionics Academy"
+    },
+    {
+      "roll": 67,
+      "result": "Psionics Fear"
+    },
+    {
+      "roll": 68,
+      "result": "Psionics Worship"
+    },
+    {
+      "roll": 69,
+      "result": "Quarantined World"
+    },
+    {
+      "roll": 70,
+      "result": "Radioactive World"
+    },
+    {
+      "roll": 71,
+      "result": "Refugees"
+    },
+    {
+      "roll": 72,
+      "result": "Regional Hegemon"
+    },
+    {
+      "roll": 73,
+      "result": "Restrictive Laws"
+    },
+    {
+      "roll": 74,
+      "result": "Revanchists"
+    },
+    {
+      "roll": 75,
+      "result": "Revolutionaries"
+    },
+    {
+      "roll": 76,
+      "result": "Rigid Culture"
+    },
+    {
+      "roll": 77,
+      "result": "Rising Hegemon"
+    },
+    {
+      "roll": 78,
+      "result": "Ritual Combat"
+    },
+    {
+      "roll": 79,
+      "result": "Robots"
+    },
+    {
+      "roll": 80,
+      "result": "Seagoing Cities"
+    },
+    {
+      "roll": 81,
+      "result": "Sealed Menace"
+    },
+    {
+      "roll": 82,
+      "result": "Secret Masters"
+    },
+    {
+      "roll": 83,
+      "result": "Sectarians"
+    },
+    {
+      "roll": 84,
+      "result": "Seismic Instability"
+    },
+    {
+      "roll": 85,
+      "result": "Shackled World"
+    },
+    {
+      "roll": 86,
+      "result": "Societal Despair"
+    },
+    {
+      "roll": 87,
+      "result": "Sole Supplier"
+    },
+    {
+      "roll": 88,
+      "result": "Taboo Treasure"
+    },
+    {
+      "roll": 89,
+      "result": "Terraform Failure"
+    },
+    {
+      "roll": 90,
+      "result": "Theocracy"
+    },
+    {
+      "roll": 91,
+      "result": "Tomb World"
+    },
+    {
+      "roll": 92,
+      "result": "Trade Hub"
+    },
+    {
+      "roll": 93,
+      "result": "Tyranny"
+    },
+    {
+      "roll": 94,
+      "result": "Unbraked AI"
+    },
+    {
+      "roll": 95,
+      "result": "Urbanized Surface"
+    },
+    {
+      "roll": 96,
+      "result": "Utopia"
+    },
+    {
+      "roll": 97,
+      "result": "Warlords"
+    },
+    {
+      "roll": 98,
+      "result": "Xenophiles"
+    },
+    {
+      "roll": 99,
+      "result": "Xenophobes"
+    },
+    {
+      "roll": 100,
+      "result": "Zombies"
+    }
+  ]
+}

@@ -20,7 +20,7 @@ import {
   POPULATION_RANGE,
   TECH_HAB_REQUIRED,
   TERRAN_BIOSPHERE_HAB_REQUIRED,
-} from '../Data/Raw/tables';
+} from './data_tables';
 import {
   ATMOSPHERE_HAB,
   BULK_COMPOSITION_HAB,
@@ -29,7 +29,7 @@ import {
   TEMPERATURE_HAB,
   TERRAN_BIOSPHERE_HAB,
 } from '../Shared/planet_interpretation';
-import { WORLD_TAG_CONSTRAINTS } from '../Data/Raw/generation_constraints';
+import { WORLD_TAG_CONSTRAINTS } from './generation_constraints';
 
 type PhysicalProfile = {
   Atmosphere: Planet['Atmosphere'];

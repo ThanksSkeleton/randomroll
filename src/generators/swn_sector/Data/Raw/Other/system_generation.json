@@ -1,0 +1,187 @@
+{
+  "v4": {
+    "orbitalPositionCategories": [
+      "TooHot",
+      "Goldilocks",
+      "TooCold_1",
+      "IngressEgress",
+      "TooCold_3"
+    ],
+    "requiredLocations": [
+      {
+        "kind": "EgressIngressRegion",
+        "orbitalPositionCategory": "IngressEgress"
+      }
+    ],
+    "extraWorlds": {
+      "countDice": "1d6",
+      "minimumByOrbitalPosition": {
+        "TooHot": 1,
+        "TooCold_1": 1
+      },
+      "maximumByOrbitalPosition": {
+        "TooCold_3": 1
+      },
+      "goldilocksOpenSlotExtraChance": 0.5,
+      "allowedOrbitalPositionCategories": {
+        "TerrestrialPlanet": [
+          "TooHot",
+          "TooCold_1",
+          "TooCold_3"
+        ],
+        "GasGiant": [
+          "TooHot",
+          "TooCold_1",
+          "TooCold_3"
+        ],
+        "AsteroidBelt": [
+          "TooHot",
+          "TooCold_1"
+        ],
+        "GasCloud": [
+          "TooCold_1",
+          "TooCold_3"
+        ],
+        "KupierBelt": [
+          "TooCold_3"
+        ]
+      },
+      "moonRules": {
+        "terrestrialExtraWorldMayOrbitGasGiant": true,
+        "terrestrialExtraWorldMoonChance": "same as world_attributes_2 gas_giant_moon table",
+        "primaryPlanetMoonCreatesParentGasGiant": true,
+        "parentGasGiantMayUseGoldilocks": true
+      }
+    },
+    "pointsOfInterest": {
+      "minimumIngressPoints": 1,
+      "minimumEgressPoints": 1,
+      "otherCountDice": "1d4+1",
+      "independentOrbit": {
+        "kind": "IndependentOrbit",
+        "createdByPoint": "Deep-space station",
+        "onlyContainsPoint": "Deep-space station",
+        "allowedOrbitalPositionCategories": [
+          "TooHot",
+          "TooCold_1",
+          "TooCold_3"
+        ]
+      }
+    }
+  },
+  "secondaryWorld": {
+    "printedPage": 170,
+    "pdfPage": 174,
+    "origin": {
+      "dice": "d8",
+      "rows": [
+        {
+          "roll": 1,
+          "result": "Recent colony from the primary world"
+        },
+        {
+          "roll": 2,
+          "result": "Refuge for exiles from primary"
+        },
+        {
+          "roll": 3,
+          "result": "Founded ages ago by a different group"
+        },
+        {
+          "roll": 4,
+          "result": "Founded long before the primary world"
+        },
+        {
+          "roll": 5,
+          "result": "Lost ancient colony of the primary"
+        },
+        {
+          "roll": 6,
+          "result": "Colony recently torn free of the primary"
+        },
+        {
+          "roll": 7,
+          "result": "Long-standing cooperative colony world"
+        },
+        {
+          "roll": 8,
+          "result": "Recent interstellar colony from elsewhere"
+        }
+      ]
+    },
+    "relationship": {
+      "dice": "d8",
+      "rows": [
+        {
+          "roll": 1,
+          "result": "Confirmed hatred of each other"
+        },
+        {
+          "roll": 2,
+          "result": "Active cold war between them"
+        },
+        {
+          "roll": 3,
+          "result": "Old grudges or resentments"
+        },
+        {
+          "roll": 4,
+          "result": "Cultural disgust and avoidance"
+        },
+        {
+          "roll": 5,
+          "result": "Polite interchange and trade"
+        },
+        {
+          "roll": 6,
+          "result": "Cultural admiration for primary"
+        },
+        {
+          "roll": 7,
+          "result": "Long-standing friendship"
+        },
+        {
+          "roll": 8,
+          "result": "Unflinching mutual loyalty"
+        }
+      ]
+    },
+    "contactPoint": {
+      "dice": "d8",
+      "rows": [
+        {
+          "roll": 1,
+          "result": "Trade in vital goods"
+        },
+        {
+          "roll": 2,
+          "result": "Shared religion"
+        },
+        {
+          "roll": 3,
+          "result": "Mutual language"
+        },
+        {
+          "roll": 4,
+          "result": "Entertainment content"
+        },
+        {
+          "roll": 5,
+          "result": "Shared research"
+        },
+        {
+          "roll": 6,
+          "result": "Threat to both of them"
+        },
+        {
+          "roll": 7,
+          "result": "Shared elite families"
+        },
+        {
+          "roll": 8,
+          "result": "Exploiting shared resource"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "size": {
+    "Luna": {
+      "rank": 1
+    },
+    "Mars": {
+      "rank": 2
+    },
+    "Earth": {
+      "rank": 3
+    },
+    "Super-Earth": {
+      "rank": 4
+    },
+    "Neptune": {
+      "rank": 5,
+      "gasComposition": "Neptunian Gas"
+    },
+    "Jupiter": {
+      "rank": 6,
+      "gasComposition": "Jovian Gas"
+    }
+  }
+}

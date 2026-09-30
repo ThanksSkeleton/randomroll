@@ -1,0 +1,45 @@
+{
+  "dice": "d100",
+  "rows": [
+    {
+      "roll": 1,
+      "result": "Deep-space station"
+    },
+    {
+      "roll": 2,
+      "result": "Asteroid base"
+    },
+    {
+      "roll": 3,
+      "result": "Remote moon base"
+    },
+    {
+      "roll": 4,
+      "result": "Ancient orbital ruin"
+    },
+    {
+      "roll": 5,
+      "result": "Research base"
+    },
+    {
+      "roll": 6,
+      "result": "Asteroid belt"
+    },
+    {
+      "roll": 7,
+      "result": "Gas Mine"
+    },
+    {
+      "roll": 8,
+      "result": "Refueling station"
+    },
+    {
+      "roll": 9,
+      "result": "Comet base"
+    },
+    {
+      "roll": 10,
+      "result": "Comet belt"
+    }
+  ]
+}

@@ -1,5 +1,5 @@
 import type { Polity, Sector, SelectableEntity } from '../BaseDTO/merged_schema';
-import { POLITY_FLAG_COLORS } from '../Data/Raw/polity_flag_colors';
+import { POLITY_FLAG_COLORS } from '../Shared/polity_flag_colors';
 
 export interface InvariantViolation {
   RuleId: string;

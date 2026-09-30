@@ -9,7 +9,7 @@ import type {
 } from '../BaseDTO/merged_schema';
 import { choose, deterministicId, randomFor } from './generation_random';
 
-import { POLITY_FLAG_COLORS } from '../Data/Raw/polity_flag_colors';
+import { POLITY_FLAG_COLORS } from '../Shared/polity_flag_colors';
 import { capabilityFor, type Capability } from '../Shared/politics_interpretation';
 
 export interface PoliticsResult {

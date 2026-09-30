@@ -1,7 +1,14 @@
-import rawStarTypes from '../Data/Raw/star_types.json';
-import rawWorldAttributes from '../Data/Raw/world_attributes_2.json';
-import rawWorldTags from '../Data/Raw/world_tags.json';
-import rawPointsOfInterest from '../Data/Raw/system_points_of_interest.json';
+import rawStarDetails from '../Data/Raw/Details/star_types.json';
+import rawAttributeDetails from '../Data/Raw/Details/world_attributes.json';
+import rawPoiDetails from '../Data/Raw/Details/points_of_interest.json';
+import rawWorldTagDetails from '../Data/Raw/Details/world_tags.json';
+import rawStarTable from '../Data/Raw/Tables/star_types.json';
+import rawAttributeTables from '../Data/Raw/Tables/world_attributes.json';
+import rawPoiDetailTables from '../Data/Raw/Tables/poi_detail_tables.json';
+import rawPoiTable from '../Data/Raw/Tables/points_of_interest.json';
+import rawSystemGeneration from '../Data/Raw/Other/system_generation.json';
+import rawSourceInfo from '../Data/Raw/Other/source_info.json';
+import rawWorldTagTable from '../Data/Raw/Tables/world_tags.json';
 import type {
   InhabitedInfo,
   Planet,
@@ -16,7 +23,7 @@ import {
   STAR_AU_WIDTHS,
 } from '../Shared/spatial_interpretation';
 
-type RawRow = { roll: string | number; result?: string; weight?: number; hab?: number };
+type RawRow = { roll: string | number; result: string; weight?: number; hab?: number };
 export type WeightedCategory<T> = { Value: T; Weight: number; Hab?: number };
 function rollSpan(roll: string | number): readonly [number, number] {
   const [first, last = first] = String(roll).split('-').map(Number);
@@ -30,12 +37,8 @@ function rollSpan(roll: string | number): readonly [number, number] {
     throw new Error(`Invalid d100 roll span ${roll}`);
   return [first, last];
 }
-function adaptRows<T>(
-  rows: readonly RawRow[],
-  adapt: (result: string, index: number) => T,
-): WeightedCategory<T>[] {
+function adaptRows<T>(rows: readonly RawRow[], adapt: (result: string, index: number) => T) {
   return rows.map((row, index) => {
-    if (row.result === undefined) throw new Error(`Missing result at row ${index}`);
     const [first, last] = rollSpan(row.roll);
     return {
       Value: adapt(row.result, index),
@@ -44,158 +47,67 @@ function adaptRows<T>(
     };
   });
 }
-function table(id: string): RawRow[] {
-  const match = (
-    rawWorldAttributes as { tables: Array<{ id: string; rows: RawRow[] }> }
-  ).tables.find((candidate) => candidate.id === id);
-  if (match === undefined) throw new Error(`Missing reviewed table ${id}`);
-  return match.rows;
+const worldAttributeTables = rawAttributeTables.tables as Array<{
+  id: string;
+  rows: Array<{ roll: string; result: string }>;
+}>;
+const worldAttributeDetails = rawAttributeDetails.tables as Record<
+  string,
+  Record<string, Record<string, unknown>>
+>;
+function attributeTable(id: string): RawRow[] {
+  const match = worldAttributeTables.find((candidate) => candidate.id === id);
+  if (!match) throw new Error(`Missing reviewed table ${id}`);
+  return match.rows.map((row) => ({
+    ...row,
+    ...(worldAttributeDetails[id]?.[row.result] ?? {}),
+  })) as RawRow[];
 }
-const TEMPERATURE_VARIANTS: readonly Temperature[] = [
-  'Temperate (chilly)',
-  'Temperate',
-  'Temperate (warm)',
-];
+const starDetails = rawStarDetails.starTypes as Record<string, Record<string, unknown>>;
+const starTable = (rawStarTable.tables as Array<{ id: string; rows: RawRow[] }>).find(
+  (candidate) => candidate.id === 'star_type',
+);
+if (!starTable) throw new Error('Missing star_type table');
 export const STAR_TABLE = adaptRows(
-  (rawStarTypes as { tables: Array<{ id: string; rows: RawRow[] }> }).tables.find(
-    (candidate) => candidate.id === 'star_type',
-  )?.rows ?? [],
+  starTable.rows.map((row) => ({ ...row, ...(starDetails[row.result] ?? {}) })) as RawRow[],
   (result) => result as StarType,
 );
 export const ATMOSPHERE_TABLE = adaptRows(
-  table('atmosphere'),
+  attributeTable('atmosphere'),
   (result) => result as Planet['Atmosphere'],
 );
-export const TEMPERATURE_TABLE = adaptRows(table('temperature'), (result, index) =>
-  result === 'Temperate' ? TEMPERATURE_VARIANTS[index - 10]! : (result as Temperature),
+export const TEMPERATURE_TABLE = adaptRows(
+  attributeTable('temperature'),
+  (result) => result as Temperature,
 );
 export const NATIVE_BIOSPHERE_TABLE = adaptRows(
-  table('native_biosphere'),
+  attributeTable('native_biosphere'),
   (result) => result as Planet['NativeBiosphere'],
 );
 export const TERRAN_BIOSPHERE_TABLE = adaptRows(
-  table('terran_biosphere'),
+  attributeTable('terran_biosphere'),
   (result) => result as InhabitedInfo['TerranBiosphere'],
 );
 export const POPULATION_TABLE = adaptRows(
-  table('population'),
+  attributeTable('population'),
   (result) => result as InhabitedInfo['Population'],
 );
 export const TECH_LEVEL_TABLE = adaptRows(
-  table('tech_level'),
+  attributeTable('tech_level'),
   (result) => result as InhabitedInfo['TechLevel'],
 );
 export const BULK_COMPOSITION_TABLE = adaptRows(
-  table('bulk_composition'),
+  attributeTable('bulk_composition'),
   (result) => result as Planet['BulkComposition'],
 );
 export const TERRESTRIAL_SIZE_TABLE = adaptRows(
-  table('terrestrial_size'),
+  attributeTable('terrestrial_size'),
   (result) => result as Planet['Size'],
 );
+export const SYSTEM_GENERATION_CONFIG = rawSystemGeneration;
+export const RAW_SOURCE_INFO = rawSourceInfo;
 export const ALIEN_DEPENDENT_WORLD_TAGS = new Set(['Primitive Aliens', 'Xenophiles']);
-/** Runtime reflection of the schema union; adapters are checked against it at startup. */
-export const CANONICAL_WORLD_TAGS = [
-  'Abandoned Colony',
-  'Alien Ruins',
-  'Altered Humanity',
-  'Anarchists',
-  'Anthropomorphs',
-  'Area 51',
-  'Badlands World',
-  'Battleground',
-  'Beastmasters',
-  'Bubble Cities',
-  'Cheap Life',
-  'Civil War',
-  'Cold War',
-  'Colonized Population',
-  'Cultural Power',
-  'Cybercommunists',
-  'Cyborgs',
-  'Cyclical Doom',
-  'Desert World',
-  'Doomed World',
-  'Dying Race',
-  'Eugenic Cult',
-  'Exchange Consulate',
-  'Fallen Hegemon',
-  'Feral World',
-  'Flying Cities',
-  'Forbidden Tech',
-  'Former Warriors',
-  'Freak Geology',
-  'Freak Weather',
-  'Friendly Foe',
-  'Gold Rush',
-  'Great Work',
-  'Hatred',
-  'Heavy Industry',
-  'Heavy Mining',
-  'Hivemind',
-  'Holy War',
-  'Hostile Biosphere',
-  'Hostile Space',
-  'Immortals',
-  'Local Specialty',
-  'Local Tech',
-  'Major Spaceyard',
-  'Mandarinate',
-  'Mandate Base',
-  'Maneaters',
-  'Megacorps',
-  'Mercenaries',
-  'Minimal Contact',
-  'Misandry/Misogyny',
-  'Night World',
-  'Nomads',
-  'Oceanic World',
-  'Out of Contact',
-  'Outpost World',
-  'Perimeter Agency',
-  'Pilgrimage Site',
-  'Pleasure World',
-  'Police State',
-  'Post-Scarcity',
-  'Preceptor Archive',
-  'Pretech Cultists',
-  'Prison Planet',
-  'Psionics Academy',
-  'Psionics Fear',
-  'Psionics Worship',
-  'Quarantined World',
-  'Radioactive World',
-  'Refugees',
-  'Regional Hegemon',
-  'Restrictive Laws',
-  'Revanchists',
-  'Revolutionaries',
-  'Rigid Culture',
-  'Rising Hegemon',
-  'Ritual Combat',
-  'Robots',
-  'Seagoing Cities',
-  'Sealed Menace',
-  'Secret Masters',
-  'Sectarians',
-  'Seismic Instability',
-  'Shackled World',
-  'Societal Despair',
-  'Sole Supplier',
-  'Taboo Treasure',
-  'Terraform Failure',
-  'Theocracy',
-  'Tomb World',
-  'Trade Hub',
-  'Tyranny',
-  'Unbraked AI',
-  'Urbanized Surface',
-  'Utopia',
-  'Warlords',
-  'Xenophobes',
-  'Zombies',
-] as const satisfies readonly WorldTag[];
-const CANONICAL_WORLD_TAG_SET = new Set<string>(CANONICAL_WORLD_TAGS);
+
 export const WORLD_TAG_PROMPT_CATEGORIES = [
   'enemies',
   'friends',
@@ -210,31 +122,33 @@ export interface WorldTagDefinition {
   tag: string;
   prompts: WorldTagPromptLists;
 }
-
-export const WORLD_TAG_DEFINITIONS: WorldTagDefinition[] = rawWorldTags.tags.map((row) => {
+const worldTagDetails = rawWorldTagDetails.tags as Record<
+  string,
+  { prompts?: WorldTagPromptLists }
+>;
+const worldTagRows = rawWorldTagTable.rows as Array<{ roll: number; result: string }>;
+export const CANONICAL_WORLD_TAGS = worldTagRows.map((row) => row.result) as WorldTag[];
+export const WORLD_TAG_DEFINITIONS: WorldTagDefinition[] = worldTagRows.map((row) => {
+  const prompts = worldTagDetails[row.result]?.prompts;
+  if (!prompts) throw new Error(`Missing detail data for world tag ${row.result}`);
   for (const category of WORLD_TAG_PROMPT_CATEGORIES) {
-    const prompts = row.prompts[category];
-    if (!Array.isArray(prompts) || prompts.length === 0 || prompts.some((prompt) => !prompt))
-      throw new Error(`World tag ${row.tag} has an invalid ${category} prompt list`);
+    const values = prompts[category];
+    if (!Array.isArray(values) || values.length === 0 || values.some((value) => !value))
+      throw new Error(`World tag ${row.result} has an invalid ${category} prompt list`);
   }
-  return {
-    roll: row.roll,
-    tag: row.tag,
-    prompts: row.prompts,
-  };
+  return { roll: row.roll, tag: row.result, prompts };
 });
-
+const tableWorldTags = new Set(CANONICAL_WORLD_TAGS);
+if (Object.keys(worldTagDetails).some((tag) => !tableWorldTags.has(tag as WorldTag)))
+  throw new Error('World-tag details contain values missing from the roll table');
 export const WORLD_TAG_TABLE: WeightedCategory<WorldTag>[] = WORLD_TAG_DEFINITIONS.filter(
   (row) => !ALIEN_DEPENDENT_WORLD_TAGS.has(row.tag),
-).map((row) => {
-  if (!CANONICAL_WORLD_TAG_SET.has(row.tag))
-    throw new Error(`Unknown canonical world tag ${row.tag}`);
-  return { Value: row.tag as WorldTag, Weight: 1 };
-});
-export const POI_TABLE: WeightedCategory<PointOfInterestType>[] = (
-  rawPointsOfInterest as { otherPoint: { rows: Array<{ point: string }> } }
-).otherPoint.rows.map((row) => ({ Value: row.point as PointOfInterestType, Weight: 1 }));
+).map((row) => ({ Value: row.tag as WorldTag, Weight: 1 }));
 
+export const POI_TABLE: WeightedCategory<PointOfInterestType>[] = adaptRows(
+  rawPoiTable.rows as RawRow[],
+  (result) => result as PointOfInterestType,
+);
 export interface PointOfInterestDetailEntry {
   roll: string;
   result: string;
@@ -248,35 +162,32 @@ const POI_DETAIL_COLUMN_LABELS: Record<string, string> = {
   occupants: 'Occupants',
   situations: 'Situation',
 };
-const rawPoiDetailRows = (
-  rawPointsOfInterest as {
-    otherPoint: { rows: Array<Record<string, unknown> & { point: string }> };
-  }
-).otherPoint.rows;
+const poiDetailTables = rawPoiDetailTables.points as Record<
+  string,
+  Record<string, PointOfInterestDetailEntry[]>
+>;
 export const POI_DETAIL_COLUMNS_BY_TYPE: Partial<
   Record<PointOfInterestType, PointOfInterestDetailColumn[]>
 > = Object.fromEntries(
-  rawPoiDetailRows.map((row) => [
-    row.point as PointOfInterestType,
-    Object.entries(row)
-      .filter(
-        ([key, value]) => !['roll', 'point', 'locationType'].includes(key) && Array.isArray(value),
-      )
-      .map(([key, value]) => ({
-        key,
-        label: POI_DETAIL_COLUMN_LABELS[key] ?? `${key[0]!.toUpperCase()}${key.slice(1)}`,
-        entries: value as PointOfInterestDetailEntry[],
-      })),
+  Object.entries(poiDetailTables).map(([point, columns]) => [
+    point as PointOfInterestType,
+    Object.entries(columns).map(([key, entries]) => ({
+      key,
+      label: POI_DETAIL_COLUMN_LABELS[key] ?? `${key[0]!.toUpperCase()}${key.slice(1)}`,
+      entries,
+    })),
   ]),
 );
-export const EXTRA_WORLD_ARCHETYPES = (
-  rawPointsOfInterest as {
-    extraWorlds: { archetypes: Array<{ archetype: string; category: string }> };
-  }
-).extraWorlds.archetypes.map((row) => ({
-  ...row,
-  Archetype: row.archetype === 'KupierBelt' ? 'KuiperBelt' : row.archetype,
-}));
+const extraWorldDetails = rawPoiDetails.extraWorlds.archetypes as Record<
+  string,
+  { category: string; description: string }
+>;
+export const EXTRA_WORLD_ARCHETYPES = Object.entries(extraWorldDetails).map(
+  ([archetype, detail]) => ({
+    ...detail,
+    Archetype: archetype === 'KupierBelt' ? 'KuiperBelt' : archetype,
+  }),
+);
 
 export function assertD100Coverage(rows: readonly RawRow[], tableName: string): void {
   const coverage = new Set<number>();
@@ -290,13 +201,9 @@ export function assertD100Coverage(rows: readonly RawRow[], tableName: string): 
   if (coverage.size !== 100) throw new Error(`${tableName} does not cover 1-100 exactly once`);
 }
 export function assertReviewedTableIntegrity(): void {
-  assertD100Coverage(
-    (rawStarTypes as { tables: Array<{ rows: RawRow[] }> }).tables[0]!.rows,
-    'star_type',
-  );
-  for (const candidate of (rawWorldAttributes as { tables: Array<{ id: string; rows: RawRow[] }> })
-    .tables)
-    assertD100Coverage(candidate.rows, candidate.id);
+  assertD100Coverage(starTable!.rows, 'star_type');
+  for (const candidate of worldAttributeTables) assertD100Coverage(candidate.rows, candidate.id);
+  assertD100Coverage(rawWorldTagTable.rows as RawRow[], 'world_tags');
   for (const star of Object.keys(STAR_AU_WIDTHS) as StarType[])
     for (const temperature of directOrbitTemperatures(star)) {
       const [minimum, maximum] = directOrbitAuBand(star, temperature);
