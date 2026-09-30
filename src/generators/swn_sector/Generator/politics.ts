@@ -10,7 +10,7 @@ import type {
 import { choose, deterministicId, randomFor } from './generation_random';
 
 import { POLITY_FLAG_COLORS } from '../Data/Raw/polity_flag_colors';
-import { capabilityFor, type Capability } from '../Helpers/Domain/politics_interpretation';
+import { capabilityFor, type Capability } from '../Shared/politics_interpretation';
 
 export interface PoliticsResult {
   Polities: Polity[];

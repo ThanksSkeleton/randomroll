@@ -9,8 +9,8 @@ import {
   routeSystems,
   findObject,
   objectDetails,
-} from '../Helpers/Domain/sector_selectors';
-import { hasAnyScan } from '../Helpers/Domain/scan_visibility';
+} from '../Shared/sector_selectors';
+import { hasAnyScan } from '../Shared/scan_visibility';
 import { hpoiVisible } from '../Projector/culture_projection';
 import { isVisibleToPlayerDisplay } from './visibility_presentation';
 import { DetailBar } from './features/object-inspector/DetailBar';

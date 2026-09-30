@@ -11,7 +11,7 @@ import type {
   HabitablePoiDisplayDTO,
   PolityDisplayDTO,
 } from '../DisplayDTO/dto';
-import { TECH_LEVEL } from '../Helpers/Domain/planet_interpretation';
+import { TECH_LEVEL } from '../Shared/planet_interpretation';
 import { projectClaims, projectPolity } from './politics_projection';
 import { projectWorldTag } from './world_tag_projection';
 import { HPOI_MARKER } from '../Data/Projection/poi_presentation';

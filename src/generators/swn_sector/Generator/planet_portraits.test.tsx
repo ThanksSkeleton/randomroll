@@ -9,7 +9,7 @@ import { generate } from './generate';
 import { assignPortraitIndex } from './portrait_selection';
 import { choose, randomFor } from './generation_random';
 import { projectPortrait } from '../Projector/portrait_projection';
-import { checkAllInvariants } from '../Validation/invariants';
+import { checkAllInvariants } from './generated_sector_invariants';
 import {
   portraitCategoryKeys,
   portraitManifest,

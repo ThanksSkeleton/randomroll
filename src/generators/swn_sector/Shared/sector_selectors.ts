@@ -11,7 +11,7 @@ import type {
   Star,
   StarSystem,
   SystemObject,
-} from '../../BaseDTO/merged_schema';
+} from '../BaseDTO/merged_schema';
 
 export type FoundObject =
   | { object: StarSystem; kind: 'System'; containingSystem?: StarSystem }

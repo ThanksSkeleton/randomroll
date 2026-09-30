@@ -20,12 +20,12 @@ import {
   shuffled,
 } from './generation_random';
 import { POI_DETAIL_COLUMNS_BY_TYPE, POI_TABLE } from './generation_rules';
-import { isPoiHostCompatible } from '../Helpers/Domain/poi_host_interpretation';
+import { isPoiHostCompatible } from '../Shared/poi_host_interpretation';
 import {
   directOrbitAuBand,
   directOrbitAuRange,
   temperatureForDirectOrbitAu,
-} from '../Helpers/Domain/spatial_interpretation';
+} from '../Shared/spatial_interpretation';
 import { assignPortraitIndex } from './portrait_selection';
 import { generateInhabitedPlanet } from './generate_inhabited_planet';
 import {

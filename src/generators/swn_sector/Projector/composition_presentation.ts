@@ -1,4 +1,4 @@
-import type { BulkComposition, Temperature } from '../../BaseDTO/merged_schema';
+import type { BulkComposition, Temperature } from '../BaseDTO/merged_schema';
 
 export const COLD_TEMPERATURES: ReadonlySet<Temperature> = new Set([
   'Cryogenic',

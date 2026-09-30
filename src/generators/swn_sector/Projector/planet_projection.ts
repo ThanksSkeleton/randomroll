@@ -2,14 +2,12 @@ import type { PlanetDisplayDTO, PlanetStockText } from '../DisplayDTO/dto';
 import type { Planet, Sector } from '../BaseDTO/merged_schema';
 import { planetColor, planetColorClass } from './planet_presentation';
 import {
-  formatPlanetAu,
-  isTidallyLocked,
   planetHabitability,
-  POPULATION_TIER,
   STAR_HABITABILITY,
   TECH_LEVEL,
-} from '../Helpers/Domain/planet_interpretation';
-import { displayBulkComposition } from '../Helpers/Domain/composition_interpretation';
+} from '../Shared/planet_interpretation';
+import { formatPlanetAu, isTidallyLocked, POPULATION_TIER } from './planet_presentation_interpretation';
+import { displayBulkComposition } from './composition_presentation';
 import { projectObjectSpatial } from './object_spatial_projection';
 import { projectClaims } from './politics_projection';
 import { projectPoiCount } from './poi_projection';

@@ -4,9 +4,8 @@ import {
   directOrbitAuBand,
   directOrbitAuRange,
   directOrbitTemperatures,
-  normalTemperatureAuBand,
-  systemEdgeAu,
-} from '../Helpers/Domain/spatial_interpretation';
+} from '../Shared/spatial_interpretation';
+import { normalTemperatureAuBand, systemEdgeAu } from './system_presentation_interpretation';
 
 export function projectSystemSpatial(
   sector: Sector,

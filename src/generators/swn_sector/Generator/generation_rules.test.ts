@@ -10,13 +10,12 @@ import {
   WORLD_TAG_TABLE,
   assertReviewedTableIntegrity,
 } from './generation_rules';
-import { isPoiHostCompatible } from '../Helpers/Domain/poi_host_interpretation';
+import { isPoiHostCompatible } from '../Shared/poi_host_interpretation';
 import {
   directOrbitAuBand,
   directOrbitTemperatures,
-  normalTemperatureAuBand,
-  systemEdgeAu,
-} from '../Helpers/Domain/spatial_interpretation';
+} from '../Shared/spatial_interpretation';
+import { normalTemperatureAuBand, systemEdgeAu } from '../Projector/system_presentation_interpretation';
 import { generateTemplateOtherCelestialObject, generateTemplatePlanet } from './planet_templates';
 
 test('reviewed tables adapt to canonical values without losing their weights', () => {

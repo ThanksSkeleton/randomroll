@@ -14,6 +14,7 @@ const EXPECTED: Record<string, string> = {
 test('fixed seed canonical output retains earlier choices through portrait projection', () => {
   for (const [seed, expected] of Object.entries(EXPECTED)) {
     const sector = generate(seed);
+    expect(generate(seed)).toEqual(sector);
     expect(sector.SchemaVersion).toBe('merged-v7');
     for (const system of sector.Systems)
       for (const object of system.Objects) {

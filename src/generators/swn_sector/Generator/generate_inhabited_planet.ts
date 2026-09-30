@@ -12,7 +12,7 @@ import {
   TERRESTRIAL_SIZE_TABLE,
   WORLD_TAG_TABLE,
 } from './generation_rules';
-import { directOrbitTemperatures } from '../Helpers/Domain/spatial_interpretation';
+import { directOrbitTemperatures } from '../Shared/spatial_interpretation';
 import {
   ATMOSPHERE_MAX_PERCENTILE,
   NATIVE_BIOSPHERE_MIN_PERCENTILE,
@@ -28,7 +28,7 @@ import {
   TECH_LEVEL,
   TEMPERATURE_HAB,
   TERRAN_BIOSPHERE_HAB,
-} from '../Helpers/Domain/planet_interpretation';
+} from '../Shared/planet_interpretation';
 import { WORLD_TAG_CONSTRAINTS } from '../Data/Raw/generation_constraints';
 
 type PhysicalProfile = {

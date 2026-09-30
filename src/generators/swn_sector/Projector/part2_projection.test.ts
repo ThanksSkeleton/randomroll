@@ -1,14 +1,14 @@
 import { expect, test } from 'vitest';
 import { generate } from '../Generator/generate';
-import { checkAllInvariants } from '../Validation/invariants';
+import { checkAllInvariants } from '../Generator/generated_sector_invariants';
 import { projectObjectSpatial } from './object_spatial_projection';
 import { projectObjectKind } from './object_kind_projection';
 import { hexRouteDistance, owningRoute, projectRoute } from './route_projection';
 import { projectStar } from './star_projection';
 import { STAR_PRESENTATION } from '../Data/Projection/star_presentation';
-import { directOrbitAuBand } from '../Helpers/Domain/spatial_interpretation';
+import { directOrbitAuBand } from '../Shared/spatial_interpretation';
 import { projectSystemSpatial } from './system_spatial_projection';
-import { applySectorEdits } from '../Composition/sector_edits';
+import { applySectorEdits } from '../Application/sector_edits';
 
 test('star, system, object, and route projection is pure', () => {
   const sector = generate('part-two-projection');

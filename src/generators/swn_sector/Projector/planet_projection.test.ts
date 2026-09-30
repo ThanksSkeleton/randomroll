@@ -1,9 +1,9 @@
 import { expect, test } from 'vitest';
 import { generate } from '../Generator/generate';
 import { projectPlanet } from './planet_projection';
-import { STAR_HABITABILITY } from '../Helpers/Domain/planet_interpretation';
+import { STAR_HABITABILITY } from '../Shared/planet_interpretation';
 import { STAR_TABLE } from '../Generator/generation_rules';
-import { directOrbitAuBand } from '../Helpers/Domain/spatial_interpretation';
+import { directOrbitAuBand } from '../Shared/spatial_interpretation';
 
 test('star interpretation agrees with the generation source', () => {
   for (const row of STAR_TABLE) expect(STAR_HABITABILITY[row.Value]).toBe(row.Hab);

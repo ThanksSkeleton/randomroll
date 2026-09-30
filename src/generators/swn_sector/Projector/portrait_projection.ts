@@ -7,7 +7,7 @@ import {
   portraitAt,
   type PortraitCategory,
 } from '../Data/Projection/portrait_assets';
-import { displayBulkComposition } from '../Helpers/Domain/composition_interpretation';
+import { displayBulkComposition } from './composition_presentation';
 import { projectObjectSpatial } from './object_spatial_projection';
 import { owningRoute } from './route_projection';
 

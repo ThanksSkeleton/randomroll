@@ -1,3 +1,5 @@
+> Historical implementation record: the paths in this document describe the architecture at the time of that migration. The later architecture cleanup renamed those active owners to `Application/` and `Shared/`, moved generated-sector checks under `Generator/`, and removed `Validation/`.
+
 # SWN Sector: Project Organization
 
 ## Status and scope

@@ -1,4 +1,4 @@
-import type { StarSystem, StarType, Temperature } from '../../BaseDTO/merged_schema';
+import type { StarSystem, StarType, Temperature } from '../BaseDTO/merged_schema';
 
 export const TEMPERATURE_RANK: Readonly<Record<Temperature, number>> = {
   Cryogenic: 1,
@@ -147,25 +147,6 @@ export function temperatureForDirectOrbitAu(starType: StarType, au: number): Tem
       `Expected one direct-orbit temperature band for ${starType} AU ${au}; found ${matches.length}`,
     );
   return matches[0]!;
-}
-
-/** Returns the AU boundaries enclosing all normal temperatures. */
-export function normalTemperatureAuBand(starType: StarType): readonly [number, number] {
-  const widths = STAR_AU_WIDTHS[starType];
-  const inner = widths.FromStar + widths.ExtremeHotRange;
-  return [inner, inner + widths.NormalRange];
-}
-
-/** The outer system boundary implied by System_AU_Width.csv. */
-export function systemEdgeAu(starType: StarType): number {
-  const widths = STAR_AU_WIDTHS[starType];
-  return (
-    widths.FromStar +
-    widths.ExtremeHotRange +
-    widths.NormalRange +
-    widths.ExtremeColdRange +
-    widths.ToSystemEdge
-  );
 }
 
 export function effectiveOrbit(

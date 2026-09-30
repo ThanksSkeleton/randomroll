@@ -1,7 +1,7 @@
 import { expect, test } from 'vitest';
 import { generate } from '../Generator/generate';
 import { projectSystemSpatial } from './system_spatial_projection';
-import { temperatureForDirectOrbitAu } from '../Helpers/Domain/spatial_interpretation';
+import { temperatureForDirectOrbitAu } from '../Shared/spatial_interpretation';
 
 test('system spatial projection is repeatable and leaves the sector unchanged', () => {
   const sector = generate('system-spatial-projection');

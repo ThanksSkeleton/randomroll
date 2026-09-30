@@ -5,7 +5,7 @@ import type {
   GeneratedOtherCelestialObject as OtherCelestialObject,
 } from './generation_model';
 import { choose, deterministicId, randomFor } from './generation_random';
-import { directOrbitTemperatures } from '../Helpers/Domain/spatial_interpretation';
+import { directOrbitTemperatures } from '../Shared/spatial_interpretation';
 import { assignPortraitIndex } from './portrait_selection';
 
 export type ExtraPlanetTemplate =

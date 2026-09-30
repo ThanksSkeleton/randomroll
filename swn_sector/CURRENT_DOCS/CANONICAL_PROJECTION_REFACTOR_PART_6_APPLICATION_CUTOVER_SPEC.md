@@ -1,3 +1,5 @@
+> Historical implementation record: the paths in this document describe the architecture at the time of that migration. The later architecture cleanup renamed those active owners to `Application/` and `Shared/`, moved generated-sector checks under `Generator/`, and removed `Validation/`.
+
 # Part 6: Application Cutover and Canonical Audit — Implemented
 
 This is sub-spec 6 of the [canonical projection refactor roadmap](CANONICAL_PROJECTION_REFACTOR_ROADMAP.md). It starts from the implemented `merged-v7` in-memory sector and the projection slices from parts 1–4. Part 5 remains deferred. The shared display graph now feeds the archive, reducer, inspector, hex map, and both system views. UI commands update canonical state through `PrototypeApplication` and receive detached projected values. No Base DTO types are imported by production UI files. The field inventory and final source audit below close this cutover; no canonical fields or schema version required changes.

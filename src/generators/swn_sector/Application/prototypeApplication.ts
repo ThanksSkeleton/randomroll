@@ -8,7 +8,7 @@ import {
   projectSector,
   type SectorProjectionResult,
 } from '../Projector/sector_projection';
-import { checkAllInvariants } from '../Validation/invariants';
+import { checkAllInvariants } from '../Generator/generated_sector_invariants';
 import { applySectorEdits, validSectorEdits, type SectorEdits } from './sector_edits';
 import {
   deleteSectorObject,

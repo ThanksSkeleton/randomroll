@@ -1,0 +1,30 @@
+flowchart LR
+  L0["Application"]
+  L1["BaseDTO"]
+  L2["Data"]
+  L3["DisplayDTO"]
+  L4["Generator"]
+  L5["Projector"]
+  L6["Shared"]
+  L7["UI"]
+  L8["portrait_review"]
+  L0 -->|4| L1
+  L0 -->|1| L3
+  L0 -->|4| L4
+  L0 -->|1| L5
+  L0 -->|2| L6
+  L2 -->|7| L1
+  L2 -->|1| L6
+  L3 -->|2| L1
+  L3 -->|3| L2
+  L4 -->|11| L1
+  L4 -->|5| L2
+  L4 -->|15| L6
+  L5 -->|18| L1
+  L5 -->|5| L2
+  L5 -->|11| L3
+  L5 -->|6| L6
+  L6 -->|7| L1
+  L6 -->|1| L2
+  L7 -->|1| L0
+  L7 -->|12| L3

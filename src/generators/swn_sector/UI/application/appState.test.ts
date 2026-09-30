@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { appReducer, createAppState } from './appState';
-import { createInitialSectors } from '../../Composition/initialSectors';
+import { createInitialSectors } from '../../Application/initialSectors';
 import { projectSector } from '../../Projector/sector_projection';
 
 function displaySectors() {

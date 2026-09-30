@@ -1,7 +1,7 @@
 import { expect, test } from 'vitest';
 import { generateInhabitedPlanet } from './generate_inhabited_planet';
-import { directOrbitTemperatures } from '../Helpers/Domain/spatial_interpretation';
-import { planetHabitability } from '../Helpers/Domain/planet_interpretation';
+import { directOrbitTemperatures } from '../Shared/spatial_interpretation';
+import { planetHabitability } from '../Shared/planet_interpretation';
 
 function world(
   seed: string,

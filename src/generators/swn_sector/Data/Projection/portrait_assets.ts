@@ -4,7 +4,7 @@ import type {
   PointOfInterestType,
   StarType,
 } from '../../BaseDTO/merged_schema';
-import { isPortraitIndex, PORTRAIT_VARIANT_COUNT } from '../../Helpers/Domain/portrait_index';
+import { isPortraitIndex, PORTRAIT_VARIANT_COUNT } from '../../Shared/portrait_index';
 
 export const portraitCategoryKeys = [
   'mercurian',

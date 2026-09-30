@@ -40,3 +40,8 @@ Rename top-level `Composition/` to `Application/`, including its tests. Update e
 3. The same fixed seeds produce equal Base DTOs, and repeated projection produces equal Display DTOs. Existing command success/failure results and validation rule outcomes remain unchanged.
 4. Run `npx tsc --noEmit`, `npx vitest run src/generators/swn_sector src/generators/swn_culture`, and `npx vite build`. Resolve failures before declaring the cleanup complete.
 5. Regenerate or recheck the dependency graph after step 4 and report any remaining cross-layer imports or cycles. The baseline JSON is the comparison point, not proof of the final state.
+
+
+## Implementation result
+
+Completed on 2026-09-30. Canonical validation now lives in `src/generators/swn_sector/Shared/canonical_validation.ts`; the compatibility gate and generation checks live in `Generator/generated_sector_invariants.ts`. Shared interpretation is under `Shared/`, presentation-only helpers are under `Projector/`, and the former `Composition/` owner is `Application/`. The rechecked graph is recorded in `SWN_SECTOR_IMPORT_GRAPH_FINAL.json` and `.mmd`: no forbidden cross-layer edges remain, and the only cycle is the existing type-only `BaseDTO/culture.ts` ↔ `BaseDTO/merged_schema.ts` cycle from the baseline.

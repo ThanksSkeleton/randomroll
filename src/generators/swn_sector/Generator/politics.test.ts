@@ -10,7 +10,7 @@ import type {
   TechLevel,
 } from '../BaseDTO/merged_schema';
 import { resolvePolitics } from './politics';
-import { capabilityFor } from '../Helpers/Domain/politics_interpretation';
+import { capabilityFor } from '../Shared/politics_interpretation';
 
 function entity(id: string, niceName = id): SelectableEntity {
   return {

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { createInitialSectors } from '../Composition/initialSectors';
-import { PrototypeApplication } from '../Composition/prototypeApplication';
+import { createInitialSectors } from '../Application/initialSectors';
+import { PrototypeApplication } from '../Application/prototypeApplication';
 import { projectSector } from './sector_projection';
 
 const options = { preview: 'gm', assetBaseUrl: '/' } as const;

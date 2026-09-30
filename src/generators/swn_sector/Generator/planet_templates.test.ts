@@ -7,12 +7,12 @@ import {
   populatePointsOfInterest,
   retrySystemGeneration,
 } from './generate_system';
-import { isPoiHostCompatible } from '../Helpers/Domain/poi_host_interpretation';
+import { isPoiHostCompatible } from '../Shared/poi_host_interpretation';
 import {
   directOrbitAuBand,
   directOrbitAuRange,
   temperatureForDirectOrbitAu,
-} from '../Helpers/Domain/spatial_interpretation';
+} from '../Shared/spatial_interpretation';
 import { generateTemplateOtherCelestialObject, generateTemplatePlanet } from './planet_templates';
 
 test('every planet template expands to a complete canonical uninhabited planet', () => {

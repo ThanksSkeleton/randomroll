@@ -14,7 +14,7 @@ import {
   directOrbitAuBand,
   directOrbitTemperatures,
   STAR_AU_WIDTHS,
-} from '../Helpers/Domain/spatial_interpretation';
+} from '../Shared/spatial_interpretation';
 
 type RawRow = { roll: string | number; result?: string; weight?: number; hab?: number };
 export type WeightedCategory<T> = { Value: T; Weight: number; Hab?: number };

@@ -1,6 +1,6 @@
-import { isValidScanVisibility, type ScanField } from '../Helpers/Domain/scan_visibility';
+import { isValidScanVisibility, type ScanField } from '../Shared/scan_visibility';
 import type { Guid, ScanVisibility, Sector } from '../BaseDTO/merged_schema';
-import { containingSystem, findObject, routePortals } from '../Helpers/Domain/sector_selectors';
+import { containingSystem, findObject, routePortals } from '../Shared/sector_selectors';
 
 export type SectorOperationFailure =
   'object-not-found' | 'invalid-visibility' | 'deletion-prohibited' | 'move-prohibited';

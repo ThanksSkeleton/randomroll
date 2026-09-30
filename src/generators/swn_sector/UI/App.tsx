@@ -17,7 +17,7 @@ import {
   createPrototypeApplication,
   type PrototypeApplication,
   type SectorCommandResult,
-} from '../Composition/prototypeApplication';
+} from '../Application/prototypeApplication';
 
 function readDisplays(application: PrototypeApplication, preview: Preview): DisplaySectorDTO[] {
   return application

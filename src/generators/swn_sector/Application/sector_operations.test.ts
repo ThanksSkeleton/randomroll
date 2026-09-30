@@ -12,8 +12,8 @@ import {
   routeHasEndpointInSystem,
   routePortals,
   routeSystems,
-} from '../Helpers/Domain/sector_selectors';
-import { validateSector } from '../Validation/sector_validation';
+} from '../Shared/sector_selectors';
+import { checkAllInvariants } from '../Generator/generated_sector_invariants';
 
 describe('canonical sector domain', () => {
   it('updates visibility immutably', () => {
@@ -70,7 +70,7 @@ describe('canonical sector domain', () => {
     expect(findObject(result.value, route.Id)).toBeUndefined();
     expect(findObject(result.value, portals[0].Id)).toBeUndefined();
     expect(findObject(result.value, portals[1].Id)).toBeUndefined();
-    expect(validateSector(result.value)).toEqual([]);
+    expect(checkAllInvariants(result.value)).toEqual([]);
   });
 
   it('does not allow movement to a route or route portal', () => {
@@ -90,6 +90,6 @@ describe('canonical sector domain', () => {
     expect(result.ok).toBe(true);
     if (!result.ok) throw new Error(result.reason);
     expect(findObject(result.value, object.Id)).toBeUndefined();
-    expect(validateSector(result.value)).toEqual([]);
+    expect(checkAllInvariants(result.value)).toEqual([]);
   });
 });

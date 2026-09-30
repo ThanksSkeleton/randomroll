@@ -1,11 +1,11 @@
 import type { ObjectSpatialDisplayDTO } from '../DisplayDTO/dto';
 import type { Sector } from '../BaseDTO/merged_schema';
-import { effectiveOrbit } from '../Helpers/Domain/spatial_interpretation';
+import { effectiveOrbit } from '../Shared/spatial_interpretation';
 import {
   projectOtherObjectGlyphClass,
   projectOtherObjectTypeLabel,
 } from './object_kind_projection';
-import { formatPlanetAu } from '../Helpers/Domain/planet_interpretation';
+import { formatPlanetAu } from './planet_presentation_interpretation';
 
 export function projectObjectSpatial(
   sector: Sector,

@@ -3,7 +3,7 @@ import { randomUUID } from 'node:crypto';
 import { readdirSync, statSync, unlinkSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { generate } from './generate';
-import { checkAllInvariants } from '../Validation/invariants';
+import { checkAllInvariants } from './generated_sector_invariants';
 
 const DEFAULT_SECTOR_COUNT = 20;
 const MAX_SECTOR_COUNT = 100;

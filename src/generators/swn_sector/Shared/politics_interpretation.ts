@@ -1,4 +1,4 @@
-import type { Population, TechLevel } from '../../BaseDTO/merged_schema';
+import type { Population, TechLevel } from '../BaseDTO/merged_schema';
 
 export interface Capability {
   Attack: number;

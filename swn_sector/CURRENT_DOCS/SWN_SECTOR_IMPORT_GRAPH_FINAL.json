@@ -1,0 +1,1806 @@
+{
+  "generatedAt": "2026-09-30T17:43:00.394Z",
+  "scope": "src/generators/swn_sector",
+  "productionFiles": 73,
+  "allSourceFiles": 103,
+  "internalEdges": 211,
+  "layerEdges": [
+    {
+      "from": "Application",
+      "to": "BaseDTO",
+      "count": 4
+    },
+    {
+      "from": "Application",
+      "to": "DisplayDTO",
+      "count": 1
+    },
+    {
+      "from": "Application",
+      "to": "Generator",
+      "count": 4
+    },
+    {
+      "from": "Application",
+      "to": "Projector",
+      "count": 1
+    },
+    {
+      "from": "Application",
+      "to": "Shared",
+      "count": 2
+    },
+    {
+      "from": "Data",
+      "to": "BaseDTO",
+      "count": 7
+    },
+    {
+      "from": "Data",
+      "to": "Shared",
+      "count": 1
+    },
+    {
+      "from": "DisplayDTO",
+      "to": "BaseDTO",
+      "count": 2
+    },
+    {
+      "from": "DisplayDTO",
+      "to": "Data",
+      "count": 3
+    },
+    {
+      "from": "Generator",
+      "to": "BaseDTO",
+      "count": 11
+    },
+    {
+      "from": "Generator",
+      "to": "Data",
+      "count": 5
+    },
+    {
+      "from": "Generator",
+      "to": "Shared",
+      "count": 15
+    },
+    {
+      "from": "Projector",
+      "to": "BaseDTO",
+      "count": 18
+    },
+    {
+      "from": "Projector",
+      "to": "Data",
+      "count": 5
+    },
+    {
+      "from": "Projector",
+      "to": "DisplayDTO",
+      "count": 11
+    },
+    {
+      "from": "Projector",
+      "to": "Shared",
+      "count": 6
+    },
+    {
+      "from": "Shared",
+      "to": "BaseDTO",
+      "count": 7
+    },
+    {
+      "from": "Shared",
+      "to": "Data",
+      "count": 1
+    },
+    {
+      "from": "UI",
+      "to": "Application",
+      "count": 1
+    },
+    {
+      "from": "UI",
+      "to": "DisplayDTO",
+      "count": 12
+    }
+  ],
+  "forbiddenCrossLayerEdges": [],
+  "cycles": [
+    [
+      "src/generators/swn_sector/BaseDTO/merged_schema.ts",
+      "src/generators/swn_sector/BaseDTO/culture.ts"
+    ]
+  ],
+  "fileEdges": [
+    {
+      "from": "src/generators/swn_sector/Application/initialSectors.ts",
+      "to": "src/generators/swn_sector/Generator/generate.ts",
+      "fromLayer": "Application",
+      "toLayer": "Generator",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Application/initialSectors.ts",
+      "to": "src/generators/swn_sector/BaseDTO/merged_schema.ts",
+      "fromLayer": "Application",
+      "toLayer": "BaseDTO",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/Application/prototypeApplication.ts",
+      "to": "src/generators/swn_sector/Application/initialSectors.ts",
+      "fromLayer": "Application",
+      "toLayer": "Application",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Application/prototypeApplication.ts",
+      "to": "src/generators/swn_sector/Generator/generate.ts",
+      "fromLayer": "Application",
+      "toLayer": "Generator",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Application/prototypeApplication.ts",
+      "to": "src/generators/swn_sector/Generator/culture.ts",
+      "fromLayer": "Application",
+      "toLayer": "Generator",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Application/prototypeApplication.ts",
+      "to": "src/generators/swn_sector/BaseDTO/merged_schema.ts",
+      "fromLayer": "Application",
+      "toLayer": "BaseDTO",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/Application/prototypeApplication.ts",
+      "to": "src/generators/swn_sector/DisplayDTO/dto.ts",
+      "fromLayer": "Application",
+      "toLayer": "DisplayDTO",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/Application/prototypeApplication.ts",
+      "to": "src/generators/swn_sector/Projector/sector_projection.ts",
+      "fromLayer": "Application",
+      "toLayer": "Projector",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Application/prototypeApplication.ts",
+      "to": "src/generators/swn_sector/Generator/generated_sector_invariants.ts",
+      "fromLayer": "Application",
+      "toLayer": "Generator",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Application/prototypeApplication.ts",
+      "to": "src/generators/swn_sector/Application/sector_edits.ts",
+      "fromLayer": "Application",
+      "toLayer": "Application",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Application/prototypeApplication.ts",
+      "to": "src/generators/swn_sector/Application/sector_operations.ts",
+      "fromLayer": "Application",
+      "toLayer": "Application",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Application/sector_edits.ts",
+      "to": "src/generators/swn_sector/BaseDTO/merged_schema.ts",
+      "fromLayer": "Application",
+      "toLayer": "BaseDTO",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/Application/sector_operations.ts",
+      "to": "src/generators/swn_sector/Shared/scan_visibility.ts",
+      "fromLayer": "Application",
+      "toLayer": "Shared",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Application/sector_operations.ts",
+      "to": "src/generators/swn_sector/BaseDTO/merged_schema.ts",
+      "fromLayer": "Application",
+      "toLayer": "BaseDTO",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/Application/sector_operations.ts",
+      "to": "src/generators/swn_sector/Shared/sector_selectors.ts",
+      "fromLayer": "Application",
+      "toLayer": "Shared",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/BaseDTO/culture.ts",
+      "to": "src/generators/swn_sector/BaseDTO/merged_schema.ts",
+      "fromLayer": "BaseDTO",
+      "toLayer": "BaseDTO",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/BaseDTO/merged_schema.ts",
+      "to": "src/generators/swn_sector/BaseDTO/culture.ts",
+      "fromLayer": "BaseDTO",
+      "toLayer": "BaseDTO",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/Data/Projection/planet_presentation.ts",
+      "to": "src/generators/swn_sector/BaseDTO/merged_schema.ts",
+      "fromLayer": "Data",
+      "toLayer": "BaseDTO",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/Data/Projection/poi_presentation.ts",
+      "to": "src/generators/swn_sector/BaseDTO/merged_schema.ts",
+      "fromLayer": "Data",
+      "toLayer": "BaseDTO",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/Data/Projection/portrait_assets.ts",
+      "to": "src/generators/swn_sector/BaseDTO/merged_schema.ts",
+      "fromLayer": "Data",
+      "toLayer": "BaseDTO",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/Data/Projection/portrait_assets.ts",
+      "to": "src/generators/swn_sector/Shared/portrait_index.ts",
+      "fromLayer": "Data",
+      "toLayer": "Shared",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Data/Projection/star_presentation.ts",
+      "to": "src/generators/swn_sector/BaseDTO/merged_schema.ts",
+      "fromLayer": "Data",
+      "toLayer": "BaseDTO",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/Data/Raw/generation_constraints.ts",
+      "to": "src/generators/swn_sector/BaseDTO/merged_schema.ts",
+      "fromLayer": "Data",
+      "toLayer": "BaseDTO",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/Data/Raw/polity_flag_colors.ts",
+      "to": "src/generators/swn_sector/BaseDTO/merged_schema.ts",
+      "fromLayer": "Data",
+      "toLayer": "BaseDTO",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/Data/Raw/tables.ts",
+      "to": "src/generators/swn_sector/BaseDTO/merged_schema.ts",
+      "fromLayer": "Data",
+      "toLayer": "BaseDTO",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/DisplayDTO/dto.ts",
+      "to": "src/generators/swn_sector/BaseDTO/merged_schema.ts",
+      "fromLayer": "DisplayDTO",
+      "toLayer": "BaseDTO",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/DisplayDTO/dto.ts",
+      "to": "src/generators/swn_sector/BaseDTO/culture.ts",
+      "fromLayer": "DisplayDTO",
+      "toLayer": "BaseDTO",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/DisplayDTO/dto.ts",
+      "to": "src/generators/swn_sector/Data/Projection/star_presentation.ts",
+      "fromLayer": "DisplayDTO",
+      "toLayer": "Data",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/DisplayDTO/dto.ts",
+      "to": "src/generators/swn_sector/Data/Projection/planet_presentation.ts",
+      "fromLayer": "DisplayDTO",
+      "toLayer": "Data",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/DisplayDTO/dto.ts",
+      "to": "src/generators/swn_sector/Data/Projection/portrait_assets.ts",
+      "fromLayer": "DisplayDTO",
+      "toLayer": "Data",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/Generator/culture.ts",
+      "to": "src/generators/swn_sector/BaseDTO/culture.ts",
+      "fromLayer": "Generator",
+      "toLayer": "BaseDTO",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/Generator/culture.ts",
+      "to": "src/generators/swn_sector/BaseDTO/merged_schema.ts",
+      "fromLayer": "Generator",
+      "toLayer": "BaseDTO",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/Generator/culture.ts",
+      "to": "src/generators/swn_sector/Generator/generation_random.ts",
+      "fromLayer": "Generator",
+      "toLayer": "Generator",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Generator/generate.ts",
+      "to": "src/generators/swn_sector/BaseDTO/merged_schema.ts",
+      "fromLayer": "Generator",
+      "toLayer": "BaseDTO",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/Generator/generate.ts",
+      "to": "src/generators/swn_sector/Generator/generation_random.ts",
+      "fromLayer": "Generator",
+      "toLayer": "Generator",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Generator/generate.ts",
+      "to": "src/generators/swn_sector/Generator/generation_rules.ts",
+      "fromLayer": "Generator",
+      "toLayer": "Generator",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Generator/generate.ts",
+      "to": "src/generators/swn_sector/Generator/generate_routes.ts",
+      "fromLayer": "Generator",
+      "toLayer": "Generator",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Generator/generate.ts",
+      "to": "src/generators/swn_sector/Generator/generate_system.ts",
+      "fromLayer": "Generator",
+      "toLayer": "Generator",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Generator/generate.ts",
+      "to": "src/generators/swn_sector/Generator/politics.ts",
+      "fromLayer": "Generator",
+      "toLayer": "Generator",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Generator/generate.ts",
+      "to": "src/generators/swn_sector/Generator/culture.ts",
+      "fromLayer": "Generator",
+      "toLayer": "Generator",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Generator/generate.ts",
+      "to": "src/generators/swn_sector/Shared/planet_interpretation.ts",
+      "fromLayer": "Generator",
+      "toLayer": "Shared",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Generator/generate_inhabited_planet.ts",
+      "to": "src/generators/swn_sector/BaseDTO/merged_schema.ts",
+      "fromLayer": "Generator",
+      "toLayer": "BaseDTO",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/Generator/generate_inhabited_planet.ts",
+      "to": "src/generators/swn_sector/Generator/generation_model.ts",
+      "fromLayer": "Generator",
+      "toLayer": "Generator",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/Generator/generate_inhabited_planet.ts",
+      "to": "src/generators/swn_sector/Generator/generation_random.ts",
+      "fromLayer": "Generator",
+      "toLayer": "Generator",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Generator/generate_inhabited_planet.ts",
+      "to": "src/generators/swn_sector/Generator/generation_rules.ts",
+      "fromLayer": "Generator",
+      "toLayer": "Generator",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Generator/generate_inhabited_planet.ts",
+      "to": "src/generators/swn_sector/Shared/spatial_interpretation.ts",
+      "fromLayer": "Generator",
+      "toLayer": "Shared",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Generator/generate_inhabited_planet.ts",
+      "to": "src/generators/swn_sector/Data/Raw/tables.ts",
+      "fromLayer": "Generator",
+      "toLayer": "Data",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Generator/generate_inhabited_planet.ts",
+      "to": "src/generators/swn_sector/Shared/planet_interpretation.ts",
+      "fromLayer": "Generator",
+      "toLayer": "Shared",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Generator/generate_inhabited_planet.ts",
+      "to": "src/generators/swn_sector/Data/Raw/generation_constraints.ts",
+      "fromLayer": "Generator",
+      "toLayer": "Data",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Generator/generate_routes.ts",
+      "to": "src/generators/swn_sector/BaseDTO/merged_schema.ts",
+      "fromLayer": "Generator",
+      "toLayer": "BaseDTO",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/Generator/generate_routes.ts",
+      "to": "src/generators/swn_sector/Generator/generation_random.ts",
+      "fromLayer": "Generator",
+      "toLayer": "Generator",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Generator/generate_routes.ts",
+      "to": "src/generators/swn_sector/Generator/portrait_selection.ts",
+      "fromLayer": "Generator",
+      "toLayer": "Generator",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Generator/generate_system.ts",
+      "to": "src/generators/swn_sector/BaseDTO/merged_schema.ts",
+      "fromLayer": "Generator",
+      "toLayer": "BaseDTO",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/Generator/generate_system.ts",
+      "to": "src/generators/swn_sector/Generator/generation_model.ts",
+      "fromLayer": "Generator",
+      "toLayer": "Generator",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/Generator/generate_system.ts",
+      "to": "src/generators/swn_sector/Generator/generation_model.ts",
+      "fromLayer": "Generator",
+      "toLayer": "Generator",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Generator/generate_system.ts",
+      "to": "src/generators/swn_sector/Generator/generation_random.ts",
+      "fromLayer": "Generator",
+      "toLayer": "Generator",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Generator/generate_system.ts",
+      "to": "src/generators/swn_sector/Generator/generation_rules.ts",
+      "fromLayer": "Generator",
+      "toLayer": "Generator",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Generator/generate_system.ts",
+      "to": "src/generators/swn_sector/Shared/poi_host_interpretation.ts",
+      "fromLayer": "Generator",
+      "toLayer": "Shared",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Generator/generate_system.ts",
+      "to": "src/generators/swn_sector/Shared/spatial_interpretation.ts",
+      "fromLayer": "Generator",
+      "toLayer": "Shared",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Generator/generate_system.ts",
+      "to": "src/generators/swn_sector/Generator/portrait_selection.ts",
+      "fromLayer": "Generator",
+      "toLayer": "Generator",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Generator/generate_system.ts",
+      "to": "src/generators/swn_sector/Generator/generate_inhabited_planet.ts",
+      "fromLayer": "Generator",
+      "toLayer": "Generator",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Generator/generate_system.ts",
+      "to": "src/generators/swn_sector/Generator/planet_templates.ts",
+      "fromLayer": "Generator",
+      "toLayer": "Generator",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Generator/generated_sector_invariants.ts",
+      "to": "src/generators/swn_sector/BaseDTO/merged_schema.ts",
+      "fromLayer": "Generator",
+      "toLayer": "BaseDTO",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/Generator/generated_sector_invariants.ts",
+      "to": "src/generators/swn_sector/Data/Raw/generation_constraints.ts",
+      "fromLayer": "Generator",
+      "toLayer": "Data",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Generator/generated_sector_invariants.ts",
+      "to": "src/generators/swn_sector/Shared/poi_host_interpretation.ts",
+      "fromLayer": "Generator",
+      "toLayer": "Shared",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Generator/generated_sector_invariants.ts",
+      "to": "src/generators/swn_sector/Data/Raw/tables.ts",
+      "fromLayer": "Generator",
+      "toLayer": "Data",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Generator/generated_sector_invariants.ts",
+      "to": "src/generators/swn_sector/Shared/planet_interpretation.ts",
+      "fromLayer": "Generator",
+      "toLayer": "Shared",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Generator/generated_sector_invariants.ts",
+      "to": "src/generators/swn_sector/Shared/canonical_validation.ts",
+      "fromLayer": "Generator",
+      "toLayer": "Shared",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Generator/generated_sector_invariants.ts",
+      "to": "src/generators/swn_sector/Shared/planet_interpretation.ts",
+      "fromLayer": "Generator",
+      "toLayer": "Shared",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Generator/generated_sector_invariants.ts",
+      "to": "src/generators/swn_sector/Shared/spatial_interpretation.ts",
+      "fromLayer": "Generator",
+      "toLayer": "Shared",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Generator/generated_sector_invariants.ts",
+      "to": "src/generators/swn_sector/Shared/portrait_index.ts",
+      "fromLayer": "Generator",
+      "toLayer": "Shared",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Generator/generation_model.ts",
+      "to": "src/generators/swn_sector/BaseDTO/merged_schema.ts",
+      "fromLayer": "Generator",
+      "toLayer": "BaseDTO",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/Generator/generation_rules.ts",
+      "to": "src/generators/swn_sector/BaseDTO/merged_schema.ts",
+      "fromLayer": "Generator",
+      "toLayer": "BaseDTO",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/Generator/generation_rules.ts",
+      "to": "src/generators/swn_sector/Shared/spatial_interpretation.ts",
+      "fromLayer": "Generator",
+      "toLayer": "Shared",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Generator/planet_templates.ts",
+      "to": "src/generators/swn_sector/BaseDTO/merged_schema.ts",
+      "fromLayer": "Generator",
+      "toLayer": "BaseDTO",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/Generator/planet_templates.ts",
+      "to": "src/generators/swn_sector/Generator/generation_model.ts",
+      "fromLayer": "Generator",
+      "toLayer": "Generator",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/Generator/planet_templates.ts",
+      "to": "src/generators/swn_sector/Generator/generation_random.ts",
+      "fromLayer": "Generator",
+      "toLayer": "Generator",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Generator/planet_templates.ts",
+      "to": "src/generators/swn_sector/Shared/spatial_interpretation.ts",
+      "fromLayer": "Generator",
+      "toLayer": "Shared",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Generator/planet_templates.ts",
+      "to": "src/generators/swn_sector/Generator/portrait_selection.ts",
+      "fromLayer": "Generator",
+      "toLayer": "Generator",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Generator/politics.ts",
+      "to": "src/generators/swn_sector/BaseDTO/merged_schema.ts",
+      "fromLayer": "Generator",
+      "toLayer": "BaseDTO",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/Generator/politics.ts",
+      "to": "src/generators/swn_sector/Generator/generation_random.ts",
+      "fromLayer": "Generator",
+      "toLayer": "Generator",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Generator/politics.ts",
+      "to": "src/generators/swn_sector/Data/Raw/polity_flag_colors.ts",
+      "fromLayer": "Generator",
+      "toLayer": "Data",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Generator/politics.ts",
+      "to": "src/generators/swn_sector/Shared/politics_interpretation.ts",
+      "fromLayer": "Generator",
+      "toLayer": "Shared",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Generator/portrait_selection.ts",
+      "to": "src/generators/swn_sector/Generator/generation_random.ts",
+      "fromLayer": "Generator",
+      "toLayer": "Generator",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Generator/portrait_selection.ts",
+      "to": "src/generators/swn_sector/Shared/portrait_index.ts",
+      "fromLayer": "Generator",
+      "toLayer": "Shared",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Projector/composition_presentation.ts",
+      "to": "src/generators/swn_sector/BaseDTO/merged_schema.ts",
+      "fromLayer": "Projector",
+      "toLayer": "BaseDTO",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/Projector/culture_projection.ts",
+      "to": "src/generators/swn_sector/BaseDTO/merged_schema.ts",
+      "fromLayer": "Projector",
+      "toLayer": "BaseDTO",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/Projector/culture_projection.ts",
+      "to": "src/generators/swn_sector/BaseDTO/culture.ts",
+      "fromLayer": "Projector",
+      "toLayer": "BaseDTO",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/Projector/culture_projection.ts",
+      "to": "src/generators/swn_sector/DisplayDTO/dto.ts",
+      "fromLayer": "Projector",
+      "toLayer": "DisplayDTO",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/Projector/culture_projection.ts",
+      "to": "src/generators/swn_sector/Shared/planet_interpretation.ts",
+      "fromLayer": "Projector",
+      "toLayer": "Shared",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Projector/culture_projection.ts",
+      "to": "src/generators/swn_sector/Projector/politics_projection.ts",
+      "fromLayer": "Projector",
+      "toLayer": "Projector",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Projector/culture_projection.ts",
+      "to": "src/generators/swn_sector/Projector/world_tag_projection.ts",
+      "fromLayer": "Projector",
+      "toLayer": "Projector",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Projector/culture_projection.ts",
+      "to": "src/generators/swn_sector/Data/Projection/poi_presentation.ts",
+      "fromLayer": "Projector",
+      "toLayer": "Data",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Projector/object_kind_projection.ts",
+      "to": "src/generators/swn_sector/BaseDTO/merged_schema.ts",
+      "fromLayer": "Projector",
+      "toLayer": "BaseDTO",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/Projector/object_spatial_projection.ts",
+      "to": "src/generators/swn_sector/DisplayDTO/dto.ts",
+      "fromLayer": "Projector",
+      "toLayer": "DisplayDTO",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/Projector/object_spatial_projection.ts",
+      "to": "src/generators/swn_sector/BaseDTO/merged_schema.ts",
+      "fromLayer": "Projector",
+      "toLayer": "BaseDTO",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/Projector/object_spatial_projection.ts",
+      "to": "src/generators/swn_sector/Shared/spatial_interpretation.ts",
+      "fromLayer": "Projector",
+      "toLayer": "Shared",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Projector/object_spatial_projection.ts",
+      "to": "src/generators/swn_sector/Projector/object_kind_projection.ts",
+      "fromLayer": "Projector",
+      "toLayer": "Projector",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Projector/object_spatial_projection.ts",
+      "to": "src/generators/swn_sector/Projector/planet_presentation_interpretation.ts",
+      "fromLayer": "Projector",
+      "toLayer": "Projector",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Projector/planet_presentation.ts",
+      "to": "src/generators/swn_sector/BaseDTO/merged_schema.ts",
+      "fromLayer": "Projector",
+      "toLayer": "BaseDTO",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/Projector/planet_presentation.ts",
+      "to": "src/generators/swn_sector/Data/Projection/planet_presentation.ts",
+      "fromLayer": "Projector",
+      "toLayer": "Data",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Projector/planet_presentation_interpretation.ts",
+      "to": "src/generators/swn_sector/BaseDTO/merged_schema.ts",
+      "fromLayer": "Projector",
+      "toLayer": "BaseDTO",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/Projector/planet_projection.ts",
+      "to": "src/generators/swn_sector/DisplayDTO/dto.ts",
+      "fromLayer": "Projector",
+      "toLayer": "DisplayDTO",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/Projector/planet_projection.ts",
+      "to": "src/generators/swn_sector/BaseDTO/merged_schema.ts",
+      "fromLayer": "Projector",
+      "toLayer": "BaseDTO",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/Projector/planet_projection.ts",
+      "to": "src/generators/swn_sector/Projector/planet_presentation.ts",
+      "fromLayer": "Projector",
+      "toLayer": "Projector",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Projector/planet_projection.ts",
+      "to": "src/generators/swn_sector/Shared/planet_interpretation.ts",
+      "fromLayer": "Projector",
+      "toLayer": "Shared",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Projector/planet_projection.ts",
+      "to": "src/generators/swn_sector/Projector/planet_presentation_interpretation.ts",
+      "fromLayer": "Projector",
+      "toLayer": "Projector",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Projector/planet_projection.ts",
+      "to": "src/generators/swn_sector/Projector/composition_presentation.ts",
+      "fromLayer": "Projector",
+      "toLayer": "Projector",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Projector/planet_projection.ts",
+      "to": "src/generators/swn_sector/Projector/object_spatial_projection.ts",
+      "fromLayer": "Projector",
+      "toLayer": "Projector",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Projector/planet_projection.ts",
+      "to": "src/generators/swn_sector/Projector/politics_projection.ts",
+      "fromLayer": "Projector",
+      "toLayer": "Projector",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Projector/planet_projection.ts",
+      "to": "src/generators/swn_sector/Projector/poi_projection.ts",
+      "fromLayer": "Projector",
+      "toLayer": "Projector",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Projector/poi_projection.ts",
+      "to": "src/generators/swn_sector/BaseDTO/merged_schema.ts",
+      "fromLayer": "Projector",
+      "toLayer": "BaseDTO",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/Projector/poi_projection.ts",
+      "to": "src/generators/swn_sector/DisplayDTO/dto.ts",
+      "fromLayer": "Projector",
+      "toLayer": "DisplayDTO",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/Projector/politics_projection.ts",
+      "to": "src/generators/swn_sector/BaseDTO/merged_schema.ts",
+      "fromLayer": "Projector",
+      "toLayer": "BaseDTO",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/Projector/politics_projection.ts",
+      "to": "src/generators/swn_sector/DisplayDTO/dto.ts",
+      "fromLayer": "Projector",
+      "toLayer": "DisplayDTO",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/Projector/politics_projection.ts",
+      "to": "src/generators/swn_sector/Shared/politics_interpretation.ts",
+      "fromLayer": "Projector",
+      "toLayer": "Shared",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Projector/portrait_projection.ts",
+      "to": "src/generators/swn_sector/DisplayDTO/dto.ts",
+      "fromLayer": "Projector",
+      "toLayer": "DisplayDTO",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/Projector/portrait_projection.ts",
+      "to": "src/generators/swn_sector/BaseDTO/merged_schema.ts",
+      "fromLayer": "Projector",
+      "toLayer": "BaseDTO",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/Projector/portrait_projection.ts",
+      "to": "src/generators/swn_sector/Data/Projection/portrait_assets.ts",
+      "fromLayer": "Projector",
+      "toLayer": "Data",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Projector/portrait_projection.ts",
+      "to": "src/generators/swn_sector/Projector/composition_presentation.ts",
+      "fromLayer": "Projector",
+      "toLayer": "Projector",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Projector/portrait_projection.ts",
+      "to": "src/generators/swn_sector/Projector/object_spatial_projection.ts",
+      "fromLayer": "Projector",
+      "toLayer": "Projector",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Projector/portrait_projection.ts",
+      "to": "src/generators/swn_sector/Projector/route_projection.ts",
+      "fromLayer": "Projector",
+      "toLayer": "Projector",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Projector/route_projection.ts",
+      "to": "src/generators/swn_sector/DisplayDTO/dto.ts",
+      "fromLayer": "Projector",
+      "toLayer": "DisplayDTO",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/Projector/route_projection.ts",
+      "to": "src/generators/swn_sector/BaseDTO/merged_schema.ts",
+      "fromLayer": "Projector",
+      "toLayer": "BaseDTO",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/Projector/sector_projection.ts",
+      "to": "src/generators/swn_sector/BaseDTO/merged_schema.ts",
+      "fromLayer": "Projector",
+      "toLayer": "BaseDTO",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/Projector/sector_projection.ts",
+      "to": "src/generators/swn_sector/DisplayDTO/dto.ts",
+      "fromLayer": "Projector",
+      "toLayer": "DisplayDTO",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/Projector/sector_projection.ts",
+      "to": "src/generators/swn_sector/Projector/culture_projection.ts",
+      "fromLayer": "Projector",
+      "toLayer": "Projector",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Projector/sector_projection.ts",
+      "to": "src/generators/swn_sector/Projector/object_kind_projection.ts",
+      "fromLayer": "Projector",
+      "toLayer": "Projector",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Projector/sector_projection.ts",
+      "to": "src/generators/swn_sector/Projector/object_spatial_projection.ts",
+      "fromLayer": "Projector",
+      "toLayer": "Projector",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Projector/sector_projection.ts",
+      "to": "src/generators/swn_sector/Projector/planet_projection.ts",
+      "fromLayer": "Projector",
+      "toLayer": "Projector",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Projector/sector_projection.ts",
+      "to": "src/generators/swn_sector/Projector/poi_projection.ts",
+      "fromLayer": "Projector",
+      "toLayer": "Projector",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Projector/sector_projection.ts",
+      "to": "src/generators/swn_sector/Projector/politics_projection.ts",
+      "fromLayer": "Projector",
+      "toLayer": "Projector",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Projector/sector_projection.ts",
+      "to": "src/generators/swn_sector/Projector/portrait_projection.ts",
+      "fromLayer": "Projector",
+      "toLayer": "Projector",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Projector/sector_projection.ts",
+      "to": "src/generators/swn_sector/Projector/route_projection.ts",
+      "fromLayer": "Projector",
+      "toLayer": "Projector",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Projector/sector_projection.ts",
+      "to": "src/generators/swn_sector/Projector/star_projection.ts",
+      "fromLayer": "Projector",
+      "toLayer": "Projector",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Projector/sector_projection.ts",
+      "to": "src/generators/swn_sector/Projector/system_spatial_projection.ts",
+      "fromLayer": "Projector",
+      "toLayer": "Projector",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Projector/star_presentation.ts",
+      "to": "src/generators/swn_sector/BaseDTO/merged_schema.ts",
+      "fromLayer": "Projector",
+      "toLayer": "BaseDTO",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/Projector/star_presentation.ts",
+      "to": "src/generators/swn_sector/Data/Projection/star_presentation.ts",
+      "fromLayer": "Projector",
+      "toLayer": "Data",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Projector/star_projection.ts",
+      "to": "src/generators/swn_sector/DisplayDTO/dto.ts",
+      "fromLayer": "Projector",
+      "toLayer": "DisplayDTO",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/Projector/star_projection.ts",
+      "to": "src/generators/swn_sector/BaseDTO/merged_schema.ts",
+      "fromLayer": "Projector",
+      "toLayer": "BaseDTO",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/Projector/star_projection.ts",
+      "to": "src/generators/swn_sector/Data/Projection/star_presentation.ts",
+      "fromLayer": "Projector",
+      "toLayer": "Data",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Projector/system_presentation_interpretation.ts",
+      "to": "src/generators/swn_sector/BaseDTO/merged_schema.ts",
+      "fromLayer": "Projector",
+      "toLayer": "BaseDTO",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/Projector/system_presentation_interpretation.ts",
+      "to": "src/generators/swn_sector/Shared/spatial_interpretation.ts",
+      "fromLayer": "Projector",
+      "toLayer": "Shared",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Projector/system_spatial_projection.ts",
+      "to": "src/generators/swn_sector/DisplayDTO/dto.ts",
+      "fromLayer": "Projector",
+      "toLayer": "DisplayDTO",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/Projector/system_spatial_projection.ts",
+      "to": "src/generators/swn_sector/BaseDTO/merged_schema.ts",
+      "fromLayer": "Projector",
+      "toLayer": "BaseDTO",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/Projector/system_spatial_projection.ts",
+      "to": "src/generators/swn_sector/Shared/spatial_interpretation.ts",
+      "fromLayer": "Projector",
+      "toLayer": "Shared",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Projector/system_spatial_projection.ts",
+      "to": "src/generators/swn_sector/Projector/system_presentation_interpretation.ts",
+      "fromLayer": "Projector",
+      "toLayer": "Projector",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Projector/world_tag_projection.ts",
+      "to": "src/generators/swn_sector/BaseDTO/merged_schema.ts",
+      "fromLayer": "Projector",
+      "toLayer": "BaseDTO",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/Projector/world_tag_projection.ts",
+      "to": "src/generators/swn_sector/DisplayDTO/dto.ts",
+      "fromLayer": "Projector",
+      "toLayer": "DisplayDTO",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/Shared/canonical_validation.ts",
+      "to": "src/generators/swn_sector/BaseDTO/merged_schema.ts",
+      "fromLayer": "Shared",
+      "toLayer": "BaseDTO",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/Shared/canonical_validation.ts",
+      "to": "src/generators/swn_sector/Data/Raw/polity_flag_colors.ts",
+      "fromLayer": "Shared",
+      "toLayer": "Data",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/Shared/planet_interpretation.ts",
+      "to": "src/generators/swn_sector/BaseDTO/merged_schema.ts",
+      "fromLayer": "Shared",
+      "toLayer": "BaseDTO",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/Shared/poi_host_interpretation.ts",
+      "to": "src/generators/swn_sector/BaseDTO/merged_schema.ts",
+      "fromLayer": "Shared",
+      "toLayer": "BaseDTO",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/Shared/politics_interpretation.ts",
+      "to": "src/generators/swn_sector/BaseDTO/merged_schema.ts",
+      "fromLayer": "Shared",
+      "toLayer": "BaseDTO",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/Shared/scan_visibility.ts",
+      "to": "src/generators/swn_sector/BaseDTO/merged_schema.ts",
+      "fromLayer": "Shared",
+      "toLayer": "BaseDTO",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/Shared/sector_selectors.ts",
+      "to": "src/generators/swn_sector/BaseDTO/merged_schema.ts",
+      "fromLayer": "Shared",
+      "toLayer": "BaseDTO",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/Shared/spatial_interpretation.ts",
+      "to": "src/generators/swn_sector/BaseDTO/merged_schema.ts",
+      "fromLayer": "Shared",
+      "toLayer": "BaseDTO",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/UI/App.tsx",
+      "to": "src/generators/swn_sector/UI/application/appState.ts",
+      "fromLayer": "UI",
+      "toLayer": "UI",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/UI/App.tsx",
+      "to": "src/generators/swn_sector/UI/application/appState.ts",
+      "fromLayer": "UI",
+      "toLayer": "UI",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/UI/App.tsx",
+      "to": "src/generators/swn_sector/UI/features/navigation/AppChrome.tsx",
+      "fromLayer": "UI",
+      "toLayer": "UI",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/UI/App.tsx",
+      "to": "src/generators/swn_sector/UI/features/navigation/AppChrome.tsx",
+      "fromLayer": "UI",
+      "toLayer": "UI",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/UI/App.tsx",
+      "to": "src/generators/swn_sector/UI/features/sector-archive/SectorArchive.tsx",
+      "fromLayer": "UI",
+      "toLayer": "UI",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/UI/App.tsx",
+      "to": "src/generators/swn_sector/UI/features/culture/CultureScreen.tsx",
+      "fromLayer": "UI",
+      "toLayer": "UI",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/UI/App.tsx",
+      "to": "src/generators/swn_sector/UI/features/object-inspector/DetailBar.tsx",
+      "fromLayer": "UI",
+      "toLayer": "UI",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/UI/App.tsx",
+      "to": "src/generators/swn_sector/UI/features/sector-editor/GMEditBar.tsx",
+      "fromLayer": "UI",
+      "toLayer": "UI",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/UI/App.tsx",
+      "to": "src/generators/swn_sector/UI/features/sector-map/HexMap.tsx",
+      "fromLayer": "UI",
+      "toLayer": "UI",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/UI/App.tsx",
+      "to": "src/generators/swn_sector/UI/features/system-viewer/SystemViewer.tsx",
+      "fromLayer": "UI",
+      "toLayer": "UI",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/UI/App.tsx",
+      "to": "src/generators/swn_sector/UI/features/system-viewer/SymbolicSystem.tsx",
+      "fromLayer": "UI",
+      "toLayer": "UI",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/UI/App.tsx",
+      "to": "src/generators/swn_sector/UI/features/system-viewer/TopDown.tsx",
+      "fromLayer": "UI",
+      "toLayer": "UI",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/UI/App.tsx",
+      "to": "src/generators/swn_sector/DisplayDTO/dto.ts",
+      "fromLayer": "UI",
+      "toLayer": "DisplayDTO",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/UI/App.tsx",
+      "to": "src/generators/swn_sector/UI/visibility_presentation.ts",
+      "fromLayer": "UI",
+      "toLayer": "UI",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/UI/App.tsx",
+      "to": "src/generators/swn_sector/Application/prototypeApplication.ts",
+      "fromLayer": "UI",
+      "toLayer": "Application",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/UI/application/appState.ts",
+      "to": "src/generators/swn_sector/DisplayDTO/dto.ts",
+      "fromLayer": "UI",
+      "toLayer": "DisplayDTO",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/UI/features/culture/CultureScreen.tsx",
+      "to": "src/generators/swn_sector/DisplayDTO/dto.ts",
+      "fromLayer": "UI",
+      "toLayer": "DisplayDTO",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/UI/features/culture/CultureScreen.tsx",
+      "to": "src/generators/swn_sector/UI/features/politics/PolityFlag.tsx",
+      "fromLayer": "UI",
+      "toLayer": "UI",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/UI/features/navigation/AppChrome.tsx",
+      "to": "src/generators/swn_sector/UI/application/appState.ts",
+      "fromLayer": "UI",
+      "toLayer": "UI",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/UI/features/navigation/AppChrome.tsx",
+      "to": "src/generators/swn_sector/UI/features/navigation/IconButton.tsx",
+      "fromLayer": "UI",
+      "toLayer": "UI",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/UI/features/object-inspector/DetailBar.tsx",
+      "to": "src/generators/swn_sector/DisplayDTO/dto.ts",
+      "fromLayer": "UI",
+      "toLayer": "DisplayDTO",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/UI/features/object-inspector/DetailBar.tsx",
+      "to": "src/generators/swn_sector/UI/application/appState.ts",
+      "fromLayer": "UI",
+      "toLayer": "UI",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/UI/features/object-inspector/DetailBar.tsx",
+      "to": "src/generators/swn_sector/UI/features/politics/PolityFlag.tsx",
+      "fromLayer": "UI",
+      "toLayer": "UI",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/UI/features/politics/PolityFlag.tsx",
+      "to": "src/generators/swn_sector/DisplayDTO/dto.ts",
+      "fromLayer": "UI",
+      "toLayer": "DisplayDTO",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/UI/features/sector-archive/SectorArchive.tsx",
+      "to": "src/generators/swn_sector/DisplayDTO/dto.ts",
+      "fromLayer": "UI",
+      "toLayer": "DisplayDTO",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/UI/features/sector-editor/GMEditBar.tsx",
+      "to": "src/generators/swn_sector/DisplayDTO/dto.ts",
+      "fromLayer": "UI",
+      "toLayer": "DisplayDTO",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/UI/features/sector-editor/GMEditBar.tsx",
+      "to": "src/generators/swn_sector/UI/application/appState.ts",
+      "fromLayer": "UI",
+      "toLayer": "UI",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/UI/features/sector-editor/GMEditBar.tsx",
+      "to": "src/generators/swn_sector/UI/features/navigation/IconButton.tsx",
+      "fromLayer": "UI",
+      "toLayer": "UI",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/UI/features/sector-editor/GMEditBar.tsx",
+      "to": "src/generators/swn_sector/UI/features/navigation/LayeredVisibilitySymbol.tsx",
+      "fromLayer": "UI",
+      "toLayer": "UI",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/UI/features/sector-editor/GMEditBar.tsx",
+      "to": "src/generators/swn_sector/UI/features/navigation/LayeredVisibilitySymbol.tsx",
+      "fromLayer": "UI",
+      "toLayer": "UI",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/UI/features/sector-map/HexMap.tsx",
+      "to": "src/generators/swn_sector/DisplayDTO/dto.ts",
+      "fromLayer": "UI",
+      "toLayer": "DisplayDTO",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/UI/features/sector-map/HexMap.tsx",
+      "to": "src/generators/swn_sector/UI/application/appState.ts",
+      "fromLayer": "UI",
+      "toLayer": "UI",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/UI/features/sector-map/HexMap.tsx",
+      "to": "src/generators/swn_sector/UI/features/system-viewer/StarGlyph.tsx",
+      "fromLayer": "UI",
+      "toLayer": "UI",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/UI/features/sector-map/HexMap.tsx",
+      "to": "src/generators/swn_sector/UI/features/politics/PolityFlag.tsx",
+      "fromLayer": "UI",
+      "toLayer": "UI",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/UI/features/system-viewer/StarGlyph.tsx",
+      "to": "src/generators/swn_sector/DisplayDTO/dto.ts",
+      "fromLayer": "UI",
+      "toLayer": "DisplayDTO",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/UI/features/system-viewer/SymbolicSystem.tsx",
+      "to": "src/generators/swn_sector/UI/application/appState.ts",
+      "fromLayer": "UI",
+      "toLayer": "UI",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/UI/features/system-viewer/SymbolicSystem.tsx",
+      "to": "src/generators/swn_sector/DisplayDTO/dto.ts",
+      "fromLayer": "UI",
+      "toLayer": "DisplayDTO",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/UI/features/system-viewer/SymbolicSystem.tsx",
+      "to": "src/generators/swn_sector/UI/visibility_presentation.ts",
+      "fromLayer": "UI",
+      "toLayer": "UI",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/UI/features/system-viewer/SymbolicSystem.tsx",
+      "to": "src/generators/swn_sector/UI/features/system-viewer/StarGlyph.tsx",
+      "fromLayer": "UI",
+      "toLayer": "UI",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/UI/features/system-viewer/SymbolicSystem.tsx",
+      "to": "src/generators/swn_sector/UI/features/politics/PolityFlag.tsx",
+      "fromLayer": "UI",
+      "toLayer": "UI",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/UI/features/system-viewer/TopDown.tsx",
+      "to": "src/generators/swn_sector/UI/application/appState.ts",
+      "fromLayer": "UI",
+      "toLayer": "UI",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/UI/features/system-viewer/TopDown.tsx",
+      "to": "src/generators/swn_sector/DisplayDTO/dto.ts",
+      "fromLayer": "UI",
+      "toLayer": "DisplayDTO",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/UI/features/system-viewer/TopDown.tsx",
+      "to": "src/generators/swn_sector/UI/hex_geometry.ts",
+      "fromLayer": "UI",
+      "toLayer": "UI",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/UI/features/system-viewer/TopDown.tsx",
+      "to": "src/generators/swn_sector/UI/visibility_presentation.ts",
+      "fromLayer": "UI",
+      "toLayer": "UI",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/UI/features/system-viewer/TopDown.tsx",
+      "to": "src/generators/swn_sector/UI/features/system-viewer/StarGlyph.tsx",
+      "fromLayer": "UI",
+      "toLayer": "UI",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/UI/features/system-viewer/TopDown.tsx",
+      "to": "src/generators/swn_sector/UI/features/politics/PolityFlag.tsx",
+      "fromLayer": "UI",
+      "toLayer": "UI",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/UI/main.tsx",
+      "to": "src/generators/swn_sector/UI/App.tsx",
+      "fromLayer": "UI",
+      "toLayer": "UI",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/UI/visibility_presentation.ts",
+      "to": "src/generators/swn_sector/DisplayDTO/dto.ts",
+      "fromLayer": "UI",
+      "toLayer": "DisplayDTO",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/portrait_review/main.ts",
+      "to": "src/generators/swn_sector/portrait_review/catalog.ts",
+      "fromLayer": "portrait_review",
+      "toLayer": "portrait_review",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/portrait_review/main.ts",
+      "to": "src/generators/swn_sector/portrait_review/catalog.ts",
+      "fromLayer": "portrait_review",
+      "toLayer": "portrait_review",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/portrait_review/main.ts",
+      "to": "src/generators/swn_sector/portrait_review/queue.ts",
+      "fromLayer": "portrait_review",
+      "toLayer": "portrait_review",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/portrait_review/main.ts",
+      "to": "src/generators/swn_sector/portrait_review/queue.ts",
+      "fromLayer": "portrait_review",
+      "toLayer": "portrait_review",
+      "kind": "static",
+      "typeOnly": true
+    },
+    {
+      "from": "src/generators/swn_sector/portrait_review/queue.ts",
+      "to": "src/generators/swn_sector/portrait_review/catalog.ts",
+      "fromLayer": "portrait_review",
+      "toLayer": "portrait_review",
+      "kind": "static",
+      "typeOnly": false
+    },
+    {
+      "from": "src/generators/swn_sector/portrait_review/queue.ts",
+      "to": "src/generators/swn_sector/portrait_review/catalog.ts",
+      "fromLayer": "portrait_review",
+      "toLayer": "portrait_review",
+      "kind": "static",
+      "typeOnly": true
+    }
+  ]
+}

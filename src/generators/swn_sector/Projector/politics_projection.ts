@@ -4,7 +4,7 @@ import type {
   PoliticalClaimsDisplayDTO,
   PolityDisplayDTO,
 } from '../DisplayDTO/dto';
-import { capabilityFor } from '../Helpers/Domain/politics_interpretation';
+import { capabilityFor } from '../Shared/politics_interpretation';
 
 export function projectPolity(sector: Sector, id: string): PolityDisplayDTO | undefined {
   const polity = sector.Polities.find((candidate) => candidate.Id === id);

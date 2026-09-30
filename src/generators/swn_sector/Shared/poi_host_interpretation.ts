@@ -1,4 +1,4 @@
-import type { Planet, PointOfInterestType, SystemObject } from '../../BaseDTO/merged_schema';
+import type { Planet, PointOfInterestType, SystemObject } from '../BaseDTO/merged_schema';
 
 export function isGasPlanet(planet: Planet): boolean {
   return planet.BulkComposition === 'Jovian Gas' || planet.BulkComposition === 'Neptunian Gas';

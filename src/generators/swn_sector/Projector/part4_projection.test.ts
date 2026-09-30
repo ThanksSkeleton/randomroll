@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest';
-import { PrototypeApplication } from '../Composition/prototypeApplication';
+import { PrototypeApplication } from '../Application/prototypeApplication';
 import { generate } from '../Generator/generate';
 import { projectCultureScreen, projectHabitablePoi } from './culture_projection';
 import { projectClaims, projectConquest, projectPolity } from './politics_projection';

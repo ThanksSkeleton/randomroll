@@ -1,12 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { checkAllInvariants } from './invariants';
+import { checkAllInvariants } from './generated_sector_invariants';
 import type {
   OtherCelestialObject,
   Planet,
   Sector,
   SelectableEntity,
 } from '../BaseDTO/merged_schema';
-import { directOrbitAuBand } from '../Helpers/Domain/spatial_interpretation';
+import { directOrbitAuBand } from '../Shared/spatial_interpretation';
 
 function entity(id: string): SelectableEntity {
   return {
@@ -162,6 +162,18 @@ describe('merged-sector independent stations', () => {
 
     expect(violations.some((violation) => violation.RuleId === 'F13')).toBe(false);
     expect(violations.some((violation) => violation.RuleId === 'F4')).toBe(true);
+  });
+
+  it('rejects POIs with unresolved object references', () => {
+    const input = sector([planet('planet', null, 'Earth'), planet('extra', null, 'Mars')]);
+    input.Systems[0]!.PointsOfInterest.push({
+      ...entity('poi'),
+      ParentObjectId: 'missing-object',
+      POIType: 'Asteroid base',
+      AngleDegrees: 0,
+    });
+
+    expect(checkAllInvariants(input).some((violation) => violation.RuleId === 'F1')).toBe(true);
   });
 
   it('enforces other-object temperature bands', () => {

@@ -1,15 +1,15 @@
 import { describe, expect, it } from 'vitest';
 import { generate } from '../Generator/generate';
-import { createInitialSectors } from '../Composition/initialSectors';
+import { createInitialSectors } from '../Application/initialSectors';
 import {
   findContainingSystem,
   findObject,
   getAllSelectableIds,
   objectEntries,
   routePortals,
-} from '../Helpers/Domain/sector_selectors';
-import { validateSector } from '../Validation/sector_validation';
-import { updateObjectScanVisibility } from '../Composition/sector_operations';
+} from '../Shared/sector_selectors';
+import { checkAllInvariants } from '../Generator/generated_sector_invariants';
+import { updateObjectScanVisibility } from '../Application/sector_operations';
 
 describe('canonical sector data', () => {
   it('creates deterministic generator-backed initial sectors', () => {
@@ -21,7 +21,7 @@ describe('canonical sector data', () => {
       expect(sector.Systems.length).toBeLessThanOrEqual(30);
       expect(new Set(getAllSelectableIds(sector)).size).toBe(getAllSelectableIds(sector).length);
       expect(sector.RoutePortals.length).toBeGreaterThan(0);
-      expect(validateSector(sector)).toEqual([]);
+      expect(checkAllInvariants(sector)).toEqual([]);
     }
   });
 
@@ -43,7 +43,7 @@ describe('canonical sector data', () => {
     expect(result.ok).toBe(true);
     if (!result.ok) throw new Error(result.reason);
     expect(findObject(result.value, object.Id)?.object.Visibility.BasicScan).toBe(true);
-    expect(validateSector(result.value)).toEqual([]);
+    expect(checkAllInvariants(result.value)).toEqual([]);
   });
 
   it('indexes systems, stars, objects, POIs, route portals, routes, and the ship', () => {

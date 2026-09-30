@@ -12,7 +12,7 @@ import { generateRoutes } from './generate_routes';
 import { generateCompleteSystem } from './generate_system';
 import { resolvePolitics } from './politics';
 import { completeWorld, createHabitablePointsOfInterest } from './culture';
-import { STAR_HABITABILITY } from '../Helpers/Domain/planet_interpretation';
+import { STAR_HABITABILITY } from '../Shared/planet_interpretation';
 
 export function generate(
   seed: string,

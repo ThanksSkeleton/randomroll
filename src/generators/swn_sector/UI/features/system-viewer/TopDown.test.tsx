@@ -2,7 +2,7 @@
 
 import { cleanup, render, screen } from '@testing-library/react';
 import { afterEach, beforeAll, describe, expect, it } from 'vitest';
-import { createInitialSectors } from '../../../Composition/initialSectors';
+import { createInitialSectors } from '../../../Application/initialSectors';
 import { projectSector } from '../../../Projector/sector_projection';
 import { TopDown } from './TopDown';
 
