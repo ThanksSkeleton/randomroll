@@ -1,77 +1,4 @@
 {
-  "v4": {
-    "orbitalPositionCategories": [
-      "TooHot",
-      "Goldilocks",
-      "TooCold_1",
-      "IngressEgress",
-      "TooCold_3"
-    ],
-    "requiredLocations": [
-      {
-        "kind": "EgressIngressRegion",
-        "orbitalPositionCategory": "IngressEgress"
-      }
-    ],
-    "extraWorlds": {
-      "countDice": "1d6",
-      "minimumByOrbitalPosition": {
-        "TooHot": 1,
-        "TooCold_1": 1
-      },
-      "maximumByOrbitalPosition": {
-        "TooCold_3": 1
-      },
-      "goldilocksOpenSlotExtraChance": 0.5,
-      "allowedOrbitalPositionCategories": {
-        "TerrestrialPlanet": [
-          "TooHot",
-          "TooCold_1",
-          "TooCold_3"
-        ],
-        "GasGiant": [
-          "TooHot",
-          "TooCold_1",
-          "TooCold_3"
-        ],
-        "AsteroidBelt": [
-          "TooHot",
-          "TooCold_1"
-        ],
-        "GasCloud": [
-          "TooCold_1",
-          "TooCold_3"
-        ],
-        "KupierBelt": [
-          "TooCold_3"
-        ]
-      },
-      "moonRules": {
-        "terrestrialExtraWorldMayOrbitGasGiant": true,
-        "terrestrialExtraWorldMoonChance": "same as world_attributes_2 gas_giant_moon table",
-        "primaryPlanetMoonCreatesParentGasGiant": true,
-        "parentGasGiantMayUseGoldilocks": true
-      }
-    },
-    "pointsOfInterest": {
-      "minimumIngressPoints": 1,
-      "minimumEgressPoints": 1,
-      "otherCountDice": "1d4+1",
-      "independentOrbit": {
-        "kind": "IndependentOrbit",
-        "createdByPoint": "Deep-space station",
-        "onlyContainsPoint": "Deep-space station",
-        "allowedOrbitalPositionCategories": [
-          "TooHot",
-          "TooCold_1",
-          "TooCold_3"
-        ]
-      }
-    }
-  },
-  "secondaryWorld": {
-    "printedPage": 170,
-    "pdfPage": 174,
     "origin": {
       "dice": "d8",
       "rows": [
@@ -183,5 +110,5 @@
         }
       ]
     }
-  }
 }
+

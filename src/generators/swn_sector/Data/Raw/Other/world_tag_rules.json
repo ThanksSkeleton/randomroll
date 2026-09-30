@@ -1,7 +1,0 @@
-{
-  "defaultHasAliens": false,
-  "notes": {
-    "calculatedHab": "The minimum of atmosphere, temperature, and Terran biosphere hab ratings.",
-    "constraints": "Atmosphere, population, and native-biosphere constraints use inclusive d100 cutoffs; technology constraints compare the tech_level row's tl field; native-biosphere constraints apply to native_biosphere."
-  }
-}

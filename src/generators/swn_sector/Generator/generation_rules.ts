@@ -6,8 +6,6 @@ import rawStarTable from '../Data/Raw/Tables/star_types.json';
 import rawAttributeTables from '../Data/Raw/Tables/world_attributes.json';
 import rawPoiDetailTables from '../Data/Raw/Tables/poi_detail_tables.json';
 import rawPoiTable from '../Data/Raw/Tables/points_of_interest.json';
-import rawSystemGeneration from '../Data/Raw/Other/system_generation.json';
-import rawSourceInfo from '../Data/Raw/Other/source_info.json';
 import rawWorldTagTable from '../Data/Raw/Tables/world_tags.json';
 import type {
   InhabitedInfo,
@@ -104,8 +102,6 @@ export const TERRESTRIAL_SIZE_TABLE = adaptRows(
   attributeTable('terrestrial_size'),
   (result) => result as Planet['Size'],
 );
-export const SYSTEM_GENERATION_CONFIG = rawSystemGeneration;
-export const RAW_SOURCE_INFO = rawSourceInfo;
 export const ALIEN_DEPENDENT_WORLD_TAGS = new Set(['Primitive Aliens', 'Xenophiles']);
 
 export const WORLD_TAG_PROMPT_CATEGORIES = [
