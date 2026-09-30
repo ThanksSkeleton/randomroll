@@ -1,12 +1,5 @@
 import type { CSSProperties } from 'react';
-import type { Sector } from '../../../BaseDTO/merged_schema';
-import {
-  deleteSectorObject,
-  relocatePlayerShip,
-  updateObjectScanVisibility,
-} from '../../domain/sector/operations';
-import { findDetails } from '../../domain/sector/selectors';
-import { projectObjectKind } from '../../../Projector/object_kind_projection';
+import type { DisplaySectorDTO, DisplaySelectableDTO } from '../../../DisplayDTO/dto';
 import type { EditDraft, View } from '../../application/appState';
 import { IconButton } from '../navigation/IconButton';
 import { LayeredVisibilitySymbol } from '../navigation/LayeredVisibilitySymbol';
@@ -35,7 +28,7 @@ const VISIBILITY_GLYPH_SETTINGS: VisibilityGlyphSettings = {
   pol2: { size: 50, buttonWidth: 62, offsetX: -48, offsetY: 0 },
 };
 
-function isChoiceActive(choice: VisibilityChoice, visibility: Sector['PlayerShip']['Visibility']) {
+function isChoiceActive(choice: VisibilityChoice, visibility: DisplaySelectableDTO['visibility']) {
   switch (choice) {
     case 'noVis':
       return !visibility.BasicScan && !visibility.PoliticsScan;
@@ -54,8 +47,8 @@ function isChoiceActive(choice: VisibilityChoice, visibility: Sector['PlayerShip
 
 function toggleChoice(
   choice: VisibilityChoice,
-  visibility: Sector['PlayerShip']['Visibility'],
-): Sector['PlayerShip']['Visibility'] {
+  visibility: DisplaySelectableDTO['visibility'],
+): DisplaySelectableDTO['visibility'] {
   const next = { ...visibility };
   switch (choice) {
     case 'noVis':
@@ -112,8 +105,10 @@ export function GMEditBar({
   setLocked,
   canMove,
   selected,
-  sector,
-  mutate,
+  display,
+  onMove,
+  onVisibility,
+  onDelete,
   view: _view,
   draft: _draft,
   beginEdit,
@@ -124,19 +119,20 @@ export function GMEditBar({
   setLocked: (v: boolean) => void;
   canMove: boolean;
   selected: string | null;
-  sector: Sector;
-  mutate: (s: Sector) => void;
+  display: DisplaySectorDTO;
+  onMove: (targetId: string) => void;
+  onVisibility: (id: string, visibility: DisplaySelectableDTO['visibility']) => void;
+  onDelete: (id: string) => void;
   view: View;
   draft: EditDraft | null;
   beginEdit: () => void;
   saveEdit: () => void;
 }) {
-  const info = selected ? findDetails(sector, selected) : undefined;
-  const kind = projectObjectKind(sector, selected);
+  const info = selected ? display.entities[selected] : undefined;
+  const kind = info?.kindLabel ?? '';
   const move = () => {
     if (!selected || !canMove) return;
-    const result = relocatePlayerShip(sector, selected);
-    if (result.ok) mutate(result.value);
+    onMove(selected);
   };
   const renderVisibilityChoice = ({
     key,
@@ -144,7 +140,7 @@ export function GMEditBar({
     marks,
     crossedOut,
   }: (typeof VISIBILITY_CHOICES)[number]) => {
-    const active = info ? isChoiceActive(key, info.Visibility) : false;
+    const active = info ? isChoiceActive(key, info.visibility) : false;
     return (
       <button
         key={key}
@@ -155,7 +151,7 @@ export function GMEditBar({
         disabled={
           locked ||
           !info ||
-          ((key === 'pol0' || key === 'pol1' || key === 'pol2') && !info.Visibility.BasicScan)
+          ((key === 'pol0' || key === 'pol1' || key === 'pol2') && !info.visibility.BasicScan)
         }
         className={`visibility-state-button visibility-choice-${key} icon-button ${active ? 'button-active' : 'button-allowed'}`}
         style={
@@ -165,21 +161,8 @@ export function GMEditBar({
         }
         onClick={() => {
           if (!selected || !info) return;
-          const target = toggleChoice(key, info.Visibility);
-          let next = sector;
-          for (const field of [
-            'BasicScan',
-            'DetailedScan',
-            'PoliticsScan',
-            'DeepPoliticsScan',
-          ] as const) {
-            const current = findDetails(next, selected);
-            if (!current || current.Visibility[field] === target[field]) continue;
-            const result = updateObjectScanVisibility(next, selected, field, target[field]);
-            if (!result.ok) return;
-            next = result.value;
-          }
-          mutate(next);
+          const target = toggleChoice(key, info.visibility);
+          onVisibility(selected, target);
         }}
       >
         <LayeredVisibilitySymbol
@@ -241,8 +224,7 @@ export function GMEditBar({
           }
           onClick={() => {
             if (!selected) return;
-            const result = deleteSectorObject(sector, selected);
-            if (result.ok) mutate(result.value);
+            onDelete(selected);
           }}
         />
       </div>

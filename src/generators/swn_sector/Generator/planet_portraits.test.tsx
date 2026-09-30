@@ -17,6 +17,34 @@ import {
   portraitIdsFor,
 } from '../Data/Projection/portrait_assets';
 import { DetailBar } from '../UI/features/object-inspector/DetailBar';
+import { projectSector } from '../Projector/sector_projection';
+import type { Sector } from '../BaseDTO/merged_schema';
+
+function Inspector({
+  sector: source,
+  selectedId,
+  preview,
+}: {
+  sector: Sector;
+  selectedId: string;
+  preview: 'gm' | 'player';
+  locked: boolean;
+  draft: null;
+  setDraft: () => void;
+}) {
+  const result = projectSector(source, { preview, assetBaseUrl: '/' });
+  if (!result.ok) throw new Error(`Projection failed at ${result.path}`);
+  return (
+    <DetailBar
+      display={result.value}
+      selectedId={selectedId}
+      preview={preview}
+      locked={true}
+      draft={null}
+      setDraft={() => {}}
+    />
+  );
+}
 
 const sector = generate('PORTRAIT-CHECK');
 const system = sector.Systems.find((candidate) => candidate.Star.PortraitIndex !== undefined)!;
@@ -125,7 +153,7 @@ describe('sector portrait assets', () => {
     expect(projectPortrait(selected, planet.Id, 'gm', '/assets/')).toEqual(first);
     expect(selected).toEqual(before);
     const { container } = render(
-      <DetailBar
+      <Inspector
         sector={selected}
         selectedId={planet.Id}
         preview="gm"
@@ -140,7 +168,7 @@ describe('sector portrait assets', () => {
   it('uses a source image with CSS variants in the inspector', () => {
     const portrait = projectPortrait(sector, planet.Id, 'gm', '/')!;
     const { container } = render(
-      <DetailBar
+      <Inspector
         sector={sector}
         selectedId={planet.Id}
         preview="gm"
@@ -160,7 +188,7 @@ describe('sector portrait assets', () => {
 
   it('shows the selected system’s star portrait', () => {
     const { container } = render(
-      <DetailBar
+      <Inspector
         sector={sector}
         selectedId={system.Id}
         preview="gm"
@@ -176,7 +204,7 @@ describe('sector portrait assets', () => {
 
   it('replaces the image element when the selected portrait changes', () => {
     const { container, rerender } = render(
-      <DetailBar
+      <Inspector
         sector={sector}
         selectedId={planet.Id}
         preview="gm"
@@ -187,7 +215,7 @@ describe('sector portrait assets', () => {
     );
     const firstImage = container.querySelector('.object-art img');
     rerender(
-      <DetailBar
+      <Inspector
         sector={sector}
         selectedId={route.Id}
         preview="gm"
@@ -209,7 +237,7 @@ describe('sector portrait assets', () => {
     );
     if (!inhabitedPlanet) throw new Error('Expected an inhabited planet in the test sector');
     const { container, rerender } = render(
-      <DetailBar
+      <Inspector
         sector={sector}
         selectedId={sector.PlayerShip.Id}
         preview="gm"
@@ -221,7 +249,7 @@ describe('sector portrait assets', () => {
     expect(container.querySelector('.portrait-no-data')?.textContent).toBe('NO DATA');
     expect(container.querySelector('.object-art-glyph')).toBeNull();
     rerender(
-      <DetailBar
+      <Inspector
         sector={sector}
         selectedId={inhabitedPlanet.Id}
         preview="gm"
@@ -249,7 +277,7 @@ describe('sector portrait assets', () => {
       ),
     };
     const { container, rerender } = render(
-      <DetailBar
+      <Inspector
         sector={visibleSector}
         selectedId={route.Id}
         preview="player"
@@ -262,7 +290,7 @@ describe('sector portrait assets', () => {
       /Portrait of Route 1, route/i,
     );
     rerender(
-      <DetailBar
+      <Inspector
         sector={visibleSector}
         selectedId={routePortal.Id}
         preview="player"
@@ -278,7 +306,7 @@ describe('sector portrait assets', () => {
 
   it('does not show a portrait before basic visibility', () => {
     const { container } = render(
-      <DetailBar
+      <Inspector
         sector={sector}
         selectedId={planet.Id}
         preview="player"

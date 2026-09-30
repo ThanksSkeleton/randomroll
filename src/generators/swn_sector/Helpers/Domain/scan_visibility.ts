@@ -1,4 +1,4 @@
-import type { ScanVisibility } from '../../../BaseDTO/merged_schema';
+import type { ScanVisibility } from '../../BaseDTO/merged_schema';
 
 export type ScanField = keyof ScanVisibility;
 

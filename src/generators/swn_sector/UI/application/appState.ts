@@ -1,4 +1,4 @@
-import type { Sector } from '../../BaseDTO/merged_schema';
+import type { DisplaySectorDTO } from '../../DisplayDTO/dto';
 
 export type View = 'hex' | 'system' | 'all' | 'sectors' | 'culture';
 export type Preview = 'gm' | 'player';
@@ -11,7 +11,7 @@ export type EditDraft = {
 };
 
 export type AppState = {
-  sectors: Sector[];
+  sectors: DisplaySectorDTO[];
   activeIndex: number;
   archiveIndex: number;
   view: View;
@@ -27,7 +27,7 @@ export type AppState = {
 export type AppAction =
   | { type: 'selectObject'; id: string | null }
   | { type: 'selectRoute'; id: string; contextSystemId: string }
-  | { type: 'changePreview'; preview: Preview }
+  | { type: 'changePreview'; preview: Preview; sectors: DisplaySectorDTO[] }
   | { type: 'changeView'; view: View }
   | { type: 'openSystem'; systemId: string; mode: SystemMode }
   | { type: 'changeRepresentation'; mode: SystemMode }
@@ -35,13 +35,18 @@ export type AppAction =
   | { type: 'beginEditing'; draft: EditDraft }
   | { type: 'updateDraft'; draft: EditDraft }
   | { type: 'discardEditing' }
-  | { type: 'saveEditing'; sectors: Sector[] }
-  | { type: 'updateSector'; sector: Sector }
+  | { type: 'saveEditing'; display: DisplaySectorDTO }
+  | { type: 'updateSector'; display: DisplaySectorDTO }
   | { type: 'loadSector'; index: number }
   | { type: 'setArchiveIndex'; index: number }
-  | { type: 'replaceSectors'; sectors: Sector[]; archiveIndex?: number; activeIndex?: number };
+  | {
+      type: 'replaceSectors';
+      sectors: DisplaySectorDTO[];
+      archiveIndex?: number;
+      activeIndex?: number;
+    };
 
-export function createAppState(sectors: Sector[]): AppState {
+export function createAppState(sectors: DisplaySectorDTO[]): AppState {
   return {
     sectors,
     activeIndex: 0,
@@ -75,10 +80,17 @@ export function appReducer(state: AppState, action: AppAction): AppState {
         return {
           ...clearNavigation(state),
           preview: action.preview,
+          sectors: action.sectors,
           view: 'hex',
           currentSystemId: null,
         };
-      return { ...state, preview: action.preview, editDraft: null, locked: true };
+      return {
+        ...state,
+        preview: action.preview,
+        sectors: action.sectors,
+        editDraft: null,
+        locked: true,
+      };
     }
     case 'changeView':
       return {
@@ -115,12 +127,19 @@ export function appReducer(state: AppState, action: AppAction): AppState {
     case 'discardEditing':
       return { ...state, editDraft: null, locked: true };
     case 'saveEditing':
-      return { ...state, sectors: action.sectors, editDraft: null, locked: true };
+      return {
+        ...state,
+        sectors: state.sectors.map((sector, index) =>
+          index === state.activeIndex ? action.display : sector,
+        ),
+        editDraft: null,
+        locked: true,
+      };
     case 'updateSector':
       return {
         ...state,
         sectors: state.sectors.map((sector, index) =>
-          index === state.activeIndex ? action.sector : sector,
+          index === state.activeIndex ? action.display : sector,
         ),
       };
     case 'loadSector':

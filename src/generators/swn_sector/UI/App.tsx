@@ -1,4 +1,3 @@
-import { projectObjectKind } from '../Projector/object_kind_projection';
 import { useEffect, useMemo, useReducer, useState } from 'react';
 import { appReducer, createAppState } from './application/appState';
 import type { EditDraft, Preview, View } from './application/appState';
@@ -12,23 +11,29 @@ import { HexMap as FeatureHexMap } from './features/sector-map/HexMap';
 import { SystemViewer } from './features/system-viewer/SystemViewer';
 import { SymbolicSystem as FeatureSymbolicSystem } from './features/system-viewer/SymbolicSystem';
 import { TopDown as FeatureTopDown } from './features/system-viewer/TopDown';
-import type { Sector } from '../BaseDTO/merged_schema';
-import { applySectorEdits } from './domain/sector/operations';
+import type { DisplaySectorDTO } from '../DisplayDTO/dto';
+import { isVisibleToPlayerDisplay } from './visibility_presentation';
 import {
-  findContainingSystem,
-  findObject,
-  isVisibleToPlayer,
-  resolveTravelDestination,
-} from './domain/sector/selectors';
-import { createPrototypeApplication } from '../Composition/prototypeApplication';
-import { projectCultureScreen } from '../Projector/culture_projection';
+  createPrototypeApplication,
+  type PrototypeApplication,
+  type SectorCommandResult,
+} from '../Composition/prototypeApplication';
 
-function isVisible(id: string, sector: Sector, preview: Preview) {
-  return preview === 'gm' || isVisibleToPlayer(sector, id);
+function readDisplays(application: PrototypeApplication, preview: Preview): DisplaySectorDTO[] {
+  return application
+    .readSectors({ preview, assetBaseUrl: import.meta.env.BASE_URL })
+    .map((result) => {
+      if (!result.ok) throw new Error(`Sector projection failed at ${result.path}`);
+      return result.value;
+    });
 }
 
-function objectKind(sector: Sector, id: string | null): string {
-  return projectObjectKind(sector, id);
+function isVisible(id: string, display: DisplaySectorDTO | null, preview: Preview) {
+  return Boolean(display && (preview === 'gm' || isVisibleToPlayerDisplay(display, id)));
+}
+
+function objectKind(display: DisplaySectorDTO | null, id: string | null): string {
+  return id && display ? (display.entities[id]?.kindLabel ?? '') : '';
 }
 
 export default function App() {
@@ -36,7 +41,7 @@ export default function App() {
   const [showTemperatureOverlay, setShowTemperatureOverlay] = useState(false);
   const [showPolityOverlay, setShowPolityOverlay] = useState(false);
   const [state, dispatch] = useReducer(appReducer, undefined, () =>
-    createAppState(application.listSectors()),
+    createAppState(readDisplays(application, 'gm')),
   );
   const isGmSession = application.getCurrentSession().role === 'gm';
   const {
@@ -52,36 +57,45 @@ export default function App() {
     locked,
     editDraft,
   } = state;
-  const sector = sectors[activeIndex];
-  const currentSystem = sector.Systems.find((s) => s.Id === currentSystemId) ?? null;
+  const display = sectors[activeIndex] ?? null;
+  const currentSystem = display?.systems.find((s) => s.id === currentSystemId) ?? null;
   useEffect(() => {
-    if (preview === 'player' && selected && !isVisible(selected, sector, preview))
+    if (preview === 'player' && selected && !isVisible(selected, display, preview))
       dispatch({ type: 'selectObject', id: null });
-  }, [preview, selected, sector]);
-  const mutate = (next: Sector) => dispatch({ type: 'updateSector', sector: next });
+  }, [preview, selected, display]);
   const setSelected = (id: string | null) => dispatch({ type: 'selectObject', id });
+  const commandOptions = { preview, assetBaseUrl: import.meta.env.BASE_URL };
+  const applyCommand = (result: SectorCommandResult) => {
+    if (!result.ok) return;
+    dispatch({ type: 'updateSector', display: result.display });
+    if (selected && !result.display.entities[selected]) setSelected(null);
+  };
   const setLocked = (next: boolean) => {
     if (next) dispatch({ type: 'discardEditing' });
   };
   const updateDraft = (update: (draft: EditDraft) => EditDraft) =>
     dispatch({
       type: 'updateDraft',
-      draft: update(editDraft ?? { sectorName: sector.SectorName, details: {} }),
+      draft: update(editDraft ?? { sectorName: display?.name ?? '', details: {} }),
     });
   const discardEdit = () => dispatch({ type: 'discardEditing' });
   const beginEdit = () =>
-    dispatch({ type: 'beginEditing', draft: { sectorName: sector.SectorName, details: {} } });
+    dispatch({ type: 'beginEditing', draft: { sectorName: display?.name ?? '', details: {} } });
   const saveEdit = () => {
     if (!editDraft) return;
-    const saved = application.saveSector(activeIndex, applySectorEdits(sector, editDraft));
-    if (saved) dispatch({ type: 'saveEditing', sectors: saved });
+    const result = application.editSector(activeIndex, editDraft, {
+      preview,
+      assetBaseUrl: import.meta.env.BASE_URL,
+    });
+    if (result.ok) dispatch({ type: 'saveEditing', display: result.display });
   };
   const selectRoute = (id: string, contextSystemId: string) =>
     dispatch({ type: 'selectRoute', id, contextSystemId });
   const go = (v: View) => dispatch({ type: 'changeView', view: v });
-  const setPreviewMode = (next: Preview) => dispatch({ type: 'changePreview', preview: next });
+  const setPreviewMode = (next: Preview) =>
+    dispatch({ type: 'changePreview', preview: next, sectors: readDisplays(application, next) });
   const canMove = useMemo(() => {
-    const k = objectKind(sector, selected);
+    const k = objectKind(display, selected);
     const targetIsMovable =
       view === 'hex'
         ? k === 'SYSTEM'
@@ -89,37 +103,37 @@ export default function App() {
           ? ['SYSTEM', 'WORLD', 'MOON'].includes(k)
           : false;
     return !locked && targetIsMovable;
-  }, [locked, sector, selected, view]);
-  const selectedSystem = useMemo(() => {
-    if (!selected) return null;
-    const kind = objectKind(sector, selected);
-    if (kind === 'SYSTEM') return sector.Systems.find((system) => system.Id === selected) ?? null;
-    if (kind === 'PLAYER SHIP')
-      return findContainingSystem(sector, sector.PlayerShip.CurrentLocationId) ?? null;
-    if (kind === 'ROUTE') return null;
-    return findContainingSystem(sector, selected) ?? null;
-  }, [sector, selected]);
-  const travelDestination = useMemo(() => {
-    const kind = objectKind(sector, selected);
-    if (kind === 'SYSTEM' && view === 'system' && selectedSystem?.Id !== currentSystem?.Id)
-      return selectedSystem;
+  }, [locked, display, selected, view]);
+  const selectedSystemId = useMemo(() => {
+    if (!selected || !display) return null;
+    const entity = display.entities[selected];
+    if (!entity || entity.kind === 'Route') return null;
+    if (entity.kind === 'PlayerShip') return display.playerShipSystemId;
+    return entity.containingSystemId;
+  }, [display, selected]);
+  const travelDestinationId = useMemo(() => {
+    const kind = objectKind(display, selected);
+    if (kind === 'SYSTEM' && view === 'system' && selectedSystemId !== currentSystemId)
+      return selectedSystemId;
     if (kind !== 'ROUTE' || (view !== 'system' && view !== 'all') || !selected) return null;
-    const contextSystemId = view === 'system' ? currentSystem?.Id : routeContextSystemId;
+    const contextSystemId = view === 'system' ? currentSystemId : routeContextSystemId;
     return contextSystemId
-      ? (resolveTravelDestination(sector, selected, contextSystemId) ?? null)
+      ? (display?.entities[selected]?.route?.endpointSystemIds.find(
+          (id) => id !== contextSystemId,
+        ) ?? null)
       : null;
-  }, [currentSystem, routeContextSystemId, sector, selected, selectedSystem, view]);
-  const canTravel = Boolean(travelDestination);
+  }, [currentSystemId, display, routeContextSystemId, selected, selectedSystemId, view]);
+  const canTravel = Boolean(travelDestinationId);
   const travelToSelectedSystem = () => {
-    if (!travelDestination) return;
+    if (!travelDestinationId) return;
     discardEdit();
     if (view === 'system')
-      dispatch({ type: 'openSystem', systemId: travelDestination.Id, mode: systemMode });
-    else dispatch({ type: 'selectObject', id: travelDestination.Id });
+      dispatch({ type: 'openSystem', systemId: travelDestinationId, mode: systemMode });
+    else dispatch({ type: 'selectObject', id: travelDestinationId });
     if (view === 'all')
       requestAnimationFrame(() =>
         document
-          .getElementById(`symbolic-system-${travelDestination.Id}`)
+          .getElementById(`symbolic-system-${travelDestinationId}`)
           ?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' }),
       );
   };
@@ -144,15 +158,11 @@ export default function App() {
       return;
     }
     if (enteringSingle) {
-      const system =
-        selectedSystem ??
-        (currentSystemId
-          ? (sector.Systems.find((candidate) => candidate.Id === currentSystemId) ?? null)
-          : null);
-      if (!system) return;
+      const systemId = selectedSystemId ?? currentSystemId;
+      if (!systemId || !display?.systems.some((system) => system.id === systemId)) return;
       dispatch({
         type: 'openSystem',
-        systemId: system.Id,
+        systemId,
         mode: nextMode.endsWith('symbolic') ? 'symbolic' : 'topdown',
       });
       return;
@@ -160,9 +170,12 @@ export default function App() {
     // Returning to the sector preserves ships, systems, and routes. A star, world,
     // moon, or POI is represented by its containing system at sector scope.
     if (view === 'system' && selected) {
-      const kind = objectKind(sector, selected);
+      const kind = objectKind(display, selected);
       if (!['PLAYER SHIP', 'SYSTEM', 'ROUTE'].includes(kind))
-        dispatch({ type: 'selectObject', id: findContainingSystem(sector, selected)?.Id ?? null });
+        dispatch({
+          type: 'selectObject',
+          id: display?.entities[selected]?.containingSystemId ?? null,
+        });
     }
     dispatch({ type: 'returnToSector', view: nextMode.endsWith('symbolic') ? 'all' : 'hex' });
   };
@@ -170,44 +183,62 @@ export default function App() {
     <div className={`app ${preview === 'player' ? 'player-mode' : ''}`}>
       <AppChrome view={view} preview={preview} setPreview={setPreviewMode} go={go} />
       {view === 'culture' && preview === 'gm' && isGmSession ? (
-        <CultureScreen
-          display={projectCultureScreen(sector)!}
-          onCompleteWorld={(worldId) => {
-            const result = application.completeWorld(activeIndex, worldId);
-            if (result.ok) dispatch({ type: 'updateSector', sector: result.sector });
-          }}
-        />
+        display ? (
+          <CultureScreen
+            display={display.culture}
+            onCompleteWorld={(worldId) => {
+              const result = application.completeWorld(activeIndex, worldId, commandOptions);
+              if (result.ok) dispatch({ type: 'updateSector', display: result.display });
+            }}
+          />
+        ) : (
+          <main role="alert">Sector display unavailable.</main>
+        )
       ) : view === 'sectors' ? (
         <main className="workspace no-inspector">
           <SectorArchive
-            sectors={sectors}
+            sectors={application.readArchiveSectors()}
             selectedIndex={archiveIndex}
             setSelectedIndex={(index) => dispatch({ type: 'setArchiveIndex', index })}
             load={() => {
-              if (application.loadSector(archiveIndex))
+              if (application.readSector(archiveIndex, commandOptions).ok)
                 dispatch({ type: 'loadSector', index: archiveIndex });
             }}
             generate={(seed, mode) => {
-              application.generateSector(seed, mode);
-              dispatch({
-                type: 'replaceSectors',
-                sectors: application.listSectors(),
-                archiveIndex: sectors.length,
-              });
-            }}
-            rename={(name) => {
-              const next = application.renameSector(archiveIndex, name);
-              if (next) dispatch({ type: 'replaceSectors', sectors: next });
-            }}
-            remove={() => {
-              const result = application.deleteSector(archiveIndex);
+              const result = application.generateSector(seed, mode, commandOptions);
               if (result.ok)
                 dispatch({
                   type: 'replaceSectors',
-                  sectors: result.sectors,
-                  archiveIndex: result.nextIndex,
-                  activeIndex: activeIndex === archiveIndex ? result.nextIndex : activeIndex,
+                  sectors: [...sectors, result.display],
+                  archiveIndex: sectors.length,
                 });
+            }}
+            rename={(name) => {
+              const result = application.renameSector(archiveIndex, name, commandOptions);
+              if (result.ok)
+                dispatch({
+                  type: 'replaceSectors',
+                  sectors: sectors.map((sector, index) =>
+                    index === archiveIndex ? result.display : sector,
+                  ),
+                });
+            }}
+            remove={() => {
+              const result = application.deleteSector(archiveIndex);
+              if (result.ok) {
+                const nextActiveIndex =
+                  activeIndex === archiveIndex
+                    ? result.nextIndex
+                    : activeIndex > archiveIndex
+                      ? activeIndex - 1
+                      : activeIndex;
+                dispatch({
+                  type: 'replaceSectors',
+                  sectors: sectors.filter((_, index) => index !== archiveIndex),
+                  archiveIndex: result.nextIndex,
+                  activeIndex: nextActiveIndex,
+                });
+              }
             }}
           />
         </main>
@@ -217,8 +248,8 @@ export default function App() {
             <aside className="control-sidebar" aria-label="Sector controls">
               <StageNav
                 mode={stageMode}
-                singleReady={Boolean(selectedSystem || currentSystem)}
-                shipSelected={selected === sector.PlayerShip.Id}
+                singleReady={Boolean(selectedSystemId || currentSystem)}
+                shipSelected={selected === display?.playerShipId}
                 travelReady={canTravel}
                 showTemperatureOverlay={showTemperatureOverlay}
                 temperatureOverlayReady={view === 'system' && systemMode === 'topdown'}
@@ -227,21 +258,28 @@ export default function App() {
                 polityOverlayReady={view === 'hex' || view === 'system' || view === 'all'}
                 onPolityOverlay={() => setShowPolityOverlay((current) => !current)}
                 onMode={switchStageMode}
-                onSelectShip={() => setSelected(sector.PlayerShip.Id)}
+                onSelectShip={() => setSelected(display?.playerShipId ?? null)}
                 onTravel={travelToSelectedSystem}
               />
-              {isGmSession ? (
+              {isGmSession && display ? (
                 <FeatureGMEditBar
                   hidden={preview !== 'gm'}
                   locked={locked}
                   setLocked={setLocked}
                   canMove={canMove}
                   selected={selected}
-                  sector={sector}
-                  mutate={(next) => {
-                    mutate(next);
-                    if (selected && !findObject(next, selected)) setSelected(null);
-                  }}
+                  display={display}
+                  onMove={(targetId) =>
+                    applyCommand(application.moveShip(activeIndex, targetId, commandOptions))
+                  }
+                  onVisibility={(id, visibility) =>
+                    applyCommand(
+                      application.setScanVisibility(activeIndex, id, visibility, commandOptions),
+                    )
+                  }
+                  onDelete={(id) =>
+                    applyCommand(application.deleteObject(activeIndex, id, commandOptions))
+                  }
                   view={view}
                   draft={editDraft}
                   beginEdit={beginEdit}
@@ -258,9 +296,9 @@ export default function App() {
                     : ''
               }`}
             >
-              {view === 'hex' && (
+              {view === 'hex' && display && (
                 <FeatureHexMap
-                  sector={sector}
+                  display={display}
                   selected={selected}
                   select={setSelected}
                   preview={preview}
@@ -269,63 +307,72 @@ export default function App() {
               )}
               {view === 'system' && currentSystem && (
                 <SystemViewer
-                  system={currentSystem}
-                  sector={sector}
-                  preview={preview}
-                  visible={isVisible(currentSystem.Id, sector, preview)}
+                  visible={isVisible(currentSystem.id, display, preview)}
                   mode={systemMode}
                   symbolic={
-                    <FeatureSymbolicSystem
-                      system={currentSystem}
-                      sector={sector}
-                      selected={selected}
-                      select={setSelected}
-                      selectRoute={selectRoute}
-                      preview={preview}
-                      defaultOpen
-                      showHeader={false}
-                      showPolityOverlay={showPolityOverlay}
-                    />
+                    display ? (
+                      <FeatureSymbolicSystem
+                        systemId={currentSystem.id}
+                        display={display}
+                        selected={selected}
+                        select={setSelected}
+                        selectRoute={selectRoute}
+                        preview={preview}
+                        defaultOpen
+                        showHeader={false}
+                        showPolityOverlay={showPolityOverlay}
+                      />
+                    ) : null
                   }
                   topdown={
-                    <FeatureTopDown
-                      system={currentSystem}
-                      sector={sector}
-                      selected={selected}
-                      select={setSelected}
-                      preview={preview}
-                      showTemperatureOverlay={showTemperatureOverlay}
-                      showPolityOverlay={showPolityOverlay}
-                    />
+                    display ? (
+                      <FeatureTopDown
+                        systemId={currentSystem.id}
+                        display={display}
+                        selected={selected}
+                        select={setSelected}
+                        preview={preview}
+                        showTemperatureOverlay={showTemperatureOverlay}
+                        showPolityOverlay={showPolityOverlay}
+                      />
+                    ) : null
                   }
                 />
               )}
-              {view === 'all' && (
+              {view === 'all' && display && (
                 <div className="all-systems">
-                  {sector.Systems.filter((s) => isVisible(s.Id, sector, preview)).map((s) => (
-                    <FeatureSymbolicSystem
-                      key={s.Id}
-                      system={s}
-                      sector={sector}
-                      selected={selected}
-                      select={setSelected}
-                      selectRoute={selectRoute}
-                      preview={preview}
-                      defaultOpen={false}
-                      showPolityOverlay={showPolityOverlay}
-                    />
-                  ))}
+                  {display.systems
+                    .filter((s) => isVisible(s.id, display, preview))
+                    .map((s) => (
+                      <FeatureSymbolicSystem
+                        key={s.id}
+                        systemId={s.id}
+                        display={display}
+                        selected={selected}
+                        select={setSelected}
+                        selectRoute={selectRoute}
+                        preview={preview}
+                        defaultOpen={false}
+                        showPolityOverlay={showPolityOverlay}
+                      />
+                    ))}
                 </div>
               )}
             </section>
-            <FeatureDetailBar
-              sector={sector}
-              selectedId={selected}
-              preview={preview}
-              locked={locked}
-              draft={editDraft}
-              setDraft={updateDraft}
-            />
+            {display ? (
+              <FeatureDetailBar
+                display={display}
+                selectedId={selected}
+                preview={preview}
+                locked={locked}
+                draft={editDraft}
+                setDraft={updateDraft}
+              />
+            ) : (
+              <aside className="detail-bar" role="alert">
+                Sector display unavailable.
+              </aside>
+            )}
           </main>
         </>
       )}

@@ -1,19 +1,53 @@
 import { createInitialSectors } from './initialSectors';
 import { generate } from '../Generator/generate';
 import { completeWorld as generateWorldCulture } from '../Generator/culture';
-import { projectCultureScreen } from '../Projector/culture_projection';
-import type { Sector, StartingWorldMode } from '../BaseDTO/merged_schema';
-import type { CultureScreenDisplayDTO } from '../DisplayDTO/dto';
+import type { ScanVisibility, Sector, StartingWorldMode } from '../BaseDTO/merged_schema';
+import type { ArchiveSectorDisplayDTO, DisplaySectorDTO } from '../DisplayDTO/dto';
+import {
+  projectArchiveSector,
+  projectSector,
+  type SectorProjectionResult,
+} from '../Projector/sector_projection';
+import { checkAllInvariants } from '../Validation/invariants';
+import { applySectorEdits, validSectorEdits, type SectorEdits } from './sector_edits';
+import {
+  deleteSectorObject,
+  relocatePlayerShip,
+  setObjectScanVisibility,
+  type SectorOperationResult,
+  type SectorOperationFailure,
+} from './sector_operations';
 
 export type LocalSession = { role: 'gm' };
 
 export type DeleteSectorResult =
-  | { ok: true; sectors: Sector[]; nextIndex: number }
+  | { ok: true; archive: ArchiveSectorDisplayDTO[]; nextIndex: number }
   | { ok: false; reason: 'invalid-index' | 'last-sector' };
 
 export type CompleteWorldResult =
-  | { ok: true; sector: Sector; culture: CultureScreenDisplayDTO }
+  | { ok: true; display: DisplaySectorDTO }
   | { ok: false; reason: 'invalid-index' | 'invalid-world' | 'invalid-projection' };
+
+export type GenerateSectorResult =
+  | { ok: true; display: DisplaySectorDTO; archive: ArchiveSectorDisplayDTO[] }
+  | { ok: false; reason: 'invalid-projection' };
+
+export type RenameSectorResult =
+  | { ok: true; display: DisplaySectorDTO; archive: ArchiveSectorDisplayDTO[] }
+  | { ok: false; reason: 'invalid-index' | 'invalid-name' | 'invalid-projection' };
+
+export type ProjectionOptions = { preview: 'gm' | 'player'; assetBaseUrl: string };
+
+export type EditSectorResult =
+  | { ok: true; display: DisplaySectorDTO }
+  | { ok: false; reason: 'invalid-index' | 'invalid-edit' | 'invalid-projection' };
+
+export type SectorCommandResult =
+  | { ok: true; display: DisplaySectorDTO }
+  | {
+      ok: false;
+      reason: 'invalid-index' | 'invalid-sector' | 'invalid-projection' | SectorOperationFailure;
+    };
 
 function copy<T>(value: T): T {
   return structuredClone(value);
@@ -22,8 +56,8 @@ function copy<T>(value: T): T {
 /**
  * Concrete local application boundary for the prototype.
  *
- * These methods intentionally remain synchronous and in-memory. They are
- * replacement points for sub-spec 6, not a general repository abstraction.
+ * The UI reads projected display values and commits through explicit commands.
+ * Canonical sectors stay private to this synchronous, in-memory boundary.
  */
 export class PrototypeApplication {
   private sectors: Sector[];
@@ -32,30 +66,113 @@ export class PrototypeApplication {
     this.sectors = copy(initialSectors);
   }
 
-  generateSector(seed: string, startingWorldMode: StartingWorldMode = 'UNRESTRICTED'): Sector {
+  generateSector(
+    seed: string,
+    startingWorldMode: StartingWorldMode = 'UNRESTRICTED',
+    options: ProjectionOptions = { preview: 'gm', assetBaseUrl: '/' },
+  ): GenerateSectorResult {
     const generated = copy(generate(seed, startingWorldMode));
+    const projected = projectSector(generated, options);
+    if (!projected.ok) return { ok: false, reason: 'invalid-projection' };
     this.sectors = [...this.sectors, generated];
-    return copy(generated);
+    return { ok: true, display: projected.value, archive: this.readArchiveSectors() };
   }
 
-  listSectors(): Sector[] {
-    return copy(this.sectors);
+  readArchiveSectors(): ArchiveSectorDisplayDTO[] {
+    return this.sectors.map(projectArchiveSector);
   }
 
-  loadSector(index: number): Sector | undefined {
+  private loadCanonical(index: number): Sector | undefined {
     return index >= 0 && index < this.sectors.length ? copy(this.sectors[index]) : undefined;
   }
 
-  saveSector(index: number, sector: Sector): Sector[] | undefined {
-    if (index < 0 || index >= this.sectors.length) return undefined;
-    this.sectors = this.sectors.map((current, currentIndex) =>
-      currentIndex === index ? copy(sector) : current,
-    );
-    return this.listSectors();
+  /** Shared read boundary for the part 6 UI cutover. */
+  readSector(
+    index: number,
+    options: { preview: 'gm' | 'player'; assetBaseUrl: string },
+  ): SectorProjectionResult | { ok: false; reason: 'invalid-index' } {
+    const sector = this.loadCanonical(index);
+    return sector ? projectSector(sector, options) : { ok: false, reason: 'invalid-index' };
   }
 
-  completeWorld(index: number, worldId: string): CompleteWorldResult {
-    const current = this.loadSector(index);
+  readSectors(options: {
+    preview: 'gm' | 'player';
+    assetBaseUrl: string;
+  }): SectorProjectionResult[] {
+    return this.sectors.map((sector) => projectSector(sector, options));
+  }
+
+  editSector(
+    index: number,
+    edits: SectorEdits,
+    options: { preview: 'gm' | 'player'; assetBaseUrl: string },
+  ): EditSectorResult {
+    const current = this.loadCanonical(index);
+    if (!current) return { ok: false, reason: 'invalid-index' };
+    if (!validSectorEdits(current, edits)) return { ok: false, reason: 'invalid-edit' };
+    const next = applySectorEdits(current, edits);
+    if (checkAllInvariants(next).length) return { ok: false, reason: 'invalid-edit' };
+    const display = projectSector(next, options);
+    if (!display.ok) return { ok: false, reason: 'invalid-projection' };
+    this.sectors[index] = copy(next);
+    return { ok: true, display: display.value };
+  }
+
+  private updateSectorByCommand(
+    index: number,
+    operation: (sector: Sector) => SectorOperationResult<Sector>,
+    options: { preview: 'gm' | 'player'; assetBaseUrl: string },
+  ): SectorCommandResult {
+    const current = this.loadCanonical(index);
+    if (!current) return { ok: false, reason: 'invalid-index' };
+    const result = operation(current);
+    if (!result.ok) return result;
+    if (checkAllInvariants(result.value).length) return { ok: false, reason: 'invalid-sector' };
+    const display = projectSector(result.value, options);
+    if (!display.ok) return { ok: false, reason: 'invalid-projection' };
+    this.sectors[index] = copy(result.value);
+    return { ok: true, display: display.value };
+  }
+
+  setScanVisibility(
+    index: number,
+    id: string,
+    visibility: ScanVisibility,
+    options: { preview: 'gm' | 'player'; assetBaseUrl: string },
+  ): SectorCommandResult {
+    return this.updateSectorByCommand(
+      index,
+      (sector) => setObjectScanVisibility(sector, id, visibility),
+      options,
+    );
+  }
+
+  moveShip(
+    index: number,
+    targetId: string,
+    options: { preview: 'gm' | 'player'; assetBaseUrl: string },
+  ): SectorCommandResult {
+    return this.updateSectorByCommand(
+      index,
+      (sector) => relocatePlayerShip(sector, targetId),
+      options,
+    );
+  }
+
+  deleteObject(
+    index: number,
+    id: string,
+    options: { preview: 'gm' | 'player'; assetBaseUrl: string },
+  ): SectorCommandResult {
+    return this.updateSectorByCommand(index, (sector) => deleteSectorObject(sector, id), options);
+  }
+
+  completeWorld(
+    index: number,
+    worldId: string,
+    options: ProjectionOptions = { preview: 'gm', assetBaseUrl: '/' },
+  ): CompleteWorldResult {
+    const current = this.loadCanonical(index);
     if (!current) return { ok: false, reason: 'invalid-index' };
     const eligible = current.Systems.some((system) =>
       system.Objects.some(
@@ -65,28 +182,31 @@ export class PrototypeApplication {
     );
     if (!eligible) return { ok: false, reason: 'invalid-world' };
     const next = generateWorldCulture(current, worldId);
-    const culture = projectCultureScreen(next);
-    if (!culture) return { ok: false, reason: 'invalid-projection' };
+    if (checkAllInvariants(next).length) return { ok: false, reason: 'invalid-projection' };
+    const projected = projectSector(next, options);
+    if (!projected.ok) return { ok: false, reason: 'invalid-projection' };
     this.sectors = this.sectors.map((sector, currentIndex) =>
       currentIndex === index ? copy(next) : sector,
     );
-    return { ok: true, sector: copy(next), culture };
+    return { ok: true, display: projected.value };
   }
 
-  renameSector(index: number, name: string): Sector[] | undefined {
+  renameSector(index: number, name: string, options: ProjectionOptions): RenameSectorResult {
     const trimmedName = name.trim();
-    if (!trimmedName || index < 0 || index >= this.sectors.length) return undefined;
-    this.sectors = this.sectors.map((sector, currentIndex) =>
-      currentIndex === index ? { ...sector, SectorName: trimmedName } : sector,
-    );
-    return this.listSectors();
+    if (index < 0 || index >= this.sectors.length) return { ok: false, reason: 'invalid-index' };
+    if (!trimmedName) return { ok: false, reason: 'invalid-name' };
+    const next = { ...this.sectors[index], SectorName: trimmedName };
+    const projected = projectSector(next, options);
+    if (!projected.ok) return { ok: false, reason: 'invalid-projection' };
+    this.sectors[index] = next;
+    return { ok: true, display: projected.value, archive: this.readArchiveSectors() };
   }
 
   deleteSector(index: number): DeleteSectorResult {
     if (index < 0 || index >= this.sectors.length) return { ok: false, reason: 'invalid-index' };
     if (this.sectors.length <= 1) return { ok: false, reason: 'last-sector' };
     this.sectors = this.sectors.filter((_, currentIndex) => currentIndex !== index);
-    return { ok: true, sectors: this.listSectors(), nextIndex: Math.max(0, index - 1) };
+    return { ok: true, archive: this.readArchiveSectors(), nextIndex: Math.max(0, index - 1) };
   }
 
   getCurrentSession(): LocalSession {

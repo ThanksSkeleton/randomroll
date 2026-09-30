@@ -8,7 +8,7 @@ import { projectStar } from './star_projection';
 import { STAR_PRESENTATION } from '../Data/Projection/star_presentation';
 import { directOrbitAuBand } from '../Helpers/Domain/spatial_interpretation';
 import { projectSystemSpatial } from './system_spatial_projection';
-import { applySectorEdits } from '../UI/domain/sector/operations';
+import { applySectorEdits } from '../Composition/sector_edits';
 
 test('star, system, object, and route projection is pure', () => {
   const sector = generate('part-two-projection');

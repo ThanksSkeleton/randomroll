@@ -3,16 +3,11 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { SystemViewer } from './SystemViewer';
-import { createInitialSectors } from '../../data';
 
 describe('SystemViewer', () => {
   it('renders the restricted state when the system is not visible', () => {
-    const sector = createInitialSectors()[0];
     render(
       <SystemViewer
-        system={sector.Systems[0]}
-        sector={sector}
-        preview="player"
         visible={false}
         mode="symbolic"
         symbolic={<span>symbolic</span>}
@@ -26,12 +21,8 @@ describe('SystemViewer', () => {
   });
 
   it('renders only the selected representation', () => {
-    const sector = createInitialSectors()[0];
     render(
       <SystemViewer
-        system={sector.Systems[0]}
-        sector={sector}
-        preview="gm"
         visible
         mode="topdown"
         symbolic={<span>symbolic</span>}

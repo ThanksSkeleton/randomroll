@@ -132,6 +132,18 @@ describe('prototype application workflows', () => {
     expect(currentVisibility).toHaveProperty('disabled', true);
   });
 
+  it('updates scan visibility through the GM command', () => {
+    renderApp();
+    fireEvent.click(firstSystemButton());
+    fireEvent.click(screen.getByRole('button', { name: '▣ LOCKED' }));
+    const science = screen.getByRole('button', { name: 'Sci 1' });
+    expect(science.getAttribute('aria-pressed')).toBe('false');
+    fireEvent.click(science);
+    expect(science.getAttribute('aria-pressed')).toBe('true');
+    fireEvent.click(screen.getByRole('button', { name: '□ UNLOCKED' }));
+    expect(screen.getByRole('button', { name: 'Sci 1' }).getAttribute('aria-pressed')).toBe('true');
+  });
+
   it('discards an unsaved GM draft on navigation', () => {
     renderApp();
     const originalName = firstSystemButton()

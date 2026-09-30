@@ -1,13 +1,5 @@
-import type { Sector } from '../../../BaseDTO/merged_schema';
+import type { DisplaySectorDTO } from '../../../DisplayDTO/dto';
 import type { Preview } from '../../application/appState';
-import {
-  findContainingSystem,
-  findDetails,
-  isVisibleToPlayer,
-} from '../../domain/sector/selectors';
-import { projectStar } from '../../../Projector/star_projection';
-import { projectRoute } from '../../../Projector/route_projection';
-import { projectClaims } from '../../../Projector/politics_projection';
 import { StarGlyph } from '../system-viewer/StarGlyph';
 import { polityFlagColorValue } from '../politics/PolityFlag';
 
@@ -17,13 +9,13 @@ const BAKED_HEXMAP = {
   leftMargin: 36,
 } as const;
 
-function visible(id: string, sector: Sector, preview: Preview) {
-  return preview === 'gm' || isVisibleToPlayer(sector, id);
+function visible(id: string, display: DisplaySectorDTO, preview: Preview) {
+  return preview === 'gm' || Boolean(display.entities[id]?.visibility.BasicScan);
 }
-function name(id: string, sector: Sector, preview: Preview) {
-  const d = findDetails(sector, id);
+function name(id: string, display: DisplaySectorDTO, preview: Preview) {
+  const d = display.entities[id];
   if (!d) return undefined;
-  return preview === 'player' && !d.Visibility.PoliticsScan ? d.ProceduralName : d.NiceName;
+  return preview === 'player' && !d.visibility.PoliticsScan ? d.proceduralName : d.niceName;
 }
 function position(x: number, y: number) {
   const scale = BAKED_HEXMAP.hexSize / 112;
@@ -79,13 +71,13 @@ function Selectable({
 }
 
 export function HexMap({
-  sector,
+  display,
   selected,
   select,
   preview,
   showPolityOverlay = false,
 }: {
-  sector: Sector;
+  display: DisplaySectorDTO;
   selected: string | null;
   select: (id: string | null) => void;
   preview: Preview;
@@ -104,51 +96,49 @@ export function HexMap({
         style={{ width: mapWidth, height: mapHeight }}
       >
         <svg className="routes" viewBox={`0 0 ${mapWidth} ${mapHeight}`}>
-          {sector.Routes.filter((r) => visible(r.Id, sector, preview)).map((route) => {
-            const display = projectRoute(sector, route.Id, preview);
-            if (!display || !display.endpointSystemIds.every((id) => visible(id, sector, preview)))
-              return null;
-            const [a, b] = display.endpointHexes;
-            const p1 = position(a.Column, a.Row),
-              p2 = position(b.Column, b.Row);
-            return (
-              <line
-                key={route.Id}
-                x1={p1.left}
-                y1={p1.top}
-                x2={p2.left}
-                y2={p2.top}
-                className={selected === route.Id ? 'selected' : ''}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  select(route.Id);
-                }}
-              />
-            );
-          })}
+          {display.routeIds
+            .filter((id) => visible(id, display, preview))
+            .map((routeId) => {
+              const route = display.entities[routeId]?.route;
+              if (!route || !route.endpointSystemIds.every((id) => visible(id, display, preview)))
+                return null;
+              const [a, b] = route.endpointHexes;
+              const p1 = position(a.Column, a.Row),
+                p2 = position(b.Column, b.Row);
+              return (
+                <line
+                  key={routeId}
+                  x1={p1.left}
+                  y1={p1.top}
+                  x2={p2.left}
+                  y2={p2.top}
+                  className={selected === routeId ? 'selected' : ''}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    select(routeId);
+                  }}
+                />
+              );
+            })}
         </svg>
         {Array.from({ length: 77 }, (_, i) => {
           const x = (i % 11) + 1,
             y = Math.floor(i / 11) + 1;
-          const system = sector.Systems.find(
-            (candidate) => candidate.HexLocation.Column === x && candidate.HexLocation.Row === y,
+          const system = display.systems.find(
+            (candidate) =>
+              candidate.spatial.hexLocation.Column === x && candidate.spatial.hexLocation.Row === y,
           );
           const showSystemClaims =
             showPolityOverlay &&
             system !== undefined &&
-            visible(system.Id, sector, preview) &&
-            (preview === 'gm' || system.Visibility.PoliticsScan);
-          const claimIds =
-            showSystemClaims && system ? (projectClaims(sector, system)?.claimantIds ?? []) : [];
-          const claimants = claimIds.flatMap((id) => {
-            const polity = sector.Polities.find((candidate) => candidate.Id === id);
-            return polity ? [polity] : [];
-          });
+            visible(system.id, display, preview) &&
+            (preview === 'gm' || display.entities[system.id]?.visibility.PoliticsScan);
+          const claimants = showSystemClaims && system ? system.claims.claimants : [];
           return (
             <div
               key={i}
               className={`hex-cell ${claimants.length > 0 ? 'hex-polity-tinted' : ''}`}
-              data-system-id={system?.Id}
+              data-system-id={system?.id}
               data-polities={claimants.map((polity) => polity.NiceName).join(', ') || undefined}
               style={{
                 ...position(x, y),
@@ -167,45 +157,47 @@ export function HexMap({
             </div>
           );
         })}
-        {sector.Systems.filter((s) => visible(s.Id, sector, preview)).map((system) => {
-          const p = position(system.HexLocation.Column, system.HexLocation.Row);
-          const starDisplay = projectStar(sector, system.Id)!;
-          const label = name(system.Id, sector, preview) ?? 'System';
-          const shipHere =
-            findContainingSystem(sector, sector.PlayerShip.CurrentLocationId)?.Id === system.Id &&
-            visible(sector.PlayerShip.Id, sector, preview);
-          return (
-            <div
-              className="system-pin"
-              key={system.Id}
-              style={{ ...p, ...starDisplay.styleTokens }}
-            >
-              <Selectable
-                id={system.Id}
-                selected={selected}
-                onSelect={select}
-                label={`System ${label}`}
-                className={`star-pin ${starDisplay.className}`}
+        {display.systems
+          .filter((s) => visible(s.id, display, preview))
+          .map((system) => {
+            const p = position(system.spatial.hexLocation.Column, system.spatial.hexLocation.Row);
+            const starDisplay = system.star;
+            const label = name(system.id, display, preview) ?? 'System';
+            const shipHere =
+              display.playerShipSystemId === system.id &&
+              visible(display.playerShipId, display, preview);
+            return (
+              <div
+                className="system-pin"
+                key={system.id}
+                style={{ ...p, ...starDisplay.styleTokens }}
               >
-                <StarGlyph recipe={starDisplay.recipe} />
-              </Selectable>
-              <label className="system-name-label system-map-caption">
-                <strong>{label}</strong>
-              </label>
-              {shipHere && (
                 <Selectable
-                  id={sector.PlayerShip.Id}
+                  id={system.id}
                   selected={selected}
                   onSelect={select}
-                  label="Player ship"
-                  className="ship-token"
+                  label={`System ${label}`}
+                  className={`star-pin ${starDisplay.className}`}
                 >
-                  ▰
+                  <StarGlyph recipe={starDisplay.recipe} />
                 </Selectable>
-              )}
-            </div>
-          );
-        })}
+                <label className="system-name-label system-map-caption">
+                  <strong>{label}</strong>
+                </label>
+                {shipHere && (
+                  <Selectable
+                    id={display.playerShipId}
+                    selected={selected}
+                    onSelect={select}
+                    label="Player ship"
+                    className="ship-token"
+                  >
+                    ▰
+                  </Selectable>
+                )}
+              </div>
+            );
+          })}
       </div>
     </div>
   );

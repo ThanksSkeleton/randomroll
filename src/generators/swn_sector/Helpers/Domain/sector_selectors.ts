@@ -1,9 +1,6 @@
-import { hasAnyScan } from './visibility';
-import { hpoiVisible } from '../../../Projector/culture_projection';
 import type {
   Guid,
   HabitablePointOfInterest,
-  HexLocation,
   OtherCelestialObject,
   Planet,
   PointOfInterest,
@@ -14,7 +11,7 @@ import type {
   Star,
   StarSystem,
   SystemObject,
-} from '../../../BaseDTO/merged_schema';
+} from '../../BaseDTO/merged_schema';
 
 export type FoundObject =
   | { object: StarSystem; kind: 'System'; containingSystem?: StarSystem }
@@ -30,18 +27,6 @@ export type FoundObject =
   | { object: RoutePortal; kind: 'RoutePortal'; containingSystem?: StarSystem }
   | { object: Route; kind: 'Route'; containingSystem?: StarSystem }
   | { object: PlayerShip; kind: 'PlayerShip'; containingSystem?: StarSystem };
-
-export function areAdjacentHexes(a: HexLocation, b: HexLocation): boolean {
-  const dx = Math.abs(a.Column - b.Column);
-  const dy = b.Row - a.Row;
-  if (dx === 0) return Math.abs(dy) === 1;
-  if (dx !== 1) return false;
-  const leftColumn = a.Column < b.Column ? a.Column : b.Column;
-  const rowDelta = a.Column < b.Column ? dy : -dy;
-  return leftColumn % 2 === 1
-    ? rowDelta === 0 || rowDelta === -1
-    : rowDelta === 0 || rowDelta === 1;
-}
 
 export function systemObjects(system: StarSystem): SystemObject[] {
   return system.Objects;
@@ -140,13 +125,6 @@ export function objectDetails(sector: Sector, id: Guid) {
   return findObject(sector, id)?.object;
 }
 export const findDetails = objectDetails;
-export function isVisibleToPlayer(sector: Sector, id: Guid): boolean {
-  const found = findObject(sector, id);
-  if (found?.kind === 'HabitablePointOfInterest')
-    return hpoiVisible(sector, found.object, 'player');
-  const visibility = objectDetails(sector, id)?.Visibility;
-  return visibility ? hasAnyScan(visibility) : false;
-}
 export function resolveTravelDestination(sector: Sector, routeId: Guid, contextSystemId: Guid) {
   const route = sector.Routes.find((candidate) => candidate.Id === routeId);
   const systems = route && routeSystems(sector, route);

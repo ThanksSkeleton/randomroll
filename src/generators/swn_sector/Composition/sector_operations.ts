@@ -1,6 +1,6 @@
-import { isValidScanVisibility, type ScanField } from './visibility';
-import type { Guid, ScanVisibility, Sector } from '../../../BaseDTO/merged_schema';
-import { containingSystem, findObject, routePortals } from './selectors';
+import { isValidScanVisibility, type ScanField } from '../Helpers/Domain/scan_visibility';
+import type { Guid, ScanVisibility, Sector } from '../BaseDTO/merged_schema';
+import { containingSystem, findObject, routePortals } from '../Helpers/Domain/sector_selectors';
 
 export type SectorOperationFailure =
   'object-not-found' | 'invalid-visibility' | 'deletion-prohibited' | 'move-prohibited';
@@ -35,6 +35,20 @@ export function updateObjectScanVisibility(
   }
   if (!isValidScanVisibility(visibility)) return failure('invalid-visibility');
   updated.object.Visibility = visibility;
+  return success(next);
+}
+
+export function setObjectScanVisibility(
+  sector: Sector,
+  id: Guid,
+  visibility: ScanVisibility,
+): SectorOperationResult<Sector> {
+  if (!isValidScanVisibility(visibility)) return failure('invalid-visibility');
+  if (!findObject(sector, id)) return failure('object-not-found');
+  const next = copySector(sector);
+  const updated = findObject(next, id);
+  if (!updated) return failure('object-not-found');
+  updated.object.Visibility = { ...visibility };
   return success(next);
 }
 
@@ -105,30 +119,4 @@ export function deleteSectorObject(sector: Sector, id: Guid): SectorOperationRes
   }
   next.PlayerShip.CurrentLocationId = next.PlayerShip.CurrentLocationId;
   return success(next);
-}
-
-export type EditableDetailField =
-  | 'NiceName'
-  | 'InfoboxSummary'
-  | 'BasicScan'
-  | 'DetailedScan'
-  | 'PoliticsScan'
-  | 'DeepPoliticsScan'
-  | 'GM';
-export interface SectorEdits {
-  sectorName: string;
-  details: Record<Guid, Partial<Record<EditableDetailField, string>>>;
-}
-export function applySectorEdits(sector: Sector, edits: SectorEdits): Sector {
-  const next = copySector(sector);
-  next.SectorName = edits.sectorName;
-  for (const [id, fields] of Object.entries(edits.details)) {
-    const entity = findObject(next, id)?.object;
-    if (!entity) continue;
-    for (const [field, value] of Object.entries(fields) as [EditableDetailField, string][]) {
-      if (field === 'NiceName') entity.NiceName = value;
-      else entity.Intelligence[field] = value;
-    }
-  }
-  return next;
 }

@@ -11,7 +11,8 @@ It sketches the smaller implementation specs needed to get there. The
 [organization step](CANONICAL_PROJECTION_REFACTOR_PART_3_ORGANIZATION_SPEC.md)
 and [part 4](CANONICAL_PROJECTION_REFACTOR_PART_4_POLITICS_CULTURE_POI_SPEC.md)
 are implemented. Part 5 is explicitly deferred and is not a prerequisite for
-part 6; part 6 remains proposed.
+part 6; [part 6](CANONICAL_PROJECTION_REFACTOR_PART_6_APPLICATION_CUTOVER_SPEC.md)
+is implemented and its application cutover and canonical audit are closed out.
 
 This roadmap also implements the architecture's Project Organization rule:
 file location must make each architectural category visible. The organization
@@ -115,7 +116,7 @@ presentation behavior may continue. The completed
 [portrait index slice](CANONICAL_PROJECTION_PORTRAIT_INDEX_SPEC.md) remains in
 place. Do not silently move the deferred disclosure work into part 6.
 
-### 6. Application cutover and canonical audit — spec to write
+### 6. Application cutover and canonical audit — implemented
 
 Make the application's read boundary return one shared Display Sector DTO,
 while commands accept IDs and explicit edits to canonical state. Remove direct
@@ -129,6 +130,9 @@ projection data, remove it**. Classify generation provenance and schema
 metadata explicitly. Update validation and any schema version affected by
 removed fields. The present prototype stores sectors only in memory, so this
 sub-spec should address external migration only if persistence is introduced.
+The [part 6 implementation spec](CANONICAL_PROJECTION_REFACTOR_PART_6_APPLICATION_CUTOVER_SPEC.md)
+records the current direct reads, command boundary, field audit, cutover order,
+and acceptance checks.
 
 ## Completion criteria for the active refactor
 

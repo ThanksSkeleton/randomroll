@@ -1,13 +1,18 @@
 import type {
   HexLocation,
   Planet,
+  OtherCelestialObjectType,
   PolityFlag,
   StarType,
   SystemObject,
   Temperature,
   WorldTag,
+  IntelligenceText,
+  ScanVisibility,
+  SelectableObjectKind,
+  StartingWorldMode,
 } from '../BaseDTO/merged_schema';
-import type { SwnCulture } from '../BaseDTO/culture';
+import type { SectorCulture, SwnCulture } from '../BaseDTO/culture';
 import type { StarPresentation } from '../Data/Projection/star_presentation';
 import type { PlanetColor } from '../Data/Projection/planet_presentation';
 import type { PortraitCategory, PortraitStyle } from '../Data/Projection/portrait_assets';
@@ -171,4 +176,68 @@ export type CultureOverviewRowDisplayDTO = {
 export type CultureScreenDisplayDTO = {
   worlds: CultureWorldDisplayDTO[];
   overview: CultureOverviewRowDisplayDTO[];
+};
+
+/** One detached, shared read model. Preview choices remain presentation behavior. */
+export type DisplaySelectableDTO = {
+  id: string;
+  kind: SelectableObjectKind;
+  kindLabel: string;
+  containingSystemId: string | null;
+  proceduralName: string;
+  niceName: string;
+  visibility: ScanVisibility;
+  intelligence: IntelligenceText;
+  portrait: PortraitDisplayDTO | null;
+  portraitDescription: string;
+  inspectorStock: PlanetStockText;
+  inspectorClaimants?: PolityDisplayDTO[];
+  inhabited?: boolean;
+  selectedCulture?: SectorCulture | null;
+  size?: Planet['Size'];
+  otherObjectType?: OtherCelestialObjectType;
+  spatial?: ObjectSpatialDisplayDTO;
+  planet?: PlanetDisplayDTO;
+  star?: StarDisplayDTO;
+  systemSpatial?: SystemSpatialDisplayDTO;
+  claims?: PoliticalClaimsDisplayDTO;
+  poi?: PoiDisplayDTO;
+  habitablePoi?: HabitablePoiDisplayDTO;
+  route?: RouteDisplayDTO;
+  angleDegrees?: number;
+};
+
+export type DisplaySystemDTO = {
+  id: string;
+  starId: string;
+  objectIds: string[];
+  poiIds: string[];
+  habitablePoiIds: string[];
+  spatial: SystemSpatialDisplayDTO;
+  star: StarDisplayDTO;
+  claims: PoliticalClaimsDisplayDTO;
+};
+
+export type DisplaySectorDTO = {
+  name: string;
+  startingWorldId: string | null;
+  playerShipId: string;
+  playerShipLocationId: string;
+  playerShipSystemId: string | null;
+  systems: DisplaySystemDTO[];
+  routeIds: string[];
+  portalIds: string[];
+  entities: Record<string, DisplaySelectableDTO>;
+  polities: PolityDisplayDTO[];
+  conquests: ConquestDisplayDTO[];
+  culture: CultureScreenDisplayDTO;
+};
+
+export type ArchiveSectorDisplayDTO = {
+  index: number;
+  name: string;
+  originalSeed: string;
+  startingWorldMode: StartingWorldMode;
+  startingWorldId: string | null;
+  startingWorldName: string | null;
 };

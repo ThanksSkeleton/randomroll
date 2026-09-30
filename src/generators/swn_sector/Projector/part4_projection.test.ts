@@ -1,7 +1,6 @@
 import { expect, test } from 'vitest';
 import { PrototypeApplication } from '../Composition/prototypeApplication';
 import { generate } from '../Generator/generate';
-import { checkAllInvariants } from '../Validation/invariants';
 import { projectCultureScreen, projectHabitablePoi } from './culture_projection';
 import { projectClaims, projectConquest, projectPolity } from './politics_projection';
 import { projectWorldTag } from './world_tag_projection';
@@ -59,13 +58,10 @@ test('completion command stores selected culture once and returns fresh projecti
   const first = app.completeWorld(0, incomplete.Id);
   expect(first.ok).toBe(true);
   if (!first.ok) return;
-  expect(first.culture.worlds.find((world) => world.id === incomplete.Id)?.complete).toBe(true);
-  expect(
-    first.sector.Systems.flatMap((system) => system.Objects).find(
-      (object): object is Planet => object.Id === incomplete.Id && object.Kind === 'Planet',
-    )?.Culture,
-  ).toBeTruthy();
-  expect(checkAllInvariants(first.sector)).toEqual([]);
+  expect(first.display.culture.worlds.find((world) => world.id === incomplete.Id)?.complete).toBe(
+    true,
+  );
+  expect(first.display.entities[incomplete.Id].selectedCulture).toBeTruthy();
   const second = app.completeWorld(0, incomplete.Id);
   expect(second).toEqual(first);
   expect(

@@ -1,14 +1,15 @@
 import { describe, expect, it } from 'vitest';
 import { generate } from '../Generator/generate';
+import { createInitialSectors } from '../Composition/initialSectors';
 import {
-  createInitialSectors,
   findContainingSystem,
   findObject,
   getAllSelectableIds,
-  validateSector,
-} from './data';
-import { objectEntries, routePortals } from './domain/sector/selectors';
-import { updateObjectScanVisibility } from './domain/sector/operations';
+  objectEntries,
+  routePortals,
+} from '../Helpers/Domain/sector_selectors';
+import { validateSector } from '../Validation/sector_validation';
+import { updateObjectScanVisibility } from '../Composition/sector_operations';
 
 describe('canonical sector data', () => {
   it('creates deterministic generator-backed initial sectors', () => {

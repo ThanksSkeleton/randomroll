@@ -1,7 +1,11 @@
-import { isValidScanVisibility } from './visibility';
-import type { Sector } from '../../../BaseDTO/merged_schema';
-import { validPolityFlag } from '../../../Validation/politics';
-import { containingSystem, getAllSelectableIds, routePortals } from './selectors';
+import { isValidScanVisibility } from '../Helpers/Domain/scan_visibility';
+import type { Sector } from '../BaseDTO/merged_schema';
+import { validPolityFlag } from './politics';
+import {
+  containingSystem,
+  getAllSelectableIds,
+  routePortals,
+} from '../Helpers/Domain/sector_selectors';
 
 export function validateSector(sector: Sector): string[] {
   const errors: string[] = [];

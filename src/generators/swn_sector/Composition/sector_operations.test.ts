@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { generate } from '../../../Generator/generate';
-import { deleteSectorObject, relocatePlayerShip, updateObjectScanVisibility } from './operations';
+import { generate } from '../Generator/generate';
+import {
+  deleteSectorObject,
+  relocatePlayerShip,
+  updateObjectScanVisibility,
+} from './sector_operations';
 import {
   findContainingSystem,
   findDetails,
@@ -8,8 +12,8 @@ import {
   routeHasEndpointInSystem,
   routePortals,
   routeSystems,
-} from './selectors';
-import { validateSector } from './validation';
+} from '../Helpers/Domain/sector_selectors';
+import { validateSector } from '../Validation/sector_validation';
 
 describe('canonical sector domain', () => {
   it('updates visibility immutably', () => {

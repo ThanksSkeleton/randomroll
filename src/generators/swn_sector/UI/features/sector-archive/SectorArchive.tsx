@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
-import type { Sector, StartingWorldMode } from '../../../BaseDTO/merged_schema';
+import type { ArchiveSectorDisplayDTO } from '../../../DisplayDTO/dto';
+
+type StartingWorldMode = ArchiveSectorDisplayDTO['startingWorldMode'];
 
 export function SectorArchive({
   sectors,
@@ -10,7 +12,7 @@ export function SectorArchive({
   rename,
   remove,
 }: {
-  sectors: Sector[];
+  sectors: ArchiveSectorDisplayDTO[];
   selectedIndex: number;
   setSelectedIndex: (n: number) => void;
   load: () => void;
@@ -21,8 +23,8 @@ export function SectorArchive({
   const [seed, setSeed] = useState('DELTA-7734');
   const [mode, setMode] = useState<StartingWorldMode>('UNRESTRICTED');
   const [generationError, setGenerationError] = useState('');
-  const [name, setName] = useState(sectors[selectedIndex]?.SectorName ?? '');
-  useEffect(() => setName(sectors[selectedIndex]?.SectorName ?? ''), [selectedIndex, sectors]);
+  const [name, setName] = useState(sectors[selectedIndex]?.name ?? '');
+  useEffect(() => setName(sectors[selectedIndex]?.name ?? ''), [selectedIndex, sectors]);
   return (
     <div className="archive">
       <section className="generator">
@@ -73,24 +75,17 @@ export function SectorArchive({
             onChange={(e) => setSelectedIndex(Number(e.target.value))}
           >
             {sectors.map((s, i) => (
-              <option value={i} key={`${s.SectorName}-${i}`}>
-                {s.SectorName} // {s.OriginalSeed}
+              <option value={i} key={`${s.name}-${i}`}>
+                {s.name} // {s.originalSeed}
               </option>
             ))}
           </select>
         </label>
-        {sectors[selectedIndex]?.StartingWorldId &&
-          (() => {
-            const selectedSector = sectors[selectedIndex]!;
-            const startingWorld = selectedSector.Systems.flatMap((system) => system.Objects).find(
-              (object) => object.Id === selectedSector.StartingWorldId,
-            );
-            return startingWorld ? (
-              <p className="starting-world-summary">
-                Starting world: <strong>{startingWorld.NiceName}</strong>
-              </p>
-            ) : null;
-          })()}
+        {sectors[selectedIndex]?.startingWorldName && (
+          <p className="starting-world-summary">
+            Starting world: <strong>{sectors[selectedIndex].startingWorldName}</strong>
+          </p>
+        )}
         <button className="primary full button-allowed load-sector-button" onClick={load}>
           LOAD SELECTED SECTOR →
         </button>

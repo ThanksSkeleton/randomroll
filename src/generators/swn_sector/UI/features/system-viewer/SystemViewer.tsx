@@ -1,19 +1,11 @@
 import type { ReactNode } from 'react';
-import type { Preview } from '../../application/appState';
-import type { Sector, StarSystem } from '../../../BaseDTO/merged_schema';
 
 export function SystemViewer({
-  system,
-  sector,
-  preview,
   visible,
   mode,
   symbolic,
   topdown,
 }: {
-  system: StarSystem;
-  sector: Sector;
-  preview: Preview;
   visible: boolean;
   mode: 'symbolic' | 'topdown';
   symbolic: ReactNode;
@@ -26,5 +18,5 @@ export function SystemViewer({
         <p className="restricted-view-description">Not in Star Database and Out of Sensor Range</p>
       </div>
     );
-  return system && sector && preview ? <>{mode === 'symbolic' ? symbolic : topdown}</> : null;
+  return <>{mode === 'symbolic' ? symbolic : topdown}</>;
 }

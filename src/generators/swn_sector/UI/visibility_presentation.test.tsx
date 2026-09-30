@@ -3,17 +3,114 @@
 import { cleanup, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it } from 'vitest';
 import { generate } from '../Generator/generate';
-import type { Planet, Sector } from '../BaseDTO/merged_schema';
-import { routeSystems } from './domain/sector/selectors';
+import type { Planet, Sector, StarSystem } from '../BaseDTO/merged_schema';
+import {
+  objectEntries,
+  routeSystems,
+  findObject,
+  objectDetails,
+} from '../Helpers/Domain/sector_selectors';
+import { hasAnyScan } from '../Helpers/Domain/scan_visibility';
+import { hpoiVisible } from '../Projector/culture_projection';
+import { isVisibleToPlayerDisplay } from './visibility_presentation';
 import { DetailBar } from './features/object-inspector/DetailBar';
+import { projectSector } from '../Projector/sector_projection';
 import { HexMap } from './features/sector-map/HexMap';
 import { SymbolicSystem } from './features/system-viewer/SymbolicSystem';
 
 afterEach(cleanup);
 
+function isVisibleToPlayer(sector: Sector, id: string): boolean {
+  const found = findObject(sector, id);
+  if (found?.kind === 'HabitablePointOfInterest')
+    return hpoiVisible(sector, found.object, 'player');
+  const visibility = objectDetails(sector, id)?.Visibility;
+  return visibility ? hasAnyScan(visibility) : false;
+}
+
+function Inspector({
+  sector,
+  selectedId,
+  preview,
+}: {
+  sector: Sector;
+  selectedId: string;
+  preview: 'gm' | 'player';
+  locked: boolean;
+  draft: null;
+  setDraft: () => void;
+}) {
+  const result = projectSector(sector, { preview, assetBaseUrl: '/' });
+  if (!result.ok) throw new Error(`Projection failed at ${result.path}`);
+  return (
+    <DetailBar
+      display={result.value}
+      selectedId={selectedId}
+      preview={preview}
+      locked={true}
+      draft={null}
+      setDraft={() => {}}
+    />
+  );
+}
+
+function ProjectedHexMap({
+  sector,
+  selected,
+  select,
+  preview,
+  showPolityOverlay,
+}: {
+  sector: Sector;
+  selected: string | null;
+  select: (id: string | null) => void;
+  preview: 'gm' | 'player';
+  showPolityOverlay?: boolean;
+}) {
+  const result = projectSector(sector, { preview, assetBaseUrl: '/' });
+  if (!result.ok) throw new Error(`Projection failed at ${result.path}`);
+  return (
+    <HexMap
+      display={result.value}
+      selected={selected}
+      select={select}
+      preview={preview}
+      showPolityOverlay={showPolityOverlay}
+    />
+  );
+}
+
+function ProjectedSymbolicSystem({
+  sector,
+  system,
+  preview,
+}: {
+  sector: Sector;
+  system: StarSystem;
+  selected: null;
+  select: () => void;
+  selectRoute: () => void;
+  preview: 'gm' | 'player';
+  defaultOpen: false;
+}) {
+  const result = projectSector(sector, { preview, assetBaseUrl: '/' });
+  if (!result.ok) throw new Error(`Projection failed at ${result.path}`);
+  return (
+    <SymbolicSystem
+      systemId={system.Id}
+      display={result.value}
+      selected={null}
+      select={() => {}}
+      selectRoute={() => {}}
+      preview={preview}
+      defaultOpen={false}
+    />
+  );
+}
+
 const renderDetail = (sector: Sector, selectedId: string) =>
   render(
-    <DetailBar
+    <Inspector
       sector={sector}
       selectedId={selectedId}
       preview="player"
@@ -41,6 +138,16 @@ function visiblePlanet(sector: Sector): Planet {
 }
 
 describe('scan visibility presentation', () => {
+  it('keeps projected player-preview visibility aligned with the existing presentation rule', () => {
+    const sector = generate('VISIBILITY-PROJECTION-PARITY');
+    const result = projectSector(sector, { preview: 'player', assetBaseUrl: '/' });
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    for (const { object } of objectEntries(sector))
+      expect(isVisibleToPlayerDisplay(result.value, object.Id)).toBe(
+        isVisibleToPlayer(sector, object.Id),
+      );
+  });
   it('lists the union of object claimants in system Politics 1 with their flags', () => {
     const sector = generate('VISIBILITY-SYSTEM-POLITICS');
     const system = sector.Systems[0]!;
@@ -85,7 +192,7 @@ describe('scan visibility presentation', () => {
 
     planet.Visibility.PoliticsScan = true;
     view.rerender(
-      <DetailBar
+      <Inspector
         sector={sector}
         selectedId={planet.Id}
         preview="player"
@@ -152,7 +259,7 @@ describe('scan visibility presentation', () => {
 
     object.ClaimedByPolityIds = sector.Polities.slice(0, 2).map((polity) => polity.Id);
     view.rerender(
-      <DetailBar
+      <Inspector
         sector={sector}
         selectedId={object.Id}
         preview="player"
@@ -167,7 +274,7 @@ describe('scan visibility presentation', () => {
 
     object.ClaimedByPolityIds = [];
     view.rerender(
-      <DetailBar
+      <Inspector
         sector={sector}
         selectedId={object.Id}
         preview="player"
@@ -202,7 +309,7 @@ describe('scan visibility presentation', () => {
 
     route.Visibility.PoliticsScan = true;
     view.rerender(
-      <DetailBar
+      <Inspector
         sector={sector}
         selectedId={route.Id}
         preview="player"
@@ -221,7 +328,7 @@ describe('scan visibility presentation', () => {
     const planet = visiblePlanet(sector);
     const system = sector.Systems.find((candidate) => candidate.Objects.includes(planet))!;
     const view = render(
-      <SymbolicSystem
+      <ProjectedSymbolicSystem
         system={system}
         sector={sector}
         selected={null}
@@ -237,7 +344,7 @@ describe('scan visibility presentation', () => {
 
     planet.Visibility.PoliticsScan = true;
     view.rerender(
-      <SymbolicSystem
+      <ProjectedSymbolicSystem
         system={system}
         sector={sector}
         selected={null}
@@ -262,12 +369,14 @@ describe('scan visibility presentation', () => {
       DeepPoliticsScan: false,
     };
     const view = render(
-      <HexMap sector={sector} selected={null} select={() => {}} preview="player" />,
+      <ProjectedHexMap sector={sector} selected={null} select={() => {}} preview="player" />,
     );
     expect(view.getByRole('button', { name: 'System PROC SYSTEM' })).toBeTruthy();
 
     system.Visibility.PoliticsScan = true;
-    view.rerender(<HexMap sector={sector} selected={null} select={() => {}} preview="player" />);
+    view.rerender(
+      <ProjectedHexMap sector={sector} selected={null} select={() => {}} preview="player" />,
+    );
     expect(view.getByRole('button', { name: 'System NICE SYSTEM' })).toBeTruthy();
   });
 
@@ -284,7 +393,7 @@ describe('scan visibility presentation', () => {
     system.Objects[0]!.ClaimedByPolityIds = [expected[1]!.Id, expected[0]!.Id];
 
     const view = render(
-      <HexMap
+      <ProjectedHexMap
         sector={sector}
         selected={null}
         select={() => {}}
@@ -304,7 +413,7 @@ describe('scan visibility presentation', () => {
 
     system.Visibility.PoliticsScan = false;
     view.rerender(
-      <HexMap
+      <ProjectedHexMap
         sector={sector}
         selected={null}
         select={() => {}}
