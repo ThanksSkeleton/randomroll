@@ -11,11 +11,11 @@
       },
       "Polar": {
         "orbitalOrder": 4,
-        "hab": 1
+        "hab": 2
       },
       "Subarctic": {
         "orbitalOrder": 5,
-        "hab": 2
+        "hab": 3
       },
       "Boreal": {
         "orbitalOrder": 6,
@@ -47,11 +47,11 @@
       },
       "Equatorial": {
         "orbitalOrder": 13,
-        "hab": 2
+        "hab": 3
       },
       "Scorching": {
         "orbitalOrder": 14,
-        "hab": 1
+        "hab": 2
       },
       "Infernal": {
         "orbitalOrder": 15,
@@ -87,7 +87,7 @@
       },
       "2": {
         "name": "Microbial",
-        "hab": 2,
+        "hab": 3,
         "habRequired": 1
       },
       "3": {
@@ -182,23 +182,23 @@
     },
     "bulk_composition": {
       "Sulfur": {
-        "hab": 1,
+        "hab": 2,
         "color": "Yellow"
       },
       "Carbon": {
-        "hab": 1,
+        "hab": 2,
         "color": "Black"
       },
       "Magnesium": {
-        "hab": 1,
+        "hab": 2,
         "color": "Dark Green"
       },
       "Calcium-Aluminum": {
-        "hab": 1,
+        "hab": 2,
         "color": "Gray"
       },
       "Iron": {
-        "hab": 1,
+        "hab": 3,
         "color": "Red"
       },
       "Water": {
@@ -220,13 +220,13 @@
     "gas_giant_moon": {},
     "size": {
       "Luna": {
-        "hab": 1
+        "hab": 2
       },
       "Mars": {
-        "hab": 2
+        "hab": 3
       },
       "Super-Earth": {
-        "hab": 2
+        "hab": 3
       },
       "Earth": {
         "hab": 3
