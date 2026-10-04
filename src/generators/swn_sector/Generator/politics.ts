@@ -11,6 +11,7 @@ import { choose, deterministicId, randomFor } from './generation_random';
 
 import { POLITY_FLAG_COLORS } from '../Shared/polity_flag_colors';
 import { capabilityFor, type Capability } from '../Shared/politics_interpretation';
+import { hexDistance } from '../Shared/hex_distance';
 
 export interface PoliticsResult {
   Polities: Polity[];
@@ -78,15 +79,21 @@ export function resolvePolitics(
   const distancesByPolityId = new Map(
     homeworlds.map(({ polity, system }) => [polity.Id, routeDistances(system.Id, adjacency)]),
   );
+  const homeSystemByPolityId = new Map(homeworlds.map(({ polity, system }) => [polity.Id, system]));
   const paintedByObjectId = new Map<Guid, ResolvedPolity[]>();
   for (const system of systems)
     for (const object of system.Objects) {
       const painted = homeworlds
         .filter(({ world, polity }) => {
           if (world.Id === object.Id) return true;
-          if (polity.Projection < 0) return false;
+          if (polity.Projection < 0 || polity.ProjectionHexDistance < 0) return false;
           const distance = distancesByPolityId.get(polity.Id)?.get(system.Id);
-          return distance !== undefined && distance <= polity.Projection;
+          const homeSystem = homeSystemByPolityId.get(polity.Id)!;
+          return (
+            distance !== undefined &&
+            distance <= polity.Projection &&
+            hexDistance(homeSystem.HexLocation, system.HexLocation) <= polity.ProjectionHexDistance
+          );
         })
         .map(({ polity }) => polity);
       paintedByObjectId.set(object.Id, painted);

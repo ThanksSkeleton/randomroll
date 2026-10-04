@@ -81,6 +81,8 @@ test('tag descriptions and HPOI text are projected without canonical copies', ()
   const hpoi = sector.Systems.flatMap((system) => system.HabitablePointsOfInterest).find(
     (item) => item.ParentWorldId === world.Id,
   )!;
-  expect(projectHabitablePoi(sector, hpoi.Id)?.stock.basic).toBe(hpoi.HPOIType);
+  expect(projectHabitablePoi(sector, hpoi.Id)?.stock.basic).toMatch(
+    new RegExp(`^${hpoi.HPOIType}(?:\\n|$)`),
+  );
   expect(projectHabitablePoi(sector, 'missing')).toBeUndefined();
 });

@@ -6,9 +6,9 @@ import { projectPolity } from '../Projector/politics_projection';
 import type { WorldTag } from '../BaseDTO/merged_schema';
 
 const EXPECTED: Record<string, string> = {
-  'sector-one-seed': 'ba5b9de654d7848c3710342cc4e193b7dbef5dff5d394b1f8da31b973fad1795',
-  'sector-two-seed': '1a9b7febc4887b360e1c1cda0062c9bf35f261f9fe1265862f04bab606dfae47',
-  'part-two-regression': '7e39b96ee024105e821bd357789b59ba141f74f6bbc1293ac7f31a4317353116',
+  'sector-one-seed': 'f18435b62c1b3729b45a85e8710dbfbb5ac86108f5ef57f58a729d72cf0b865f',
+  'sector-two-seed': 'c427d03b6cd66f94facdc1502911510a23bdd3266fa13e34b894f4586467af34',
+  'part-two-regression': 'b01bf56042af4a4bce03d0087ecc4ca151d56ee1d507ff443b3583219c422983',
 };
 
 test('fixed seed canonical output stays deterministic through portrait projection', () => {

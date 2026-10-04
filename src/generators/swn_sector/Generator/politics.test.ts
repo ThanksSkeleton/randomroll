@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type {
   OtherCelestialObject,
+  HexLocation,
   Planet,
   Population,
   Route,
@@ -70,10 +71,14 @@ function other(id: string, type: OtherCelestialObject['ObjectType']): OtherCeles
   };
 }
 
-function system(id: string, objects: StarSystem['Objects']): StarSystem {
+function system(
+  id: string,
+  objects: StarSystem['Objects'],
+  HexLocation: HexLocation = { Column: 1, Row: 1 },
+): StarSystem {
   return {
     ...entity(id),
-    HexLocation: { Column: 1, Row: 1 },
+    HexLocation,
     Star: { ...entity(`${id}-star`), StarType: 'G-type' },
     Objects: objects,
     PointsOfInterest: [],
@@ -115,13 +120,7 @@ function claims(result: ReturnType<typeof resolvePolitics>, objectId: string): s
 
 describe('political capability matrix', () => {
   it('maps every canonical technology and population combination', () => {
-    const populations: Population[] = [
-      1,
-      2,
-      3,
-      4,
-      5,
-    ];
+    const populations: Population[] = [1, 2, 3, 4, 5];
     const expected: Record<TechLevel, Array<[number, number, number]>> = {
       0: populations.map(() => [0, 0, -1]),
       1: populations.map(() => [0, 0, -1]),
@@ -165,12 +164,42 @@ describe('political capability matrix', () => {
           Attack,
           Defense,
           Projection,
+          ProjectionHexDistance: Projection,
         }),
       );
   });
 });
 
 describe('simultaneous political resolution', () => {
+  it('requires both configured route-hop and hex-distance projection reach', () => {
+    const alpha = planet('alpha', 'Alpha', {
+      TechLevel: 4,
+      Population: 2,
+    });
+    const nearbyStation = other('nearby-station', 'IndependentStation');
+    const distantWorld = planet('distant-world', 'Distant', {
+      TechLevel: 1,
+      Population: 1,
+    });
+    const systems = [
+      system('alpha-system', [alpha], { Column: 1, Row: 1 }),
+      system('nearby-system', [nearbyStation], { Column: 2, Row: 1 }),
+      system('distant-system', [distantWorld], { Column: 3, Row: 1 }),
+    ];
+    const { routes, portals } = connect([
+      ['alpha-system', 'nearby-system'],
+      ['alpha-system', 'distant-system'],
+    ]);
+
+    const result = resolvePolitics('dual-projection-range', systems, routes, portals);
+
+    expect(claims(result, nearbyStation.Id)).toEqual(['Alpha']);
+    expect(claims(result, distantWorld.Id)).toEqual(['Distant']);
+    expect(result.ConquestEvents.some((event) => event.TargetWorldId === distantWorld.Id)).toBe(
+      false,
+    );
+  });
+
   it('assigns unique body colors when polity count exceeds the old palette', () => {
     const systems = Array.from({ length: 30 }, (_, index) => {
       const suffix = String(index).padStart(2, '0');
