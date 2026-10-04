@@ -102,6 +102,13 @@ export const BULK_COMPOSITION_TABLE = adaptRows(
   attributeTable('bulk_composition'),
   (result) => result as Planet['BulkComposition'],
 );
+export const SURFACE_WATER_PRESENT_TABLE = adaptRows(
+  attributeTable('surface_water_present'),
+  (result) => result === 'Yes',
+);
+export const GAS_GIANT_MOON_TABLE = adaptRows(attributeTable('gas_giant_moon'), (result) =>
+  result === 'Yes',
+);
 export const SIZE_TABLE = adaptRows(attributeTable('size'), (result) => result as Planet['Size']);
 export const ALIEN_DEPENDENT_WORLD_TAGS = new Set(['Primitive Aliens', 'Xenophiles']);
 

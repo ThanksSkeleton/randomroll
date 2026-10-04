@@ -19,7 +19,7 @@ import {
   rollDie,
   shuffled,
 } from './generation_random';
-import { POI_DETAIL_COLUMNS_BY_TYPE, POI_TABLE } from './generation_rules';
+import { GAS_GIANT_MOON_TABLE, POI_DETAIL_COLUMNS_BY_TYPE, POI_TABLE } from './generation_rules';
 import { isPoiHostCompatible } from '../Shared/poi_host_interpretation';
 import {
   directOrbitAuBand,
@@ -160,7 +160,6 @@ export const EXTRA_OBJECT_TYPE_WEIGHTS: readonly { Value: ExtraObjectCategory; W
     { Value: 'KuiperBelt', Weight: 10 },
   ];
 const ONE_INHABITED_WORLD_MAX_ROLL = 85;
-const GAS_GIANT_MOON_MAX_ROLL = 10;
 export const MAX_SYSTEM_GENERATION_RETRIES = 5;
 
 const SYSTEM_NAME_ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -313,8 +312,11 @@ function generateSystemOnce(options: GenerateSystemOptions): StarSystem {
   const count = inhabitedCount(options.seed, options.entityPath);
   for (let index = 0; index < count; index += 1) {
     const worldPath = `${options.entityPath}:inhabited:${String(index + 1).padStart(2, '0')}`;
-    const isMoon =
-      rollDie(randomFor(options.seed, `${worldPath}:moon`), 100) <= GAS_GIANT_MOON_MAX_ROLL;
+    const isMoon = chooseWeighted(
+      randomFor(options.seed, `${worldPath}:moon`),
+      GAS_GIANT_MOON_TABLE,
+      'gas giant moon',
+    ).Value;
     if (!isMoon) {
       objects.push(
         generateInhabitedPlanet({

@@ -5,6 +5,7 @@ import {
   BULK_COMPOSITION_TABLE,
   NATIVE_BIOSPHERE_TABLE,
   POPULATION_TABLE,
+  SURFACE_WATER_PRESENT_TABLE,
   TECH_LEVEL_TABLE,
   TEMPERATURE_TABLE,
   TERRAN_BIOSPHERE_TABLE,
@@ -50,8 +51,6 @@ export type InhabitedPlanetOptions = {
   allowedTemperatures?: readonly Temperature[];
 };
 
-/** A d100-style roll succeeds for surface water on 75% of unconstrained worlds. */
-const SURFACE_WATER_PRESENT_MINIMUM_ROLL = 0.25;
 const MAX_PROFILE_ROLLS = 100;
 const TOMB_WORLD_MAX_ENVIRONMENTAL_HAB = 1;
 const TOMB_WORLD_MIN_TECH_LEVEL = 4;
@@ -364,7 +363,11 @@ export function generateInhabitedPlanet(options: InhabitedPlanetOptions): Planet
   const forcedWater = waterState(profile, tags);
   const surfaceWater =
     forcedWater ??
-    randomFor(options.seed, `${profilePath}:water`)() >= SURFACE_WATER_PRESENT_MINIMUM_ROLL;
+    chooseWeighted(
+      randomFor(options.seed, `${profilePath}:water`),
+      SURFACE_WATER_PRESENT_TABLE,
+      'surface water presence',
+    ).Value;
   const name = options.name ?? `Inhabited world ${options.entityPath}`;
   return {
     Id: deterministicId(options.seed, options.entityPath),
