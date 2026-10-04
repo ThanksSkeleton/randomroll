@@ -143,22 +143,24 @@ describe('scan visibility presentation', () => {
     const simple = [...(basic?.querySelectorAll('.basic-scan-simple') ?? [])].map(
       (element) => element.textContent,
     );
-    expect(simple).toHaveLength(2);
+    expect(simple.every((line) => line && !line.includes('Atmosphere'))).toBe(true);
     expect(simple.every((line) => line && !line.includes('Atmosphere'))).toBe(true);
 
-    const drawer = basic?.querySelector('.basic-scan-drawer') as HTMLDetailsElement;
+    const drawer = [...(basic?.querySelectorAll('.basic-scan-drawer') ?? [])].find(
+      (element) => element.querySelector('summary')?.textContent === 'Atmosphere: Breathable',
+    ) as HTMLDetailsElement;
     expect(drawer.open).toBe(false);
-    expect(drawer.querySelector('summary')?.textContent).toBe('Type - Breathable');
+    expect(drawer.querySelector('summary')?.textContent).toBe('Atmosphere: Breathable');
     expect(
       [...drawer.querySelectorAll('.basic-scan-drawer-content > div')].map(
         (element) => element.textContent,
       ),
-    ).toEqual(['N₂ 79%', 'O₂ 20%']);
+    ).toEqual(['N₂: 79%', 'O₂: 20%']);
     fireEvent.click(drawer.querySelector('summary')!);
     expect(drawer.open).toBe(true);
   });
 
-  it('shows Vacuum as a simple Basic Scan line without a drawer', () => {
+  it('shows Vacuum as an atmosphere drawer', () => {
     const sector = generate('VISIBILITY-VACUUM-SIMPLE');
     const planet = visiblePlanet(sector);
     planet.Atmosphere = { Category: 'Vacuum' };
@@ -166,11 +168,29 @@ describe('scan visibility presentation', () => {
     const basic = view.container.querySelector('.scan-basicscan');
 
     expect(
-      [...(basic?.querySelectorAll('.basic-scan-simple') ?? [])].map(
+      [...(basic?.querySelectorAll('.basic-scan-drawer') ?? [])].some(
+        (element) => element.querySelector('summary')?.textContent === 'Atmosphere: Vacuum',
+      ),
+    ).toBe(true);
+  });
+
+  it('shows gravity with Earth mass and size class in a Basic Scan drawer', () => {
+    const sector = generate('VISIBILITY-SIZE-DRAWER');
+    const planet = visiblePlanet(sector);
+    planet.Size = 'Earth';
+    const view = renderDetail(sector, planet.Id);
+    const basic = view.container.querySelector('.scan-basicscan');
+    const drawer = [...(basic?.querySelectorAll('.basic-scan-drawer') ?? [])].find(
+      (element) => element.querySelector('summary')?.textContent === 'Planet: 9.81 m/s²',
+    ) as HTMLDetailsElement;
+
+    expect(drawer.open).toBe(false);
+    expect(
+      [...drawer.querySelectorAll('.basic-scan-drawer-content > div')].map(
         (element) => element.textContent,
       ),
-    ).toContain('Type - Vacuum');
-    expect(basic?.querySelector('.basic-scan-drawer')).toBeNull();
+    ).toEqual(['1 M⊕', 'Earth-Class', expect.stringMatching(/^Composition: /)]);
+    expect(basic?.querySelector('.basic-scan-simple')).toBeNull();
   });
 
   it('keeps projected player-preview visibility aligned with the existing presentation rule', () => {
@@ -245,19 +265,24 @@ describe('scan visibility presentation', () => {
     );
   });
 
-  it('places planet facts in Detailed and Politics stock while Deep stock is empty', () => {
+  it('places bioscan facts in Basic and Politics stock while Deep stock is empty', () => {
     const sector = generate('VISIBILITY-STOCK');
     const planet = visiblePlanet(sector);
     planet.Visibility.PoliticsScan = true;
     planet.Visibility.DeepPoliticsScan = true;
     const view = renderDetail(sector, planet.Id);
 
+    const basic = view.container.querySelector('.scan-basicscan');
     const detailed = view.container.querySelector('.scan-detailedscan .detail-stock-content');
     const politics = view.container.querySelector('.scan-politicsscan .detail-stock-content');
     const deep = view.container.querySelector('.scan-deeppoliticsscan .detail-stock-content');
-    expect(detailed?.textContent).toContain('Life, Native:');
-    expect(detailed?.textContent).toContain('Life, Terran:');
-    expect(detailed?.textContent).toContain('Population:');
+    expect(basic?.textContent).toContain('Bioscan: Life Detected');
+    expect(basic?.textContent).toContain(
+      `Terran: ${planet.InhabitedInfo !== false && planet.InhabitedInfo.TerranBiosphere}`,
+    );
+    expect(basic?.textContent).toContain(`Native: ${planet.NativeBiosphere}`);
+    expect(basic?.textContent).toContain('Human Population:');
+    expect(detailed?.textContent).toBe('-');
     expect(detailed?.textContent).not.toContain('Tech Level:');
     expect(politics?.textContent).toContain('Tech Level:');
     expect(deep?.textContent).toBe('-');

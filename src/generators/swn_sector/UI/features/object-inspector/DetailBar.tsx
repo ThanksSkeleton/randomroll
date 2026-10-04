@@ -41,24 +41,25 @@ function StockField({ content }: { content: string }) {
 function BasicScanField({ content, entityId }: { content: BasicScanContent; entityId: string }) {
   return (
     <div className="basic-scan-elements">
-      {content.simple.map((line, index) => (
-        <div className="basic-scan-element basic-scan-simple" key={`${entityId}:simple:${index}`}>
-          {line}
-        </div>
-      ))}
-      {content.complex.map((element, index) => (
-        <details
-          className="basic-scan-element basic-scan-drawer"
-          key={`${entityId}:complex:${index}`}
-        >
-          <summary>{element.summary}</summary>
-          <div className="basic-scan-drawer-content">
-            {element.lines.map((line, lineIndex) => (
-              <div key={lineIndex}>{line}</div>
-            ))}
+      {content.entries.map((entry, index) =>
+        entry.type === 'simple' ? (
+          <div className="basic-scan-element basic-scan-simple" key={`${entityId}:simple:${index}`}>
+            {entry.text}
           </div>
-        </details>
-      ))}
+        ) : (
+          <details
+            className="basic-scan-element basic-scan-drawer"
+            key={`${entityId}:complex:${index}`}
+          >
+            <summary>{entry.summary}</summary>
+            <div className="basic-scan-drawer-content">
+              {entry.lines.map((line, lineIndex) => (
+                <div key={lineIndex}>{line}</div>
+              ))}
+            </div>
+          </details>
+        ),
+      )}
     </div>
   );
 }
@@ -256,8 +257,9 @@ function DetailBox({
                   <BasicScanField
                     content={
                       info.inspectorBasicScan ?? {
-                        simple: stock.basic.split('\n'),
-                        complex: [],
+                        entries: stock.basic
+                          .split('\n')
+                          .map((text) => ({ type: 'simple' as const, text })),
                       }
                     }
                     entityId={info.id}

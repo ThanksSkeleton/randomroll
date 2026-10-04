@@ -1,24 +1,61 @@
 {
   "size": {
     "Luna": {
-      "rank": 1
+      "rank": 1,
+      "massEarth": 0.0123,
+      "gravityMps2": 1.62
     },
     "Mars": {
-      "rank": 2
+      "rank": 2,
+      "massEarth": 0.107,
+      "gravityMps2": 3.71
     },
     "Earth": {
-      "rank": 3
+      "rank": 3,
+      "massEarth": 1,
+      "gravityMps2": 9.81
     },
     "Super-Earth": {
-      "rank": 4
+      "rank": 4,
+      "massEarth": 5,
+      "gravityMps2": 20.7
     },
     "Neptune": {
       "rank": 5,
+      "massEarth": 17.15,
+      "gravityMps2": null,
       "gasComposition": "Neptunian Gas"
     },
     "Jupiter": {
       "rank": 6,
+      "massEarth": 317.8,
+      "gravityMps2": null,
       "gasComposition": "Jovian Gas"
     }
+  },
+  "temperature": {
+    "Cryogenic": { "label": "Cryogenic", "celsius": -130, "fahrenheit": -202 },
+    "Deepfrozen": { "label": "Deepfrozen", "celsius": -90, "fahrenheit": -130 },
+    "Polar": { "label": "Polar", "celsius": -60, "fahrenheit": -76 },
+    "Subarctic": { "label": "Subarctic", "celsius": -40, "fahrenheit": -40 },
+    "Boreal": { "label": "Boreal", "celsius": 5, "fahrenheit": 41 },
+    "Alpine": { "label": "Alpine", "celsius": 10, "fahrenheit": 50 },
+    "Temperate (chilly)": {
+      "label": "Temperate (chilly)",
+      "celsius": 15,
+      "fahrenheit": 59
+    },
+    "Temperate": { "label": "Temperate", "celsius": 20, "fahrenheit": 68 },
+    "Temperate (warm)": {
+      "label": "Temperate (warm)",
+      "celsius": 25,
+      "fahrenheit": 77
+    },
+    "Mediterranean": { "label": "Mediterranean", "celsius": 30, "fahrenheit": 86 },
+    "Subtropical": { "label": "Subtropical", "celsius": 35, "fahrenheit": 95 },
+    "Equatorial": { "label": "Equatorial", "celsius": 45, "fahrenheit": 113 },
+    "Scorching": { "label": "Scorching", "celsius": 54, "fahrenheit": 129 },
+    "Infernal": { "label": "Infernal", "celsius": 64, "fahrenheit": 147 },
+    "Furance": { "label": "Furnace", "celsius": 200, "fahrenheit": 392 }
   }
 }

@@ -4,6 +4,18 @@ import { projectPlanet } from './planet_projection';
 import { STAR_HABITABILITY } from '../Shared/planet_interpretation';
 import { STAR_TABLE } from '../Generator/generation_rules';
 import { directOrbitAuBand } from '../Shared/spatial_interpretation';
+import { planetSizeScan } from './planet_presentation_interpretation';
+
+test.each([
+  ['Luna', 'Planet: 1.62 m/s²', '0.0123 M⊕'],
+  ['Mars', 'Planet: 3.71 m/s²', '0.107 M⊕'],
+  ['Earth', 'Planet: 9.81 m/s²', '1 M⊕'],
+  ['Super-Earth', 'Planet: 20.7 m/s²', '5 M⊕'],
+  ['Neptune', 'Planet: No Surface', '17.15 M⊕'],
+  ['Jupiter', 'Planet: No Surface', '317.8 M⊕'],
+] as const)('size %s uses the documented physical values', (size, summary, mass) => {
+  expect(planetSizeScan(size)).toEqual({ summary, lines: [mass, `${size}-Class`] });
+});
 
 test('star interpretation agrees with the generation source', () => {
   for (const row of STAR_TABLE) expect(STAR_HABITABILITY[row.Value]).toBe(row.Hab);
@@ -21,7 +33,12 @@ test('projecting a planet is repeatable and leaves the sector unchanged', () => 
   expect(first).toEqual(projectPlanet(sector, planet.Id, { preview: 'gm' }));
   expect(sector).toEqual(original);
   expect(first?.habitabilityRating).toBeGreaterThanOrEqual(0);
-  expect(first?.stock.detailed).toContain('Population:');
+  expect(first?.stock.detailed).toBe('-');
+  expect(
+    first?.basicScan.entries.some(
+      (entry) => entry.type === 'complex' && entry.summary === 'Bioscan: Life Detected',
+    ),
+  ).toBe(true);
   expect(first?.stock.politics).toContain('Tech Level:');
 });
 

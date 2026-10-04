@@ -35,8 +35,9 @@ export type PlanetStockText = {
 };
 
 export type BasicScanContent = {
-  simple: string[];
-  complex: Array<{ summary: string; lines: string[] }>;
+  entries: Array<
+    { type: 'simple'; text: string } | { type: 'complex'; summary: string; lines: string[] }
+  >;
 };
 
 export type PlanetDisplayDTO = {
