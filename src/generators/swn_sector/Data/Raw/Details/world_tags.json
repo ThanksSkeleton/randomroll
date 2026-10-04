@@ -1,6 +1,9 @@
 {
   "tags": {
     "Abandoned Colony": {
+      "constraints": {
+        "maxPopulationRank": 1
+      },
       "prompts": {
         "enemies": [
           "Crazed survivors",

@@ -52,11 +52,18 @@ export type InhabitedPlanetOptions = {
 };
 
 const MAX_PROFILE_ROLLS = 100;
-const TOMB_WORLD_MAX_ENVIRONMENTAL_HAB = 1;
 const TOMB_WORLD_MIN_TECH_LEVEL = 4;
 
 function tagsRequire(tags: readonly WorldTag[], tag: WorldTag): boolean {
   return tags.includes(tag);
+}
+
+function maximumPopulationRankForTags(tags: readonly WorldTag[]): number {
+  return tags.reduce(
+    (maximum, tag) =>
+      Math.min(maximum, WORLD_TAG_CONSTRAINTS.get(tag)?.maxPopulationRank ?? 5),
+    5,
+  );
 }
 
 function chooseWithinHab<T extends string | number>(
@@ -120,21 +127,6 @@ function profileInvalidReason(
       profile.Atmosphere.Category === 'Vacuum')
   )
     return 'the rolled temperature/atmosphere requires dry conditions while the tags or composition require water';
-  if (
-    (tagsRequire(tags, 'Tomb World') || tagsRequire(tags, 'Abandoned Colony')) &&
-    profile.Population !== 1
-  )
-    return 'Tomb World or Abandoned Colony requires fewer than 500 inhabitants';
-  if (tagsRequire(tags, 'Outpost World') && profile.Population === 5)
-    return 'Outpost World cannot have billions of inhabitants';
-  if (
-    (tagsRequire(tags, 'Heavy Industry') ||
-      tagsRequire(tags, 'Major Spaceyard') ||
-      tagsRequire(tags, 'Post-Scarcity')) &&
-    profile.TechLevel < 3
-  )
-    return 'industry/spaceyard/post-scarcity requires technology level 3 or higher';
-
   for (const tag of tags) {
     const constraint = WORLD_TAG_CONSTRAINTS.get(tag);
     if (constraint === undefined) continue;
@@ -188,18 +180,11 @@ function tagPairHasIntersection(
   )
     return false;
   let minimumPopulationRank = 1;
-  let maximumPopulationRank = 5;
   for (const tag of tags) {
     const constraint = WORLD_TAG_CONSTRAINTS.get(tag);
     minimumPopulationRank = Math.max(minimumPopulationRank, constraint?.minPopulationRank ?? 1);
-    maximumPopulationRank = Math.min(maximumPopulationRank, constraint?.maxPopulationRank ?? 5);
   }
-  if (
-    tagsRequire(tags, 'Tomb World') ||
-    tagsRequire(tags, 'Abandoned Colony') ||
-    tagsRequire(tags, 'Outpost World')
-  )
-    maximumPopulationRank = Math.min(maximumPopulationRank, 1);
+  let maximumPopulationRank = maximumPopulationRankForTags(tags);
   if (starHabitability !== undefined) {
     const maximumSupportedPopulationRank = POPULATION_TABLE.filter(
       (row) => POPULATION_HAB_REQUIRED[row.Value] <= starHabitability,
@@ -207,6 +192,14 @@ function tagPairHasIntersection(
     maximumPopulationRank = Math.min(maximumPopulationRank, maximumSupportedPopulationRank);
   }
   return minimumPopulationRank <= maximumPopulationRank;
+}
+
+function maximumEnvironmentalHabForTags(tags: readonly WorldTag[]): number {
+  return tags.reduce(
+    (maximum, tag) =>
+      Math.min(maximum, WORLD_TAG_CONSTRAINTS.get(tag)?.maxEnvironmentalHab ?? Infinity),
+    Infinity,
+  );
 }
 
 function selectTags(
@@ -295,10 +288,11 @@ export function generateInhabitedPlanet(options: InhabitedPlanetOptions): Planet
       TERRAN_BIOSPHERE_HAB[TerranBiosphere],
       SIZE_HAB[Size],
     );
+    const maximumEnvironmentalHab = maximumEnvironmentalHabForTags(tags);
     const compositionRows =
-      isTombWorld && environmentalHabBeforeComposition > TOMB_WORLD_MAX_ENVIRONMENTAL_HAB
+      isTombWorld && environmentalHabBeforeComposition > maximumEnvironmentalHab
         ? BULK_COMPOSITION_TABLE.filter(
-            (row) => BULK_COMPOSITION_HAB[row.Value] <= TOMB_WORLD_MAX_ENVIRONMENTAL_HAB,
+            (row) => BULK_COMPOSITION_HAB[row.Value] <= maximumEnvironmentalHab,
           )
         : BULK_COMPOSITION_TABLE;
     const BulkComposition = chooseWeighted(
@@ -308,7 +302,9 @@ export function generateInhabitedPlanet(options: InhabitedPlanetOptions): Planet
     ).Value;
     currentHab = Math.min(currentHab, BULK_COMPOSITION_HAB[BulkComposition]);
     const populationRows = isTombWorld
-      ? POPULATION_TABLE.filter((row) => row.Value === 1)
+      ? POPULATION_TABLE.filter(
+          (row) => row.Value <= maximumPopulationRankForTags(tags),
+        )
       : POPULATION_TABLE;
     const technologyRows = isTombWorld
       ? TECH_LEVEL_TABLE.filter((row) => row.Value >= TOMB_WORLD_MIN_TECH_LEVEL)

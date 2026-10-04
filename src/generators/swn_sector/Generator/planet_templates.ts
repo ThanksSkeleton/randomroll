@@ -8,6 +8,7 @@ import { choose, deterministicId, randomFor } from './generation_random';
 import { directOrbitTemperatures } from '../Shared/spatial_interpretation';
 import { assignPortraitIndex } from './portrait_selection';
 import { presetAtmosphere } from './generate_atmosphere';
+import { GAS_COMPOSITION_BY_SIZE } from './data_tables';
 
 export type ExtraPlanetTemplate =
   | 'Mercurian'
@@ -39,6 +40,13 @@ type TemplateFacts = Pick<
   Planet,
   'Size' | 'BulkComposition' | 'SurfaceWaterPresent' | 'Atmosphere' | 'NativeBiosphere'
 >;
+
+function gasCompositionForTemplate(size: Planet['Size']): Planet['BulkComposition'] {
+  const composition = GAS_COMPOSITION_BY_SIZE[size];
+  if (composition === undefined)
+    throw new Error(`Missing gas composition for ${size} template`);
+  return composition;
+}
 
 const TEMPLATE_FACTS: Readonly<Record<ExtraPlanetTemplate, TemplateFacts>> = {
   Mercurian: {
@@ -92,14 +100,14 @@ const TEMPLATE_FACTS: Readonly<Record<ExtraPlanetTemplate, TemplateFacts>> = {
   },
   Jovian: {
     Size: 'Jupiter',
-    BulkComposition: 'Jovian Gas',
+    BulkComposition: gasCompositionForTemplate('Jupiter'),
     SurfaceWaterPresent: false,
     Atmosphere: presetAtmosphere('Jovian'),
     NativeBiosphere: 1,
   },
   Neptunian: {
     Size: 'Neptune',
-    BulkComposition: 'Neptunian Gas',
+    BulkComposition: gasCompositionForTemplate('Neptune'),
     SurfaceWaterPresent: false,
     Atmosphere: presetAtmosphere('Neptunian'),
     NativeBiosphere: 1,
