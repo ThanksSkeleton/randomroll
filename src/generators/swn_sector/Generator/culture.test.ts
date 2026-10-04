@@ -76,8 +76,8 @@ test('contested worlds suppress infrastructure and assign one garrison per claim
   completedWorld.Culture!.planetaryDefenses.patrolBoatPresence = 'Escorts / NPC Admirals';
   const [lowPolity, highPolity] = completed.Polities.slice(0, 2);
   for (const [polity, level] of [
-    [lowPolity, 'Medieval technology'],
-    [highPolity, 'Modern postech'],
+    [lowPolity, 1],
+    [highPolity, 4],
   ] as const) {
     const home = completed.Systems.flatMap((system) => system.Objects).find(
       (object): object is Planet => object.Id === polity.HomeworldId && object.Kind === 'Planet',

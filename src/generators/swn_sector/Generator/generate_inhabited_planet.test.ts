@@ -80,11 +80,11 @@ test('constructively enforces tag semantics', () => {
   expect(info).not.toBe(false);
   if (info === false) throw new Error('Expected inhabited information');
   expect(info.Population).toBe('Fewer than 500');
-  expect(info.TechLevel).toMatch(/[Pp]ostech|Pretech/);
+  expect(info.TechLevel).toBeGreaterThanOrEqual(4);
 
   const industrial = world('industry-world', ['Heavy Industry', 'Major Spaceyard']);
   if (industrial.InhabitedInfo === false) throw new Error('Expected inhabited information');
-  expect(industrial.InhabitedInfo.TechLevel).not.toMatch(/Neolithic|Medieval|Early Industrial/);
+  expect(industrial.InhabitedInfo.TechLevel).toBeGreaterThanOrEqual(3);
 });
 
 test('constructively generates the Tomb World and Abandoned Colony regression seed', () => {
@@ -93,7 +93,7 @@ test('constructively generates the Tomb World and Abandoned Colony regression se
 
   expect(planetHabitability(tomb, 3, tomb.Temperature)).toBeLessThanOrEqual(1);
   expect(tomb.InhabitedInfo.Population).toBe('Fewer than 500');
-  expect(tomb.InhabitedInfo.TechLevel).toMatch(/[Pp]ostech|Pretech/);
+  expect(tomb.InhabitedInfo.TechLevel).toBeGreaterThanOrEqual(4);
 });
 
 test('rejects incompatible water requirements before construction', () => {

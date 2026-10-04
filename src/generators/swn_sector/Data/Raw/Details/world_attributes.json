@@ -143,32 +143,39 @@
       }
     },
     "tech_level": {
-      "Neolithic-level technology": {
-        "tl": 0,
+      "0": {
+        "longString": "Neolithic-level technology",
+        "shortString": "Neolithic",
         "habRequired": 3
       },
-      "Medieval technology": {
-        "tl": 1,
+      "1": {
+        "longString": "Medieval technology",
+        "shortString": "Medieval",
         "habRequired": 3
       },
-      "Early Industrial Age tech": {
-        "tl": 2,
+      "2": {
+        "longString": "Early Industrial Age tech",
+        "shortString": "Industrial",
         "habRequired": 3
       },
-      "Tech like that of present-day Earth": {
-        "tl": 3,
+      "3": {
+        "longString": "Tech like that of present-day Earth",
+        "shortString": "21st Century",
         "habRequired": 2
       },
-      "Modern postech": {
-        "tl": 4,
+      "4": {
+        "longString": "Modern postech",
+        "shortString": "Postech: Baseline",
         "habRequired": 0
       },
-      "Postech with specialties": {
-        "tl": 4.1,
+      "4.1": {
+        "longString": "Postech with specialties",
+        "shortString": "Postech: Specialties",
         "habRequired": 0
       },
-      "Pretech with surviving infrastructure": {
-        "tl": 5,
+      "5": {
+        "longString": "Pretech with surviving infrastructure",
+        "shortString": "Pretech",
         "habRequired": 0
       }
     },

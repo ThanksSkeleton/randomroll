@@ -30,16 +30,6 @@ export function planetHabitability(
   );
 }
 
-export const TECH_LEVEL: Readonly<Record<InhabitedInfo['TechLevel'], number>> = {
-  'Neolithic-level technology': 0,
-  'Medieval technology': 1,
-  'Early Industrial Age tech': 2,
-  'Tech like that of present-day Earth': 3,
-  'Modern postech': 4,
-  'Postech with specialties': 4.1,
-  'Pretech with surviving infrastructure': 5,
-};
-
 export const TEMPERATURE_HAB: Readonly<Record<Temperature, number>> = {
   Cryogenic: 0,
   Deepfrozen: 1,

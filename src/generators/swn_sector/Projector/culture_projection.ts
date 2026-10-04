@@ -11,7 +11,7 @@ import type {
   HabitablePoiDisplayDTO,
   PolityDisplayDTO,
 } from '../DisplayDTO/dto';
-import { TECH_LEVEL } from '../Shared/planet_interpretation';
+import { techLevelStrings } from '../Shared/tech_level_interpretation';
 import { projectClaims, projectPolity } from './politics_projection';
 import { projectWorldTag } from './world_tag_projection';
 import { HPOI_MARKER } from '../Data/Projection/poi_presentation';
@@ -53,11 +53,11 @@ export function hpoiProjection(
       !home ||
       home.Kind !== 'Planet' ||
       home.InhabitedInfo === false ||
-      TECH_LEVEL[home.InhabitedInfo.TechLevel] < 4
+      home.InhabitedInfo.TechLevel < 4
     )
       reason = 'Assigned polity below TL 4';
   } else if (world.ClaimedByPolityIds.length > 1) reason = 'Contested world';
-  else if (TECH_LEVEL[world.InhabitedInfo.TechLevel] < 4) reason = 'Original polity below TL 4';
+  else if (world.InhabitedInfo.TechLevel < 4) reason = 'Original polity below TL 4';
   if (!world.Culture) return { absent: reason !== null, reason, fields: [], polityIds };
   const culture = world.Culture;
   let fields: [string, string][];
@@ -253,7 +253,7 @@ export function projectCultureWorld(
     kindLabel: world.Orbit.ParentObjectId ? 'Moon' : 'Planet',
     complete: Boolean(world.Culture),
     startingWorld: sector.StartingWorldId === world.Id,
-    techLevel: world.InhabitedInfo.TechLevel,
+    techLevel: techLevelStrings(world.InhabitedInfo.TechLevel).shortString,
     population: world.InhabitedInfo.Population,
     tags: world.InhabitedInfo.WorldTags.map(projectWorldTag) as CultureWorldDisplayDTO['tags'],
     originalPolity: originalPolity ?? null,

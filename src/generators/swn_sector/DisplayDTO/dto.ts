@@ -55,6 +55,7 @@ export type PlanetDisplayDTO = {
   population: string | null;
   technologyRating: number | null;
   technologyLevel: string | null;
+  technologyLevelShort: string | null;
   technologyColorClass: string | null;
   stock: PlanetStockText;
 };

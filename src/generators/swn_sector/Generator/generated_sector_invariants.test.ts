@@ -64,7 +64,7 @@ function station(id: string, parentObjectId: string | null): OtherCelestialObjec
 
 function sector(objects: Array<Planet | OtherCelestialObject>): Sector {
   return {
-    SchemaVersion: 'merged-v7',
+    SchemaVersion: 'merged-v8',
     OriginalSeed: 'test',
     StartingWorldMode: 'UNRESTRICTED',
     StartingWorldId: null,
@@ -148,7 +148,7 @@ describe('merged-sector independent stations', () => {
       WorldTags: ['Abandoned Colony', 'Alien Ruins'],
       TerranBiosphere: 'None',
       Population: 'Fewer than 500',
-      TechLevel: 'Modern postech',
+      TechLevel: 4,
     };
     terrestrial.Culture = null;
     const input = sector([terrestrial, planet('extra', null, 'Mars'), station('station', null)]);
@@ -207,7 +207,7 @@ describe('merged-sector independent stations', () => {
       WorldTags: ['Tomb World', 'Abandoned Colony'],
       TerranBiosphere: 'None',
       Population: 'Fewer than a million inhabitants',
-      TechLevel: 'Modern postech',
+      TechLevel: 4,
     };
     world.Culture = null;
 
@@ -229,7 +229,7 @@ describe('merged-sector independent stations', () => {
       WorldTags: ['Desert World', 'Alien Ruins'],
       TerranBiosphere: 'None',
       Population: 'Fewer than 500',
-      TechLevel: 'Modern postech',
+      TechLevel: 4,
     };
     world.Culture = null;
 
@@ -250,7 +250,7 @@ describe('merged-sector independent stations', () => {
       WorldTags: ['Alien Ruins', 'Anarchists'],
       TerranBiosphere: 'Significant',
       Population: 'Fewer than 500',
-      TechLevel: 'Modern postech',
+      TechLevel: 4,
     };
     world.Culture = null;
     const input = sector([world, planet('extra', null, 'Mars'), station('station', null)]);

@@ -185,31 +185,31 @@
       "rows": [
         {
           "roll": "1-3",
-          "result": "Neolithic-level technology"
+          "result": 0.0
         },
         {
           "roll": "4-9",
-          "result": "Medieval technology"
+          "result": 1.0
         },
         {
           "roll": "10-28",
-          "result": "Early Industrial Age tech"
+          "result": 2.0
         },
         {
           "roll": "29-47",
-          "result": "Tech like that of present-day Earth"
+          "result": 3.0
         },
         {
           "roll": "48-91",
-          "result": "Modern postech"
+          "result": 4.0
         },
         {
           "roll": "92-97",
-          "result": "Postech with specialties"
+          "result": 4.1
         },
         {
           "roll": "98-100",
-          "result": "Pretech with surviving infrastructure"
+          "result": 5.0
         }
       ]
     },

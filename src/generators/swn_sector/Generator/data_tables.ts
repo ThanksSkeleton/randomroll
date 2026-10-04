@@ -6,7 +6,7 @@ import rawAtmosphereTable from '../Data/Raw/Tables/atmosphere.json';
 
 const attributeTables = rawAttributeTables.tables as Array<{
   id: string;
-  rows: Array<{ roll: string; result: string }>;
+  rows: Array<{ roll: string; result: string | number }>;
 }>;
 const attributeDetails = rawAttributeDetails.tables as Record<
   string,
@@ -17,10 +17,10 @@ function rows(id: string) {
   if (!table) throw new Error(`Missing table ${id}`);
   return table.rows;
 }
-function detail(id: string, value: string): Record<string, unknown> {
-  return attributeDetails[id]?.[value] ?? {};
+function detail(id: string, value: string | number): Record<string, unknown> {
+  return attributeDetails[id]?.[String(value)] ?? {};
 }
-function numberDetail(id: string, value: string, key: string): number {
+function numberDetail(id: string, value: string | number, key: string): number {
   const result = detail(id, value)[key];
   if (typeof result !== 'number') throw new Error(`Missing ${key} detail for ${id}/${value}`);
   return result;

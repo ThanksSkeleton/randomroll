@@ -40,7 +40,7 @@ export interface SelectableEntity {
 }
 
 export interface Sector {
-  SchemaVersion: 'merged-v7';
+  SchemaVersion: 'merged-v8';
   /** Generation provenance; it is not a complete replay specification. */
   OriginalSeed: string;
   /** Starting-world eligibility mode selected when this sector was generated. */
@@ -344,14 +344,7 @@ export type Population =
   | 'Hundreds of millions of inhabitants'
   | 'Billions of inhabitants';
 
-export type TechLevel =
-  | 'Neolithic-level technology'
-  | 'Medieval technology'
-  | 'Early Industrial Age tech'
-  | 'Tech like that of present-day Earth'
-  | 'Modern postech'
-  | 'Postech with specialties'
-  | 'Pretech with surviving infrastructure';
+export type TechLevel = 0 | 1 | 2 | 3 | 4 | 4.1 | 5;
 
 export type Size = 'Luna' | 'Mars' | 'Earth' | 'Super-Earth' | 'Neptune' | 'Jupiter';
 

@@ -27,7 +27,6 @@ import {
 import {
   BULK_COMPOSITION_HAB,
   SIZE_HAB,
-  TECH_LEVEL,
   TEMPERATURE_HAB,
   TERRAN_BIOSPHERE_HAB,
 } from '../Shared/planet_interpretation';
@@ -511,7 +510,7 @@ function validateInhabitedPlanet(
       secondTag === 'Heavy Industry' ||
       secondTag === 'Major Spaceyard' ||
       secondTag === 'Post-Scarcity') &&
-    TECH_LEVEL[inhabited.TechLevel] < 3
+    inhabited.TechLevel < 3
   ) {
     fail('E6', `Industry tag on ${planet.Id} requires non-primitive technology.`);
   }
@@ -562,10 +561,7 @@ function validateInhabitedPlanet(
       populationMax > constraint.maxPopulationPercentile
     )
       fail('2A-19c', `Tag ${tag} requires less population on ${planet.Id}.`);
-    if (
-      constraint.minTechLevel !== undefined &&
-      TECH_LEVEL[inhabited.TechLevel] < constraint.minTechLevel
-    )
+    if (constraint.minTechLevel !== undefined && inhabited.TechLevel < constraint.minTechLevel)
       fail('2A-19d', `Tag ${tag} requires higher technology on ${planet.Id}.`);
   }
 }

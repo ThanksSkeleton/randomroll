@@ -95,7 +95,7 @@ export function generate(
   }
   const shipName = 'Player ship';
   const result: Sector = {
-    SchemaVersion: 'merged-v7',
+    SchemaVersion: 'merged-v8',
     OriginalSeed: seed,
     StartingWorldMode: startingWorldMode,
     SectorName: `Sector ${seed}`,
@@ -140,9 +140,6 @@ function eligibleStartingWorld(planet: Planet, mode: StartingWorldMode): boolean
   if (planet.InhabitedInfo === false) return false;
   if (mode === 'UNRESTRICTED') return true;
   const { TechLevel, Population } = planet.InhabitedInfo;
-  const qualifiesForTl4 =
-    TechLevel === 'Modern postech' ||
-    TechLevel === 'Postech with specialties' ||
-    TechLevel === 'Pretech with surviving infrastructure';
+  const qualifiesForTl4 = TechLevel >= 4;
   return qualifiesForTl4 && (mode === 'TL4_PLUS' || Population !== 'Fewer than 500');
 }

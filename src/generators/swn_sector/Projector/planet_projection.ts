@@ -1,7 +1,7 @@
 import type { PlanetDisplayDTO, PlanetStockText } from '../DisplayDTO/dto';
 import type { Planet, Sector } from '../BaseDTO/merged_schema';
 import { planetColor, planetColorClass } from './planet_presentation';
-import { planetHabitability, STAR_HABITABILITY, TECH_LEVEL } from '../Shared/planet_interpretation';
+import { planetHabitability, STAR_HABITABILITY } from '../Shared/planet_interpretation';
 import {
   isTidallyLocked,
   planetSizeScan,
@@ -13,6 +13,7 @@ import { projectObjectSpatial } from './object_spatial_projection';
 import { projectClaims } from './politics_projection';
 import { projectPoiCount } from './poi_projection';
 import { formatAtmosphere, resolveAtmosphere } from '../Shared/atmosphere_interpretation';
+import { techLevelStrings } from '../Shared/tech_level_interpretation';
 
 const HABITABILITY_COLOR: Readonly<Record<number, string>> = {
   0: '#858b90',
@@ -52,7 +53,8 @@ export function projectPlanet(
   const habitabilityRating = planetHabitability(planet, starHabitability, spatial.temperature);
   const inhabited = planet.InhabitedInfo;
   const populationTier = inhabited === false ? null : POPULATION_TIER[inhabited.Population];
-  const technologyRating = inhabited === false ? null : TECH_LEVEL[inhabited.TechLevel];
+  const technologyRating = inhabited === false ? null : inhabited.TechLevel;
+  const technologyStrings = inhabited === false ? null : techLevelStrings(inhabited.TechLevel);
   const hostName = planet.Orbit.ParentObjectId
     ? visibleName(sector, planet.Orbit.ParentObjectId, context.preview)
     : undefined;
@@ -108,7 +110,7 @@ export function projectPlanet(
       : {
           basic,
           detailed: '-',
-          politics: `Tech Level: ${technologyRating} - ${inhabited.TechLevel}\n${claim}`,
+          politics: `Tech Level: ${technologyRating} - ${technologyStrings!.longString}\n${claim}`,
           deep: planet.Culture
             ? `Cultural Template: ${planet.Culture.culturalTemplate}\nOutsider Opinion: ${planet.Culture.outsiderOpinion}\nLaw Enforcement: ${planet.Culture.lawEnforcement.amount}; ${planet.Culture.lawEnforcement.style}; ${planet.Culture.lawEnforcement.specialLaw}\nBiggest Conflict: ${planet.Culture.biggestConflict.category}; ${planet.Culture.biggestConflict.details}`
             : '-',
@@ -131,7 +133,8 @@ export function projectPlanet(
     populationTier,
     population: inhabited === false ? null : inhabited.Population,
     technologyRating,
-    technologyLevel: inhabited === false ? null : inhabited.TechLevel,
+    technologyLevel: technologyStrings?.longString ?? null,
+    technologyLevelShort: technologyStrings?.shortString ?? null,
     technologyColorClass:
       technologyRating === null
         ? null

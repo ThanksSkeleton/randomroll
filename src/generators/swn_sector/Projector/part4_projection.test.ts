@@ -23,10 +23,7 @@ test('politics and culture projection is deterministic and preserves historical 
   expect(home.Kind).toBe('Planet');
   if (home.Kind !== 'Planet' || home.InhabitedInfo === false) throw new Error('Missing homeworld');
   const oldTech = home.InhabitedInfo.TechLevel;
-  home.InhabitedInfo.TechLevel =
-    oldTech === 'Neolithic-level technology'
-      ? 'Pretech with surviving infrastructure'
-      : 'Neolithic-level technology';
+  home.InhabitedInfo.TechLevel = oldTech === 0 ? 5 : 0;
   expect(projectPolity(sector, polity.Id)?.attack).not.toBe(before.attack);
   expect(sector.ConquestEvents).toEqual(original.ConquestEvents);
   const event = sector.ConquestEvents[0];

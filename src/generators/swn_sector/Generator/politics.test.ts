@@ -123,31 +123,31 @@ describe('political capability matrix', () => {
       'Billions of inhabitants',
     ];
     const expected: Record<TechLevel, Array<[number, number, number]>> = {
-      'Neolithic-level technology': populations.map(() => [0, 0, -1]),
-      'Medieval technology': populations.map(() => [0, 0, -1]),
-      'Early Industrial Age tech': populations.map(() => [0, 0, -1]),
-      'Tech like that of present-day Earth': [
+      0: populations.map(() => [0, 0, -1]),
+      1: populations.map(() => [0, 0, -1]),
+      2: populations.map(() => [0, 0, -1]),
+      3: [
         [0, 0, 0],
         [0, 0, 0],
         [0, 0, 0],
         [1, 1, 0],
         [1, 1, 0],
       ],
-      'Modern postech': [
+      4: [
         [1, 1, 0],
         [2, 2, 1],
         [2, 2, 1],
         [2, 3, 1],
         [2, 3, 1],
       ],
-      'Postech with specialties': [
+      4.1: [
         [1, 1, 0],
         [2, 2, 1],
         [2, 2, 1],
         [2, 3, 1],
         [2, 3, 1],
       ],
-      'Pretech with surviving infrastructure': [
+      5: [
         [2, 2, 1],
         [3, 3, 2],
         [3, 4, 2],
@@ -156,12 +156,12 @@ describe('political capability matrix', () => {
       ],
     };
 
-    for (const [techLevel, rows] of Object.entries(expected) as [
-      TechLevel,
+    for (const [techLevelKey, rows] of Object.entries(expected) as [
+      string,
       Array<[number, number, number]>,
     ][])
       rows.forEach(([Attack, Defense, Projection], index) =>
-        expect(capabilityFor(techLevel, populations[index]!)).toEqual({
+        expect(capabilityFor(Number(techLevelKey) as TechLevel, populations[index]!)).toEqual({
           Attack,
           Defense,
           Projection,
@@ -176,7 +176,7 @@ describe('simultaneous political resolution', () => {
       const suffix = String(index).padStart(2, '0');
       return system(`system-${suffix}`, [
         planet(`world-${suffix}`, `World ${suffix}`, {
-          TechLevel: 'Modern postech',
+          TechLevel: 4,
           Population: 'Fewer than 500',
         }),
       ]);
@@ -191,11 +191,11 @@ describe('simultaneous political resolution', () => {
 
   it('gives a surviving native exclusive control of its contested homeworld', () => {
     const alpha = planet('alpha', 'Alpha', {
-      TechLevel: 'Modern postech',
+      TechLevel: 4,
       Population: 'Hundreds of millions of inhabitants',
     });
     const beta = planet('beta', 'Beta', {
-      TechLevel: 'Pretech with surviving infrastructure',
+      TechLevel: 5,
       Population: 'Fewer than a million inhabitants',
     });
     const systems = [system('alpha-system', [alpha]), system('beta-system', [beta])];
@@ -212,15 +212,15 @@ describe('simultaneous political resolution', () => {
 
   it('keeps multiple foreign victors tied on a defeated homeworld', () => {
     const alpha = planet('alpha', 'Alpha', {
-      TechLevel: 'Modern postech',
+      TechLevel: 4,
       Population: 'Fewer than a million inhabitants',
     });
     const beta = planet('beta', 'Beta', {
-      TechLevel: 'Pretech with surviving infrastructure',
+      TechLevel: 5,
       Population: 'Fewer than a million inhabitants',
     });
     const gamma = planet('gamma', 'Gamma', {
-      TechLevel: 'Pretech with surviving infrastructure',
+      TechLevel: 5,
       Population: 'Several million inhabitants',
     });
     const systems = [
@@ -263,11 +263,11 @@ describe('simultaneous political resolution', () => {
 
   it('preserves a conquered polity projection beyond its conqueror range', () => {
     const beta = planet('beta', 'Beta', {
-      TechLevel: 'Pretech with surviving infrastructure',
+      TechLevel: 5,
       Population: 'Fewer than a million inhabitants',
     });
     const alpha = planet('alpha', 'Alpha', {
-      TechLevel: 'Modern postech',
+      TechLevel: 4,
       Population: 'Fewer than a million inhabitants',
     });
     const remoteStation = other('remote-station', 'IndependentStation');
@@ -291,11 +291,11 @@ describe('simultaneous political resolution', () => {
 
   it('limits projection -1 to its homeworld and paints every object at projection 0', () => {
     const primitive = planet('primitive', 'Primitive', {
-      TechLevel: 'Medieval technology',
+      TechLevel: 1,
       Population: 'Billions of inhabitants',
     });
     const industrial = planet('industrial', 'Industrial', {
-      TechLevel: 'Tech like that of present-day Earth',
+      TechLevel: 3,
       Population: 'Fewer than a million inhabitants',
     });
     const emptyWorld = planet('empty', 'Empty', false);

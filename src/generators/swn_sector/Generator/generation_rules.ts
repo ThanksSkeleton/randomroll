@@ -23,7 +23,7 @@ import {
   STAR_AU_WIDTHS,
 } from '../Shared/spatial_interpretation';
 
-type RawRow = { roll: string | number; result: string; weight?: number; hab?: number };
+type RawRow = { roll: string | number; result: string | number; weight?: number; hab?: number };
 export type WeightedCategory<T> = { Value: T; Weight: number; Hab?: number };
 function rollSpan(roll: string | number): readonly [number, number] {
   const [first, last = first] = String(roll).split('-').map(Number);
@@ -37,7 +37,10 @@ function rollSpan(roll: string | number): readonly [number, number] {
     throw new Error(`Invalid d100 roll span ${roll}`);
   return [first, last];
 }
-function adaptRows<T>(rows: readonly RawRow[], adapt: (result: string, index: number) => T) {
+function adaptRows<T>(
+  rows: readonly RawRow[],
+  adapt: (result: string | number, index: number) => T,
+) {
   return rows.map((row, index) => {
     const [first, last] = rollSpan(row.roll);
     return {
@@ -49,7 +52,7 @@ function adaptRows<T>(rows: readonly RawRow[], adapt: (result: string, index: nu
 }
 const worldAttributeTables = rawAttributeTables.tables as Array<{
   id: string;
-  rows: Array<{ roll: string; result: string }>;
+  rows: Array<{ roll: string; result: string | number }>;
 }>;
 const worldAttributeDetails = rawAttributeDetails.tables as Record<
   string,
@@ -60,7 +63,7 @@ function attributeTable(id: string): RawRow[] {
   if (!match) throw new Error(`Missing reviewed table ${id}`);
   return match.rows.map((row) => ({
     ...row,
-    ...(worldAttributeDetails[id]?.[row.result] ?? {}),
+    ...(worldAttributeDetails[id]?.[String(row.result)] ?? {}),
   })) as RawRow[];
 }
 const starDetails = rawStarDetails.starTypes as Record<string, Record<string, unknown>>;
@@ -69,7 +72,7 @@ const starTable = (rawStarTable.tables as Array<{ id: string; rows: RawRow[] }>)
 );
 if (!starTable) throw new Error('Missing star_type table');
 export const STAR_TABLE = adaptRows(
-  starTable.rows.map((row) => ({ ...row, ...(starDetails[row.result] ?? {}) })) as RawRow[],
+  starTable.rows.map((row) => ({ ...row, ...(starDetails[String(row.result)] ?? {}) })) as RawRow[],
   (result) => result as StarType,
 );
 export const ATMOSPHERE_TABLE = adaptRows(
@@ -94,7 +97,7 @@ export const POPULATION_TABLE = adaptRows(
 );
 export const TECH_LEVEL_TABLE = adaptRows(
   attributeTable('tech_level'),
-  (result) => result as InhabitedInfo['TechLevel'],
+  (result) => Number(result) as InhabitedInfo['TechLevel'],
 );
 export const BULK_COMPOSITION_TABLE = adaptRows(
   attributeTable('bulk_composition'),
@@ -124,7 +127,7 @@ const worldTagDetails = rawWorldTagDetails.tags as Record<
 const worldTagRows = rawWorldTagTable.rows as Array<{ roll: number; result: string }>;
 export const CANONICAL_WORLD_TAGS = worldTagRows.map((row) => row.result) as WorldTag[];
 export const WORLD_TAG_DEFINITIONS: WorldTagDefinition[] = worldTagRows.map((row) => {
-  const prompts = worldTagDetails[row.result]?.prompts;
+  const prompts = worldTagDetails[String(row.result)]?.prompts;
   if (!prompts) throw new Error(`Missing detail data for world tag ${row.result}`);
   for (const category of WORLD_TAG_PROMPT_CATEGORIES) {
     const values = prompts[category];

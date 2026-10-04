@@ -220,7 +220,8 @@ export function validateCanonicalShape(
       ) &&
       string(item.InhabitedInfo.TerranBiosphere, `${path}.InhabitedInfo.TerranBiosphere`) &&
       string(item.InhabitedInfo.Population, `${path}.InhabitedInfo.Population`) &&
-      string(item.InhabitedInfo.TechLevel, `${path}.InhabitedInfo.TechLevel`)
+      typeof item.InhabitedInfo.TechLevel === 'number' &&
+      [0, 1, 2, 3, 4, 4.1, 5].includes(item.InhabitedInfo.TechLevel)
     );
   };
   if (
@@ -242,7 +243,7 @@ export function validateCanonicalShape(
       ],
       'Sector',
     ) ||
-    value.SchemaVersion !== 'merged-v7' ||
+    value.SchemaVersion !== 'merged-v8' ||
     !string(value.OriginalSeed, 'Sector.OriginalSeed') ||
     !['UNRESTRICTED', 'TL4_PLUS', 'TL4_PLUS_POP_GT_500'].includes(
       String(value.StartingWorldMode),

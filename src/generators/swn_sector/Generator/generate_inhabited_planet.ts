@@ -23,7 +23,6 @@ import {
 import {
   BULK_COMPOSITION_HAB,
   SIZE_HAB,
-  TECH_LEVEL,
   TEMPERATURE_HAB,
   TERRAN_BIOSPHERE_HAB,
 } from '../Shared/planet_interpretation';
@@ -63,7 +62,7 @@ function tagsRequire(tags: readonly WorldTag[], tag: WorldTag): boolean {
   return tags.includes(tag);
 }
 
-function chooseWithinHab<T extends string>(
+function chooseWithinHab<T extends string | number>(
   seed: string,
   path: string,
   rows: readonly { Value: T; Weight: number }[],
@@ -135,7 +134,7 @@ function profileInvalidReason(
     (tagsRequire(tags, 'Heavy Industry') ||
       tagsRequire(tags, 'Major Spaceyard') ||
       tagsRequire(tags, 'Post-Scarcity')) &&
-    TECH_LEVEL[profile.TechLevel] < 3
+    profile.TechLevel < 3
   )
     return 'industry/spaceyard/post-scarcity requires technology level 3 or higher';
 
@@ -170,10 +169,7 @@ function profileInvalidReason(
       populationMaximum > constraint.maxPopulationPercentile
     )
       return `${tag} caps the population percentile`;
-    if (
-      constraint.minTechLevel !== undefined &&
-      TECH_LEVEL[profile.TechLevel] < constraint.minTechLevel
-    )
+    if (constraint.minTechLevel !== undefined && profile.TechLevel < constraint.minTechLevel)
       return `${tag} requires a higher technology level`;
   }
   return undefined;
@@ -321,7 +317,7 @@ export function generateInhabitedPlanet(options: InhabitedPlanetOptions): Planet
       ? POPULATION_TABLE.filter((row) => row.Value === 'Fewer than 500')
       : POPULATION_TABLE;
     const technologyRows = isTombWorld
-      ? TECH_LEVEL_TABLE.filter((row) => TECH_LEVEL[row.Value] >= TOMB_WORLD_MIN_TECH_LEVEL)
+      ? TECH_LEVEL_TABLE.filter((row) => row.Value >= TOMB_WORLD_MIN_TECH_LEVEL)
       : TECH_LEVEL_TABLE;
     const candidate: PhysicalProfile = {
       Atmosphere,
