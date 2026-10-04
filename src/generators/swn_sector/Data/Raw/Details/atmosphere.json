@@ -1,0 +1,113 @@
+{
+  "gases": {
+    "H2": { "chemicalFormula": "H₂", "longName": "Hydrogen", "category": "Flammable" },
+    "CH4": { "chemicalFormula": "CH₄", "longName": "Methane", "category": "Flammable" },
+    "O2": { "chemicalFormula": "O₂", "longName": "Oxygen", "category": "Flammable" },
+    "SO2": { "chemicalFormula": "SO₂", "longName": "Sulfur Dioxide", "category": "Corrosive" },
+    "H2S": { "chemicalFormula": "H₂S", "longName": "Hydrogen Sulfide", "category": "Corrosive" },
+    "HCl": { "chemicalFormula": "HCl", "longName": "Hydrogen Chloride", "category": "Corrosive" },
+    "HF": { "chemicalFormula": "HF", "longName": "Hydrogen Fluoride", "category": "Corrosive" },
+    "O3": { "chemicalFormula": "O₃", "longName": "Ozone", "category": "Corrosive" },
+    "NH3": { "chemicalFormula": "NH₃", "longName": "Ammonia", "category": "Corrosive" },
+    "CO2": { "chemicalFormula": "CO₂", "longName": "Carbon Dioxide", "category": "Toxic" },
+    "CO": { "chemicalFormula": "CO", "longName": "Carbon Monoxide", "category": "Toxic" },
+    "HCN": { "chemicalFormula": "HCN", "longName": "Hydrogen Cyanide", "category": "Toxic" },
+    "N2O": { "chemicalFormula": "N₂O", "longName": "Nitrous Oxide", "category": "Toxic" },
+    "CHCl3": { "chemicalFormula": "CHCl₃", "longName": "Chloroform", "category": "Toxic" },
+    "CCl2F2": { "chemicalFormula": "CCl₂F₂", "longName": "Freon", "category": "Toxic" },
+    "N2": { "chemicalFormula": "N₂", "longName": "Nitrogen", "category": "Inert" },
+    "Ar": { "chemicalFormula": "Ar", "longName": "Argon", "category": "Inert" },
+    "He": { "chemicalFormula": "He", "longName": "Helium", "category": "Inert" },
+    "CF4": { "chemicalFormula": "CF₄", "longName": "Carbon Tetrafluoride", "category": "Inert" },
+    "SF6": { "chemicalFormula": "SF₆", "longName": "Sulfur Hexafluoride", "category": "Inert" }
+  },
+  "habRatings": {
+    "Vacuum": 0,
+    "Corrosive": 0,
+    "Toxic": 0,
+    "Filter": 1,
+    "Pressure": 2,
+    "Flammable": 0,
+    "Inert": 0,
+    "Breathable": 3,
+    "GasGiant": 0,
+    "IceGiant": 0
+  },
+  "pressureThresholdsAtm": { "lowBelow": 0.6, "highAbove": 3.9 },
+  "templates": {
+    "Vacuum": { "bar": 0, "gases": [] },
+    "Breathable": {
+      "bar": 1,
+      "gases": [
+        { "selectedGas": true, "percent": 79 },
+        { "gasId": "O2", "percent": 20 }
+      ]
+    },
+    "Inert": { "bar": 1, "gases": [{ "selectedGas": true, "percent": 99 }] },
+    "Flammable": { "bar": 1, "gases": [{ "selectedGas": true, "percent": 99 }] },
+    "Pressure": {
+      "Low": {
+        "bar": 0.5,
+        "gases": [
+          { "gasId": "N2", "percent": 79 },
+          { "gasId": "O2", "percent": 21 }
+        ]
+      },
+      "High": {
+        "bar": 4,
+        "gases": [
+          { "gasId": "N2", "percent": 79 },
+          { "gasId": "O2", "percent": 21 }
+        ]
+      }
+    },
+    "Corrosive": {
+      "bar": 1,
+      "gases": [
+        { "gasId": "N2", "percent": 75 },
+        { "selectedGas": true, "percent": 24 }
+      ]
+    },
+    "Toxic": {
+      "bar": 1,
+      "gases": [
+        { "gasId": "N2", "percent": 75 },
+        { "selectedGas": true, "percent": 25 }
+      ]
+    },
+    "Filter": {
+      "bar": 1,
+      "gases": [
+        { "gasId": "N2", "percent": 69 },
+        { "gasId": "O2", "percent": 21 },
+        { "selectedGas": true, "percent": 10 }
+      ]
+    },
+    "GasGiant": {
+      "bar": 10,
+      "gases": [
+        { "gasId": "H2", "percent": 90 },
+        { "gasId": "He", "percent": 10 }
+      ]
+    },
+    "IceGiant": {
+      "bar": 4,
+      "gases": [
+        { "gasId": "N2", "percent": 75 },
+        { "gasId": "CH4", "percent": 15 },
+        { "gasId": "H2", "percent": 10 }
+      ]
+    }
+  },
+  "presetAtmospheres": {
+    "Mercurian": { "Category": "Vacuum" },
+    "Lunar": { "Category": "Vacuum" },
+    "Venusian": { "Category": "Corrosive", "SelectedGas": "HCl" },
+    "Martian": { "Category": "Inert", "SelectedGas": "N2" },
+    "Jovian": { "Category": "GasGiant" },
+    "Neptunian": { "Category": "IceGiant" },
+    "Titanian": { "Category": "Flammable", "SelectedGas": "CH4" },
+    "Ioan": { "Category": "Corrosive", "SelectedGas": "SO2" },
+    "Europan / Plutonic": { "Category": "Inert", "SelectedGas": "N2" }
+  }
+}

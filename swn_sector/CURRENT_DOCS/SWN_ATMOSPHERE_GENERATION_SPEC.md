@@ -206,14 +206,14 @@ type AtmosphereCategory =
   | 'Vacuum' | 'Corrosive' | 'Toxic' | 'Filter' | 'Pressure'
   | 'Flammable' | 'Inert' | 'Breathable' | 'GasGiant' | 'IceGiant';
 type GasCategory = 'Corrosive' | 'Toxic' | 'Inert' | 'Flammable';
-type GasId = string; // Chemical formula identifying an entry in the raw gas catalog.
+type GasId = string; // Plain-digit formula ID (for example, H2) identifying a raw gas catalog entry.
 type Atmosphere =
   | { Category: 'Corrosive' | 'Toxic' | 'Filter' | 'Flammable' | 'Inert' | 'Breathable'; SelectedGas: GasId }
   | { Category: 'Pressure'; PressureResult: 'Low' | 'High' }
   | { Category: 'Vacuum' | 'GasGiant' | 'IceGiant' };
 ```
 
-`SelectedGas` refers to the appropriate conditional table: corrosive gas, poison for Toxic and Filter, flammable gas, inert gas, or breathable background gas. Fixed planet templates provide their selected gas directly. A pressure result is stored only for the Pressure class.
+`SelectedGas` refers to the appropriate conditional table: corrosive gas, poison for Toxic and Filter, flammable gas, inert gas, or breathable background gas. Gas IDs and all references use plain digits (for example, `H2`); the catalog's `chemicalFormula` retains subscripts for display (for example, `H₂`). Fixed planet templates provide their selected gas directly. A pressure result is stored only for the Pressure class.
 
 Resolve `LongName`, `HabRating`, `Bar`, and `Gases: Array<{ Gas: Gas; Percent: number }>` deterministically from the Base DTO outcome and raw definitions for domain interpretation and display. `Gas` has `ChemicalFormula`, `LongName`, and `Category: GasCategory`. Pressure is numeric so the 0.5 and 4 bar templates remain representable. Projection reads the resolved values; it does not make new random selections.
 

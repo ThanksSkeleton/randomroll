@@ -291,14 +291,30 @@ export type WorldTag =
   | 'Xenophobes'
   | 'Zombies';
 
-export type Atmosphere =
+export type AtmosphereCategory =
   | 'Vacuum'
   | 'Corrosive'
-  | 'Invasive'
-  | 'Corrosive+Invasive'
-  | 'Inert gas'
-  | 'Breathable: Thin/Thick'
-  | 'Breathable';
+  | 'Toxic'
+  | 'Filter'
+  | 'Pressure'
+  | 'Flammable'
+  | 'Inert'
+  | 'Breathable'
+  | 'GasGiant'
+  | 'IceGiant';
+
+/** Gas catalog ID using plain digits (for example, H2), distinct from its display formula. */
+export type AtmosphereGasId = string;
+
+export type AtmosphereOutcome =
+  | {
+      Category: 'Corrosive' | 'Toxic' | 'Filter' | 'Flammable' | 'Inert' | 'Breathable';
+      SelectedGas: AtmosphereGasId;
+    }
+  | { Category: 'Pressure'; PressureResult: 'Low' | 'High' }
+  | { Category: 'Vacuum' | 'GasGiant' | 'IceGiant' };
+
+export type Atmosphere = AtmosphereOutcome;
 
 export type Temperature =
   | 'Cryogenic'

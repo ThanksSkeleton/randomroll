@@ -1,0 +1,27 @@
+{
+  "class": {
+    "dice": "d100",
+    "rows": [
+      { "roll": "1-4", "result": "Vacuum" },
+      { "roll": "5-8", "result": "Corrosive" },
+      { "roll": "9-12", "result": "Toxic" },
+      { "roll": "13-16", "result": "Filter" },
+      { "roll": "17-20", "result": "Pressure" },
+      { "roll": "21-24", "result": "Flammable" },
+      { "roll": "25-35", "result": "Inert" },
+      { "roll": "36-100", "result": "Breathable" }
+    ]
+  },
+  "flammableGas": ["H2", "CH4", "O2"],
+  "corrosiveGas": ["SO2", "H2S", "HCl", "HF", "O3", "NH3"],
+  "poison": ["CO2", "CO", "HCN", "N2O", "CHCl3", "CCl2F2"],
+  "inertGas": ["N2", "Ar", "He", "CF4", "SF6"],
+  "breathableBackgroundGas": [
+    { "gasId": "N2", "weight": 75 },
+    { "gasId": "Ar", "weight": 10 },
+    { "gasId": "He", "weight": 5 },
+    { "gasId": "CF4", "weight": 5 },
+    { "gasId": "SF6", "weight": 5 }
+  ],
+  "pressureResult": ["Low", "High"]
+}
