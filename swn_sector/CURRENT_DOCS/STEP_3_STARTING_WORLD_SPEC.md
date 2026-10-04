@@ -22,16 +22,18 @@ Sector generation receives one starting-world mode.
 | --- | --- |
 | `UNRESTRICTED` | Any inhabited planet or moon, regardless of tech level or population band. |
 | `TL4_PLUS` | Any inhabited planet or moon whose numeric tech level is at least 4. |
-| `TL4_PLUS_POP_GT_500` | Any inhabited planet or moon whose numeric tech level is at least 4 and whose population band is not `Fewer than 500`. |
+| `TL4_PLUS_POP_GT_2000` | Any inhabited planet or moon whose numeric tech level is at least 4 and whose population band is above `Up to 2,000 inhabitants`. |
 
 For eligibility purposes:
 
 - `Modern postech` is TL4.
 - `Postech with specialties` is TL4.1 and qualifies as TL4+.
 - `Pretech with surviving infrastructure` is TL5.
-- “Population greater than 500” is evaluated using the existing categorical population value. Every category except `Fewer than 500` qualifies.
+- “Population greater than 2,000” is evaluated using the existing categorical population value. Every category except `Up to 2,000 inhabitants` qualifies.
 
 The UI labels may be friendlier than the serialized mode keys, but their meaning must be explicit. The default mode remains a drill-down decision.
+
+The legacy serialized mode `TL4_PLUS_POP_GT_500` remains accepted when loading existing sectors and has the same current eligibility behavior.
 
 ## Selection algorithm
 
@@ -135,7 +137,7 @@ No reroll state is added.
 
 1. `UNRESTRICTED` can select any inhabited world and never selects an uninhabited planet.
 2. `TL4_PLUS` never selects a world below TL4.
-3. `TL4_PLUS_POP_GT_500` never selects a world below TL4 or in the `Fewer than 500` population band.
+3. `TL4_PLUS_POP_GT_2000` never selects a world below TL4 or in the `Up to 2,000 inhabitants` population band.
 4. TL4.1 qualifies for both TL4+ modes.
 5. Selection is deterministic for the same seed, sector contents, and mode.
 6. A mode with no eligible candidates fails clearly and never falls back silently.

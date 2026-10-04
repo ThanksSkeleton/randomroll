@@ -30,8 +30,8 @@ const TECH_LABELS: Record<string, string> = {
 };
 
 const POPULATION_LABELS: Record<string, string> = {
-  '1': 'Rank 1 · Outpost (&lt;500)',
-  '2': 'Rank 2 · City-State (&lt;1M)',
+  '1': 'Rank 1 · Outpost (≤2,000)',
+  '2': 'Rank 2 · City-State (2,001–1M)',
   '3': 'Rank 3 · Minor Polity (millions)',
   '4': 'Rank 4 · Major Polity (hundreds of millions)',
   '5': 'Rank 5 · Great Polity (billions)',

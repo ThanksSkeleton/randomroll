@@ -30,7 +30,7 @@ Map canonical population categories to matrix columns as follows:
 
 | Canonical population | Matrix population band |
 | --- | --- |
-| `Fewer than 500` | `500` |
+| `Up to 2,000 inhabitants` | `500` |
 | `Fewer than a million inhabitants` | `1m` |
 | `Several million inhabitants` | `several Million` |
 | `Hundreds of millions of inhabitants` | `100M` |

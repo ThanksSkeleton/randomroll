@@ -249,7 +249,7 @@ export function validateCanonicalShape(
     ) ||
     value.SchemaVersion !== 'merged-v9' ||
     !string(value.OriginalSeed, 'Sector.OriginalSeed') ||
-    !['UNRESTRICTED', 'TL4_PLUS', 'TL4_PLUS_POP_GT_500'].includes(
+    !['UNRESTRICTED', 'TL4_PLUS', 'TL4_PLUS_POP_GT_2000', 'TL4_PLUS_POP_GT_500'].includes(
       String(value.StartingWorldMode),
     ) ||
     !(value.StartingWorldId === null || string(value.StartingWorldId, 'Sector.StartingWorldId')) ||

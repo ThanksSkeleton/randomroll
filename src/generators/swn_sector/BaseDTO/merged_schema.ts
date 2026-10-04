@@ -96,7 +96,8 @@ export interface ConquestEvent {
   Defense: number;
 }
 
-export type StartingWorldMode = 'UNRESTRICTED' | 'TL4_PLUS' | 'TL4_PLUS_POP_GT_500';
+export type StartingWorldMode =
+  'UNRESTRICTED' | 'TL4_PLUS' | 'TL4_PLUS_POP_GT_2000' | 'TL4_PLUS_POP_GT_500';
 
 export interface Route extends SelectableEntity {
   PortalIds: [Guid, Guid];

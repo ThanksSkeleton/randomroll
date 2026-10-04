@@ -42,9 +42,7 @@ export function SectorArchive({
           >
             <option value="UNRESTRICTED">Unrestricted: any inhabited world</option>
             <option value="TL4_PLUS">TL4+: tech level 4 or higher</option>
-            <option value="TL4_PLUS_POP_GT_500">
-              TL4+ and population band above “Fewer than 500”
-            </option>
+            <option value="TL4_PLUS_POP_GT_2000">TL4+ and population above 2,000</option>
           </select>
         </label>
         {generationError && (
