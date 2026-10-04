@@ -3,6 +3,7 @@ import {
   CANONICAL_WORLD_TAGS,
   EXTRA_WORLD_ARCHETYPES,
   POI_TABLE,
+  SIZE_TABLE,
   STAR_TABLE,
   TEMPERATURE_TABLE,
   WORLD_TAG_DEFINITIONS,
@@ -11,12 +12,13 @@ import {
   assertReviewedTableIntegrity,
 } from './generation_rules';
 import { isPoiHostCompatible } from '../Shared/poi_host_interpretation';
+import { directOrbitAuBand, directOrbitTemperatures } from '../Shared/spatial_interpretation';
 import {
-  directOrbitAuBand,
-  directOrbitTemperatures,
-} from '../Shared/spatial_interpretation';
-import { normalTemperatureAuBand, systemEdgeAu } from '../Projector/system_presentation_interpretation';
+  normalTemperatureAuBand,
+  systemEdgeAu,
+} from '../Projector/system_presentation_interpretation';
 import { generateTemplateOtherCelestialObject, generateTemplatePlanet } from './planet_templates';
+import { SIZE_HAB } from '../Shared/planet_interpretation';
 
 test('reviewed tables adapt to canonical values without losing their weights', () => {
   expect(() => assertReviewedTableIntegrity()).not.toThrow();
@@ -42,6 +44,23 @@ test('reviewed tables adapt to canonical values without losing their weights', (
   expect(POI_TABLE.map((row) => row.Value)).toContain('Gas Mine');
   expect(POI_TABLE.map((row) => row.Value)).not.toContain('Gas giant mine');
   expect(EXTRA_WORLD_ARCHETYPES.map((row) => row.Archetype)).toContain('KuiperBelt');
+});
+
+test('size table covers rocky planets and gas giants with matching habitability', () => {
+  expect(SIZE_TABLE.map((row) => row.Value)).toEqual([
+    'Luna',
+    'Mars',
+    'Super-Earth',
+    'Earth',
+    'Neptune',
+    'Jupiter',
+  ]);
+  expect(SIZE_TABLE.reduce((sum, row) => sum + row.Weight, 0)).toBe(100);
+  for (const row of SIZE_TABLE) expect(row.Hab).toBe(SIZE_HAB[row.Value]);
+  expect(SIZE_TABLE.filter((row) => row.Hab === 0).map((row) => row.Value)).toEqual([
+    'Neptune',
+    'Jupiter',
+  ]);
 });
 
 test('new POIs use Kuiper belts and gas clouds as hosts', () => {

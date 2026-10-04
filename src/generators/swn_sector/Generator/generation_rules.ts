@@ -100,10 +100,7 @@ export const BULK_COMPOSITION_TABLE = adaptRows(
   attributeTable('bulk_composition'),
   (result) => result as Planet['BulkComposition'],
 );
-export const TERRESTRIAL_SIZE_TABLE = adaptRows(
-  attributeTable('terrestrial_size'),
-  (result) => result as Planet['Size'],
-);
+export const SIZE_TABLE = adaptRows(attributeTable('size'), (result) => result as Planet['Size']);
 export const ALIEN_DEPENDENT_WORLD_TAGS = new Set(['Primitive Aliens', 'Xenophiles']);
 
 export const WORLD_TAG_PROMPT_CATEGORIES = [

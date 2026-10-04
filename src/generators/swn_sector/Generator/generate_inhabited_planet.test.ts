@@ -26,6 +26,24 @@ test('builds deterministic complete inhabited terrestrial planets', () => {
   expect(planet.Size).not.toBe('Neptune');
 });
 
+test('inhabited worlds never roll gas giant sizes, including on Hab 0 stars', () => {
+  for (const star of [
+    { type: 'G-type', hab: 3 },
+    { type: 'White dwarf', hab: 0 },
+  ] as const) {
+    for (let index = 0; index < 50; index += 1) {
+      const planet = generateInhabitedPlanet({
+        seed: `size-${star.type}-${index}`,
+        entityPath: 'system:01:inhabited:01',
+        starType: star.type,
+        starHabitability: star.hab,
+        orbit: { AU: 1, AngleDegrees: 0, ParentObjectId: null },
+      });
+      expect(['Neptune', 'Jupiter']).not.toContain(planet.Size);
+    }
+  }
+});
+
 test('filters compact-remnant worlds to usable direct-orbit temperatures', () => {
   const planet = generateInhabitedPlanet({
     seed: 'compact-remnant',

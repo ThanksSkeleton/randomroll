@@ -276,7 +276,7 @@
       ]
     },
     {
-      "id": "terrestrial_size",
+      "id": "size",
       "dice": "d100",
       "rows": [
         {
@@ -292,8 +292,16 @@
           "result": "Super-Earth"
         },
         {
-          "roll": "26-100",
+          "roll": "26-90",
           "result": "Earth"
+        },
+        {
+          "roll": "91-95",
+          "result": "Neptune"
+        },
+        {
+          "roll": "96-100",
+          "result": "Jupiter"
         }
       ]
     }

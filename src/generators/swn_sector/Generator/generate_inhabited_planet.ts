@@ -8,7 +8,7 @@ import {
   TECH_LEVEL_TABLE,
   TEMPERATURE_TABLE,
   TERRAN_BIOSPHERE_TABLE,
-  TERRESTRIAL_SIZE_TABLE,
+  SIZE_TABLE,
   WORLD_TAG_TABLE,
 } from './generation_rules';
 import { directOrbitTemperatures } from '../Shared/spatial_interpretation';
@@ -295,7 +295,7 @@ export function generateInhabitedPlanet(options: InhabitedPlanetOptions): Planet
     currentHab = Math.min(currentHab, TERRAN_BIOSPHERE_HAB[TerranBiosphere]);
     const Size = chooseWeighted(
       randomFor(options.seed, `${path}:size`),
-      TERRESTRIAL_SIZE_TABLE,
+      SIZE_TABLE.filter((row) => (row.Hab ?? 0) > 0),
       'sizes',
     ).Value;
     currentHab = Math.min(currentHab, SIZE_HAB[Size]);
