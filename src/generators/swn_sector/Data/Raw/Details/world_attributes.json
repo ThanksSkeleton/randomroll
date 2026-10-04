@@ -92,25 +92,46 @@
         "thermalOrbit": "Temperate"
       }
     },
-    "native_biosphere": {},
+    "native_biosphere": {
+      "1": {
+        "name": "None"
+      },
+      "2": {
+        "name": "Microbial"
+      },
+      "3": {
+        "name": "Limited"
+      },
+      "4": {
+        "name": "Significant"
+      },
+      "5": {
+        "name": "Engineered"
+      }
+    },
     "terran_biosphere": {
       "1": {
+        "name": "None",
         "hab": 0,
         "habRequired": 0
       },
       "2": {
+        "name": "Microbial",
         "hab": 1,
         "habRequired": 1
       },
       "3": {
+        "name": "Limited",
         "hab": 2,
         "habRequired": 1
       },
       "4": {
+        "name": "Significant",
         "hab": 3,
         "habRequired": 2
       },
       "5": {
+        "name": "Engineered",
         "hab": 3,
         "habRequired": 1
       }

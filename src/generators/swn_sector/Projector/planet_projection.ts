@@ -14,6 +14,7 @@ import { projectPoiCount } from './poi_projection';
 import { formatAtmosphere, resolveAtmosphere } from '../Shared/atmosphere_interpretation';
 import { techLevelStrings } from '../Shared/tech_level_interpretation';
 import { populationStrings } from '../Shared/population_interpretation';
+import { biosphereName } from '../Shared/biosphere_interpretation';
 
 const HABITABILITY_COLOR: Readonly<Record<number, string>> = {
   0: '#858b90',
@@ -61,7 +62,11 @@ export function projectPlanet(
   const moonFact = hostName ? `Moon of ${hostName}` : null;
   const displayedComposition = displayBulkComposition(planet.BulkComposition, spatial.temperature);
   const atmosphere = resolveAtmosphere(planet.Atmosphere);
-  const atmosphereSummary = `Atmosphere: ${formatAtmosphere(planet.Atmosphere)}`;
+  const atmosphereSummary = `Atmosphere: ${
+    planet.Atmosphere.Category === 'Pressure'
+      ? formatAtmosphere(planet.Atmosphere)
+      : planet.Atmosphere.Category
+  }`;
   const sizeDetails = planetSizeScan(planet.Size);
   const temperatureDetails = planetTemperatureScan(spatial.temperature, spatial.effectiveAu);
   const bioscan =
@@ -71,9 +76,8 @@ export function projectPlanet(
           type: 'complex' as const,
           summary: 'Bioscan: Life Detected',
           lines: [
-            `Terran: ${inhabited.TerranBiosphere}`,
-            `Native: ${planet.NativeBiosphere}`,
-            `Human Population: ${populationDetails!.longString}`,
+            `Terran: ${biosphereName(inhabited.TerranBiosphere)}`,
+            `Native: ${biosphereName(planet.NativeBiosphere)}`,
           ],
         };
   const basicScan = {
@@ -85,11 +89,15 @@ export function projectPlanet(
         lines: [...sizeDetails.lines, `Composition: ${displayedComposition}`],
       },
       ...(moonFact ? [{ type: 'simple' as const, text: moonFact }] : []),
-      {
-        type: 'complex' as const,
-        summary: atmosphereSummary,
-        lines: atmosphere.Gases.map(({ Gas, Percent }) => `${Gas.ChemicalFormula}: ${Percent}%`),
-      },
+      ...(planet.Atmosphere.Category === 'Vacuum'
+        ? [{ type: 'simple' as const, text: atmosphereSummary }]
+        : [
+            {
+              type: 'complex' as const,
+              summary: atmosphereSummary,
+              lines: atmosphere.Gases.map(({ Gas, Percent }) => `${Gas.ChemicalFormula}: ${Percent}%`),
+            },
+          ]),
       bioscan,
     ],
   };

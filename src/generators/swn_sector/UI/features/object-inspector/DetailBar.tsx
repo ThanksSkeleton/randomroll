@@ -5,7 +5,7 @@ import type {
 } from '../../../DisplayDTO/dto';
 import type { EditDraft, Preview, EditableDetailField } from '../../application/appState';
 import { useState } from 'react';
-import { PolityFlagList } from '../politics/PolityFlag';
+import { PolityFlag } from '../politics/PolityFlag';
 
 function displayName(info: DisplaySelectableDTO | undefined, preview: Preview) {
   if (!info) return undefined;
@@ -60,6 +60,72 @@ function BasicScanField({ content, entityId }: { content: BasicScanContent; enti
           </details>
         ),
       )}
+    </div>
+  );
+}
+
+function PoliticsScanField({ info }: { info: DisplaySelectableDTO }) {
+  const planet = info.planet;
+  const claimants = info.inspectorClaimants ?? [];
+  if (!planet || planet.technologyRating === null || !planet.technologyLevel || !planet.population)
+    return (
+      <>
+        {info.inspectorClaimants !== undefined && (
+          <div className="stock-field">
+            <p className="detail-section-description detail-stock-content politics-scan-claimant">
+              <span>ClaimedBy:</span>
+              {info.inspectorClaimants.length > 0 ? (
+                info.inspectorClaimants.map((polity) => (
+                  <span className="politics-scan-claimant-entry" key={polity.id}>
+                    {polity.NiceName} <PolityFlag polity={polity} />
+                  </span>
+                ))
+              ) : (
+                <span className="politics-scan-claimant-entry">
+                  None <PolityFlag />
+                </span>
+              )}
+            </p>
+          </div>
+        )}
+        {info.inspectorClaimants === undefined && (
+          <StockField content={info.inspectorStock.politics} />
+        )}
+      </>
+    );
+  const hasNativePolity = claimants.some((polity) => polity.homeworldId === planet.id);
+  const sovereignty =
+    claimants.length > 1
+      ? 'Contested'
+      : claimants.length === 1 && !hasNativePolity
+        ? 'Vassal'
+        : 'Independent';
+  return (
+    <div className="basic-scan-elements">
+      <details className="basic-scan-element basic-scan-drawer">
+        <summary>Tech Level: {planet.technologyRating} - {planet.technologyLevelShort}</summary>
+        <div className="basic-scan-drawer-content">{planet.technologyLevel}</div>
+      </details>
+      <details className="basic-scan-element basic-scan-drawer">
+        <summary>Population: {planet.populationShort}</summary>
+        <div className="basic-scan-drawer-content">{planet.population}</div>
+      </details>
+      <details className="basic-scan-element basic-scan-drawer">
+        <summary>Sovereignty: {sovereignty}</summary>
+        <div className="basic-scan-drawer-content">
+          {claimants.length > 1 ? (
+            claimants.map((polity, index) => (
+              <div className="politics-scan-claimant" key={polity.id}>
+                Claimant {index === 0 ? 'A' : 'B'}: {polity.NiceName} <PolityFlag polity={polity} />
+              </div>
+            ))
+          ) : claimants.length === 1 ? (
+            <div className="politics-scan-claimant">
+              Claimed By: {claimants[0]!.NiceName} <PolityFlag polity={claimants[0]} />
+            </div>
+          ) : null}
+        </div>
+      </details>
     </div>
   );
 }
@@ -189,7 +255,6 @@ function DetailBox({
   setDraft: (update: (draft: EditDraft) => EditDraft) => void;
 }) {
   const [activeTab, setActiveTab] = useState<'player' | 'gm'>('player');
-  const claimants = info.inspectorClaimants;
   const edit = (field: EditableDetailField) => (value: string) =>
     setDraft((old) => ({
       ...old,
@@ -267,12 +332,7 @@ function DetailBox({
                 )}
                 {field === 'DetailedScan' && <StockField content={stock.detailed} />}
                 {field === 'PoliticsScan' && (
-                  <>
-                    <StockField content={stock.politics} />
-                    {claimants !== undefined && (
-                      <PolityFlagList polities={claimants} className="politics-scan-flags" />
-                    )}
-                  </>
+                  <PoliticsScanField info={info} />
                 )}
                 {field === 'DeepPoliticsScan' && <StockField content={stock.deep} />}
                 {(field === 'DetailedScan' || field === 'DeepPoliticsScan') && (

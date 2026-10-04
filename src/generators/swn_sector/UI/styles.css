@@ -2549,6 +2549,20 @@ select {
 .politics-scan-flags {
   padding: 0 12px 10px;
 }
+.politics-scan-claimant {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+.politics-scan-claimant .polity-flag {
+  display: inline-block;
+}
+.politics-scan-claimant-entry {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
 .polity-overlay-flags {
   position: absolute;
   z-index: 40;

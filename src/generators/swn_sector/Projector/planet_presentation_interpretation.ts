@@ -13,7 +13,7 @@ const TEMPERATURE_VALUES = rawPlanetValues.temperature as Record<
 export function planetSizeScan(size: Planet['Size']): { summary: string; lines: string[] } {
   const { massEarth, gravityMps2 } = SIZE_VALUES[size];
   return {
-    summary: gravityMps2 === null ? 'Planet: No Surface' : `Planet: ${gravityMps2} m/s²`,
+    summary: gravityMps2 === null ? 'Gravity: No Surface' : `Gravity: ${gravityMps2} m/s²`,
     lines: [`${massEarth} M⊕`, `${size}-Class`],
   };
 }
