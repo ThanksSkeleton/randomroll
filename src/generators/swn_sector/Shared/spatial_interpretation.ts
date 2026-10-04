@@ -1,22 +1,14 @@
 import type { StarSystem, StarType, Temperature } from '../BaseDTO/merged_schema';
+import rawStarDetails from '../Data/Raw/Details/star_types.json';
+import rawWorldAttributeDetails from '../Data/Raw/Details/world_attributes.json';
 
-export const TEMPERATURE_RANK: Readonly<Record<Temperature, number>> = {
-  Cryogenic: 1,
-  Deepfrozen: 2,
-  Polar: 3,
-  Subarctic: 4,
-  Boreal: 5,
-  Alpine: 6,
-  'Temperate (chilly)': 7,
-  Temperate: 8,
-  'Temperate (warm)': 9,
-  Mediterranean: 10,
-  Subtropical: 11,
-  Equatorial: 12,
-  Infernal: 13,
-  Scorching: 14,
-  Furance: 15,
-};
+const temperatureDetails = rawWorldAttributeDetails.tables.temperature as Record<
+  string,
+  { orbitalOrder: number }
+>;
+const ORDERED_TEMPERATURES: readonly Temperature[] = Object.entries(temperatureDetails)
+  .sort(([, first], [, second]) => first.orbitalOrder - second.orbitalOrder)
+  .map(([temperature]) => temperature as Temperature);
 
 export type StarAuWidths = {
   FromStar: number;
@@ -26,87 +18,21 @@ export type StarAuWidths = {
   ToSystemEdge: number;
 };
 
-export const STAR_AU_WIDTHS: Readonly<Record<StarType, StarAuWidths>> = {
-  'A-type': {
-    FromStar: 0.273,
-    ExtremeHotRange: 2.73,
-    ExtremeColdRange: 8.19,
-    NormalRange: 2.28,
-    ToSystemEdge: 2.02,
-  },
-  'F-type': {
-    FromStar: 0.111,
-    ExtremeHotRange: 1.11,
-    ExtremeColdRange: 3.34,
-    NormalRange: 0.928,
-    ToSystemEdge: 0.823,
-  },
-  'G-type': {
-    FromStar: 0.086,
-    ExtremeHotRange: 0.864,
-    ExtremeColdRange: 2.59,
-    NormalRange: 0.72,
-    ToSystemEdge: 0.639,
-  },
-  'K-type': {
-    FromStar: 0.036,
-    ExtremeHotRange: 0.36,
-    ExtremeColdRange: 1.08,
-    NormalRange: 0.3,
-    ToSystemEdge: 0.266,
-  },
-  'M-type': {
-    FromStar: 0.0227,
-    ExtremeHotRange: 0.227,
-    ExtremeColdRange: 0.682,
-    NormalRange: 0.189,
-    ToSystemEdge: 0.168,
-  },
-  Giant: {
-    FromStar: 0.535,
-    ExtremeHotRange: 5.35,
-    ExtremeColdRange: 16.06,
-    NormalRange: 4.46,
-    ToSystemEdge: 3.96,
-  },
-  'White dwarf': {
-    FromStar: 0.303,
-    ExtremeHotRange: 4.295,
-    ExtremeColdRange: 10.355,
-    NormalRange: 0,
-    ToSystemEdge: 2.24,
-  },
-  'Neutron star': {
-    FromStar: 0.303,
-    ExtremeHotRange: 4.295,
-    ExtremeColdRange: 10.355,
-    NormalRange: 0,
-    ToSystemEdge: 2.24,
-  },
-  'Stellar-mass black hole': {
-    FromStar: 0.303,
-    ExtremeHotRange: 4.295,
-    ExtremeColdRange: 10.355,
-    NormalRange: 0,
-    ToSystemEdge: 2.24,
-  },
-};
+const starTypeDetails = rawStarDetails.starTypes as unknown as Record<
+  StarType,
+  { auWidths?: StarAuWidths }
+>;
+export const STAR_AU_WIDTHS: Readonly<Record<StarType, StarAuWidths>> = Object.fromEntries(
+  (Object.keys(starTypeDetails) as StarType[]).map((starType) => {
+    const auWidths = starTypeDetails[starType].auWidths;
+    if (auWidths === undefined) throw new Error(`Missing AU widths for star type ${starType}`);
+    return [starType, auWidths];
+  }),
+) as Readonly<Record<StarType, StarAuWidths>>;
 
-export const NORMAL_TEMPERATURES_HOT_TO_COLD: readonly Temperature[] = [
-  'Scorching',
-  'Infernal',
-  'Equatorial',
-  'Subtropical',
-  'Mediterranean',
-  'Temperate (warm)',
-  'Temperate',
-  'Temperate (chilly)',
-  'Alpine',
-  'Boreal',
-  'Subarctic',
-  'Polar',
-  'Deepfrozen',
-];
+export const NORMAL_TEMPERATURES_HOT_TO_COLD: readonly Temperature[] = ORDERED_TEMPERATURES
+  .slice(1, -1)
+  .reverse();
 export function directOrbitAuBand(
   starType: StarType,
   temperature: Temperature,
@@ -122,7 +48,7 @@ export function directOrbitAuBand(
   return [hotEnd + index * width, hotEnd + (index + 1) * width];
 }
 export function directOrbitTemperatures(starType: StarType): Temperature[] {
-  return (Object.keys(TEMPERATURE_RANK) as Temperature[]).filter((temperature) => {
+  return ORDERED_TEMPERATURES.filter((temperature) => {
     const [minimum, maximum] = directOrbitAuBand(starType, temperature);
     return maximum > minimum;
   });

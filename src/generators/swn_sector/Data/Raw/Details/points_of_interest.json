@@ -53,34 +53,56 @@
   },
   "otherPoints": {
     "Deep-space station": {
-      "locationType": "OwnOrbit"
+      "locationType": "Independent Station",
+      "hostPredicate": { "kind": "otherCelestialObject", "objectType": "IndependentStation" }
     },
     "Asteroid base": {
-      "locationType": "AsteroidBelt"
+      "locationType": "Asteroid Belt",
+      "hostPredicate": { "kind": "otherCelestialObject", "objectType": "AsteroidBelt" }
     },
     "Remote moon base": {
-      "locationType": "Any NonPrimary Terrestrial Planet"
+      "locationType": "Any Non-Gas Planet",
+      "hostPredicate": { "kind": "planet", "gasPlanet": false }
     },
     "Ancient orbital ruin": {
-      "locationType": "Any NonPrimary Planet"
+      "locationType": "Any Planet",
+      "hostPredicate": { "kind": "planet" }
     },
     "Research base": {
-      "locationType": "Any NonPrimary Planet"
+      "locationType": "Any Planet",
+      "hostPredicate": { "kind": "planet" }
     },
     "Asteroid belt": {
-      "locationType": "AsteroidBelt"
+      "locationType": "Asteroid Belt",
+      "hostPredicate": { "kind": "otherCelestialObject", "objectType": "AsteroidBelt" }
     },
     "Gas Mine": {
-      "locationType": "GasGiant Planet or GasCloud"
+      "locationType": "Gas Giant Planet or Gas Cloud",
+      "hostPredicate": {
+        "kind": "anyOf",
+        "predicates": [
+          { "kind": "planet", "gasPlanet": true },
+          { "kind": "otherCelestialObject", "objectType": "GasCloud" }
+        ]
+      }
     },
     "Refueling station": {
-      "locationType": "GasGiant Planet or GasCloud"
+      "locationType": "Gas Giant Planet or Gas Cloud",
+      "hostPredicate": {
+        "kind": "anyOf",
+        "predicates": [
+          { "kind": "planet", "gasPlanet": true },
+          { "kind": "otherCelestialObject", "objectType": "GasCloud" }
+        ]
+      }
     },
     "Comet base": {
-      "locationType": "KuiperBelt"
+      "locationType": "Kuiper Belt",
+      "hostPredicate": { "kind": "otherCelestialObject", "objectType": "KuiperBelt" }
     },
     "Comet belt": {
-      "locationType": "KuiperBelt"
+      "locationType": "Kuiper Belt",
+      "hostPredicate": { "kind": "otherCelestialObject", "objectType": "KuiperBelt" }
     }
   }
 }

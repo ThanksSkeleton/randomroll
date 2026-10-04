@@ -8,7 +8,7 @@ export function normalTemperatureAuBand(starType: StarType): readonly [number, n
   return [inner, inner + widths.NormalRange];
 }
 
-/** The outer system boundary implied by System_AU_Width.csv. */
+/** The outer system boundary implied by the configured star AU widths. */
 export function systemEdgeAu(starType: StarType): number {
   const widths = STAR_AU_WIDTHS[starType];
   return (

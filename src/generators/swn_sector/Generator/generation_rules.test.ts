@@ -12,12 +12,18 @@ import {
   assertReviewedTableIntegrity,
 } from './generation_rules';
 import { isPoiHostCompatible } from '../Shared/poi_host_interpretation';
-import { directOrbitAuBand, directOrbitTemperatures } from '../Shared/spatial_interpretation';
+import {
+  directOrbitAuBand,
+  directOrbitAuRange,
+  directOrbitTemperatures,
+  STAR_AU_WIDTHS,
+} from '../Shared/spatial_interpretation';
 import {
   normalTemperatureAuBand,
   systemEdgeAu,
 } from '../Projector/system_presentation_interpretation';
 import { generateTemplateOtherCelestialObject, generateTemplatePlanet } from './planet_templates';
+import { generateInhabitedPlanet } from './generate_inhabited_planet';
 import { SIZE_HAB } from '../Shared/planet_interpretation';
 
 test('reviewed tables adapt to canonical values without losing their weights', () => {
@@ -92,6 +98,80 @@ test('new POIs use Kuiper belts and gas clouds as hosts', () => {
   expect(isPoiHostCompatible('Gas Mine', gasGiant)).toBe(true);
 });
 
+test('every POI uses its JSON host predicate for compatible and incompatible objects', () => {
+  const orbit = { AU: 1, AngleDegrees: 0, ParentObjectId: null };
+  const starType = 'G-type' as const;
+  const rockyPlanet = generateTemplatePlanet({
+    seed: 'poi-predicates',
+    entityPath: 'rocky',
+    starType,
+    template: 'Ioan',
+    orbit,
+  });
+  const gasGiant = generateTemplatePlanet({
+    seed: 'poi-predicates',
+    entityPath: 'gas-giant',
+    starType,
+    template: 'Jovian',
+    orbit,
+  });
+  const primaryPlanet = generateInhabitedPlanet({
+    seed: 'poi-predicates',
+    entityPath: 'primary',
+    starType,
+    starHabitability: 3,
+    orbit,
+  });
+  const asteroidBelt = generateTemplateOtherCelestialObject({
+    seed: 'poi-predicates',
+    entityPath: 'asteroid-belt',
+    starType,
+    template: 'AsteroidBelt',
+    orbit,
+  });
+  const kuiperBelt = generateTemplateOtherCelestialObject({
+    seed: 'poi-predicates',
+    entityPath: 'kuiper-belt',
+    starType,
+    template: 'KuiperBelt',
+    orbit,
+  });
+  const gasCloud = generateTemplateOtherCelestialObject({
+    seed: 'poi-predicates',
+    entityPath: 'gas-cloud',
+    starType,
+    template: 'GasCloud',
+    orbit,
+  });
+  const independentStation = { ...asteroidBelt, ObjectType: 'IndependentStation' as const };
+
+  expect(isPoiHostCompatible('Deep-space station', independentStation)).toBe(true);
+  expect(isPoiHostCompatible('Deep-space station', gasCloud)).toBe(false);
+  for (const type of ['Asteroid base', 'Asteroid belt'] as const) {
+    expect(isPoiHostCompatible(type, asteroidBelt)).toBe(true);
+    expect(isPoiHostCompatible(type, kuiperBelt)).toBe(false);
+  }
+  expect(isPoiHostCompatible('Remote moon base', primaryPlanet)).toBe(true);
+  expect(isPoiHostCompatible('Remote moon base', rockyPlanet)).toBe(true);
+  expect(isPoiHostCompatible('Remote moon base', gasGiant)).toBe(false);
+  expect(isPoiHostCompatible('Remote moon base', gasCloud)).toBe(false);
+  for (const type of ['Ancient orbital ruin', 'Research base'] as const) {
+    expect(isPoiHostCompatible(type, primaryPlanet)).toBe(true);
+    expect(isPoiHostCompatible(type, gasGiant)).toBe(true);
+    expect(isPoiHostCompatible(type, gasCloud)).toBe(false);
+  }
+  for (const type of ['Comet base', 'Comet belt'] as const) {
+    expect(isPoiHostCompatible(type, kuiperBelt)).toBe(true);
+    expect(isPoiHostCompatible(type, asteroidBelt)).toBe(false);
+  }
+  for (const type of ['Gas Mine', 'Refueling station'] as const) {
+    expect(isPoiHostCompatible(type, gasGiant)).toBe(true);
+    expect(isPoiHostCompatible(type, gasCloud)).toBe(true);
+    expect(isPoiHostCompatible(type, rockyPlanet)).toBe(false);
+    expect(isPoiHostCompatible(type, asteroidBelt)).toBe(false);
+  }
+});
+
 test('compact remnants retain only usable direct-orbit temperature bands', () => {
   expect(directOrbitAuBand('White dwarf', 'Temperate')[0]).toBe(
     directOrbitAuBand('White dwarf', 'Temperate')[1],
@@ -102,9 +182,31 @@ test('compact remnants retain only usable direct-orbit temperature bands', () =>
   );
 });
 
-test('system edge uses the complete System_AU_Width span', () => {
+test('system edge uses the complete configured star AU width span', () => {
   expect(systemEdgeAu('G-type')).toBeCloseTo(4.899);
   expect(systemEdgeAu('A-type')).toBeCloseTo(15.493);
+});
+
+test('JSON star widths cover every direct-orbit temperature band', () => {
+  for (const starType of Object.keys(STAR_AU_WIDTHS) as Array<keyof typeof STAR_AU_WIDTHS>) {
+    const [rangeStart, rangeEnd] = directOrbitAuRange(starType);
+    const bands = directOrbitTemperatures(starType)
+      .map((temperature) => ({
+        temperature,
+        range: directOrbitAuBand(starType, temperature),
+      }))
+      .sort((first, second) => first.range[0] - second.range[0]);
+
+    expect(bands[0]?.range[0]).toBeCloseTo(rangeStart);
+    expect(bands.at(-1)?.range[1]).toBeCloseTo(rangeEnd);
+    for (let index = 0; index < bands.length; index += 1) {
+      const current = bands[index]!;
+      expect(current.range[1]).toBeGreaterThan(current.range[0]);
+      expect(current.range[0]).toBeGreaterThanOrEqual(rangeStart);
+      expect(current.range[1]).toBeLessThanOrEqual(rangeEnd);
+      if (index > 0) expect(current.range[0]).toBeCloseTo(bands[index - 1]!.range[1]);
+    }
+  }
 });
 
 test('normal temperature boundaries collapse for remnant stars', () => {

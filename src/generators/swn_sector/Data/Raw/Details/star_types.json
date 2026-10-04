@@ -18,7 +18,14 @@
         "beyond": ">64 AU"
       },
       "example": "Sirius A",
-      "description": "Hot, luminous main-sequence stars. Temperate terrestrial planets are possible, but stronger UV and shorter stellar lifetimes make naturally Earthlike worlds less likely."
+      "description": "Hot, luminous main-sequence stars. Temperate terrestrial planets are possible, but stronger UV and shorter stellar lifetimes make naturally Earthlike worlds less likely.",
+      "auWidths": {
+        "FromStar": 0.273,
+        "ExtremeHotRange": 2.73,
+        "ExtremeColdRange": 8.19,
+        "NormalRange": 2.28,
+        "ToSystemEdge": 2.02
+      }
     },
     "F-type": {
       "hab": 2,
@@ -34,7 +41,14 @@
         "beyond": ">44 AU"
       },
       "example": "Procyon A",
-      "description": "Hotter and more luminous than the Sun. Temperate terrestrial planets remain plausible despite greater UV exposure."
+      "description": "Hotter and more luminous than the Sun. Temperate terrestrial planets remain plausible despite greater UV exposure.",
+      "auWidths": {
+        "FromStar": 0.111,
+        "ExtremeHotRange": 1.11,
+        "ExtremeColdRange": 3.34,
+        "NormalRange": 0.928,
+        "ToSystemEdge": 0.823
+      }
     },
     "G-type": {
       "hab": 3,
@@ -50,7 +64,14 @@
         "beyond": ">36 AU"
       },
       "example": "Sol",
-      "description": "Sun-like stars and the baseline for long-term temperate terrestrial environments."
+      "description": "Sun-like stars and the baseline for long-term temperate terrestrial environments.",
+      "auWidths": {
+        "FromStar": 0.086,
+        "ExtremeHotRange": 0.864,
+        "ExtremeColdRange": 2.59,
+        "NormalRange": 0.72,
+        "ToSystemEdge": 0.639
+      }
     },
     "K-type": {
       "hab": 3,
@@ -66,7 +87,14 @@
         "beyond": ">24 AU"
       },
       "example": "Alpha Centauri B",
-      "description": "Cooler and dimmer than G stars, but stable, long-lived, and highly favorable to habitability."
+      "description": "Cooler and dimmer than G stars, but stable, long-lived, and highly favorable to habitability.",
+      "auWidths": {
+        "FromStar": 0.036,
+        "ExtremeHotRange": 0.36,
+        "ExtremeColdRange": 1.08,
+        "NormalRange": 0.3,
+        "ToSystemEdge": 0.266
+      }
     },
     "M-type": {
       "hab": 2,
@@ -82,7 +110,14 @@
         "beyond": ">3.2 AU"
       },
       "example": "Proxima Centauri",
-      "description": "Red dwarfs. Temperate planets are plausible, but close-in habitable zones have tidal, atmospheric, and stellar-activity complications."
+      "description": "Red dwarfs. Temperate planets are plausible, but close-in habitable zones have tidal, atmospheric, and stellar-activity complications.",
+      "auWidths": {
+        "FromStar": 0.0227,
+        "ExtremeHotRange": 0.227,
+        "ExtremeColdRange": 0.682,
+        "NormalRange": 0.189,
+        "ToSystemEdge": 0.168
+      }
     },
     "Giant": {
       "includes": [
@@ -101,7 +136,14 @@
         "beyond": ">52 AU"
       },
       "example": "Pollux",
-      "description": "Evolved stars with outward-shifted habitable zones. Existing outer planets or moons can become temperate, though Earthlike worlds are unusual."
+      "description": "Evolved stars with outward-shifted habitable zones. Existing outer planets or moons can become temperate, though Earthlike worlds are unusual.",
+      "auWidths": {
+        "FromStar": 0.535,
+        "ExtremeHotRange": 5.35,
+        "ExtremeColdRange": 16.06,
+        "NormalRange": 4.46,
+        "ToSystemEdge": 3.96
+      }
     },
     "White dwarf": {
       "hab": 0,
@@ -117,7 +159,14 @@
         "beyond": ">20 AU"
       },
       "example": "Sirius B",
-      "description": "Compact stellar remnant. Planets and temporary habitable zones are possible, but naturally Earthlike worlds are exceptional."
+      "description": "Compact stellar remnant. Planets and temporary habitable zones are possible, but naturally Earthlike worlds are exceptional.",
+      "auWidths": {
+        "FromStar": 0.303,
+        "ExtremeHotRange": 4.295,
+        "ExtremeColdRange": 10.355,
+        "NormalRange": 0,
+        "ToSystemEdge": 2.24
+      }
     },
     "Neutron star": {
       "hab": 0,
@@ -133,7 +182,14 @@
         "beyond": ">44 AU"
       },
       "example": "PSR B1257+12",
-      "description": "Collapsed stellar remnant. Planet formation history and extreme radiation make naturally Earthlike conditions highly improbable."
+      "description": "Collapsed stellar remnant. Planet formation history and extreme radiation make naturally Earthlike conditions highly improbable.",
+      "auWidths": {
+        "FromStar": 0.303,
+        "ExtremeHotRange": 4.295,
+        "ExtremeColdRange": 10.355,
+        "NormalRange": 0,
+        "ToSystemEdge": 2.24
+      }
     },
     "Stellar-mass black hole": {
       "hab": 0,
@@ -149,7 +205,14 @@
         "beyond": ">120 AU"
       },
       "example": "Gaia BH1",
-      "description": "Collapsed remnant without an ordinary luminous surface. Conventional naturally Earthlike planets require unusual circumstances or another luminous companion."
+      "description": "Collapsed remnant without an ordinary luminous surface. Conventional naturally Earthlike planets require unusual circumstances or another luminous companion.",
+      "auWidths": {
+        "FromStar": 0.303,
+        "ExtremeHotRange": 4.295,
+        "ExtremeColdRange": 10.355,
+        "NormalRange": 0,
+        "ToSystemEdge": 2.24
+      }
     }
   }
 }

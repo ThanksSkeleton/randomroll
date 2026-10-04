@@ -2,9 +2,9 @@
 
 ## Goal
 
-Remove the six remaining rule and lookup overlaps found between `Data/Raw` JSON and TypeScript. Keep one authoritative value for each rule. Preserve the current generated Base DTOs, projected values, and validation results for the same inputs unless a behavior change is explicitly reviewed.
+Remove the seven remaining rule and lookup overlaps across `Data/Raw` JSON, CSV, and TypeScript. Keep one authoritative value for each rule. Preserve the current generated Base DTOs, projected values, and validation results for the same inputs unless a behavior change is explicitly reviewed.
 
-The six items below group the two unused probability tables together. Roll-table results and their separate detail records are intentional joins, not duplicates to remove.
+The seven items below group the two unused probability tables together. Roll-table results and their separate detail records are intentional joins, not duplicates to remove.
 
 ## 1. Use the two existing probability tables
 
@@ -41,6 +41,12 @@ Derive the ordered temperature names from `orbitalOrder` and use that sequence f
 `Data/Raw/Details/points_of_interest.json` records `otherPoints[*].locationType`, while `Shared/poi_host_interpretation.ts` owns a separate host-compatibility switch. The JSON uses descriptions such as “Any NonPrimary Planet,” but the switch currently allows any planet for those POIs. Treat this as a behavior discrepancy, not an interchangeable label.
 
 Record structured host predicates in the POI details and make `isPoiHostCompatible` interpret them. Keep the existing predicate behavior as the migration baseline; update or clarify the descriptive `locationType` strings where they disagree. Cover every POI type and representative compatible and incompatible hosts, including primary planets, gas planets, belts, gas clouds, and independent stations. Keep generation and generated-sector validation on the same predicate.
+
+## 7. Move star AU widths into JSON
+
+`Shared/spatial_interpretation.ts` maintains `STAR_AU_WIDTHS` as a TypeScript object. The same values are in `swn_sector/System_AU_Width.csv`, but no corresponding structured fields currently exist in `Data/Raw` JSON. The `orbitalZones` descriptions in `Data/Raw/Details/star_types.json` are separate descriptive data and should not be parsed to recover these widths.
+
+Add the structured widths (`FromStar`, `ExtremeHotRange`, `ExtremeColdRange`, `NormalRange`, and `ToSystemEdge`) to each star type in `Data/Raw/Details/star_types.json`, using the current CSV/TypeScript values. Adapt `STAR_AU_WIDTHS` from those JSON fields and remove the maintained TypeScript numeric object. Retire the CSV copy or generate it from JSON so it is not a second maintained source. Verify system-edge calculations, every star/temperature AU interval, and fixed-seed placements against the current behavior.
 
 ## Acceptance checks
 

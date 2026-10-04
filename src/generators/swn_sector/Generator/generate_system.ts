@@ -680,6 +680,8 @@ export function populatePointsOfInterest(
       );
       if (placedStation === undefined || placedStation.Kind !== 'OtherCelestialObject')
         throw new Error(`Missing station ${stationPath}`);
+      if (!isPoiHostCompatible(selected.type, placedStation))
+        throw new Error(`Generated station cannot host ${selected.type}`);
       objects.push(placedStation);
       pois.push(makePoi(seed, `${entityPath}:poi:${index}`, placedStation.Id, selected.type));
       capacity.set(placedStation.Id, 1);
