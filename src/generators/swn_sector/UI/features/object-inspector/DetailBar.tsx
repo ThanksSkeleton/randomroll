@@ -54,7 +54,12 @@ function BasicScanField({ content, entityId }: { content: BasicScanContent; enti
             <summary>{entry.summary}</summary>
             <div className="basic-scan-drawer-content">
               {entry.lines.map((line, lineIndex) => (
-                <div key={lineIndex}>{line}</div>
+                <div
+                  className={line.startsWith('Description:') ? 'basic-scan-description' : undefined}
+                  key={lineIndex}
+                >
+                  {line}
+                </div>
               ))}
             </div>
           </details>
@@ -103,15 +108,14 @@ function PoliticsScanField({ info }: { info: DisplaySelectableDTO }) {
   return (
     <div className="basic-scan-elements">
       <details className="basic-scan-element basic-scan-drawer">
-        <summary>Tech Level: {planet.technologyRating} - {planet.technologyLevelShort}</summary>
-        <div className="basic-scan-drawer-content">{planet.technologyLevel}</div>
-      </details>
-      <details className="basic-scan-element basic-scan-drawer">
-        <summary>Population: {planet.populationShort}</summary>
-        <div className="basic-scan-drawer-content">{planet.population}</div>
-      </details>
-      <details className="basic-scan-element basic-scan-drawer">
-        <summary>Sovereignty: {sovereignty}</summary>
+        <summary>
+          Sovereignty: {sovereignty}
+          {claimants.length === 1 && (
+            <span className="politics-scan-rollup-flag">
+              <PolityFlag polity={claimants[0]} />
+            </span>
+          )}
+        </summary>
         <div className="basic-scan-drawer-content">
           {claimants.length > 1 ? (
             claimants.map((polity, index) => (
@@ -121,10 +125,18 @@ function PoliticsScanField({ info }: { info: DisplaySelectableDTO }) {
             ))
           ) : claimants.length === 1 ? (
             <div className="politics-scan-claimant">
-              Claimed By: {claimants[0]!.NiceName} <PolityFlag polity={claimants[0]} />
+              Claimed By: {claimants[0]!.NiceName}
             </div>
           ) : null}
         </div>
+      </details>
+      <details className="basic-scan-element basic-scan-drawer">
+        <summary>Tech Level: {planet.technologyRating} - {planet.technologyLevelShort}</summary>
+        <div className="basic-scan-drawer-content">{planet.technologyLevel}</div>
+      </details>
+      <details className="basic-scan-element basic-scan-drawer">
+        <summary>Population: {planet.populationShort}</summary>
+        <div className="basic-scan-drawer-content">{planet.population}</div>
       </details>
     </div>
   );

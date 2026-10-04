@@ -86,6 +86,7 @@ export function projectSector(
       !add(system, 'System', system.Id, {
         systemSpatial: spatial,
         star,
+        inspectorBasicScan: star.basicScan,
         claims,
         inspectorClaimants: claims.claimants,
         portraitDescription: `${star.starType} star`,
@@ -97,7 +98,8 @@ export function projectSector(
       })
     )
       return fail(`Systems.${system.Id}.Id`);
-    if (!add(system.Star, 'Star', system.Id, { star })) return fail(`Systems.${system.Id}.Star.Id`);
+    if (!add(system.Star, 'Star', system.Id, { star, inspectorBasicScan: star.basicScan }))
+      return fail(`Systems.${system.Id}.Star.Id`);
     for (const object of system.Objects) {
       const objectSpatial = projectObjectSpatial(sector, object.Id);
       const objectClaims = projectClaims(sector, object);

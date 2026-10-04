@@ -64,6 +64,11 @@ export type PlanetDisplayDTO = {
 export type StarDisplayDTO = {
   id: string;
   starType: StarType;
+  basicScan: BasicScanContent;
+  name: string;
+  solarMass: number;
+  solarLuminosity: number | null;
+  description: string;
   color: StarPresentation['color'];
   size: number;
   recipe: StarPresentation['recipe'];

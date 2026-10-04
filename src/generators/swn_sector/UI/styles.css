@@ -356,6 +356,10 @@ button.detail-tab {
 .basic-scan-drawer-content {
   padding: 8px 0 0 16px;
 }
+.basic-scan-description {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
 .detail-section.gm-note {
   background: #121719;
   border-left: 2px solid var(--blue);
@@ -2563,6 +2567,14 @@ select {
   align-items: center;
   gap: 4px;
 }
+.politics-scan-rollup-flag {
+  display: inline-flex;
+  margin-left: 5px;
+  vertical-align: middle;
+}
+.politics-scan-rollup-flag .polity-flag {
+  display: inline-block;
+}
 .polity-overlay-flags {
   position: absolute;
   z-index: 40;
@@ -2574,12 +2586,6 @@ select {
   left: 50%;
   transform: translate(-50%, -100%);
 }
-.topdown-polity-flags {
-  bottom: 18px;
-  left: 0;
-  transform: translateX(-50%);
-}
-
 /* Reusable button-state vocabulary. */
 button.button-active {
   background: var(--green);

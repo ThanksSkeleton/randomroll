@@ -4,7 +4,6 @@ import type { DisplaySectorDTO, DisplaySelectableDTO } from '../../../DisplayDTO
 import { areAdjacentHexes } from '../../hex_geometry';
 import { isVisibleToPlayerDisplay } from '../../visibility_presentation';
 import { StarGlyph } from './StarGlyph';
-import { PolityFlagList } from '../politics/PolityFlag';
 
 function poiMarker(poi: DisplaySelectableDTO) {
   return poi.habitablePoi?.marker ?? '◆';
@@ -101,7 +100,6 @@ export function TopDown({
   select,
   preview,
   showTemperatureOverlay,
-  showPolityOverlay = false,
 }: {
   systemId: string;
   display: DisplaySectorDTO;
@@ -208,13 +206,6 @@ export function TopDown({
           poi.habitablePoi?.absent !== true &&
           visible(poi.id, display, preview),
       );
-  const polityFlags = (object: DisplaySelectableDTO) =>
-    showPolityOverlay && (preview === 'gm' || object.visibility.PoliticsScan) ? (
-      <PolityFlagList
-        polities={object.claims?.claimants ?? []}
-        className="polity-overlay-flags topdown-polity-flags"
-      />
-    ) : null;
   useEffect(() => {
     const shell = shellRef.current;
     if (!shell) return;
@@ -621,7 +612,6 @@ export function TopDown({
             return (
               <div key={p.id}>
                 <div className="td-object" style={pp}>
-                  {polityFlags(p)}
                   <Selectable
                     id={p.id}
                     selected={selected}
@@ -673,7 +663,6 @@ export function TopDown({
                   };
                   return (
                     <div className="td-object td-moon" style={mp} key={m.id}>
-                      {polityFlags(m)}
                       <Selectable
                         id={m.id}
                         selected={selected}
@@ -715,7 +704,6 @@ export function TopDown({
                 style={pp}
                 key={object.id}
               >
-                {polityFlags(object)}
                 {!beltPoiHost && object.otherObjectType !== 'GasCloud' && (
                   <Selectable
                     id={object.id}
