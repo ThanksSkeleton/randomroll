@@ -15,13 +15,3 @@ export function projectPoi(sector: Sector, id: string): PoiDisplayDTO | undefine
   }
   return undefined;
 }
-
-export function projectPoiCount(
-  sector: Sector,
-  systemId: string,
-  hostId: string,
-): number | undefined {
-  const system = sector.Systems.find((candidate) => candidate.Id === systemId);
-  if (!system || !system.Objects.some((object) => object.Id === hostId)) return undefined;
-  return system.PointsOfInterest.filter((poi) => poi.ParentObjectId === hostId).length;
-}

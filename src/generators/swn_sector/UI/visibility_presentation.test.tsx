@@ -288,7 +288,7 @@ describe('scan visibility presentation', () => {
     expect(deep?.textContent).toBe('-');
   });
 
-  it('places signal counts in Detailed stock and uses a dash for empty Deep stock', () => {
+  it('does not show signal counts in Detailed stock and keeps a dash for empty Deep stock', () => {
     const sector = generate('VISIBILITY-SIGNALS');
     const object = sector.Systems.flatMap((system) => system.Objects).find(
       (candidate) =>
@@ -306,7 +306,7 @@ describe('scan visibility presentation', () => {
 
     expect(
       view.container.querySelector('.scan-detailedscan .detail-stock-content')?.textContent,
-    ).toMatch(/^Signals Detected: \d+$/);
+    ).toBe('-');
     expect(
       view.container.querySelector('.scan-deeppoliticsscan .detail-stock-content')?.textContent,
     ).toBe('-');

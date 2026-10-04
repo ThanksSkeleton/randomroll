@@ -209,8 +209,8 @@ export function projectHabitablePoi(
     assignedPolity: assignedPolity ?? null,
     ...result,
     stock: {
-      basic: hpoi.HPOIType,
-      detailed: physical.map(([name, value]) => `${name}: ${value}`).join('\n') || '-',
+      basic: [hpoi.HPOIType, ...physical.map(([name, value]) => `${name}: ${value}`)].join('\n'),
+      detailed: '-',
       politics: `ClaimedBy: ${names.length ? names.join(', ') : 'None'}`,
       deep:
         [

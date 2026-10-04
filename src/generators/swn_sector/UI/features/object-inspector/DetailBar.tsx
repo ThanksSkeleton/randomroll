@@ -266,7 +266,8 @@ function DetailBox({
   draft: EditDraft | null;
   setDraft: (update: (draft: EditDraft) => EditDraft) => void;
 }) {
-  const [activeTab, setActiveTab] = useState<'player' | 'gm'>('player');
+  const [activeTab, setActiveTab] = useState<'basic' | 'detailed' | 'gm'>('basic');
+  const visibleTab = preview !== 'gm' && activeTab === 'gm' ? 'basic' : activeTab;
   const edit = (field: EditableDetailField) => (value: string) =>
     setDraft((old) => ({
       ...old,
@@ -282,98 +283,119 @@ function DetailBox({
         </p>
       </section>
     );
+  const renderScanPanel = (tab: 'basic' | 'detailed') => {
+    const fields =
+      tab === 'basic'
+        ? ([
+            ['BasicScan', 'Basic Scan'],
+            ['PoliticsScan', 'Politics Scan'],
+          ] as const)
+        : ([
+            ['DetailedScan', 'Detailed Scan'],
+            ['DeepPoliticsScan', 'Deep Politics Scan'],
+          ] as const);
+    return (
+      <div
+        className="details-stack"
+        id={`detail-panel-${tab}`}
+        role="tabpanel"
+        aria-labelledby={`detail-tab-${tab}`}
+        hidden={visibleTab !== tab}
+      >
+        {fields.map(([field, title]) =>
+          preview === 'gm' || info.visibility[field] ? (
+            <section className={`detail-section scan-${field.toLowerCase()}`} key={field}>
+              <h3>{title}</h3>
+              {field === 'BasicScan' && (
+                <BasicScanField
+                  content={
+                    info.inspectorBasicScan ?? {
+                      entries: stock.basic
+                        .split('\n')
+                        .map((text) => ({ type: 'simple' as const, text })),
+                    }
+                  }
+                  entityId={info.id}
+                />
+              )}
+              {field === 'DetailedScan' && <StockField content={stock.detailed} />}
+              {field === 'PoliticsScan' && <PoliticsScanField info={info} />}
+              {field === 'DeepPoliticsScan' && <StockField content={stock.deep} />}
+              {(field === 'DetailedScan' || field === 'DeepPoliticsScan') && (
+                <div className="detail-small-divider" aria-hidden="true" />
+              )}
+              {(field === 'DetailedScan' || field === 'DeepPoliticsScan') &&
+              preview === 'gm' &&
+              !locked ? (
+                <EditableText
+                  className="detail-editable"
+                  multiline
+                  value={draftValue(draft, info, field)}
+                  onChange={edit(field)}
+                />
+              ) : field === 'DetailedScan' || field === 'DeepPoliticsScan' ? (
+                <p className="detail-section-description">
+                  <ContentText content={info.intelligence[field]} />
+                </p>
+              ) : null}
+            </section>
+          ) : null,
+        )}
+      </div>
+    );
+  };
   return (
     <div className="detail-pane-tabs">
-      <div className="detail-tab-list" role="tablist" aria-label="Object information">
+      <div
+        className={`detail-tab-list${preview === 'gm' ? ' detail-tab-list-gm' : ''}`}
+        role="tablist"
+        aria-label="Object information"
+      >
         <button
-          className={`detail-tab${activeTab === 'player' ? ' active' : ''}`}
-          id="detail-tab-player"
+          className={`detail-tab${visibleTab === 'basic' ? ' active' : ''}`}
+          id="detail-tab-basic"
           type="button"
           role="tab"
-          aria-selected={activeTab === 'player' || preview !== 'gm'}
-          aria-controls="detail-panel-player"
-          onClick={() => setActiveTab('player')}
+          aria-selected={visibleTab === 'basic'}
+          aria-controls="detail-panel-basic"
+          onClick={() => setActiveTab('basic')}
         >
-          SCAN INFO
+          BASIC
+        </button>
+        <button
+          className={`detail-tab${visibleTab === 'detailed' ? ' active' : ''}`}
+          id="detail-tab-detailed"
+          type="button"
+          role="tab"
+          aria-selected={visibleTab === 'detailed'}
+          aria-controls="detail-panel-detailed"
+          onClick={() => setActiveTab('detailed')}
+        >
+          DETAILED
         </button>
         {preview === 'gm' ? (
           <button
-            className={`detail-tab${activeTab === 'gm' ? ' active' : ''}`}
+            className={`detail-tab${visibleTab === 'gm' ? ' active' : ''}`}
             id="detail-tab-gm"
             type="button"
             role="tab"
-            aria-selected={activeTab === 'gm'}
+            aria-selected={visibleTab === 'gm'}
             aria-controls="detail-panel-gm"
             onClick={() => setActiveTab('gm')}
           >
-            GM INFO
+            GM
           </button>
-        ) : (
-          <span className="detail-tab detail-tab-placeholder" aria-hidden="true" />
-        )}
+        ) : null}
       </div>
-      {activeTab === 'player' || preview !== 'gm' ? (
-        <div
-          className="details-stack"
-          id="detail-panel-player"
-          role="tabpanel"
-          aria-labelledby="detail-tab-player"
-        >
-          {(
-            [
-              ['BasicScan', 'Basic Scan'],
-              ['DetailedScan', 'Detailed Scan'],
-              ['PoliticsScan', 'Politics Scan'],
-              ['DeepPoliticsScan', 'Deep Politics Scan'],
-            ] as const
-          ).map(([field, title]) =>
-            preview === 'gm' || info.visibility[field] ? (
-              <section className={`detail-section scan-${field.toLowerCase()}`} key={field}>
-                <h3>{title}</h3>
-                {field === 'BasicScan' && (
-                  <BasicScanField
-                    content={
-                      info.inspectorBasicScan ?? {
-                        entries: stock.basic
-                          .split('\n')
-                          .map((text) => ({ type: 'simple' as const, text })),
-                      }
-                    }
-                    entityId={info.id}
-                  />
-                )}
-                {field === 'DetailedScan' && <StockField content={stock.detailed} />}
-                {field === 'PoliticsScan' && (
-                  <PoliticsScanField info={info} />
-                )}
-                {field === 'DeepPoliticsScan' && <StockField content={stock.deep} />}
-                {(field === 'DetailedScan' || field === 'DeepPoliticsScan') && (
-                  <div className="detail-small-divider" aria-hidden="true" />
-                )}
-                {(field === 'DetailedScan' || field === 'DeepPoliticsScan') &&
-                preview === 'gm' &&
-                !locked ? (
-                  <EditableText
-                    className="detail-editable"
-                    multiline
-                    value={draftValue(draft, info, field)}
-                    onChange={edit(field)}
-                  />
-                ) : field === 'DetailedScan' || field === 'DeepPoliticsScan' ? (
-                  <p className="detail-section-description">
-                    <ContentText content={info.intelligence[field]} />
-                  </p>
-                ) : null}
-              </section>
-            ) : null,
-          )}
-        </div>
-      ) : (
+      {renderScanPanel('basic')}
+      {renderScanPanel('detailed')}
+      {preview === 'gm' ? (
         <section
           className="detail-section gm-note"
           id="detail-panel-gm"
           role="tabpanel"
           aria-labelledby="detail-tab-gm"
+          hidden={visibleTab !== 'gm'}
         >
           <h3>GM Information</h3>
           {info.kind !== 'PointOfInterest' && (
@@ -400,7 +422,7 @@ function DetailBox({
             </p>
           )}
         </section>
-      )}
+      ) : null}
     </div>
   );
 }

@@ -10,7 +10,7 @@ import { projectCultureScreen, projectHabitablePoi } from './culture_projection'
 import { projectObjectKind } from './object_kind_projection';
 import { projectObjectSpatial } from './object_spatial_projection';
 import { projectPlanet } from './planet_projection';
-import { projectPoi, projectPoiCount } from './poi_projection';
+import { projectPoi } from './poi_projection';
 import { projectClaims, projectConquest, projectPolity } from './politics_projection';
 import { projectPortrait } from './portrait_projection';
 import { projectRoute } from './route_projection';
@@ -133,7 +133,6 @@ export function projectSector(
               : {
                   ...emptyStock(),
                   basic: objectSpatial.inspectorBasic ?? '-',
-                  detailed: `Signals Detected: ${projectPoiCount(sector, system.Id, object.Id) ?? 0}`,
                   politics: objectClaims.stockText,
                 },
         })

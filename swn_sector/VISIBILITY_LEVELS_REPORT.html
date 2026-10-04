@@ -186,8 +186,8 @@
           </article>
           <article class="card level" data-mark="D">
             <div class="kicker">independent science branch</div><h3>Detailed Scan · <code>DetailedScan</code></h3>
-            <ul><li>Shows the Detailed Scan section and its stored editable text.</li><li>For inhabited planets, live stock shows native life, Terran life, and population band.</li><li>For uninhabited planets and other celestial objects, live stock shows the associated POI count (“Signals Detected”).</li><li>Does not affect names, entity inclusion, or portraits.</li></ul>
-            <p class="generated"><strong>Generated value:</strong> no entity receives this flag during generation. Stored <code>Intelligence.DetailedScan</code> is initialized to <code>-</code>, but the GM can edit it. Entity types without Detailed stock show <code>-</code>.</p>
+            <ul><li>Shows the Detailed Scan section and its stored editable text.</li><li>There is no generated Detailed Scan stock; physical HPOI details appear in Basic Scan.</li><li>Does not affect names, entity inclusion, or portraits.</li></ul>
+            <p class="generated"><strong>Generated value:</strong> no entity receives this flag during generation. Stored <code>Intelligence.DetailedScan</code> is initialized to <code>-</code>, but the GM can edit it.</p>
           </article>
           <article class="card level" data-mark="P">
             <div class="kicker">politics branch, stage 1</div><h3>Politics Scan · <code>PoliticsScan</code></h3>
@@ -213,12 +213,13 @@
         <div class="table-wrap"><table>
           <thead><tr><th>Entity</th><th>Basic stock</th><th>Detailed stock</th><th>Politics stock</th><th>Deep stock</th><th>GM stock / stored generation</th></tr></thead>
           <tbody>
-            <tr><td><strong>Inhabited planet or moon</strong></td><td>AU, temperature, size, moon host, atmosphere, composition</td><td>Native life, Terran life, population band</td><td>Numeric + named tech level</td><td class="no">-</td><td>World Tags / stored <code>-</code></td></tr>
-            <tr><td><strong>Uninhabited planet or moon</strong></td><td>AU, temperature, size, moon host, atmosphere, composition</td><td>Count of associated POIs (“Signals Detected”)</td><td class="no">-</td><td class="no">-</td><td class="no">- / -</td></tr>
-            <tr><td><strong>Other celestial object</strong></td><td>AU and object type</td><td>Count of associated POIs (“Signals Detected”)</td><td class="no">-</td><td class="no">-</td><td class="no">- / -</td></tr>
+            <tr><td><strong>Inhabited planet or moon</strong></td><td>AU, temperature, size, moon host, atmosphere, composition, bioscan with native/Terran life</td><td class="no">-</td><td>Technology level, population, claims</td><td>Culture summary when available</td><td>World Tags / stored <code>-</code></td></tr>
+            <tr><td><strong>Uninhabited planet or moon</strong></td><td>AU, temperature, size, moon host, atmosphere, composition</td><td class="no">-</td><td class="no">-</td><td class="no">-</td><td class="no">- / -</td></tr>
+            <tr><td><strong>Other celestial object</strong></td><td>AU and object type</td><td class="no">-</td><td class="no">-</td><td class="no">-</td><td class="no">- / -</td></tr>
             <tr><td><strong>Star system</strong></td><td>Star type</td><td class="no">-</td><td class="no">-</td><td class="no">-</td><td class="no">- / -</td></tr>
             <tr><td><strong>Route</strong></td><td>Both endpoint names and hex distance (“Spike Length”); endpoint names are procedural unless the route’s Politics flag is on</td><td class="no">-</td><td class="no">-</td><td class="no">-</td><td class="no">- / -</td></tr>
             <tr><td><strong>Point of interest</strong></td><td>POI type</td><td class="no">-</td><td class="no">-</td><td class="no">-</td><td>No separate stock block / generated rolled detail text in stored <code>GM</code></td></tr>
+            <tr><td><strong>Habitable point of interest</strong></td><td>Type and available public physical fields</td><td class="no">-</td><td>Claims and flags, or assigned polity for Garrison</td><td>Station enforcement/customs fields</td><td>All projected HPOI fields / existing stored GM note</td></tr>
             <tr><td><strong>Star</strong></td><td class="no">-</td><td class="no">-</td><td class="no">-</td><td class="no">-</td><td class="no">- / -</td></tr>
             <tr><td><strong>Route portal</strong></td><td class="no">-</td><td class="no">-</td><td class="no">-</td><td class="no">-</td><td class="no">- / -</td></tr>
             <tr><td><strong>Player ship</strong></td><td class="no">-</td><td class="no">-</td><td class="no">-</td><td class="no">-</td><td class="no">- / -</td></tr>

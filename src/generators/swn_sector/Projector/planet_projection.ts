@@ -10,7 +10,6 @@ import {
 import { displayBulkComposition } from './composition_presentation';
 import { projectObjectSpatial } from './object_spatial_projection';
 import { projectClaims } from './politics_projection';
-import { projectPoiCount } from './poi_projection';
 import { formatAtmosphere, resolveAtmosphere } from '../Shared/atmosphere_interpretation';
 import { techLevelStrings } from '../Shared/tech_level_interpretation';
 import { populationStrings } from '../Shared/population_interpretation';
@@ -105,12 +104,11 @@ export function projectPlanet(
     .flatMap((entry) => (entry.type === 'simple' ? [entry.text] : [entry.summary, ...entry.lines]))
     .join('\n');
   const claim = projectClaims(sector, planet)?.stockText ?? 'ClaimedBy: None';
-  const signalsDetected = projectPoiCount(sector, system.Id, planet.Id) ?? 0;
   const stock: PlanetStockText =
     inhabited === false
       ? {
           basic,
-          detailed: `Signals Detected: ${signalsDetected}`,
+          detailed: '-',
           politics: claim,
           deep: '-',
           gm: '-',

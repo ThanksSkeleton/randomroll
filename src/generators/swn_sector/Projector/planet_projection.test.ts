@@ -88,6 +88,6 @@ test('projects an uninhabited cold moon with the player-visible host name', () =
   expect(player?.displayedComposition).toBe('Ice');
   expect(player?.stock.basic).toContain('Moon of HOST PROCEDURAL');
   expect(gm?.stock.basic).toContain('Moon of HOST NICE');
-  expect(player?.stock.detailed).toBe('Signals Detected: 0');
+  expect(player?.stock.detailed).toBe('-');
   expect(player?.habitabilityRating).toBeNull();
 });
