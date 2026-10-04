@@ -2676,6 +2676,16 @@ button.button-active:hover:not(:disabled) {
 .culture-polity-overview {
   margin: 24px 0 32px;
 }
+.culture-world-group > h2 {
+  margin: 0 0 12px;
+}
+.culture-world-group {
+  margin: 28px 0;
+}
+.culture-world-details {
+  display: grid;
+  gap: 14px;
+}
 .culture-polity-table-scroll {
   overflow-x: auto;
 }
@@ -2747,6 +2757,46 @@ button.button-active:hover:not(:disabled) {
 }
 .culture-tag-section {
   margin: 20px 0;
+  padding: 16px;
+  border: 1px solid #496278;
+  background: #192b38;
+}
+.culture-info-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 10px;
+  margin-top: 16px;
+}
+.culture-info-box {
+  min-width: 0;
+  padding: 16px;
+  border: 1px solid #496278;
+  background: #192b38;
+}
+.culture-info-box h4 {
+  margin: 0 0 8px;
+}
+.culture-info-box .culture-data {
+  margin: 0;
+}
+.culture-component-list {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 10px;
+}
+.culture-component {
+  padding: 10px;
+  background: #14232e;
+}
+.culture-component h5 {
+  margin: 0 0 6px;
+}
+.culture-component ul {
+  margin: 6px 0 0;
+  padding-left: 20px;
+}
+.culture-component li + li {
+  margin-top: 4px;
 }
 .culture-tag-grid {
   display: grid;

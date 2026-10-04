@@ -273,13 +273,8 @@ export function projectCultureScreen(sector: Sector): CultureScreenDisplayDTO | 
   const worlds = worldIds.map((id) => projectCultureWorld(sector, id));
   if (worlds.some((world) => !world)) return undefined;
   const present = worlds as CultureWorldDisplayDTO[];
-  const counts = new Map<string, number>();
-  for (const world of present)
-    for (const id of new Set(world.claims.claimantIds)) counts.set(id, (counts.get(id) ?? 0) + 1);
   const compare = (a: PolityDisplayDTO, b: PolityDisplayDTO) =>
-    (counts.get(b.id) ?? 0) - (counts.get(a.id) ?? 0) ||
-    a.NiceName.localeCompare(b.NiceName) ||
-    a.id.localeCompare(b.id);
+    a.NiceName.localeCompare(b.NiceName) || a.id.localeCompare(b.id);
   const overview = present
     .map((world) => ({
       worldId: world.id,
@@ -291,18 +286,25 @@ export function projectCultureScreen(sector: Sector): CultureScreenDisplayDTO | 
     }))
     .sort(
       (a, b) =>
-        (b.currentPolities[0] ? (counts.get(b.currentPolities[0].id) ?? 0) : 0) -
-          (a.currentPolities[0] ? (counts.get(a.currentPolities[0].id) ?? 0) : 0) ||
         Number(b.startingWorld) - Number(a.startingWorld) ||
-        Number(b.complete) - Number(a.complete) ||
         (a.currentPolities[0]?.NiceName ?? 'None').localeCompare(
           b.currentPolities[0]?.NiceName ?? 'None',
         ) ||
         a.worldName.localeCompare(b.worldName) ||
         a.worldId.localeCompare(b.worldId),
     );
+  const compareWorldPolity = (world: CultureWorldDisplayDTO) =>
+    [...world.claims.claimants].sort(compare)[0]?.NiceName ?? 'None';
+  const sortedWorlds = [...present].sort(
+    (a, b) =>
+      Number(b.startingWorld) - Number(a.startingWorld) ||
+      Number(b.complete) - Number(a.complete) ||
+      compareWorldPolity(a).localeCompare(compareWorldPolity(b)) ||
+      a.name.localeCompare(b.name) ||
+      a.id.localeCompare(b.id),
+  );
   return {
-    worlds: present.sort((a, b) => Number(b.complete) - Number(a.complete)),
+    worlds: sortedWorlds,
     overview,
   };
 }
