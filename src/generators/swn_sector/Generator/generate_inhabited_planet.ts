@@ -286,7 +286,7 @@ export function generateInhabitedPlanet(options: InhabitedPlanetOptions): Planet
     currentHab = Math.min(currentHab, TERRAN_BIOSPHERE_HAB[TerranBiosphere]);
     const Size = chooseWeighted(
       randomFor(options.seed, `${path}:size`),
-      SIZE_TABLE.filter((row) => (row.Hab ?? 0) > 0),
+      SIZE_TABLE.filter((row) => SIZE_HAB[row.Value] > 0),
       'sizes',
     ).Value;
     currentHab = Math.min(currentHab, SIZE_HAB[Size]);

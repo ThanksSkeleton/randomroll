@@ -24,7 +24,7 @@ import {
 } from '../Shared/spatial_interpretation';
 
 type RawRow = { roll: string | number; result: string | number; weight?: number; hab?: number };
-export type WeightedCategory<T> = { Value: T; Weight: number; Hab?: number };
+export type WeightedCategory<T> = { Value: T; Weight: number };
 function rollSpan(roll: string | number): readonly [number, number] {
   const [first, last = first] = String(roll).split('-').map(Number);
   if (
@@ -46,7 +46,6 @@ function adaptRows<T>(
     return {
       Value: adapt(row.result, index),
       Weight: row.weight ?? last - first + 1,
-      ...(row.hab === undefined ? {} : { Hab: row.hab }),
     };
   });
 }

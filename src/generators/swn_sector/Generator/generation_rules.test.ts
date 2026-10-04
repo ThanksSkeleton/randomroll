@@ -56,8 +56,7 @@ test('size table covers rocky planets and gas giants with matching habitability'
     'Jupiter',
   ]);
   expect(SIZE_TABLE.reduce((sum, row) => sum + row.Weight, 0)).toBe(100);
-  for (const row of SIZE_TABLE) expect(row.Hab).toBe(SIZE_HAB[row.Value]);
-  expect(SIZE_TABLE.filter((row) => row.Hab === 0).map((row) => row.Value)).toEqual([
+  expect(SIZE_TABLE.filter((row) => SIZE_HAB[row.Value] === 0).map((row) => row.Value)).toEqual([
     'Neptune',
     'Jupiter',
   ]);

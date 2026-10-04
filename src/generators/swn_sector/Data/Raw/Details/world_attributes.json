@@ -217,6 +217,12 @@
       "Silicon": {
         "hab": 3,
         "color": "Light brown"
+      },
+      "Jovian Gas": {
+        "hab": 0
+      },
+      "Neptunian Gas": {
+        "hab": 0
       }
     },
     "surface_water_present": {},

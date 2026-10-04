@@ -2,7 +2,6 @@ import { expect, test } from 'vitest';
 import { generate } from '../Generator/generate';
 import { projectPlanet } from './planet_projection';
 import { STAR_HABITABILITY } from '../Shared/planet_interpretation';
-import { STAR_TABLE } from '../Generator/generation_rules';
 import { directOrbitAuBand } from '../Shared/spatial_interpretation';
 import { planetSizeScan } from './planet_presentation_interpretation';
 
@@ -17,8 +16,9 @@ test.each([
   expect(planetSizeScan(size)).toEqual({ summary, lines: [mass, `${size}-Class`] });
 });
 
-test('star interpretation agrees with the generation source', () => {
-  for (const row of STAR_TABLE) expect(STAR_HABITABILITY[row.Value]).toBe(row.Hab);
+test('star interpretation provides ratings for every canonical star type', () => {
+  expect(Object.values(STAR_HABITABILITY).every(Number.isFinite)).toBe(true);
+  expect(STAR_HABITABILITY['G-type']).toBe(3);
 });
 
 test('projecting a planet is repeatable and leaves the sector unchanged', () => {
