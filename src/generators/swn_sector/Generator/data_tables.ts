@@ -2,7 +2,7 @@ import type { AtmosphereCategory, InhabitedInfo, Planet } from '../BaseDTO/merge
 import rawPlanetValues from '../Data/Raw/Details/planet_values.json';
 import rawAttributeDetails from '../Data/Raw/Details/world_attributes.json';
 import rawAttributeTables from '../Data/Raw/Tables/world_attributes.json';
-import rawAtmosphereTable from '../Data/Raw/Tables/atmosphere.json';
+import { ATMOSPHERE_DATA } from '../Shared/atmosphere_table';
 
 const attributeTables = rawAttributeTables.tables as Array<{
   id: string;
@@ -62,5 +62,5 @@ export const TERRAN_BIOSPHERE_HAB_REQUIRED: Readonly<
   ]),
 ) as Record<InhabitedInfo['TerranBiosphere'], number>;
 export const ATMOSPHERE_RANK: Readonly<Record<AtmosphereCategory, number>> = Object.fromEntries(
-  rawAtmosphereTable.class.rows.map(({ result }, index) => [result, index + 1]),
+  ATMOSPHERE_DATA.rows.map(({ result }, index) => [result, index + 1]),
 ) as Record<AtmosphereCategory, number>;

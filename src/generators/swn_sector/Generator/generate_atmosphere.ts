@@ -1,6 +1,6 @@
 import type { Atmosphere, AtmosphereCategory } from '../BaseDTO/merged_schema';
 import rawDetails from '../Data/Raw/Details/atmosphere.json';
-import rawTables from '../Data/Raw/Tables/atmosphere.json';
+import { ATMOSPHERE_DATA } from '../Shared/atmosphere_table';
 import { choose, chooseWeighted, randomFor } from './generation_random';
 import { ATMOSPHERE_TABLE } from './generation_rules';
 
@@ -14,19 +14,22 @@ export function generateAtmosphere(seed: string, path: string): Atmosphere {
   if (category === 'Pressure')
     return {
       Category: category,
-      PressureResult: choose(random, rawTables.pressureResult) as 'Low' | 'High',
+      PressureResult: choose(random, ATMOSPHERE_DATA.pressureResult),
     };
   const gasTables: Partial<Record<AtmosphereCategory, readonly string[]>> = {
-    Corrosive: rawTables.corrosiveGas,
-    Toxic: rawTables.poison,
-    Filter: rawTables.poison,
-    Flammable: rawTables.flammableGas,
-    Inert: rawTables.inertGas,
+    Corrosive: ATMOSPHERE_DATA.corrosiveGas,
+    Toxic: ATMOSPHERE_DATA.poison,
+    Filter: ATMOSPHERE_DATA.poison,
+    Flammable: ATMOSPHERE_DATA.flammableGas,
+    Inert: ATMOSPHERE_DATA.inertGas,
   };
   if (category === 'Breathable') {
     const gas = chooseWeighted(
       random,
-      rawTables.breathableBackgroundGas.map((row) => ({ Value: row.gasId, Weight: row.weight })),
+      ATMOSPHERE_DATA.breathableBackgroundGas.map((row) => ({
+        Value: row.gasId,
+        Weight: row.weight,
+      })),
       'breathable background gases',
     );
     return { Category: category, SelectedGas: gas.Value };

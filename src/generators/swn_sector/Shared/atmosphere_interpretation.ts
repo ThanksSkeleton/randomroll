@@ -1,6 +1,6 @@
 import type { Atmosphere, AtmosphereCategory } from '../BaseDTO/merged_schema';
 import rawDetails from '../Data/Raw/Details/atmosphere.json';
-import rawTables from '../Data/Raw/Tables/atmosphere.json';
+import { ATMOSPHERE_DATA } from './atmosphere_table';
 
 export type GasCategory = 'Corrosive' | 'Toxic' | 'Inert' | 'Flammable';
 export type Gas = {
@@ -25,12 +25,12 @@ const templates = rawDetails.templates as Record<
 >;
 const habRatings = rawDetails.habRatings as Record<AtmosphereCategory, number>;
 const selectedGasTables: Partial<Record<AtmosphereCategory, readonly string[]>> = {
-  Corrosive: rawTables.corrosiveGas,
-  Toxic: rawTables.poison,
-  Filter: rawTables.poison,
-  Flammable: rawTables.flammableGas,
-  Inert: rawTables.inertGas,
-  Breathable: rawTables.breathableBackgroundGas.map((row) => row.gasId),
+  Corrosive: ATMOSPHERE_DATA.corrosiveGas,
+  Toxic: ATMOSPHERE_DATA.poison,
+  Filter: ATMOSPHERE_DATA.poison,
+  Flammable: ATMOSPHERE_DATA.flammableGas,
+  Inert: ATMOSPHERE_DATA.inertGas,
+  Breathable: ATMOSPHERE_DATA.breathableBackgroundGas.map((row) => row.gasId),
 };
 
 export function isAtmosphere(value: unknown): value is Atmosphere {
