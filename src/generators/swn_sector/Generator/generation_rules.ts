@@ -106,8 +106,9 @@ export const SURFACE_WATER_PRESENT_TABLE = adaptRows(
   attributeTable('surface_water_present'),
   (result) => result === 'Yes',
 );
-export const GAS_GIANT_MOON_TABLE = adaptRows(attributeTable('gas_giant_moon'), (result) =>
-  result === 'Yes',
+export const GAS_GIANT_MOON_TABLE = adaptRows(
+  attributeTable('gas_giant_moon'),
+  (result) => result === 'Yes',
 );
 export const SIZE_TABLE = adaptRows(attributeTable('size'), (result) => result as Planet['Size']);
 export const ALIEN_DEPENDENT_WORLD_TAGS = new Set(['Primitive Aliens', 'Xenophiles']);
@@ -148,6 +149,16 @@ if (Object.keys(worldTagDetails).some((tag) => !tableWorldTags.has(tag as WorldT
 export const WORLD_TAG_TABLE: WeightedCategory<WorldTag>[] = WORLD_TAG_DEFINITIONS.filter(
   (row) => !ALIEN_DEPENDENT_WORLD_TAGS.has(row.tag),
 ).map((row) => ({ Value: row.tag as WorldTag, Weight: 1 }));
+
+const WORLD_TAG_ORDER = new Map(CANONICAL_WORLD_TAGS.map((tag, index) => [tag, index]));
+
+/** Gives an unordered World Tag pair one stable representation. */
+export function canonicalWorldTagPair(tags: readonly [WorldTag, WorldTag]): [WorldTag, WorldTag] {
+  const [first, second] = tags;
+  return (WORLD_TAG_ORDER.get(first) ?? Infinity) <= (WORLD_TAG_ORDER.get(second) ?? Infinity)
+    ? [first, second]
+    : [second, first];
+}
 
 export const POI_TABLE: WeightedCategory<PointOfInterestType>[] = adaptRows(
   rawPoiTable.rows as RawRow[],

@@ -7,7 +7,7 @@ const SIZE_VALUES = rawPlanetValues.size as Record<
 >;
 const TEMPERATURE_VALUES = rawPlanetValues.temperature as Record<
   Temperature,
-  { label: string; celsius: number; fahrenheit: number }
+  { label: string; celsius: number; fahrenheit: number; description: string }
 >;
 
 export function planetSizeScan(size: Planet['Size']): { summary: string; lines: string[] } {

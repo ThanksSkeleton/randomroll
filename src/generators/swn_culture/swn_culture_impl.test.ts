@@ -29,6 +29,12 @@ test('supplying the rolled tags reproduces the same culture body', () => {
   expect(generateSwnCultureForTags(rolled.worldTags, 'replay')).toEqual(rolled);
 });
 
+test('treats supplied World Tags as unordered', () => {
+  expect(generateSwnCultureForTags(['Anarchists', 'Alien Ruins'], 'unordered')).toEqual(
+    generateSwnCultureForTags(['Alien Ruins', 'Anarchists'], 'unordered'),
+  );
+});
+
 test('each adventure component contains one valid prompt from each tag', () => {
   const tags: [WorldTag, WorldTag] = ['Abandoned Colony', 'Alien Ruins'];
   const result = generateSwnCultureForTags(tags, 'component-prompts');

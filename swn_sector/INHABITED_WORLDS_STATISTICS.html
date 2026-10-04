@@ -1,0 +1,1106 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="data:," />
+    <title>SWN Inhabited Worlds · Statistical Survey</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --ink: #e8f4ff;
+        --muted: #8da3b8;
+        --panel: rgba(13, 27, 43, 0.84);
+        --line: rgba(139, 190, 226, 0.16);
+        --cyan: #67e8f9;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        color: var(--ink);
+        background: #050b14;
+        font:
+          15px/1.5 Inter,
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          'Segoe UI',
+          sans-serif;
+      }
+      body::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        z-index: -2;
+        background:
+          radial-gradient(circle at 12% 8%, rgba(19, 125, 160, 0.24), transparent 32%),
+          radial-gradient(circle at 90% 18%, rgba(99, 68, 190, 0.2), transparent 28%),
+          linear-gradient(180deg, #07101c 0%, #040811 100%);
+      }
+      body::after {
+        content: '';
+        position: fixed;
+        inset: 0;
+        z-index: -1;
+        opacity: 0.32;
+        background-image: radial-gradient(#b7e8ff 0.65px, transparent 0.7px);
+        background-size: 29px 29px;
+        mask-image: linear-gradient(to bottom, #000, transparent 75%);
+      }
+      main {
+        width: min(1180px, calc(100% - 40px));
+        margin: auto;
+        padding: 64px 0 56px;
+      }
+      .hero {
+        display: grid;
+        grid-template-columns: 1.45fr 0.75fr;
+        gap: 42px;
+        align-items: end;
+        margin-bottom: 34px;
+      }
+      .kicker,
+      .eyebrow {
+        margin: 0 0 9px;
+        color: var(--cyan);
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+      }
+      h1 {
+        max-width: 760px;
+        margin: 0;
+        font:
+          700 clamp(42px, 7vw, 82px)/0.96 Georgia,
+          serif;
+        letter-spacing: -0.045em;
+      }
+      .hero-copy {
+        margin: 24px 0 0;
+        max-width: 680px;
+        color: #a9bed0;
+        font-size: 17px;
+      }
+      .stamp {
+        justify-self: end;
+        width: 210px;
+        padding: 22px;
+        border: 1px solid rgba(103, 232, 249, 0.35);
+        background: rgba(7, 20, 33, 0.66);
+        box-shadow: 0 0 40px rgba(40, 174, 212, 0.08);
+      }
+      .stamp strong {
+        display: block;
+        font:
+          700 44px/1 Georgia,
+          serif;
+        color: var(--cyan);
+      }
+      .stamp span {
+        color: var(--muted);
+        font-size: 12px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+      .metrics {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 14px;
+        margin: 0 0 22px;
+      }
+      .metric,
+      .chart-card,
+      .sector-card,
+      .method {
+        border: 1px solid var(--line);
+        background: var(--panel);
+        box-shadow: 0 18px 50px rgba(0, 0, 0, 0.18);
+        backdrop-filter: blur(10px);
+      }
+      .metric {
+        padding: 20px 22px;
+      }
+      .metric .value {
+        font:
+          700 32px/1 Georgia,
+          serif;
+      }
+      .metric .label {
+        margin-top: 7px;
+        color: var(--muted);
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.09em;
+      }
+      .charts {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+      }
+      .chart-card {
+        padding: 25px;
+      }
+      .chart-card:first-child,
+      .chart-card.wide {
+        grid-column: 1/-1;
+      }
+      .chart-card header {
+        display: flex;
+        justify-content: space-between;
+        gap: 18px;
+        align-items: start;
+        margin-bottom: 24px;
+      }
+      h2 {
+        margin: 0;
+        font:
+          700 25px/1.1 Georgia,
+          serif;
+      }
+      .sample {
+        color: var(--muted);
+        font-size: 12px;
+        white-space: nowrap;
+      }
+      .bars {
+        display: grid;
+        gap: 17px;
+      }
+      .bar-label {
+        display: flex;
+        justify-content: space-between;
+        gap: 18px;
+        margin-bottom: 7px;
+        font-size: 13px;
+      }
+      .bar-label span:last-child {
+        color: #dffaff;
+        font-weight: 800;
+      }
+      .bar-track {
+        height: 10px;
+        overflow: hidden;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.065);
+      }
+      .bar-fill {
+        width: var(--bar-width);
+        height: 100%;
+        border-radius: inherit;
+        background: var(--bar-color);
+        box-shadow: 0 0 18px color-mix(in srgb, var(--bar-color) 52%, transparent);
+      }
+      .bar-count {
+        margin-top: 5px;
+        color: #728ba1;
+        font-size: 11px;
+        text-align: right;
+      }
+      .chart-note {
+        margin: 22px 0 0;
+        padding-top: 18px;
+        border-top: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .sector-card {
+        margin-top: 18px;
+        padding: 25px;
+      }
+      .sector-head {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 30px;
+      }
+      .sector-head p:last-child {
+        max-width: 570px;
+        margin: 0;
+        color: var(--muted);
+      }
+      .sector-plot {
+        height: 190px;
+        display: flex;
+        gap: 5px;
+        align-items: end;
+        margin-top: 30px;
+        padding-top: 16px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.17);
+        background: repeating-linear-gradient(
+          to top,
+          transparent 0,
+          transparent 44px,
+          rgba(255, 255, 255, 0.055) 45px
+        );
+      }
+      .sector-bar {
+        position: relative;
+        flex: 1;
+        min-width: 3px;
+        height: var(--height);
+        background: linear-gradient(to top, #2563eb, var(--cyan));
+        border-radius: 3px 3px 0 0;
+        opacity: 0.82;
+        transition: opacity 0.15s;
+      }
+      .sector-bar:hover {
+        opacity: 1;
+      }
+      .sector-bar span {
+        display: none;
+      }
+      .axis {
+        display: flex;
+        justify-content: space-between;
+        color: #70869a;
+        font-size: 10px;
+        padding-top: 8px;
+      }
+      .method {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 18px;
+        margin-top: 18px;
+        padding: 22px 25px;
+      }
+      .method .badge {
+        display: grid;
+        place-items: center;
+        width: 38px;
+        height: 38px;
+        border: 1px solid rgba(103, 232, 249, 0.34);
+        border-radius: 50%;
+        color: var(--cyan);
+        font-weight: 800;
+      }
+      .method p {
+        margin: 0;
+        color: var(--muted);
+      }
+      .method strong {
+        color: var(--ink);
+      }
+      details {
+        margin-top: 14px;
+        color: #8da3b8;
+      }
+      summary {
+        cursor: pointer;
+        color: #b7cadd;
+      }
+      code {
+        color: #a5f3fc;
+      }
+      footer {
+        margin-top: 25px;
+        color: #61798e;
+        font-size: 11px;
+        text-align: center;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+      @media (max-width: 780px) {
+        main {
+          width: min(100% - 24px, 1180px);
+          padding-top: 38px;
+        }
+        .hero {
+          grid-template-columns: 1fr;
+        }
+        .stamp {
+          justify-self: start;
+        }
+        .metrics {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .charts {
+          grid-template-columns: 1fr;
+        }
+        .chart-card:first-child,
+        .chart-card.wide {
+          grid-column: auto;
+        }
+        .sector-head {
+          align-items: start;
+          flex-direction: column;
+        }
+        .sector-plot {
+          gap: 2px;
+        }
+        .method {
+          grid-template-columns: 1fr;
+        }
+      }
+      @media print {
+        body {
+          background: #07101c;
+        }
+        main {
+          padding: 20px;
+          width: 100%;
+        }
+        .chart-card,
+        .metric,
+        .sector-card,
+        .method {
+          break-inside: avoid;
+        }
+        .sector-bar {
+          print-color-adjust: exact;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section class="hero">
+        <div>
+          <p class="kicker">Sector Intelligence Office · Statistical Brief 01</p>
+          <h1>Inhabited worlds,<br />by the numbers.</h1>
+          <p class="hero-copy">
+            A deterministic survey of 50 complete sectors generated by the SWN sector engine. Every
+            percentage below describes the resulting inhabited worlds after all generation
+            constraints are applied.
+          </p>
+        </div>
+        <aside class="stamp"><strong>1,477</strong><span>inhabited worlds surveyed</span></aside>
+      </section>
+      <section class="metrics">
+        <div class="metric">
+          <div class="value">50</div>
+          <div class="label">Sectors generated</div>
+        </div>
+        <div class="metric">
+          <div class="value">1,292</div>
+          <div class="label">Star systems</div>
+        </div>
+        <div class="metric">
+          <div class="value">29.5</div>
+          <div class="label">Worlds / sector</div>
+        </div>
+        <div class="metric">
+          <div class="value">22–37</div>
+          <div class="label">Observed range</div>
+        </div>
+      </section>
+      <div class="charts">
+        <section class="chart-card">
+          <header>
+            <div>
+              <p class="eyebrow">Civilizational capability</p>
+              <h2>Technology level</h2>
+            </div>
+            <span class="sample">n = 1,477</span>
+          </header>
+          <div class="bars">
+            <div class="bar-row">
+              <div class="bar-label"><span>TL 0 · Neolithic</span><span>0.2%</span></div>
+              <div
+                class="bar-track"
+                role="img"
+                aria-label="TL 0 · Neolithic: 3 worlds, 0.2 percent"
+              >
+                <div class="bar-fill" style="--bar-width: 0.2%; --bar-color: #67e8f9"></div>
+              </div>
+              <div class="bar-count">3 worlds</div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-label"><span>TL 1 · Medieval</span><span>0.9%</span></div>
+              <div
+                class="bar-track"
+                role="img"
+                aria-label="TL 1 · Medieval: 14 worlds, 0.9 percent"
+              >
+                <div class="bar-fill" style="--bar-width: 0.95%; --bar-color: #60a5fa"></div>
+              </div>
+              <div class="bar-count">14 worlds</div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-label"><span>TL 2 · Industrial</span><span>2.7%</span></div>
+              <div
+                class="bar-track"
+                role="img"
+                aria-label="TL 2 · Industrial: 40 worlds, 2.7 percent"
+              >
+                <div class="bar-fill" style="--bar-width: 2.71%; --bar-color: #818cf8"></div>
+              </div>
+              <div class="bar-count">40 worlds</div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-label"><span>TL 3 · 21st Century</span><span>7.7%</span></div>
+              <div
+                class="bar-track"
+                role="img"
+                aria-label="TL 3 · 21st Century: 114 worlds, 7.7 percent"
+              >
+                <div class="bar-fill" style="--bar-width: 7.72%; --bar-color: #a78bfa"></div>
+              </div>
+              <div class="bar-count">114 worlds</div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-label"><span>TL 4 · Postech Baseline</span><span>74.2%</span></div>
+              <div
+                class="bar-track"
+                role="img"
+                aria-label="TL 4 · Postech Baseline: 1096 worlds, 74.2 percent"
+              >
+                <div class="bar-fill" style="--bar-width: 74.2%; --bar-color: #e879f9"></div>
+              </div>
+              <div class="bar-count">1,096 worlds</div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-label">
+                <span>TL 4.1 · Postech Specialties</span><span>10.0%</span>
+              </div>
+              <div
+                class="bar-track"
+                role="img"
+                aria-label="TL 4.1 · Postech Specialties: 148 worlds, 10.0 percent"
+              >
+                <div class="bar-fill" style="--bar-width: 10.02%; --bar-color: #fb7185"></div>
+              </div>
+              <div class="bar-count">148 worlds</div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-label"><span>TL 5 · Pretech</span><span>4.2%</span></div>
+              <div class="bar-track" role="img" aria-label="TL 5 · Pretech: 62 worlds, 4.2 percent">
+                <div class="bar-fill" style="--bar-width: 4.2%; --bar-color: #fbbf24"></div>
+              </div>
+              <div class="bar-count">62 worlds</div>
+            </div>
+          </div>
+        </section>
+        <section class="chart-card">
+          <header>
+            <div>
+              <p class="eyebrow">Scale of settlement</p>
+              <h2>Population rank</h2>
+            </div>
+            <span class="sample">n = 1,477</span>
+          </header>
+          <div class="bars">
+            <div class="bar-row">
+              <div class="bar-label"><span>Rank 1 · Outpost (&lt;500)</span><span>18.3%</span></div>
+              <div
+                class="bar-track"
+                role="img"
+                aria-label="Rank 1 · Outpost (&lt;500): 271 worlds, 18.3 percent"
+              >
+                <div class="bar-fill" style="--bar-width: 18.35%; --bar-color: #67e8f9"></div>
+              </div>
+              <div class="bar-count">271 worlds</div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-label">
+                <span>Rank 2 · City-State (&lt;1M)</span><span>53.9%</span>
+              </div>
+              <div
+                class="bar-track"
+                role="img"
+                aria-label="Rank 2 · City-State (&lt;1M): 796 worlds, 53.9 percent"
+              >
+                <div class="bar-fill" style="--bar-width: 53.89%; --bar-color: #60a5fa"></div>
+              </div>
+              <div class="bar-count">796 worlds</div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-label">
+                <span>Rank 3 · Minor Polity (millions)</span><span>16.9%</span>
+              </div>
+              <div
+                class="bar-track"
+                role="img"
+                aria-label="Rank 3 · Minor Polity (millions): 249 worlds, 16.9 percent"
+              >
+                <div class="bar-fill" style="--bar-width: 16.86%; --bar-color: #818cf8"></div>
+              </div>
+              <div class="bar-count">249 worlds</div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-label">
+                <span>Rank 4 · Major Polity (hundreds of millions)</span><span>9.2%</span>
+              </div>
+              <div
+                class="bar-track"
+                role="img"
+                aria-label="Rank 4 · Major Polity (hundreds of millions): 136 worlds, 9.2 percent"
+              >
+                <div class="bar-fill" style="--bar-width: 9.21%; --bar-color: #a78bfa"></div>
+              </div>
+              <div class="bar-count">136 worlds</div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-label">
+                <span>Rank 5 · Great Polity (billions)</span><span>1.7%</span>
+              </div>
+              <div
+                class="bar-track"
+                role="img"
+                aria-label="Rank 5 · Great Polity (billions): 25 worlds, 1.7 percent"
+              >
+                <div class="bar-fill" style="--bar-width: 1.69%; --bar-color: #e879f9"></div>
+              </div>
+              <div class="bar-count">25 worlds</div>
+            </div>
+          </div>
+        </section>
+        <section class="chart-card">
+          <header>
+            <div>
+              <p class="eyebrow">Environmental suitability</p>
+              <h2>Habitability rating</h2>
+            </div>
+            <span class="sample">n = 1,477</span>
+          </header>
+          <div class="bars">
+            <div class="bar-row">
+              <div class="bar-label"><span>Hab 0 · Hostile</span><span>46.7%</span></div>
+              <div
+                class="bar-track"
+                role="img"
+                aria-label="Hab 0 · Hostile: 690 worlds, 46.7 percent"
+              >
+                <div class="bar-fill" style="--bar-width: 46.72%; --bar-color: #67e8f9"></div>
+              </div>
+              <div class="bar-count">690 worlds</div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-label"><span>Hab 1 · Marginal</span><span>13.5%</span></div>
+              <div
+                class="bar-track"
+                role="img"
+                aria-label="Hab 1 · Marginal: 199 worlds, 13.5 percent"
+              >
+                <div class="bar-fill" style="--bar-width: 13.47%; --bar-color: #60a5fa"></div>
+              </div>
+              <div class="bar-count">199 worlds</div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-label"><span>Hab 2 · Livable</span><span>20.0%</span></div>
+              <div
+                class="bar-track"
+                role="img"
+                aria-label="Hab 2 · Livable: 296 worlds, 20.0 percent"
+              >
+                <div class="bar-fill" style="--bar-width: 20.04%; --bar-color: #818cf8"></div>
+              </div>
+              <div class="bar-count">296 worlds</div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-label"><span>Hab 3 · Earthlike</span><span>19.8%</span></div>
+              <div
+                class="bar-track"
+                role="img"
+                aria-label="Hab 3 · Earthlike: 292 worlds, 19.8 percent"
+              >
+                <div class="bar-fill" style="--bar-width: 19.77%; --bar-color: #a78bfa"></div>
+              </div>
+              <div class="bar-count">292 worlds</div>
+            </div>
+          </div>
+        </section>
+        <section class="chart-card wide">
+          <header>
+            <div>
+              <p class="eyebrow">Tied for the lowest component rating · Hab 0–2 only</p>
+              <h2>Habitability limiting factors</h2>
+            </div>
+            <span class="sample">n = 1,185</span>
+          </header>
+          <div class="bars">
+            <div class="bar-row">
+              <div class="bar-label"><span>Star lowest</span><span>13.8%</span></div>
+              <div class="bar-track" role="img" aria-label="Star lowest: 163 worlds, 13.8 percent">
+                <div class="bar-fill" style="--bar-width: 13.76%; --bar-color: #67e8f9"></div>
+              </div>
+              <div class="bar-count">163 worlds</div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-label"><span>Atmosphere lowest</span><span>40.0%</span></div>
+              <div
+                class="bar-track"
+                role="img"
+                aria-label="Atmosphere lowest: 474 worlds, 40.0 percent"
+              >
+                <div class="bar-fill" style="--bar-width: 40%; --bar-color: #60a5fa"></div>
+              </div>
+              <div class="bar-count">474 worlds</div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-label"><span>Temperature lowest</span><span>39.4%</span></div>
+              <div
+                class="bar-track"
+                role="img"
+                aria-label="Temperature lowest: 467 worlds, 39.4 percent"
+              >
+                <div class="bar-fill" style="--bar-width: 39.41%; --bar-color: #818cf8"></div>
+              </div>
+              <div class="bar-count">467 worlds</div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-label"><span>Terran biosphere lowest</span><span>61.7%</span></div>
+              <div
+                class="bar-track"
+                role="img"
+                aria-label="Terran biosphere lowest: 731 worlds, 61.7 percent"
+              >
+                <div class="bar-fill" style="--bar-width: 61.69%; --bar-color: #a78bfa"></div>
+              </div>
+              <div class="bar-count">731 worlds</div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-label"><span>Size lowest</span><span>13.3%</span></div>
+              <div class="bar-track" role="img" aria-label="Size lowest: 158 worlds, 13.3 percent">
+                <div class="bar-fill" style="--bar-width: 13.33%; --bar-color: #e879f9"></div>
+              </div>
+              <div class="bar-count">158 worlds</div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-label"><span>Bulk composition lowest</span><span>8.1%</span></div>
+              <div
+                class="bar-track"
+                role="img"
+                aria-label="Bulk composition lowest: 96 worlds, 8.1 percent"
+              >
+                <div class="bar-fill" style="--bar-width: 8.1%; --bar-color: #fb7185"></div>
+              </div>
+              <div class="bar-count">96 worlds</div>
+            </div>
+          </div>
+          <p class="chart-note">
+            Hab 3 worlds are excluded because 3 is the maximum rating and therefore does not
+            represent a meaningful limiting condition. Every factor tied at a remaining world’s
+            minimum is counted, so a world can appear in more than one row and these percentages
+            intentionally do not sum to 100%.
+          </p>
+        </section>
+      </div>
+      <section class="sector-card">
+        <div class="sector-head">
+          <div>
+            <p class="eyebrow">Sample variation</p>
+            <h2>Inhabited worlds per sector</h2>
+          </div>
+          <p>
+            Each column is one generated sector, in seed order. The variation reflects both the
+            sector’s system count and the generator’s one-or-two inhabited worlds per system.
+          </p>
+        </div>
+        <div
+          class="sector-plot"
+          aria-label="Bar chart of inhabited world count for each of 50 sectors"
+        >
+          <div
+            class="sector-bar"
+            style="--height: 75.68%"
+            title="stats-sector-001: 28 inhabited worlds"
+          >
+            <span>1</span>
+          </div>
+          <div
+            class="sector-bar"
+            style="--height: 81.08%"
+            title="stats-sector-002: 30 inhabited worlds"
+          >
+            <span>2</span>
+          </div>
+          <div
+            class="sector-bar"
+            style="--height: 75.68%"
+            title="stats-sector-003: 28 inhabited worlds"
+          >
+            <span>3</span>
+          </div>
+          <div
+            class="sector-bar"
+            style="--height: 72.97%"
+            title="stats-sector-004: 27 inhabited worlds"
+          >
+            <span>4</span>
+          </div>
+          <div
+            class="sector-bar"
+            style="--height: 70.27%"
+            title="stats-sector-005: 26 inhabited worlds"
+          >
+            <span>5</span>
+          </div>
+          <div
+            class="sector-bar"
+            style="--height: 83.78%"
+            title="stats-sector-006: 31 inhabited worlds"
+          >
+            <span>6</span>
+          </div>
+          <div
+            class="sector-bar"
+            style="--height: 91.89%"
+            title="stats-sector-007: 34 inhabited worlds"
+          >
+            <span>7</span>
+          </div>
+          <div
+            class="sector-bar"
+            style="--height: 75.68%"
+            title="stats-sector-008: 28 inhabited worlds"
+          >
+            <span>8</span>
+          </div>
+          <div
+            class="sector-bar"
+            style="--height: 67.57%"
+            title="stats-sector-009: 25 inhabited worlds"
+          >
+            <span>9</span>
+          </div>
+          <div
+            class="sector-bar"
+            style="--height: 64.86%"
+            title="stats-sector-010: 24 inhabited worlds"
+          >
+            <span>10</span>
+          </div>
+          <div
+            class="sector-bar"
+            style="--height: 81.08%"
+            title="stats-sector-011: 30 inhabited worlds"
+          >
+            <span>11</span>
+          </div>
+          <div
+            class="sector-bar"
+            style="--height: 59.46%"
+            title="stats-sector-012: 22 inhabited worlds"
+          >
+            <span>12</span>
+          </div>
+          <div
+            class="sector-bar"
+            style="--height: 89.19%"
+            title="stats-sector-013: 33 inhabited worlds"
+          >
+            <span>13</span>
+          </div>
+          <div
+            class="sector-bar"
+            style="--height: 67.57%"
+            title="stats-sector-014: 25 inhabited worlds"
+          >
+            <span>14</span>
+          </div>
+          <div
+            class="sector-bar"
+            style="--height: 62.16%"
+            title="stats-sector-015: 23 inhabited worlds"
+          >
+            <span>15</span>
+          </div>
+          <div
+            class="sector-bar"
+            style="--height: 83.78%"
+            title="stats-sector-016: 31 inhabited worlds"
+          >
+            <span>16</span>
+          </div>
+          <div
+            class="sector-bar"
+            style="--height: 83.78%"
+            title="stats-sector-017: 31 inhabited worlds"
+          >
+            <span>17</span>
+          </div>
+          <div
+            class="sector-bar"
+            style="--height: 62.16%"
+            title="stats-sector-018: 23 inhabited worlds"
+          >
+            <span>18</span>
+          </div>
+          <div
+            class="sector-bar"
+            style="--height: 89.19%"
+            title="stats-sector-019: 33 inhabited worlds"
+          >
+            <span>19</span>
+          </div>
+          <div
+            class="sector-bar"
+            style="--height: 89.19%"
+            title="stats-sector-020: 33 inhabited worlds"
+          >
+            <span>20</span>
+          </div>
+          <div
+            class="sector-bar"
+            style="--height: 94.59%"
+            title="stats-sector-021: 35 inhabited worlds"
+          >
+            <span>21</span>
+          </div>
+          <div
+            class="sector-bar"
+            style="--height: 81.08%"
+            title="stats-sector-022: 30 inhabited worlds"
+          >
+            <span>22</span>
+          </div>
+          <div
+            class="sector-bar"
+            style="--height: 78.38%"
+            title="stats-sector-023: 29 inhabited worlds"
+          >
+            <span>23</span>
+          </div>
+          <div
+            class="sector-bar"
+            style="--height: 83.78%"
+            title="stats-sector-024: 31 inhabited worlds"
+          >
+            <span>24</span>
+          </div>
+          <div
+            class="sector-bar"
+            style="--height: 89.19%"
+            title="stats-sector-025: 33 inhabited worlds"
+          >
+            <span>25</span>
+          </div>
+          <div
+            class="sector-bar"
+            style="--height: 67.57%"
+            title="stats-sector-026: 25 inhabited worlds"
+          >
+            <span>26</span>
+          </div>
+          <div
+            class="sector-bar"
+            style="--height: 86.49%"
+            title="stats-sector-027: 32 inhabited worlds"
+          >
+            <span>27</span>
+          </div>
+          <div
+            class="sector-bar"
+            style="--height: 75.68%"
+            title="stats-sector-028: 28 inhabited worlds"
+          >
+            <span>28</span>
+          </div>
+          <div
+            class="sector-bar"
+            style="--height: 67.57%"
+            title="stats-sector-029: 25 inhabited worlds"
+          >
+            <span>29</span>
+          </div>
+          <div
+            class="sector-bar"
+            style="--height: 89.19%"
+            title="stats-sector-030: 33 inhabited worlds"
+          >
+            <span>30</span>
+          </div>
+          <div
+            class="sector-bar"
+            style="--height: 86.49%"
+            title="stats-sector-031: 32 inhabited worlds"
+          >
+            <span>31</span>
+          </div>
+          <div
+            class="sector-bar"
+            style="--height: 78.38%"
+            title="stats-sector-032: 29 inhabited worlds"
+          >
+            <span>32</span>
+          </div>
+          <div
+            class="sector-bar"
+            style="--height: 81.08%"
+            title="stats-sector-033: 30 inhabited worlds"
+          >
+            <span>33</span>
+          </div>
+          <div
+            class="sector-bar"
+            style="--height: 86.49%"
+            title="stats-sector-034: 32 inhabited worlds"
+          >
+            <span>34</span>
+          </div>
+          <div
+            class="sector-bar"
+            style="--height: 83.78%"
+            title="stats-sector-035: 31 inhabited worlds"
+          >
+            <span>35</span>
+          </div>
+          <div
+            class="sector-bar"
+            style="--height: 100%"
+            title="stats-sector-036: 37 inhabited worlds"
+          >
+            <span>36</span>
+          </div>
+          <div
+            class="sector-bar"
+            style="--height: 70.27%"
+            title="stats-sector-037: 26 inhabited worlds"
+          >
+            <span>37</span>
+          </div>
+          <div
+            class="sector-bar"
+            style="--height: 86.49%"
+            title="stats-sector-038: 32 inhabited worlds"
+          >
+            <span>38</span>
+          </div>
+          <div
+            class="sector-bar"
+            style="--height: 72.97%"
+            title="stats-sector-039: 27 inhabited worlds"
+          >
+            <span>39</span>
+          </div>
+          <div
+            class="sector-bar"
+            style="--height: 72.97%"
+            title="stats-sector-040: 27 inhabited worlds"
+          >
+            <span>40</span>
+          </div>
+          <div
+            class="sector-bar"
+            style="--height: 72.97%"
+            title="stats-sector-041: 27 inhabited worlds"
+          >
+            <span>41</span>
+          </div>
+          <div
+            class="sector-bar"
+            style="--height: 78.38%"
+            title="stats-sector-042: 29 inhabited worlds"
+          >
+            <span>42</span>
+          </div>
+          <div
+            class="sector-bar"
+            style="--height: 100%"
+            title="stats-sector-043: 37 inhabited worlds"
+          >
+            <span>43</span>
+          </div>
+          <div
+            class="sector-bar"
+            style="--height: 81.08%"
+            title="stats-sector-044: 30 inhabited worlds"
+          >
+            <span>44</span>
+          </div>
+          <div
+            class="sector-bar"
+            style="--height: 75.68%"
+            title="stats-sector-045: 28 inhabited worlds"
+          >
+            <span>45</span>
+          </div>
+          <div
+            class="sector-bar"
+            style="--height: 89.19%"
+            title="stats-sector-046: 33 inhabited worlds"
+          >
+            <span>46</span>
+          </div>
+          <div
+            class="sector-bar"
+            style="--height: 86.49%"
+            title="stats-sector-047: 32 inhabited worlds"
+          >
+            <span>47</span>
+          </div>
+          <div
+            class="sector-bar"
+            style="--height: 89.19%"
+            title="stats-sector-048: 33 inhabited worlds"
+          >
+            <span>48</span>
+          </div>
+          <div
+            class="sector-bar"
+            style="--height: 86.49%"
+            title="stats-sector-049: 32 inhabited worlds"
+          >
+            <span>49</span>
+          </div>
+          <div
+            class="sector-bar"
+            style="--height: 72.97%"
+            title="stats-sector-050: 27 inhabited worlds"
+          >
+            <span>50</span>
+          </div>
+        </div>
+        <div class="axis"><span>Sector 01</span><span>Sector 50</span></div>
+      </section>
+      <section class="method">
+        <div class="badge">i</div>
+        <div>
+          <p>
+            <strong>Method.</strong> Generated in unrestricted starting-world mode with seeds
+            <code>stats-sector-001</code> through <code>stats-sector-050</code>. Habitability is the
+            canonical final rating: the minimum of star, atmosphere, temperature, Terran biosphere,
+            size, and bulk-composition ratings. Percentages count worlds—not inhabitants—and may
+            differ from raw table odds because the generator rejects incompatible profiles.
+          </p>
+          <details>
+            <summary>Show all sector seeds and counts</summary>
+            <p>
+              stats-sector-001: 24 systems / 28 inhabited worlds<br />stats-sector-002: 26 systems /
+              30 inhabited worlds<br />stats-sector-003: 25 systems / 28 inhabited worlds<br />stats-sector-004:
+              25 systems / 27 inhabited worlds<br />stats-sector-005: 24 systems / 26 inhabited
+              worlds<br />stats-sector-006: 24 systems / 31 inhabited worlds<br />stats-sector-007:
+              27 systems / 34 inhabited worlds<br />stats-sector-008: 26 systems / 28 inhabited
+              worlds<br />stats-sector-009: 22 systems / 25 inhabited worlds<br />stats-sector-010:
+              21 systems / 24 inhabited worlds<br />stats-sector-011: 28 systems / 30 inhabited
+              worlds<br />stats-sector-012: 22 systems / 22 inhabited worlds<br />stats-sector-013:
+              29 systems / 33 inhabited worlds<br />stats-sector-014: 22 systems / 25 inhabited
+              worlds<br />stats-sector-015: 23 systems / 23 inhabited worlds<br />stats-sector-016:
+              27 systems / 31 inhabited worlds<br />stats-sector-017: 26 systems / 31 inhabited
+              worlds<br />stats-sector-018: 21 systems / 23 inhabited worlds<br />stats-sector-019:
+              29 systems / 33 inhabited worlds<br />stats-sector-020: 30 systems / 33 inhabited
+              worlds<br />stats-sector-021: 29 systems / 35 inhabited worlds<br />stats-sector-022:
+              25 systems / 30 inhabited worlds<br />stats-sector-023: 26 systems / 29 inhabited
+              worlds<br />stats-sector-024: 29 systems / 31 inhabited worlds<br />stats-sector-025:
+              29 systems / 33 inhabited worlds<br />stats-sector-026: 22 systems / 25 inhabited
+              worlds<br />stats-sector-027: 30 systems / 32 inhabited worlds<br />stats-sector-028:
+              26 systems / 28 inhabited worlds<br />stats-sector-029: 21 systems / 25 inhabited
+              worlds<br />stats-sector-030: 27 systems / 33 inhabited worlds<br />stats-sector-031:
+              28 systems / 32 inhabited worlds<br />stats-sector-032: 22 systems / 29 inhabited
+              worlds<br />stats-sector-033: 26 systems / 30 inhabited worlds<br />stats-sector-034:
+              30 systems / 32 inhabited worlds<br />stats-sector-035: 28 systems / 31 inhabited
+              worlds<br />stats-sector-036: 30 systems / 37 inhabited worlds<br />stats-sector-037:
+              21 systems / 26 inhabited worlds<br />stats-sector-038: 30 systems / 32 inhabited
+              worlds<br />stats-sector-039: 21 systems / 27 inhabited worlds<br />stats-sector-040:
+              24 systems / 27 inhabited worlds<br />stats-sector-041: 25 systems / 27 inhabited
+              worlds<br />stats-sector-042: 24 systems / 29 inhabited worlds<br />stats-sector-043:
+              29 systems / 37 inhabited worlds<br />stats-sector-044: 25 systems / 30 inhabited
+              worlds<br />stats-sector-045: 25 systems / 28 inhabited worlds<br />stats-sector-046:
+              29 systems / 33 inhabited worlds<br />stats-sector-047: 28 systems / 32 inhabited
+              worlds<br />stats-sector-048: 30 systems / 33 inhabited worlds<br />stats-sector-049:
+              28 systems / 32 inhabited worlds<br />stats-sector-050: 24 systems / 27 inhabited
+              worlds
+            </p>
+          </details>
+        </div>
+      </section>
+      <footer>
+        Generated from the repository’s canonical SWN sector engine · deterministic sample
+      </footer>
+    </main>
+  </body>
+</html>

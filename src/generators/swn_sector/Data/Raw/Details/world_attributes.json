@@ -3,93 +3,63 @@
     "temperature": {
       "Cryogenic": {
         "orbitalOrder": 2,
-        "description": "Freezing point of nitrogen",
-        "hab": 0,
-        "thermalOrbit": "Too Cold"
-      },
-      "Furance": {
-        "orbitalOrder": 16,
-        "description": "Melting Point of Lead",
-        "hab": 0,
-        "thermalOrbit": "Too Hot"
+        "hab": 0
       },
       "Deepfrozen": {
         "orbitalOrder": 3,
-        "description": "Antarctica records, approximately ±10",
-        "hab": 1,
-        "thermalOrbit": "Cold"
+        "hab": 1
       },
       "Polar": {
         "orbitalOrder": 4,
-        "description": "Antarctica; core uninhabitable cold",
-        "hab": 1,
-        "thermalOrbit": "Cold"
-      },
-      "Infernal": {
-        "orbitalOrder": 14,
-        "description": "Death Valley + 10",
-        "hab": 1,
-        "thermalOrbit": "Hot"
-      },
-      "Scorching": {
-        "orbitalOrder": 15,
-        "description": "Death Valley",
-        "hab": 1,
-        "thermalOrbit": "Hot"
+        "hab": 1
       },
       "Subarctic": {
         "orbitalOrder": 5,
-        "description": "Siberia / Russian winters",
-        "hab": 2,
-        "thermalOrbit": "Cold"
-      },
-      "Equatorial": {
-        "orbitalOrder": 13,
-        "description": "Extreme real-world heat",
-        "hab": 2,
-        "thermalOrbit": "Hot"
+        "hab": 2
       },
       "Boreal": {
         "orbitalOrder": 6,
-        "description": "Scandinavian / cool temperate",
-        "hab": 3,
-        "thermalOrbit": "Temperate"
+        "hab": 3
       },
       "Alpine": {
         "orbitalOrder": 7,
-        "description": "Brisk / cool temperate",
-        "hab": 3,
-        "thermalOrbit": "Temperate"
+        "hab": 3
       },
       "Temperate (chilly)": {
         "orbitalOrder": 8,
-        "description": "Perfect baseline temperate",
-        "hab": 3,
-        "thermalOrbit": "Temperate"
+        "hab": 3
       },
       "Temperate": {
         "orbitalOrder": 9,
-        "description": "Perfect baseline temperate",
-        "hab": 3,
-        "thermalOrbit": "Temperate"
+        "hab": 3
       },
       "Temperate (warm)": {
         "orbitalOrder": 10,
-        "description": "Perfect baseline temperate",
-        "hab": 3,
-        "thermalOrbit": "Temperate"
+        "hab": 3
       },
       "Mediterranean": {
         "orbitalOrder": 11,
-        "description": "Warm temperate",
-        "hab": 3,
-        "thermalOrbit": "Temperate"
+        "hab": 3
       },
       "Subtropical": {
         "orbitalOrder": 12,
-        "description": "Warm / Saudi Arabia",
-        "hab": 3,
-        "thermalOrbit": "Temperate"
+        "hab": 3
+      },
+      "Equatorial": {
+        "orbitalOrder": 13,
+        "hab": 2
+      },
+      "Scorching": {
+        "orbitalOrder": 14,
+        "hab": 1
+      },
+      "Infernal": {
+        "orbitalOrder": 15,
+        "hab": 1
+      },
+      "Furance": {
+        "orbitalOrder": 16,
+        "hab": 0
       }
     },
     "native_biosphere": {
@@ -117,12 +87,12 @@
       },
       "2": {
         "name": "Microbial",
-        "hab": 1,
+        "hab": 2,
         "habRequired": 1
       },
       "3": {
         "name": "Limited",
-        "hab": 2,
+        "hab": 3,
         "habRequired": 1
       },
       "4": {

@@ -34,28 +34,95 @@
     }
   },
   "temperature": {
-    "Cryogenic": { "label": "Cryogenic", "celsius": -130, "fahrenheit": -202 },
-    "Deepfrozen": { "label": "Deepfrozen", "celsius": -90, "fahrenheit": -130 },
-    "Polar": { "label": "Polar", "celsius": -60, "fahrenheit": -76 },
-    "Subarctic": { "label": "Subarctic", "celsius": -40, "fahrenheit": -40 },
-    "Boreal": { "label": "Boreal", "celsius": 5, "fahrenheit": 41 },
-    "Alpine": { "label": "Alpine", "celsius": 10, "fahrenheit": 50 },
+    "Cryogenic": {
+      "label": "Cryogenic",
+      "celsius": -130,
+      "fahrenheit": -202,
+      "description": "Freezing point of nitrogen"
+    },
+    "Deepfrozen": {
+      "label": "Deepfrozen",
+      "celsius": -90,
+      "fahrenheit": -130,
+      "description": "Antarctica records, approximately ±10"
+    },
+    "Polar": {
+      "label": "Polar",
+      "celsius": -60,
+      "fahrenheit": -76,
+      "description": "Antarctica; core uninhabitable cold"
+    },
+    "Subarctic": {
+      "label": "Subarctic",
+      "celsius": -40,
+      "fahrenheit": -40,
+      "description": "Siberia / Russian winters"
+    },
+    "Boreal": {
+      "label": "Boreal",
+      "celsius": 5,
+      "fahrenheit": 41,
+      "description": "Scandinavian / cool temperate"
+    },
+    "Alpine": {
+      "label": "Alpine",
+      "celsius": 10,
+      "fahrenheit": 50,
+      "description": "Brisk / cool temperate"
+    },
     "Temperate (chilly)": {
       "label": "Temperate (chilly)",
       "celsius": 15,
-      "fahrenheit": 59
+      "fahrenheit": 59,
+      "description": "Perfect baseline temperate"
     },
-    "Temperate": { "label": "Temperate", "celsius": 20, "fahrenheit": 68 },
+    "Temperate": {
+      "label": "Temperate",
+      "celsius": 20,
+      "fahrenheit": 68,
+      "description": "Perfect baseline temperate"
+    },
     "Temperate (warm)": {
       "label": "Temperate (warm)",
       "celsius": 25,
-      "fahrenheit": 77
+      "fahrenheit": 77,
+      "description": "Perfect baseline temperate"
     },
-    "Mediterranean": { "label": "Mediterranean", "celsius": 30, "fahrenheit": 86 },
-    "Subtropical": { "label": "Subtropical", "celsius": 35, "fahrenheit": 95 },
-    "Equatorial": { "label": "Equatorial", "celsius": 45, "fahrenheit": 113 },
-    "Scorching": { "label": "Scorching", "celsius": 54, "fahrenheit": 129 },
-    "Infernal": { "label": "Infernal", "celsius": 64, "fahrenheit": 147 },
-    "Furance": { "label": "Furnace", "celsius": 200, "fahrenheit": 392 }
+    "Mediterranean": {
+      "label": "Mediterranean",
+      "celsius": 30,
+      "fahrenheit": 86,
+      "description": "Warm temperate"
+    },
+    "Subtropical": {
+      "label": "Subtropical",
+      "celsius": 35,
+      "fahrenheit": 95,
+      "description": "Warm / Saudi Arabia"
+    },
+    "Equatorial": {
+      "label": "Equatorial",
+      "celsius": 45,
+      "fahrenheit": 113,
+      "description": "Extreme real-world heat"
+    },
+    "Scorching": {
+      "label": "Scorching",
+      "celsius": 54,
+      "fahrenheit": 129,
+      "description": "Death Valley"
+    },
+    "Infernal": {
+      "label": "Infernal",
+      "celsius": 64,
+      "fahrenheit": 147,
+      "description": "Death Valley + 10"
+    },
+    "Furance": {
+      "label": "Furnace",
+      "celsius": 200,
+      "fahrenheit": 392,
+      "description": "Melting Point of Lead"
+    }
   }
 }

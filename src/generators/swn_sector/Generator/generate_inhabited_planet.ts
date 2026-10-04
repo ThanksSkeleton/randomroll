@@ -11,6 +11,7 @@ import {
   TERRAN_BIOSPHERE_TABLE,
   SIZE_TABLE,
   WORLD_TAG_TABLE,
+  canonicalWorldTagPair,
 } from './generation_rules';
 import { directOrbitTemperatures } from '../Shared/spatial_interpretation';
 import {
@@ -52,6 +53,7 @@ export type InhabitedPlanetOptions = {
 };
 
 const MAX_PROFILE_ROLLS = 100;
+const MAX_TAG_PAIR_ROLLS = 100;
 const TOMB_WORLD_MIN_TECH_LEVEL = 4;
 
 function tagsRequire(tags: readonly WorldTag[], tag: WorldTag): boolean {
@@ -60,8 +62,7 @@ function tagsRequire(tags: readonly WorldTag[], tag: WorldTag): boolean {
 
 function maximumPopulationRankForTags(tags: readonly WorldTag[]): number {
   return tags.reduce(
-    (maximum, tag) =>
-      Math.min(maximum, WORLD_TAG_CONSTRAINTS.get(tag)?.maxPopulationRank ?? 5),
+    (maximum, tag) => Math.min(maximum, WORLD_TAG_CONSTRAINTS.get(tag)?.maxPopulationRank ?? 5),
     5,
   );
 }
@@ -210,25 +211,22 @@ function selectTags(
   forcedTags?: readonly [WorldTag, WorldTag],
 ): [WorldTag, WorldTag] {
   if (forcedTags !== undefined) {
-    if (
-      forcedTags[0] === forcedTags[1] ||
-      !tagPairHasIntersection(forcedTags, starHabitability, allowedTemperatures)
-    )
+    const tags = canonicalWorldTagPair(forcedTags);
+    if (tags[0] === tags[1] || !tagPairHasIntersection(tags, starHabitability, allowedTemperatures))
       throw new Error(`No feasible forced tag pair for ${seed}:${path}`);
-    return [forcedTags[0], forcedTags[1]];
+    return tags;
   }
-  const pairs = WORLD_TAG_TABLE.flatMap((first) =>
-    WORLD_TAG_TABLE.filter(
-      (second) =>
-        first.Value !== second.Value &&
-        tagPairHasIntersection([first.Value, second.Value], starHabitability, allowedTemperatures),
-    ).map((second) => ({
-      Value: [first.Value, second.Value] as [WorldTag, WorldTag],
-      Weight: first.Weight * second.Weight,
-    })),
+  const random = randomFor(seed, `${path}:tags`);
+  for (let attempt = 0; attempt < MAX_TAG_PAIR_ROLLS; attempt += 1) {
+    const first = chooseWeighted(random, WORLD_TAG_TABLE, 'first world tag').Value;
+    const second = chooseWeighted(random, WORLD_TAG_TABLE, 'second world tag').Value;
+    const tags = canonicalWorldTagPair([first, second]);
+    if (first !== second && tagPairHasIntersection(tags, starHabitability, allowedTemperatures))
+      return tags;
+  }
+  throw new Error(
+    `No feasible world-tag pair after ${MAX_TAG_PAIR_ROLLS} rolls for ${seed}:${path}`,
   );
-  if (pairs.length === 0) throw new Error(`No feasible world-tag pairs for ${seed}:${path}`);
-  return chooseWeighted(randomFor(seed, `${path}:tags`), pairs, 'world-tag pairs').Value;
 }
 
 export function generateInhabitedPlanet(options: InhabitedPlanetOptions): Planet {
@@ -302,9 +300,7 @@ export function generateInhabitedPlanet(options: InhabitedPlanetOptions): Planet
     ).Value;
     currentHab = Math.min(currentHab, BULK_COMPOSITION_HAB[BulkComposition]);
     const populationRows = isTombWorld
-      ? POPULATION_TABLE.filter(
-          (row) => row.Value <= maximumPopulationRankForTags(tags),
-        )
+      ? POPULATION_TABLE.filter((row) => row.Value <= maximumPopulationRankForTags(tags))
       : POPULATION_TABLE;
     const technologyRows = isTombWorld
       ? TECH_LEVEL_TABLE.filter((row) => row.Value >= TOMB_WORLD_MIN_TECH_LEVEL)

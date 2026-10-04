@@ -6,6 +6,7 @@ import rawPlaceNamesCsv from '../../../temp/swn_place_names.csv?raw';
 import {
   WORLD_TAG_DEFINITIONS,
   WORLD_TAG_TABLE,
+  canonicalWorldTagPair,
   type WorldTagPromptCategory,
 } from '../swn_sector/Generator/generation_rules';
 import type { WorldTag } from '../swn_sector/BaseDTO/merged_schema';
@@ -137,14 +138,14 @@ function rollRandomWorldTags(seed: string): [WorldTag, WorldTag] {
     WORLD_TAG_TABLE.filter((row) => row.Value !== first),
     'filtered World Tags excluding the first tag',
   ).Value;
-  return [first, second];
+  return canonicalWorldTagPair([first, second]);
 }
 
 function validateWorldTags(tags: readonly [WorldTag, WorldTag]): [WorldTag, WorldTag] {
   for (const tag of tags) {
     if (!availableWorldTagSet.has(tag)) throw new Error(`Unknown or unavailable World Tag: ${tag}`);
   }
-  return [tags[0], tags[1]];
+  return canonicalWorldTagPair(tags);
 }
 
 function componentPrompts(

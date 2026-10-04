@@ -27,6 +27,12 @@ test('builds deterministic complete inhabited terrestrial planets', () => {
   expect(planet.Size).not.toBe('Neptune');
 });
 
+test('treats World Tag pairs as unordered', () => {
+  expect(world('unordered-tags', ['Anarchists', 'Alien Ruins'])).toEqual(
+    world('unordered-tags', ['Alien Ruins', 'Anarchists']),
+  );
+});
+
 test('inhabited worlds never roll gas giant sizes, including on Hab 0 stars', () => {
   for (const star of [
     { type: 'G-type', hab: 3 },
