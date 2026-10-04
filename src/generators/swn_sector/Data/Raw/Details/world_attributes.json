@@ -94,23 +94,23 @@
     },
     "native_biosphere": {},
     "terran_biosphere": {
-      "None": {
+      "1": {
         "hab": 0,
         "habRequired": 0
       },
-      "Microbial": {
+      "2": {
         "hab": 1,
         "habRequired": 1
       },
-      "Limited": {
+      "3": {
         "hab": 2,
         "habRequired": 1
       },
-      "Significant": {
+      "4": {
         "hab": 3,
         "habRequired": 2
       },
-      "Engineered": {
+      "5": {
         "hab": 3,
         "habRequired": 1
       }

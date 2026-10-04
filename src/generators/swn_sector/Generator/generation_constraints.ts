@@ -5,8 +5,8 @@ import type { PointOfInterestType } from '../BaseDTO/merged_schema';
 export type TagConstraint = {
   tag: string;
   maxEnvironmentalHab?: number;
-  maxAtmospherePercentile?: number;
-  minNativeBiospherePercentile?: number;
+  maxAtmosphereRank?: number;
+  minNativeBiosphereRank?: number;
   minTechLevel?: number;
   minPopulationRank?: number;
   maxPopulationRank?: number;

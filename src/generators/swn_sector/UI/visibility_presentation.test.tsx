@@ -147,10 +147,10 @@ describe('scan visibility presentation', () => {
     expect(simple.every((line) => line && !line.includes('Atmosphere'))).toBe(true);
 
     const drawer = [...(basic?.querySelectorAll('.basic-scan-drawer') ?? [])].find(
-      (element) => element.querySelector('summary')?.textContent === 'Atmosphere: Breathable',
+      (element) => element.querySelector('summary')?.textContent === 'Atmosphere: Breathable (N₂)',
     ) as HTMLDetailsElement;
     expect(drawer.open).toBe(false);
-    expect(drawer.querySelector('summary')?.textContent).toBe('Atmosphere: Breathable');
+    expect(drawer.querySelector('summary')?.textContent).toBe('Atmosphere: Breathable (N₂)');
     expect(
       [...drawer.querySelectorAll('.basic-scan-drawer-content > div')].map(
         (element) => element.textContent,

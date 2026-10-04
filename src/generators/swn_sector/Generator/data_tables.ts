@@ -25,11 +25,6 @@ function numberDetail(id: string, value: string | number, key: string): number {
   if (typeof result !== 'number') throw new Error(`Missing ${key} detail for ${id}/${value}`);
   return result;
 }
-function rollSpan(roll: string): readonly [number, number] {
-  const [start, end = start] = roll.split('-').map(Number);
-  return [start!, end!];
-}
-
 const planetValues = rawPlanetValues as {
   size: Record<string, { rank: number; gasComposition?: Planet['BulkComposition'] }>;
 };
@@ -66,11 +61,6 @@ export const TERRAN_BIOSPHERE_HAB_REQUIRED: Readonly<
     numberDetail('terran_biosphere', result, 'habRequired'),
   ]),
 ) as Record<InhabitedInfo['TerranBiosphere'], number>;
-export const ATMOSPHERE_MAX_PERCENTILE: Readonly<Partial<Record<AtmosphereCategory, number>>> =
-  Object.fromEntries(
-    rawAtmosphereTable.class.rows.map(({ roll, result }) => [result, rollSpan(roll)[1]]),
-  );
-export const NATIVE_BIOSPHERE_MIN_PERCENTILE: Readonly<Record<Planet['NativeBiosphere'], number>> =
-  Object.fromEntries(
-    rows('native_biosphere').map(({ roll, result }) => [result, rollSpan(roll)[0]]),
-  ) as Record<Planet['NativeBiosphere'], number>;
+export const ATMOSPHERE_RANK: Readonly<Record<AtmosphereCategory, number>> = Object.fromEntries(
+  rawAtmosphereTable.class.rows.map(({ result }, index) => [result, index + 1]),
+) as Record<AtmosphereCategory, number>;

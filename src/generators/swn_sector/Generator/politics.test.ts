@@ -48,13 +48,13 @@ function planet(
     BulkComposition: 'Silicon',
     SurfaceWaterPresent: true,
     Atmosphere: { Category: 'Breathable', SelectedGas: 'N2' },
-    NativeBiosphere: 'Significant',
+    NativeBiosphere: 4,
     InhabitedInfo:
       inhabited === false
         ? false
         : {
             WorldTags: ['Alien Ruins', 'Anarchists'],
-            TerranBiosphere: 'Significant',
+            TerranBiosphere: 4,
             ...inhabited,
           },
   };

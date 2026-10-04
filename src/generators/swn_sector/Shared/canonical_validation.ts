@@ -26,6 +26,9 @@ export function validateCanonicalShape(
     typeof item === 'string' || invalid(path, 'a string');
   const number = (item: unknown, path: string): item is number =>
     isFiniteNumber(item) || invalid(path, 'a finite number');
+  const biosphereRank = (item: unknown, path: string): boolean =>
+    (typeof item === 'number' && [1, 2, 3, 4, 5].includes(item)) ||
+    invalid(path, 'a biosphere rank from 1 through 5');
   const array = (item: unknown, path: string): item is unknown[] =>
     Array.isArray(item) || invalid(path, 'an array');
   const required = (
@@ -200,7 +203,7 @@ export function validateCanonicalShape(
       typeof item.SurfaceWaterPresent !== 'boolean' ||
       (!isAtmosphere(item.Atmosphere) &&
         invalid(`${path}.Atmosphere`, 'a valid atmosphere outcome')) ||
-      !string(item.NativeBiosphere, `${path}.NativeBiosphere`)
+      !biosphereRank(item.NativeBiosphere, `${path}.NativeBiosphere`)
     )
       return invalid(path, 'a complete Planet');
     if (item.InhabitedInfo === false) return item.Culture === undefined;
@@ -218,7 +221,7 @@ export function validateCanonicalShape(
       item.InhabitedInfo.WorldTags.every((tag, index) =>
         string(tag, `${path}.InhabitedInfo.WorldTags[${index}]`),
       ) &&
-      string(item.InhabitedInfo.TerranBiosphere, `${path}.InhabitedInfo.TerranBiosphere`) &&
+      biosphereRank(item.InhabitedInfo.TerranBiosphere, `${path}.InhabitedInfo.TerranBiosphere`) &&
       typeof item.InhabitedInfo.Population === 'number' &&
       [1, 2, 3, 4, 5].includes(item.InhabitedInfo.Population) &&
       typeof item.InhabitedInfo.TechLevel === 'number' &&

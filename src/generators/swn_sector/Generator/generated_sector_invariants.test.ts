@@ -43,7 +43,7 @@ function planet(id: string, parentObjectId: string | null, size: Planet['Size'])
       size === 'Jupiter' ? 'Jovian Gas' : size === 'Neptune' ? 'Neptunian Gas' : 'Silicon',
     SurfaceWaterPresent: false,
     Atmosphere: { Category: 'Vacuum' },
-    NativeBiosphere: 'None',
+    NativeBiosphere: 1,
     ClaimedByPolityIds: [],
     InhabitedInfo: false,
   };
@@ -146,7 +146,7 @@ describe('merged-sector independent stations', () => {
     const terrestrial = planet('terrestrial', null, 'Earth');
     terrestrial.InhabitedInfo = {
       WorldTags: ['Abandoned Colony', 'Alien Ruins'],
-      TerranBiosphere: 'None',
+      TerranBiosphere: 1,
       Population: 1,
       TechLevel: 4,
     };
@@ -205,7 +205,7 @@ describe('merged-sector independent stations', () => {
     const world = planet('world', null, 'Earth');
     world.InhabitedInfo = {
       WorldTags: ['Tomb World', 'Abandoned Colony'],
-      TerranBiosphere: 'None',
+      TerranBiosphere: 1,
       Population: 2,
       TechLevel: 4,
     };
@@ -218,6 +218,62 @@ describe('merged-sector independent stations', () => {
     ).toBe(true);
   });
 
+  it('checks the inclusive native biosphere rank required by world tags', () => {
+    const world = planet('world', null, 'Earth');
+    world.InhabitedInfo = {
+      WorldTags: ['Beastmasters', 'Alien Ruins'],
+      TerranBiosphere: 1,
+      Population: 1,
+      TechLevel: 4,
+    };
+    world.Culture = null;
+    const input = sector([world, planet('extra', null, 'Mars'), station('station', null)]);
+
+    world.NativeBiosphere = 3;
+    expect(checkAllInvariants(input).some((violation) => violation.RuleId === '2A-19b')).toBe(true);
+    world.NativeBiosphere = 4;
+    expect(checkAllInvariants(input).some((violation) => violation.RuleId === '2A-19b')).toBe(
+      false,
+    );
+  });
+
+  it('checks the inclusive atmosphere rank allowed by Bubble Cities', () => {
+    const world = planet('world', null, 'Earth');
+    world.InhabitedInfo = {
+      WorldTags: ['Bubble Cities', 'Alien Ruins'],
+      TerranBiosphere: 1,
+      Population: 1,
+      TechLevel: 4,
+    };
+    world.Culture = null;
+    const input = sector([world, planet('extra', null, 'Mars'), station('station', null)]);
+
+    world.Atmosphere = { Category: 'Flammable', SelectedGas: 'H2' };
+    expect(checkAllInvariants(input).some((violation) => violation.RuleId === '2A-19a')).toBe(
+      false,
+    );
+    world.Atmosphere = { Category: 'Inert', SelectedGas: 'N2' };
+    expect(checkAllInvariants(input).some((violation) => violation.RuleId === '2A-19a')).toBe(true);
+  });
+
+  it('rejects string biosphere values in serialized sectors', () => {
+    const world = planet('world', null, 'Earth');
+    const input = sector([world, planet('extra', null, 'Mars'), station('station', null)]);
+    (world as unknown as Record<string, unknown>).NativeBiosphere = 'None';
+    expect(checkAllInvariants(input).some((violation) => violation.RuleId === 'SCHEMA')).toBe(true);
+
+    world.NativeBiosphere = 1;
+    world.InhabitedInfo = {
+      WorldTags: ['Alien Ruins', 'Anarchists'],
+      TerranBiosphere: 1,
+      Population: 1,
+      TechLevel: 4,
+    };
+    world.Culture = null;
+    (world.InhabitedInfo as unknown as Record<string, unknown>).TerranBiosphere = 'None';
+    expect(checkAllInvariants(input).some((violation) => violation.RuleId === 'SCHEMA')).toBe(true);
+  });
+
   it('rejects surface water on a Desert World', () => {
     const world = planet('world', null, 'Earth');
     if (world.Orbit.ParentObjectId !== null) throw new Error('Expected direct orbit');
@@ -227,7 +283,7 @@ describe('merged-sector independent stations', () => {
     world.SurfaceWaterPresent = true;
     world.InhabitedInfo = {
       WorldTags: ['Desert World', 'Alien Ruins'],
-      TerranBiosphere: 'None',
+      TerranBiosphere: 1,
       Population: 1,
       TechLevel: 4,
     };
@@ -248,7 +304,7 @@ describe('merged-sector independent stations', () => {
     world.Atmosphere = { Category: 'Breathable', SelectedGas: 'N2' };
     world.InhabitedInfo = {
       WorldTags: ['Alien Ruins', 'Anarchists'],
-      TerranBiosphere: 'Significant',
+      TerranBiosphere: 4,
       Population: 1,
       TechLevel: 4,
     };

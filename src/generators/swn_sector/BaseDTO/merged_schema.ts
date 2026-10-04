@@ -333,7 +333,7 @@ export type Temperature =
   | 'Infernal'
   | 'Furance';
 
-export type NativeBiosphere = 'None' | 'Microbial' | 'Limited' | 'Significant' | 'Engineered';
+export type NativeBiosphere = 1 | 2 | 3 | 4 | 5;
 
 export type TerranBiosphere = NativeBiosphere;
 

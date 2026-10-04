@@ -2,6 +2,7 @@ import { expect, test } from 'vitest';
 import { generateInhabitedPlanet } from './generate_inhabited_planet';
 import { directOrbitTemperatures } from '../Shared/spatial_interpretation';
 import { planetHabitability } from '../Shared/planet_interpretation';
+import { ATMOSPHERE_RANK } from './data_tables';
 
 function world(
   seed: string,
@@ -85,6 +86,14 @@ test('constructively enforces tag semantics', () => {
   const industrial = world('industry-world', ['Heavy Industry', 'Major Spaceyard']);
   if (industrial.InhabitedInfo === false) throw new Error('Expected inhabited information');
   expect(industrial.InhabitedInfo.TechLevel).toBeGreaterThanOrEqual(3);
+});
+
+test('generates worlds within rank-based biosphere and atmosphere tag limits', () => {
+  const beastmasters = world('biosphere-rank-tags', ['Beastmasters', 'Alien Ruins']);
+  expect(beastmasters.NativeBiosphere).toBeGreaterThanOrEqual(4);
+
+  const bubbleCities = world('atmosphere-rank-tags', ['Bubble Cities', 'Alien Ruins']);
+  expect(ATMOSPHERE_RANK[bubbleCities.Atmosphere.Category]).toBeLessThanOrEqual(6);
 });
 
 test('constructively generates the Tomb World and Abandoned Colony regression seed', () => {

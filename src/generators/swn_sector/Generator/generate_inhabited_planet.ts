@@ -13,8 +13,7 @@ import {
 } from './generation_rules';
 import { directOrbitTemperatures } from '../Shared/spatial_interpretation';
 import {
-  ATMOSPHERE_MAX_PERCENTILE,
-  NATIVE_BIOSPHERE_MIN_PERCENTILE,
+  ATMOSPHERE_RANK,
   POPULATION_HAB_REQUIRED,
   TECH_HAB_REQUIRED,
   TERRAN_BIOSPHERE_HAB_REQUIRED,
@@ -146,17 +145,15 @@ function profileInvalidReason(
     )
       return `${tag} caps environmental habitability`;
     if (
-      constraint.maxAtmospherePercentile !== undefined &&
-      (ATMOSPHERE_MAX_PERCENTILE[profile.Atmosphere.Category] ?? 100) >
-        constraint.maxAtmospherePercentile
+      constraint.maxAtmosphereRank !== undefined &&
+      ATMOSPHERE_RANK[profile.Atmosphere.Category] > constraint.maxAtmosphereRank
     )
-      return `${tag} requires a lower atmosphere percentile`;
+      return `${tag} requires atmosphere rank ${constraint.maxAtmosphereRank} or lower`;
     if (
-      constraint.minNativeBiospherePercentile !== undefined &&
-      NATIVE_BIOSPHERE_MIN_PERCENTILE[profile.NativeBiosphere] <
-        constraint.minNativeBiospherePercentile
+      constraint.minNativeBiosphereRank !== undefined &&
+      profile.NativeBiosphere < constraint.minNativeBiosphereRank
     )
-      return `${tag} requires a higher native-biosphere percentile`;
+      return `${tag} requires native biosphere rank ${constraint.minNativeBiosphereRank} or higher`;
     if (
       constraint.minPopulationRank !== undefined &&
       profile.Population < constraint.minPopulationRank

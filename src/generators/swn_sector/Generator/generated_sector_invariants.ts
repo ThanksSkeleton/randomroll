@@ -15,9 +15,8 @@ import type {
 import { POI_TYPES, WORLD_TAG_CONSTRAINTS } from './generation_constraints';
 import { isGasPlanet, isPoiHostCompatible } from '../Shared/poi_host_interpretation';
 import {
-  ATMOSPHERE_MAX_PERCENTILE,
+  ATMOSPHERE_RANK,
   GAS_COMPOSITION_BY_SIZE,
-  NATIVE_BIOSPHERE_MIN_PERCENTILE,
   POPULATION_HAB_REQUIRED,
   SIZE_RANK,
   TECH_HAB_REQUIRED,
@@ -538,15 +537,13 @@ function validateInhabitedPlanet(
     )
       fail('2A-19a', `Tag ${tag} requires lower environmental habitability on ${planet.Id}.`);
     if (
-      constraint.maxAtmospherePercentile !== undefined &&
-      (ATMOSPHERE_MAX_PERCENTILE[planet.Atmosphere.Category] ?? 100) >
-        constraint.maxAtmospherePercentile
+      constraint.maxAtmosphereRank !== undefined &&
+      ATMOSPHERE_RANK[planet.Atmosphere.Category] > constraint.maxAtmosphereRank
     )
       fail('2A-19a', `Tag ${tag} is incompatible with atmosphere on ${planet.Id}.`);
     if (
-      constraint.minNativeBiospherePercentile !== undefined &&
-      NATIVE_BIOSPHERE_MIN_PERCENTILE[planet.NativeBiosphere] <
-        constraint.minNativeBiospherePercentile
+      constraint.minNativeBiosphereRank !== undefined &&
+      planet.NativeBiosphere < constraint.minNativeBiosphereRank
     )
       fail('2A-19b', `Tag ${tag} is incompatible with native biosphere on ${planet.Id}.`);
     if (

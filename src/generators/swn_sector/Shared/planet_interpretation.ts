@@ -49,11 +49,11 @@ export const TEMPERATURE_HAB: Readonly<Record<Temperature, number>> = {
 };
 
 export const TERRAN_BIOSPHERE_HAB: Readonly<Record<InhabitedInfo['TerranBiosphere'], number>> = {
-  None: 0,
-  Microbial: 1,
-  Limited: 2,
-  Significant: 3,
-  Engineered: 3,
+  1: 0,
+  2: 1,
+  3: 2,
+  4: 3,
+  5: 3,
 };
 
 export const SIZE_HAB: Readonly<Record<Planet['Size'], number>> = {
