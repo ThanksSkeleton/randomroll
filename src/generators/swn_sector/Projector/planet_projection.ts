@@ -1,16 +1,17 @@
 import type { PlanetDisplayDTO, PlanetStockText } from '../DisplayDTO/dto';
 import type { Planet, Sector } from '../BaseDTO/merged_schema';
 import { planetColor, planetColorClass } from './planet_presentation';
+import { planetHabitability, STAR_HABITABILITY, TECH_LEVEL } from '../Shared/planet_interpretation';
 import {
-  planetHabitability,
-  STAR_HABITABILITY,
-  TECH_LEVEL,
-} from '../Shared/planet_interpretation';
-import { formatPlanetAu, isTidallyLocked, POPULATION_TIER } from './planet_presentation_interpretation';
+  formatPlanetAu,
+  isTidallyLocked,
+  POPULATION_TIER,
+} from './planet_presentation_interpretation';
 import { displayBulkComposition } from './composition_presentation';
 import { projectObjectSpatial } from './object_spatial_projection';
 import { projectClaims } from './politics_projection';
 import { projectPoiCount } from './poi_projection';
+import { resolveAtmosphere } from '../Shared/atmosphere_interpretation';
 
 const HABITABILITY_COLOR: Readonly<Record<number, string>> = {
   0: '#858b90',
@@ -54,9 +55,30 @@ export function projectPlanet(
   const hostName = planet.Orbit.ParentObjectId
     ? visibleName(sector, planet.Orbit.ParentObjectId, context.preview)
     : undefined;
-  const moonFact = hostName ? `\nMoon of ${hostName}` : '';
+  const moonFact = hostName ? `Moon of ${hostName}` : null;
   const displayedComposition = displayBulkComposition(planet.BulkComposition, spatial.temperature);
-  const basic = `${formatPlanetAu(spatial.effectiveAu)} AU - ${spatial.temperature} - ${planet.Size}-Class${moonFact}\nAtmosphere: ${planet.Atmosphere} Composition: ${displayedComposition}`;
+  const atmosphere = resolveAtmosphere(planet.Atmosphere);
+  const atmosphereSummary = `Type - ${planet.Atmosphere.Category}`;
+  const basicScan = {
+    simple: [
+      `${formatPlanetAu(spatial.effectiveAu)} AU - ${spatial.temperature} - ${planet.Size}-Class`,
+      ...(moonFact ? [moonFact] : []),
+      `Composition: ${displayedComposition}`,
+      ...(planet.Atmosphere.Category === 'Vacuum' ? [atmosphereSummary] : []),
+    ],
+    complex:
+      planet.Atmosphere.Category === 'Vacuum'
+        ? []
+        : [
+            {
+              summary: atmosphereSummary,
+              lines: atmosphere.Gases.map(
+                ({ Gas, Percent }) => `${Gas.ChemicalFormula} ${Percent}%`,
+              ),
+            },
+          ],
+  };
+  const basic = basicScan.simple.join('\n');
   const claim = projectClaims(sector, planet)?.stockText ?? 'ClaimedBy: None';
   const signalsDetected = projectPoiCount(sector, system.Id, planet.Id) ?? 0;
   const stock: PlanetStockText =
@@ -79,6 +101,8 @@ export function projectPlanet(
         };
   return {
     id: planet.Id,
+    basicScan,
+    atmosphere,
     displayedComposition,
     color: planetColor(planet),
     colorClass: planetColorClass(planet),

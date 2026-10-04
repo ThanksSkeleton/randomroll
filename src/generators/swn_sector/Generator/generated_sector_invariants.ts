@@ -25,13 +25,13 @@ import {
   TERRAN_BIOSPHERE_HAB_REQUIRED,
 } from './data_tables';
 import {
-  ATMOSPHERE_HAB,
   BULK_COMPOSITION_HAB,
   SIZE_HAB,
   TECH_LEVEL,
   TEMPERATURE_HAB,
   TERRAN_BIOSPHERE_HAB,
 } from '../Shared/planet_interpretation';
+import { resolveAtmosphere } from '../Shared/atmosphere_interpretation';
 import {
   validPolityFlag,
   validateCanonicalShape,
@@ -441,7 +441,7 @@ function validateObject(
   if (
     effectiveOrbit(system, planet.Id)?.temperature === 'Cryogenic' ||
     effectiveOrbit(system, planet.Id)?.temperature === 'Furance' ||
-    planet.Atmosphere === 'Vacuum'
+    planet.Atmosphere.Category === 'Vacuum'
   ) {
     if (planet.SurfaceWaterPresent)
       fail('2A-28a', `Planet ${planet.Id} has surface water despite an overriding environment.`);
@@ -489,7 +489,7 @@ function validateInhabitedPlanet(
   if (totalHab < TERRAN_BIOSPHERE_HAB_REQUIRED[inhabited.TerranBiosphere])
     fail('2A-22c', `Planet ${planet.Id} lacks habitability for its Terran biosphere.`);
   const environmentalHab = Math.min(
-    ATMOSPHERE_HAB[planet.Atmosphere],
+    resolveAtmosphere(planet.Atmosphere).HabRating,
     TEMPERATURE_HAB[temperature],
     TERRAN_BIOSPHERE_HAB[inhabited.TerranBiosphere],
     SIZE_HAB[planet.Size],
@@ -542,7 +542,8 @@ function validateInhabitedPlanet(
       fail('2A-19a', `Tag ${tag} requires lower environmental habitability on ${planet.Id}.`);
     if (
       constraint.maxAtmospherePercentile !== undefined &&
-      ATMOSPHERE_MAX_PERCENTILE[planet.Atmosphere] > constraint.maxAtmospherePercentile
+      (ATMOSPHERE_MAX_PERCENTILE[planet.Atmosphere.Category] ?? 100) >
+        constraint.maxAtmospherePercentile
     )
       fail('2A-19a', `Tag ${tag} is incompatible with atmosphere on ${planet.Id}.`);
     if (

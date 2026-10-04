@@ -3,12 +3,14 @@ import rawAttributeDetails from '../Data/Raw/Details/world_attributes.json';
 import rawPoiDetails from '../Data/Raw/Details/points_of_interest.json';
 import rawWorldTagDetails from '../Data/Raw/Details/world_tags.json';
 import rawStarTable from '../Data/Raw/Tables/star_types.json';
+import rawAtmosphereTable from '../Data/Raw/Tables/atmosphere.json';
 import rawAttributeTables from '../Data/Raw/Tables/world_attributes.json';
 import rawPoiDetailTables from '../Data/Raw/Tables/poi_detail_tables.json';
 import rawPoiTable from '../Data/Raw/Tables/points_of_interest.json';
 import rawWorldTagTable from '../Data/Raw/Tables/world_tags.json';
 import type {
   InhabitedInfo,
+  AtmosphereCategory,
   Planet,
   PointOfInterestType,
   StarType,
@@ -71,8 +73,8 @@ export const STAR_TABLE = adaptRows(
   (result) => result as StarType,
 );
 export const ATMOSPHERE_TABLE = adaptRows(
-  attributeTable('atmosphere'),
-  (result) => result as Planet['Atmosphere'],
+  rawAtmosphereTable.class.rows,
+  (result) => result as AtmosphereCategory,
 );
 export const TEMPERATURE_TABLE = adaptRows(
   attributeTable('temperature'),
@@ -198,6 +200,7 @@ export function assertD100Coverage(rows: readonly RawRow[], tableName: string): 
 }
 export function assertReviewedTableIntegrity(): void {
   assertD100Coverage(starTable!.rows, 'star_type');
+  assertD100Coverage(rawAtmosphereTable.class.rows, 'atmosphere_class');
   for (const candidate of worldAttributeTables) assertD100Coverage(candidate.rows, candidate.id);
   assertD100Coverage(rawWorldTagTable.rows as RawRow[], 'world_tags');
   for (const star of Object.keys(STAR_AU_WIDTHS) as StarType[])

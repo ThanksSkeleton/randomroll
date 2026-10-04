@@ -1,5 +1,6 @@
 import type { Polity, Sector, SelectableEntity } from '../BaseDTO/merged_schema';
 import { POLITY_FLAG_COLORS } from '../Shared/polity_flag_colors';
+import { isAtmosphere } from './atmosphere_interpretation';
 
 export interface InvariantViolation {
   RuleId: string;
@@ -197,7 +198,8 @@ export function validateCanonicalShape(
       !string(item.Size, `${path}.Size`) ||
       !string(item.BulkComposition, `${path}.BulkComposition`) ||
       typeof item.SurfaceWaterPresent !== 'boolean' ||
-      !string(item.Atmosphere, `${path}.Atmosphere`) ||
+      (!isAtmosphere(item.Atmosphere) &&
+        invalid(`${path}.Atmosphere`, 'a valid atmosphere outcome')) ||
       !string(item.NativeBiosphere, `${path}.NativeBiosphere`)
     )
       return invalid(path, 'a complete Planet');

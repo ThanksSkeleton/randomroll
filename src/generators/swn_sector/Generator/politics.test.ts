@@ -47,7 +47,7 @@ function planet(
     Size: 'Earth',
     BulkComposition: 'Silicon',
     SurfaceWaterPresent: true,
-    Atmosphere: 'Breathable',
+    Atmosphere: { Category: 'Breathable', SelectedGas: 'N2' },
     NativeBiosphere: 'Significant',
     InhabitedInfo:
       inhabited === false

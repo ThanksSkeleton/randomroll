@@ -42,7 +42,7 @@ function planet(id: string, parentObjectId: string | null, size: Planet['Size'])
     BulkComposition:
       size === 'Jupiter' ? 'Jovian Gas' : size === 'Neptune' ? 'Neptunian Gas' : 'Silicon',
     SurfaceWaterPresent: false,
-    Atmosphere: 'Vacuum',
+    Atmosphere: { Category: 'Vacuum' },
     NativeBiosphere: 'None',
     ClaimedByPolityIds: [],
     InhabitedInfo: false,
@@ -223,7 +223,7 @@ describe('merged-sector independent stations', () => {
     if (world.Orbit.ParentObjectId !== null) throw new Error('Expected direct orbit');
     const band = directOrbitAuBand('G-type', 'Temperate');
     world.Orbit.AU = (band[0] + band[1]) / 2;
-    world.Atmosphere = 'Breathable';
+    world.Atmosphere = { Category: 'Breathable', SelectedGas: 'N2' };
     world.SurfaceWaterPresent = true;
     world.InhabitedInfo = {
       WorldTags: ['Desert World', 'Alien Ruins'],
@@ -245,7 +245,7 @@ describe('merged-sector independent stations', () => {
     if (world.Orbit.ParentObjectId !== null) throw new Error('Expected direct orbit');
     const band = directOrbitAuBand('G-type', 'Temperate');
     world.Orbit.AU = (band[0] + band[1]) / 2;
-    world.Atmosphere = 'Breathable';
+    world.Atmosphere = { Category: 'Breathable', SelectedGas: 'N2' };
     world.InhabitedInfo = {
       WorldTags: ['Alien Ruins', 'Anarchists'],
       TerranBiosphere: 'Significant',

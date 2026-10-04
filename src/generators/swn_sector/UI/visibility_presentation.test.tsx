@@ -1,15 +1,10 @@
 // @vitest-environment jsdom
 
-import { cleanup, render, screen } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it } from 'vitest';
 import { generate } from '../Generator/generate';
 import type { Planet, Sector, StarSystem } from '../BaseDTO/merged_schema';
-import {
-  objectEntries,
-  routeSystems,
-  findObject,
-  objectDetails,
-} from '../Shared/sector_selectors';
+import { objectEntries, routeSystems, findObject, objectDetails } from '../Shared/sector_selectors';
 import { hasAnyScan } from '../Shared/scan_visibility';
 import { hpoiVisible } from '../Projector/culture_projection';
 import { isVisibleToPlayerDisplay } from './visibility_presentation';
@@ -138,6 +133,46 @@ function visiblePlanet(sector: Sector): Planet {
 }
 
 describe('scan visibility presentation', () => {
+  it('shows atmosphere as a closed Basic Scan drawer with only gas percentages inside', () => {
+    const sector = generate('VISIBILITY-ATMOSPHERE-DRAWER');
+    const planet = visiblePlanet(sector);
+    planet.Atmosphere = { Category: 'Breathable', SelectedGas: 'N2' };
+    const view = renderDetail(sector, planet.Id);
+
+    const basic = view.container.querySelector('.scan-basicscan');
+    const simple = [...(basic?.querySelectorAll('.basic-scan-simple') ?? [])].map(
+      (element) => element.textContent,
+    );
+    expect(simple).toHaveLength(2);
+    expect(simple.every((line) => line && !line.includes('Atmosphere'))).toBe(true);
+
+    const drawer = basic?.querySelector('.basic-scan-drawer') as HTMLDetailsElement;
+    expect(drawer.open).toBe(false);
+    expect(drawer.querySelector('summary')?.textContent).toBe('Type - Breathable');
+    expect(
+      [...drawer.querySelectorAll('.basic-scan-drawer-content > div')].map(
+        (element) => element.textContent,
+      ),
+    ).toEqual(['N₂ 79%', 'O₂ 20%']);
+    fireEvent.click(drawer.querySelector('summary')!);
+    expect(drawer.open).toBe(true);
+  });
+
+  it('shows Vacuum as a simple Basic Scan line without a drawer', () => {
+    const sector = generate('VISIBILITY-VACUUM-SIMPLE');
+    const planet = visiblePlanet(sector);
+    planet.Atmosphere = { Category: 'Vacuum' };
+    const view = renderDetail(sector, planet.Id);
+    const basic = view.container.querySelector('.scan-basicscan');
+
+    expect(
+      [...(basic?.querySelectorAll('.basic-scan-simple') ?? [])].map(
+        (element) => element.textContent,
+      ),
+    ).toContain('Type - Vacuum');
+    expect(basic?.querySelector('.basic-scan-drawer')).toBeNull();
+  });
+
   it('keeps projected player-preview visibility aligned with the existing presentation rule', () => {
     const sector = generate('VISIBILITY-PROJECTION-PARITY');
     const result = projectSector(sector, { preview: 'player', assetBaseUrl: '/' });

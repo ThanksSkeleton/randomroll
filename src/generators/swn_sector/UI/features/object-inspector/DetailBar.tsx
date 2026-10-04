@@ -1,4 +1,8 @@
-import type { DisplaySectorDTO, DisplaySelectableDTO } from '../../../DisplayDTO/dto';
+import type {
+  BasicScanContent,
+  DisplaySectorDTO,
+  DisplaySelectableDTO,
+} from '../../../DisplayDTO/dto';
 import type { EditDraft, Preview, EditableDetailField } from '../../application/appState';
 import { useState } from 'react';
 import { PolityFlagList } from '../politics/PolityFlag';
@@ -30,6 +34,31 @@ function StockField({ content }: { content: string }) {
   return (
     <div className="stock-field">
       <p className="detail-section-description detail-stock-content">{content}</p>
+    </div>
+  );
+}
+
+function BasicScanField({ content, entityId }: { content: BasicScanContent; entityId: string }) {
+  return (
+    <div className="basic-scan-elements">
+      {content.simple.map((line, index) => (
+        <div className="basic-scan-element basic-scan-simple" key={`${entityId}:simple:${index}`}>
+          {line}
+        </div>
+      ))}
+      {content.complex.map((element, index) => (
+        <details
+          className="basic-scan-element basic-scan-drawer"
+          key={`${entityId}:complex:${index}`}
+        >
+          <summary>{element.summary}</summary>
+          <div className="basic-scan-drawer-content">
+            {element.lines.map((line, lineIndex) => (
+              <div key={lineIndex}>{line}</div>
+            ))}
+          </div>
+        </details>
+      ))}
     </div>
   );
 }
@@ -223,7 +252,17 @@ function DetailBox({
             preview === 'gm' || info.visibility[field] ? (
               <section className={`detail-section scan-${field.toLowerCase()}`} key={field}>
                 <h3>{title}</h3>
-                {field === 'BasicScan' && <StockField content={stock.basic} />}
+                {field === 'BasicScan' && (
+                  <BasicScanField
+                    content={
+                      info.inspectorBasicScan ?? {
+                        simple: stock.basic.split('\n'),
+                        complex: [],
+                      }
+                    }
+                    entityId={info.id}
+                  />
+                )}
                 {field === 'DetailedScan' && <StockField content={stock.detailed} />}
                 {field === 'PoliticsScan' && (
                   <>

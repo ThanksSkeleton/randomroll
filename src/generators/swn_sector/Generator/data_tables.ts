@@ -1,7 +1,8 @@
-import type { InhabitedInfo, Planet } from '../BaseDTO/merged_schema';
+import type { AtmosphereCategory, InhabitedInfo, Planet } from '../BaseDTO/merged_schema';
 import rawPlanetValues from '../Data/Raw/Details/planet_values.json';
 import rawAttributeDetails from '../Data/Raw/Details/world_attributes.json';
 import rawAttributeTables from '../Data/Raw/Tables/world_attributes.json';
+import rawAtmosphereTable from '../Data/Raw/Tables/atmosphere.json';
 
 const attributeTables = rawAttributeTables.tables as Array<{
   id: string;
@@ -45,11 +46,17 @@ export const GAS_COMPOSITION_BY_SIZE: Readonly<
 
 export const POPULATION_HAB_REQUIRED: Readonly<Record<InhabitedInfo['Population'], number>> =
   Object.fromEntries(
-    rows('population').map(({ result }) => [result, numberDetail('population', result, 'habRequired')]),
+    rows('population').map(({ result }) => [
+      result,
+      numberDetail('population', result, 'habRequired'),
+    ]),
   ) as Record<InhabitedInfo['Population'], number>;
 export const TECH_HAB_REQUIRED: Readonly<Record<InhabitedInfo['TechLevel'], number>> =
   Object.fromEntries(
-    rows('tech_level').map(({ result }) => [result, numberDetail('tech_level', result, 'habRequired')]),
+    rows('tech_level').map(({ result }) => [
+      result,
+      numberDetail('tech_level', result, 'habRequired'),
+    ]),
   ) as Record<InhabitedInfo['TechLevel'], number>;
 export const TERRAN_BIOSPHERE_HAB_REQUIRED: Readonly<
   Record<InhabitedInfo['TerranBiosphere'], number>
@@ -59,15 +66,14 @@ export const TERRAN_BIOSPHERE_HAB_REQUIRED: Readonly<
     numberDetail('terran_biosphere', result, 'habRequired'),
   ]),
 ) as Record<InhabitedInfo['TerranBiosphere'], number>;
-export const ATMOSPHERE_MAX_PERCENTILE: Readonly<Record<Planet['Atmosphere'], number>> =
+export const ATMOSPHERE_MAX_PERCENTILE: Readonly<Partial<Record<AtmosphereCategory, number>>> =
   Object.fromEntries(
-    rows('atmosphere').map(({ roll, result }) => [result, rollSpan(roll)[1]]),
-  ) as Record<Planet['Atmosphere'], number>;
-export const NATIVE_BIOSPHERE_MIN_PERCENTILE: Readonly<
-  Record<Planet['NativeBiosphere'], number>
-> = Object.fromEntries(
-  rows('native_biosphere').map(({ roll, result }) => [result, rollSpan(roll)[0]]),
-) as Record<Planet['NativeBiosphere'], number>;
+    rawAtmosphereTable.class.rows.map(({ roll, result }) => [result, rollSpan(roll)[1]]),
+  );
+export const NATIVE_BIOSPHERE_MIN_PERCENTILE: Readonly<Record<Planet['NativeBiosphere'], number>> =
+  Object.fromEntries(
+    rows('native_biosphere').map(({ roll, result }) => [result, rollSpan(roll)[0]]),
+  ) as Record<Planet['NativeBiosphere'], number>;
 export const POPULATION_RANGE: Readonly<
   Record<InhabitedInfo['Population'], readonly [number, number]>
 > = Object.fromEntries(

@@ -16,6 +16,7 @@ import type { SectorCulture, SwnCulture } from '../BaseDTO/culture';
 import type { StarPresentation } from '../Data/Projection/star_presentation';
 import type { PlanetColor } from '../Data/Projection/planet_presentation';
 import type { PortraitCategory, PortraitStyle } from '../Data/Projection/portrait_assets';
+import type { ResolvedAtmosphere } from '../Shared/atmosphere_interpretation';
 
 export type PortraitDisplayDTO = {
   portraitIndex: number;
@@ -33,8 +34,15 @@ export type PlanetStockText = {
   gm: string;
 };
 
+export type BasicScanContent = {
+  simple: string[];
+  complex: Array<{ summary: string; lines: string[] }>;
+};
+
 export type PlanetDisplayDTO = {
   id: string;
+  basicScan: BasicScanContent;
+  atmosphere: ResolvedAtmosphere;
   displayedComposition: Planet['BulkComposition'] | 'Ice';
   color: PlanetColor;
   colorClass: string;
@@ -191,6 +199,7 @@ export type DisplaySelectableDTO = {
   portrait: PortraitDisplayDTO | null;
   portraitDescription: string;
   inspectorStock: PlanetStockText;
+  inspectorBasicScan?: BasicScanContent;
   inspectorClaimants?: PolityDisplayDTO[];
   inhabited?: boolean;
   selectedCulture?: SectorCulture | null;

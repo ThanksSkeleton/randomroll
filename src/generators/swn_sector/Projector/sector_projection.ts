@@ -112,6 +112,7 @@ export function projectSector(
           spatial: objectSpatial,
           claims: objectClaims,
           ...(planet ? { planet } : {}),
+          ...(planet ? { inspectorBasicScan: planet.basicScan } : {}),
           inspectorClaimants: objectClaims.claimants,
           portraitDescription:
             object.Kind === 'Planet'

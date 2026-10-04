@@ -1,4 +1,5 @@
 import type { InhabitedInfo, Planet, StarType, Temperature } from '../BaseDTO/merged_schema';
+import { resolveAtmosphere } from './atmosphere_interpretation';
 
 /** Deterministic interpretations of canonical planet and star facts. */
 export const STAR_HABITABILITY: Readonly<Record<StarType, number>> = {
@@ -21,7 +22,7 @@ export function planetHabitability(
   if (planet.InhabitedInfo === false) return null;
   return Math.min(
     starHabitability,
-    ATMOSPHERE_HAB[planet.Atmosphere],
+    resolveAtmosphere(planet.Atmosphere).HabRating,
     TEMPERATURE_HAB[temperature],
     TERRAN_BIOSPHERE_HAB[planet.InhabitedInfo.TerranBiosphere],
     SIZE_HAB[planet.Size],
@@ -37,16 +38,6 @@ export const TECH_LEVEL: Readonly<Record<InhabitedInfo['TechLevel'], number>> = 
   'Modern postech': 4,
   'Postech with specialties': 4.1,
   'Pretech with surviving infrastructure': 5,
-};
-
-export const ATMOSPHERE_HAB: Readonly<Record<Planet['Atmosphere'], number>> = {
-  Vacuum: 0,
-  Corrosive: 0,
-  Invasive: 0,
-  'Corrosive+Invasive': 0,
-  'Inert gas': 0,
-  'Breathable: Thin/Thick': 2,
-  Breathable: 3,
 };
 
 export const TEMPERATURE_HAB: Readonly<Record<Temperature, number>> = {

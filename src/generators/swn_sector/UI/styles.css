@@ -333,6 +333,29 @@ button.detail-tab {
 .detail-stock-content {
   white-space: pre-line;
 }
+.basic-scan-elements {
+  display: grid;
+  gap: 7px;
+  margin-bottom: 14px;
+}
+.basic-scan-element {
+  min-width: 0;
+  border: 1px solid #263a40;
+  padding: 8px 10px;
+  color: #b2c2c3;
+  font-size: 13px;
+  line-height: 1.55;
+}
+.basic-scan-drawer > summary {
+  cursor: pointer;
+}
+.basic-scan-drawer > summary:focus-visible {
+  outline: 1px solid var(--green);
+  outline-offset: 3px;
+}
+.basic-scan-drawer-content {
+  padding: 8px 0 0 16px;
+}
 .detail-section.gm-note {
   background: #121719;
   border-left: 2px solid var(--blue);

@@ -2,7 +2,6 @@ import type { InhabitedInfo, StarType, Temperature, WorldTag } from '../BaseDTO/
 import type { GeneratedOrbit as Orbit, GeneratedPlanet as Planet } from './generation_model';
 import { deterministicId, chooseWeighted, randomFor } from './generation_random';
 import {
-  ATMOSPHERE_TABLE,
   BULK_COMPOSITION_TABLE,
   NATIVE_BIOSPHERE_TABLE,
   POPULATION_TABLE,
@@ -22,7 +21,6 @@ import {
   TERRAN_BIOSPHERE_HAB_REQUIRED,
 } from './data_tables';
 import {
-  ATMOSPHERE_HAB,
   BULK_COMPOSITION_HAB,
   SIZE_HAB,
   TECH_LEVEL,
@@ -30,6 +28,8 @@ import {
   TERRAN_BIOSPHERE_HAB,
 } from '../Shared/planet_interpretation';
 import { WORLD_TAG_CONSTRAINTS } from './generation_constraints';
+import { generateAtmosphere } from './generate_atmosphere';
+import { resolveAtmosphere } from '../Shared/atmosphere_interpretation';
 
 type PhysicalProfile = {
   Atmosphere: Planet['Atmosphere'];
@@ -82,7 +82,7 @@ function waterState(
   const forcedDry =
     profile.Temperature === 'Cryogenic' ||
     profile.Temperature === 'Furance' ||
-    profile.Atmosphere === 'Vacuum' ||
+    profile.Atmosphere.Category === 'Vacuum' ||
     tagsRequire(tags, 'Desert World');
   const forcedWet =
     profile.BulkComposition === 'Water' ||
@@ -100,7 +100,7 @@ function profileInvalidReason(
   starHabitability: number,
 ): string | undefined {
   const environmentalHab = Math.min(
-    ATMOSPHERE_HAB[profile.Atmosphere],
+    resolveAtmosphere(profile.Atmosphere).HabRating,
     TEMPERATURE_HAB[profile.Temperature],
     TERRAN_BIOSPHERE_HAB[profile.TerranBiosphere],
     SIZE_HAB[profile.Size],
@@ -121,7 +121,7 @@ function profileInvalidReason(
       profile.BulkComposition === 'Water' ||
       profile.Temperature === 'Cryogenic' ||
       profile.Temperature === 'Furance' ||
-      profile.Atmosphere === 'Vacuum')
+      profile.Atmosphere.Category === 'Vacuum')
   )
     return 'the rolled temperature/atmosphere requires dry conditions while the tags or composition require water';
   if (
@@ -150,7 +150,8 @@ function profileInvalidReason(
       return `${tag} caps environmental habitability`;
     if (
       constraint.maxAtmospherePercentile !== undefined &&
-      ATMOSPHERE_MAX_PERCENTILE[profile.Atmosphere] > constraint.maxAtmospherePercentile
+      (ATMOSPHERE_MAX_PERCENTILE[profile.Atmosphere.Category] ?? 100) >
+        constraint.maxAtmospherePercentile
     )
       return `${tag} requires a lower atmosphere percentile`;
     if (
@@ -267,11 +268,7 @@ export function generateInhabitedPlanet(options: InhabitedPlanetOptions): Planet
   const rejectionCounts = new Map<string, number>();
   for (let attempt = 0; attempt < MAX_PROFILE_ROLLS; attempt += 1) {
     const path = `${options.entityPath}:profile:${attempt}`;
-    const Atmosphere = chooseWeighted(
-      randomFor(options.seed, `${path}:atmosphere`),
-      ATMOSPHERE_TABLE,
-      'atmospheres',
-    ).Value;
+    const Atmosphere = generateAtmosphere(options.seed, path);
     const Temperature = chooseWeighted(
       randomFor(options.seed, `${path}:temperature`),
       TEMPERATURE_TABLE.filter((row) => allowedTemperatures.includes(row.Value)),
@@ -279,7 +276,7 @@ export function generateInhabitedPlanet(options: InhabitedPlanetOptions): Planet
     ).Value;
     let currentHab = Math.min(
       options.starHabitability,
-      ATMOSPHERE_HAB[Atmosphere],
+      resolveAtmosphere(Atmosphere).HabRating,
       TEMPERATURE_HAB[Temperature],
     );
     const NativeBiosphere = chooseWeighted(
@@ -303,7 +300,7 @@ export function generateInhabitedPlanet(options: InhabitedPlanetOptions): Planet
     ).Value;
     currentHab = Math.min(currentHab, SIZE_HAB[Size]);
     const environmentalHabBeforeComposition = Math.min(
-      ATMOSPHERE_HAB[Atmosphere],
+      resolveAtmosphere(Atmosphere).HabRating,
       TEMPERATURE_HAB[Temperature],
       TERRAN_BIOSPHERE_HAB[TerranBiosphere],
       SIZE_HAB[Size],

@@ -7,6 +7,7 @@ import type {
 import { choose, deterministicId, randomFor } from './generation_random';
 import { directOrbitTemperatures } from '../Shared/spatial_interpretation';
 import { assignPortraitIndex } from './portrait_selection';
+import { presetAtmosphere } from './generate_atmosphere';
 
 export type ExtraPlanetTemplate =
   | 'Mercurian'
@@ -44,63 +45,63 @@ const TEMPLATE_FACTS: Readonly<Record<ExtraPlanetTemplate, TemplateFacts>> = {
     Size: 'Luna',
     BulkComposition: 'Iron',
     SurfaceWaterPresent: false,
-    Atmosphere: 'Vacuum',
+    Atmosphere: presetAtmosphere('Mercurian'),
     NativeBiosphere: 'None',
   },
   'Europan / Plutonic': {
     Size: 'Luna',
     BulkComposition: 'Water',
     SurfaceWaterPresent: true,
-    Atmosphere: 'Inert gas',
+    Atmosphere: presetAtmosphere('Europan / Plutonic'),
     NativeBiosphere: 'None',
   },
   Lunar: {
     Size: 'Luna',
     BulkComposition: 'Silicon',
     SurfaceWaterPresent: false,
-    Atmosphere: 'Vacuum',
+    Atmosphere: presetAtmosphere('Lunar'),
     NativeBiosphere: 'None',
   },
   Ioan: {
     Size: 'Mars',
     BulkComposition: 'Sulfur',
     SurfaceWaterPresent: false,
-    Atmosphere: 'Corrosive',
+    Atmosphere: presetAtmosphere('Ioan'),
     NativeBiosphere: 'None',
   },
   Titanian: {
     Size: 'Mars',
     BulkComposition: 'Carbon',
     SurfaceWaterPresent: false,
-    Atmosphere: 'Inert gas',
+    Atmosphere: presetAtmosphere('Titanian'),
     NativeBiosphere: 'Microbial',
   },
   Martian: {
     Size: 'Mars',
     BulkComposition: 'Silicon',
     SurfaceWaterPresent: false,
-    Atmosphere: 'Breathable: Thin/Thick',
+    Atmosphere: presetAtmosphere('Martian'),
     NativeBiosphere: 'None',
   },
   Venusian: {
     Size: 'Earth',
     BulkComposition: 'Silicon',
     SurfaceWaterPresent: false,
-    Atmosphere: 'Corrosive',
+    Atmosphere: presetAtmosphere('Venusian'),
     NativeBiosphere: 'None',
   },
   Jovian: {
     Size: 'Jupiter',
     BulkComposition: 'Jovian Gas',
     SurfaceWaterPresent: false,
-    Atmosphere: 'Inert gas',
+    Atmosphere: presetAtmosphere('Jovian'),
     NativeBiosphere: 'None',
   },
   Neptunian: {
     Size: 'Neptune',
     BulkComposition: 'Neptunian Gas',
     SurfaceWaterPresent: false,
-    Atmosphere: 'Inert gas',
+    Atmosphere: presetAtmosphere('Neptunian'),
     NativeBiosphere: 'None',
   },
 };
@@ -130,7 +131,7 @@ export function generateTemplatePlanet(options: TemplatePlanetOptions): Planet {
     facts.SurfaceWaterPresent &&
     temperature !== 'Cryogenic' &&
     temperature !== 'Furance' &&
-    facts.Atmosphere !== 'Vacuum';
+    facts.Atmosphere.Category !== 'Vacuum';
   const name = `${options.template} ${options.entityPath}`;
   return {
     Id: deterministicId(options.seed, options.entityPath),

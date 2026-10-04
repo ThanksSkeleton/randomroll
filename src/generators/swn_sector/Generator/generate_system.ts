@@ -95,7 +95,7 @@ function deriveNonInhabitedPlanetFacts(planet: Planet): Planet {
     planet.BulkComposition === 'Water' &&
     planet.Temperature !== 'Cryogenic' &&
     planet.Temperature !== 'Furance' &&
-    planet.Atmosphere !== 'Vacuum';
+    planet.Atmosphere.Category !== 'Vacuum';
   return {
     ...planet,
     SurfaceWaterPresent: surfaceWaterPresent,
