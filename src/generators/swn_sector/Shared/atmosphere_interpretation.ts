@@ -1,6 +1,6 @@
 import type { Atmosphere, AtmosphereCategory } from '../BaseDTO/merged_schema';
 import rawDetails from '../Data/Raw/Details/atmosphere.json';
-import { ATMOSPHERE_DATA } from './atmosphere_table';
+import { ATMOSPHERE_DATA, GAS_CATEGORIES_BY_ID } from './atmosphere_table';
 
 export type GasCategory = 'Corrosive' | 'Toxic' | 'Inert' | 'Flammable';
 export type Gas = {
@@ -15,7 +15,7 @@ export type ResolvedAtmosphere = {
   Gases: Array<{ Gas: Gas; Percent: number }>;
 };
 
-type RawGas = { chemicalFormula: string; longName: string; category: GasCategory };
+type RawGas = { chemicalFormula: string; longName: string };
 type RawGasShare = { gasId?: string; selectedGas?: boolean; percent: number };
 type RawTemplate = { bar: number; gases: RawGasShare[] };
 const gases = rawDetails.gases as Record<string, RawGas>;
@@ -79,7 +79,7 @@ export function resolveAtmosphere(atmosphere: Atmosphere): ResolvedAtmosphere {
         Gas: {
           ChemicalFormula: gas.chemicalFormula,
           LongName: gas.longName,
-          Category: gas.category,
+          Category: GAS_CATEGORIES_BY_ID[id]!,
         },
         Percent: share.percent,
       };

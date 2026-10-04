@@ -12,11 +12,11 @@ The six items below group the two unused probability tables together. Roll-table
 
 Adapt the JSON rows into named weighted choices and use them at the two roll sites. Remove the constants. Preserve the existing random stream paths, one draw per decision, and forced-water precedence. Verify that fixed seeds produce the same results; both current comparisons place the lower range first, so the weighted adapter must retain row order.
 
-## 2. Derive atmosphere gas lists from gas details
+## 2. Use world-attribute gas category lists as the source of truth
 
-The `flammableGas`, `corrosiveGas`, `poison`, and `inertGas` lists in the atmosphere entry of `Data/Raw/Tables/world_attributes.json` repeat the `category` of each gas in `Data/Raw/Details/atmosphere.json`. Both generation and `Shared/atmosphere_interpretation.ts` consume those lists.
+The atmosphere entry in `Data/Raw/Tables/world_attributes.json` defines the selectable `flammableGas`, `corrosiveGas`, `poison`, and `inertGas` lists. These lists are the source of truth for gas category membership. `Data/Raw/Details/atmosphere.json` supplies each gas's descriptive formula and long name, without a second category field. Generation and `Shared/atmosphere_interpretation.ts` use the world-attribute lists.
 
-Use the gas details as the source of truth for category membership and derive the selectable lists in their current order. Keep `breathableBackgroundGas` as an explicit weighted roll rule: its weights are independent data, even though its gas IDs currently match the inert list. Validate that every selected gas ID exists and that all derived lists and fixed-seed atmosphere outcomes match the baseline before removing the duplicated category lists.
+Keep `breathableBackgroundGas` as an explicit weighted roll rule: its weights are independent data, even though its gas IDs currently match the inert list. Validate that every listed gas ID exists in the detail records and that every detailed gas has exactly one category. Preserve the current list order and fixed-seed atmosphere outcomes.
 
 ## 3. Derive gas-template composition from planet values
 
