@@ -93,7 +93,7 @@ export const TERRAN_BIOSPHERE_TABLE = adaptRows(
 );
 export const POPULATION_TABLE = adaptRows(
   attributeTable('population'),
-  (result) => result as InhabitedInfo['Population'],
+  (result) => Number(result) as InhabitedInfo['Population'],
 );
 export const TECH_LEVEL_TABLE = adaptRows(
   attributeTable('tech_level'),

@@ -12,6 +12,7 @@ import type {
   PolityDisplayDTO,
 } from '../DisplayDTO/dto';
 import { techLevelStrings } from '../Shared/tech_level_interpretation';
+import { populationStrings } from '../Shared/population_interpretation';
 import { projectClaims, projectPolity } from './politics_projection';
 import { projectWorldTag } from './world_tag_projection';
 import { HPOI_MARKER } from '../Data/Projection/poi_presentation';
@@ -254,7 +255,7 @@ export function projectCultureWorld(
     complete: Boolean(world.Culture),
     startingWorld: sector.StartingWorldId === world.Id,
     techLevel: techLevelStrings(world.InhabitedInfo.TechLevel).shortString,
-    population: world.InhabitedInfo.Population,
+    population: populationStrings(world.InhabitedInfo.Population).shortString,
     tags: world.InhabitedInfo.WorldTags.map(projectWorldTag) as CultureWorldDisplayDTO['tags'],
     originalPolity: originalPolity ?? null,
     claims,

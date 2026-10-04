@@ -137,7 +137,7 @@ function WorldSymbol({
       {d && showProceduralName(d, preview) && (
         <small className="world-procedural-name">{d.proceduralName}</small>
       )}
-      {planet.populationTier !== null && (
+      {planet.populationRank !== null && (
         <div className="summary-icons world-summary-icons" role="group" aria-label="World ratings">
           <span
             className="summary-rating summary-rating-habitability"
@@ -152,10 +152,10 @@ function WorldSymbol({
             <span
               className="summary-rating summary-rating-population"
               role="img"
-              aria-label={`Population tier ${planet.populationTier}: ${planet.population}`}
-              title={`Population tier ${planet.populationTier}: ${planet.population}`}
+              aria-label={`Population rank ${planet.populationRank}: ${planet.population}`}
+              title={`Population rank ${planet.populationRank}: ${planet.population}`}
             >
-              {Array.from({ length: planet.populationTier ?? 0 }, (_, index) => (
+              {Array.from({ length: planet.populationRank ?? 0 }, (_, index) => (
                 <svg key={index} className="population-bust" viewBox="0 0 12 14" aria-hidden="true">
                   <circle cx="6" cy="3.5" r="2.5" />
                   <path d="M1 13v-1.2a5 5 0 0 1 10 0V13z" />

@@ -116,27 +116,37 @@
       }
     },
     "population": {
-      "Fewer than 500": {
+      "1": {
+        "longString": "Fewer than 500",
+        "shortString": "Outpost",
         "populationMin": 20,
         "populationMax": 500,
         "habRequired": 0
       },
-      "Fewer than a million inhabitants": {
+      "2": {
+        "longString": "Fewer than a million inhabitants",
+        "shortString": "City-State",
         "populationMin": 501,
         "populationMax": 1000000,
         "habRequired": 0
       },
-      "Several million inhabitants": {
+      "3": {
+        "longString": "Several million inhabitants",
+        "shortString": "Minor Polity",
         "populationMin": 1000001,
         "populationMax": 100000000,
         "habRequired": 2
       },
-      "Hundreds of millions of inhabitants": {
+      "4": {
+        "longString": "Hundreds of millions of inhabitants",
+        "shortString": "Major Polity",
         "populationMin": 100000001,
         "populationMax": 1000000000,
         "habRequired": 2
       },
-      "Billions of inhabitants": {
+      "5": {
+        "longString": "Billions of inhabitants",
+        "shortString": "Great Polity",
         "populationMin": 1000000001,
         "populationMax": 5000000000,
         "habRequired": 3

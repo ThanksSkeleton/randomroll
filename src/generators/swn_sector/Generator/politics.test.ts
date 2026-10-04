@@ -116,11 +116,11 @@ function claims(result: ReturnType<typeof resolvePolitics>, objectId: string): s
 describe('political capability matrix', () => {
   it('maps every canonical technology and population combination', () => {
     const populations: Population[] = [
-      'Fewer than 500',
-      'Fewer than a million inhabitants',
-      'Several million inhabitants',
-      'Hundreds of millions of inhabitants',
-      'Billions of inhabitants',
+      1,
+      2,
+      3,
+      4,
+      5,
     ];
     const expected: Record<TechLevel, Array<[number, number, number]>> = {
       0: populations.map(() => [0, 0, -1]),
@@ -177,7 +177,7 @@ describe('simultaneous political resolution', () => {
       return system(`system-${suffix}`, [
         planet(`world-${suffix}`, `World ${suffix}`, {
           TechLevel: 4,
-          Population: 'Fewer than 500',
+          Population: 1,
         }),
       ]);
     });
@@ -192,11 +192,11 @@ describe('simultaneous political resolution', () => {
   it('gives a surviving native exclusive control of its contested homeworld', () => {
     const alpha = planet('alpha', 'Alpha', {
       TechLevel: 4,
-      Population: 'Hundreds of millions of inhabitants',
+      Population: 4,
     });
     const beta = planet('beta', 'Beta', {
       TechLevel: 5,
-      Population: 'Fewer than a million inhabitants',
+      Population: 2,
     });
     const systems = [system('alpha-system', [alpha]), system('beta-system', [beta])];
     const { routes, portals } = connect([['alpha-system', 'beta-system']]);
@@ -213,15 +213,15 @@ describe('simultaneous political resolution', () => {
   it('keeps multiple foreign victors tied on a defeated homeworld', () => {
     const alpha = planet('alpha', 'Alpha', {
       TechLevel: 4,
-      Population: 'Fewer than a million inhabitants',
+      Population: 2,
     });
     const beta = planet('beta', 'Beta', {
       TechLevel: 5,
-      Population: 'Fewer than a million inhabitants',
+      Population: 2,
     });
     const gamma = planet('gamma', 'Gamma', {
       TechLevel: 5,
-      Population: 'Several million inhabitants',
+      Population: 3,
     });
     const systems = [
       system('alpha-system', [alpha]),
@@ -264,11 +264,11 @@ describe('simultaneous political resolution', () => {
   it('preserves a conquered polity projection beyond its conqueror range', () => {
     const beta = planet('beta', 'Beta', {
       TechLevel: 5,
-      Population: 'Fewer than a million inhabitants',
+      Population: 2,
     });
     const alpha = planet('alpha', 'Alpha', {
       TechLevel: 4,
-      Population: 'Fewer than a million inhabitants',
+      Population: 2,
     });
     const remoteStation = other('remote-station', 'IndependentStation');
     const systems = [
@@ -292,11 +292,11 @@ describe('simultaneous political resolution', () => {
   it('limits projection -1 to its homeworld and paints every object at projection 0', () => {
     const primitive = planet('primitive', 'Primitive', {
       TechLevel: 1,
-      Population: 'Billions of inhabitants',
+      Population: 5,
     });
     const industrial = planet('industrial', 'Industrial', {
       TechLevel: 3,
-      Population: 'Fewer than a million inhabitants',
+      Population: 2,
     });
     const emptyWorld = planet('empty', 'Empty', false);
     const belt = other('belt', 'AsteroidBelt');

@@ -71,7 +71,7 @@ test('allows rank-2 population tags when star habitability is zero', () => {
   if (planet.InhabitedInfo === false) throw new Error('Expected inhabited information');
 
   expect(planetHabitability(planet, 0, planet.Temperature)).toBe(0);
-  expect(planet.InhabitedInfo.Population).toBe('Fewer than a million inhabitants');
+  expect(planet.InhabitedInfo.Population).toBe(2);
 });
 
 test('constructively enforces tag semantics', () => {
@@ -79,7 +79,7 @@ test('constructively enforces tag semantics', () => {
   const info = tomb.InhabitedInfo;
   expect(info).not.toBe(false);
   if (info === false) throw new Error('Expected inhabited information');
-  expect(info.Population).toBe('Fewer than 500');
+  expect(info.Population).toBe(1);
   expect(info.TechLevel).toBeGreaterThanOrEqual(4);
 
   const industrial = world('industry-world', ['Heavy Industry', 'Major Spaceyard']);
@@ -92,7 +92,7 @@ test('constructively generates the Tomb World and Abandoned Colony regression se
   if (tomb.InhabitedInfo === false) throw new Error('Expected inhabited information');
 
   expect(planetHabitability(tomb, 3, tomb.Temperature)).toBeLessThanOrEqual(1);
-  expect(tomb.InhabitedInfo.Population).toBe('Fewer than 500');
+  expect(tomb.InhabitedInfo.Population).toBe(1);
   expect(tomb.InhabitedInfo.TechLevel).toBeGreaterThanOrEqual(4);
 });
 

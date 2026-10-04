@@ -16,7 +16,6 @@ import {
   ATMOSPHERE_MAX_PERCENTILE,
   NATIVE_BIOSPHERE_MIN_PERCENTILE,
   POPULATION_HAB_REQUIRED,
-  POPULATION_RANGE,
   TECH_HAB_REQUIRED,
   TERRAN_BIOSPHERE_HAB_REQUIRED,
 } from './data_tables';
@@ -125,10 +124,10 @@ function profileInvalidReason(
     return 'the rolled temperature/atmosphere requires dry conditions while the tags or composition require water';
   if (
     (tagsRequire(tags, 'Tomb World') || tagsRequire(tags, 'Abandoned Colony')) &&
-    profile.Population !== 'Fewer than 500'
+    profile.Population !== 1
   )
     return 'Tomb World or Abandoned Colony requires fewer than 500 inhabitants';
-  if (tagsRequire(tags, 'Outpost World') && profile.Population === 'Billions of inhabitants')
+  if (tagsRequire(tags, 'Outpost World') && profile.Population === 5)
     return 'Outpost World cannot have billions of inhabitants';
   if (
     (tagsRequire(tags, 'Heavy Industry') ||
@@ -141,7 +140,6 @@ function profileInvalidReason(
   for (const tag of tags) {
     const constraint = WORLD_TAG_CONSTRAINTS.get(tag);
     if (constraint === undefined) continue;
-    const [populationMinimum, populationMaximum] = POPULATION_RANGE[profile.Population];
     if (
       constraint.maxEnvironmentalHab !== undefined &&
       environmentalHab > constraint.maxEnvironmentalHab
@@ -160,15 +158,15 @@ function profileInvalidReason(
     )
       return `${tag} requires a higher native-biosphere percentile`;
     if (
-      constraint.minPopulationPercentile !== undefined &&
-      populationMinimum < constraint.minPopulationPercentile
+      constraint.minPopulationRank !== undefined &&
+      profile.Population < constraint.minPopulationRank
     )
-      return `${tag} requires a higher population percentile`;
+      return `${tag} requires population rank ${constraint.minPopulationRank} or higher`;
     if (
-      constraint.maxPopulationPercentile !== undefined &&
-      populationMaximum > constraint.maxPopulationPercentile
+      constraint.maxPopulationRank !== undefined &&
+      profile.Population > constraint.maxPopulationRank
     )
-      return `${tag} caps the population percentile`;
+      return `${tag} requires population rank ${constraint.maxPopulationRank} or lower`;
     if (constraint.minTechLevel !== undefined && profile.TechLevel < constraint.minTechLevel)
       return `${tag} requires a higher technology level`;
   }
@@ -193,26 +191,26 @@ function tagPairHasIntersection(
     (tagsRequire(tags, 'Oceanic World') || tagsRequire(tags, 'Seagoing Cities'))
   )
     return false;
-  let populationMinimum = 1;
-  let populationMaximum = 100;
+  let minimumPopulationRank = 1;
+  let maximumPopulationRank = 5;
   for (const tag of tags) {
     const constraint = WORLD_TAG_CONSTRAINTS.get(tag);
-    populationMinimum = Math.max(populationMinimum, constraint?.minPopulationPercentile ?? 1);
-    populationMaximum = Math.min(populationMaximum, constraint?.maxPopulationPercentile ?? 100);
+    minimumPopulationRank = Math.max(minimumPopulationRank, constraint?.minPopulationRank ?? 1);
+    maximumPopulationRank = Math.min(maximumPopulationRank, constraint?.maxPopulationRank ?? 5);
   }
   if (
     tagsRequire(tags, 'Tomb World') ||
     tagsRequire(tags, 'Abandoned Colony') ||
     tagsRequire(tags, 'Outpost World')
   )
-    populationMaximum = Math.min(populationMaximum, 9);
+    maximumPopulationRank = Math.min(maximumPopulationRank, 1);
   if (starHabitability !== undefined) {
-    const maximumSupportedPopulationPercentile = POPULATION_TABLE.filter(
+    const maximumSupportedPopulationRank = POPULATION_TABLE.filter(
       (row) => POPULATION_HAB_REQUIRED[row.Value] <= starHabitability,
-    ).reduce((maximum, row) => Math.max(maximum, POPULATION_RANGE[row.Value][1]), 0);
-    populationMaximum = Math.min(populationMaximum, maximumSupportedPopulationPercentile);
+    ).reduce((maximum, row) => Math.max(maximum, row.Value), 0);
+    maximumPopulationRank = Math.min(maximumPopulationRank, maximumSupportedPopulationRank);
   }
-  return populationMinimum <= populationMaximum;
+  return minimumPopulationRank <= maximumPopulationRank;
 }
 
 function selectTags(
@@ -314,7 +312,7 @@ export function generateInhabitedPlanet(options: InhabitedPlanetOptions): Planet
     ).Value;
     currentHab = Math.min(currentHab, BULK_COMPOSITION_HAB[BulkComposition]);
     const populationRows = isTombWorld
-      ? POPULATION_TABLE.filter((row) => row.Value === 'Fewer than 500')
+      ? POPULATION_TABLE.filter((row) => row.Value === 1)
       : POPULATION_TABLE;
     const technologyRows = isTombWorld
       ? TECH_LEVEL_TABLE.filter((row) => row.Value >= TOMB_WORLD_MIN_TECH_LEVEL)

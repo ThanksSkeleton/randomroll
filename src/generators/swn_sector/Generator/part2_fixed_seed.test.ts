@@ -16,7 +16,7 @@ test('fixed seed canonical output stays deterministic through portrait projectio
   for (const seed of Object.keys(EXPECTED)) {
     const sector = generate(seed);
     expect(generate(seed)).toEqual(sector);
-    expect(sector.SchemaVersion).toBe('merged-v8');
+    expect(sector.SchemaVersion).toBe('merged-v9');
     for (const system of sector.Systems)
       for (const object of system.Objects) {
         expect(object).not.toHaveProperty('Temperature');

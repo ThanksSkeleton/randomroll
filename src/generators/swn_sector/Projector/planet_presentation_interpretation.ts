@@ -1,4 +1,4 @@
-import type { InhabitedInfo, Planet, StarType, Temperature } from '../BaseDTO/merged_schema';
+import type { Planet, StarType, Temperature } from '../BaseDTO/merged_schema';
 import rawPlanetValues from '../Data/Raw/Details/planet_values.json';
 
 const SIZE_VALUES = rawPlanetValues.size as Record<
@@ -31,14 +31,6 @@ export function planetTemperatureScan(
     lines: [`${formatPlanetAu(au)} AU`, `Climate: ${label}`],
   };
 }
-
-export const POPULATION_TIER: Readonly<Record<InhabitedInfo['Population'], number>> = {
-  'Fewer than 500': 1,
-  'Fewer than a million inhabitants': 2,
-  'Several million inhabitants': 3,
-  'Hundreds of millions of inhabitants': 4,
-  'Billions of inhabitants': 5,
-};
 
 export function isTidallyLocked(planet: Pick<Planet, 'Orbit'>, starType: StarType): boolean {
   return planet.Orbit.ParentObjectId === null && starType === 'M-type';

@@ -26,7 +26,7 @@ function entity(id: string) {
 
 function sector(): Sector {
   return {
-    SchemaVersion: 'merged-v8',
+    SchemaVersion: 'merged-v9',
     OriginalSeed: 'test',
     StartingWorldMode: 'UNRESTRICTED',
     StartingWorldId: null,

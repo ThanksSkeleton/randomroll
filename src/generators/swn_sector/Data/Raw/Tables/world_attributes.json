@@ -159,23 +159,23 @@
       "rows": [
         {
           "roll": "1-9",
-          "result": "Fewer than 500"
+          "result": 1.0
         },
         {
           "roll": "10-31",
-          "result": "Fewer than a million inhabitants"
+          "result": 2.0
         },
         {
           "roll": "32-75",
-          "result": "Several million inhabitants"
+          "result": 3.0
         },
         {
           "roll": "76-94",
-          "result": "Hundreds of millions of inhabitants"
+          "result": 4.0
         },
         {
           "roll": "95-100",
-          "result": "Billions of inhabitants"
+          "result": 5.0
         }
       ]
     },

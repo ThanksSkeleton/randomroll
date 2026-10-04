@@ -8,8 +8,8 @@ export type TagConstraint = {
   maxAtmospherePercentile?: number;
   minNativeBiospherePercentile?: number;
   minTechLevel?: number;
-  minPopulationPercentile?: number;
-  maxPopulationPercentile?: number;
+  minPopulationRank?: number;
+  maxPopulationRank?: number;
 };
 const tagDetails = rawWorldTagDetails.tags as Record<
   string,

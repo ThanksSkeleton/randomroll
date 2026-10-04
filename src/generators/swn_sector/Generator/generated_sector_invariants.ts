@@ -19,7 +19,6 @@ import {
   GAS_COMPOSITION_BY_SIZE,
   NATIVE_BIOSPHERE_MIN_PERCENTILE,
   POPULATION_HAB_REQUIRED,
-  POPULATION_RANGE,
   SIZE_RANK,
   TECH_HAB_REQUIRED,
   TERRAN_BIOSPHERE_HAB_REQUIRED,
@@ -515,7 +514,7 @@ function validateInhabitedPlanet(
     fail('E6', `Industry tag on ${planet.Id} requires non-primitive technology.`);
   }
   if (firstTag === 'Outpost World' || secondTag === 'Outpost World') {
-    if (inhabited.Population === 'Billions of inhabitants')
+    if (inhabited.Population === 5)
       fail('E8', `Outpost world ${planet.Id} has billions of inhabitants.`);
   }
   if ((firstTag === 'Desert World' || secondTag === 'Desert World') && planet.SurfaceWaterPresent) {
@@ -526,14 +525,13 @@ function validateInhabitedPlanet(
       firstTag === 'Abandoned Colony' ||
       secondTag === 'Tomb World' ||
       secondTag === 'Abandoned Colony') &&
-    inhabited.Population !== 'Fewer than 500'
+    inhabited.Population !== 1
   ) {
     fail('E9', `Tomb World or Abandoned Colony ${planet.Id} must have rank-1 population.`);
   }
   for (const tag of inhabited.WorldTags) {
     const constraint = WORLD_TAG_CONSTRAINTS.get(tag);
     if (constraint === undefined) continue;
-    const [populationMin, populationMax] = POPULATION_RANGE[inhabited.Population];
     if (
       constraint.maxEnvironmentalHab !== undefined &&
       environmentalHab > constraint.maxEnvironmentalHab
@@ -552,15 +550,21 @@ function validateInhabitedPlanet(
     )
       fail('2A-19b', `Tag ${tag} is incompatible with native biosphere on ${planet.Id}.`);
     if (
-      constraint.minPopulationPercentile !== undefined &&
-      populationMin < constraint.minPopulationPercentile
+      constraint.minPopulationRank !== undefined &&
+      inhabited.Population < constraint.minPopulationRank
     )
-      fail('2A-19c', `Tag ${tag} requires more population on ${planet.Id}.`);
+      fail(
+        '2A-19c',
+        `Tag ${tag} requires population rank ${constraint.minPopulationRank} or higher.`,
+      );
     if (
-      constraint.maxPopulationPercentile !== undefined &&
-      populationMax > constraint.maxPopulationPercentile
+      constraint.maxPopulationRank !== undefined &&
+      inhabited.Population > constraint.maxPopulationRank
     )
-      fail('2A-19c', `Tag ${tag} requires less population on ${planet.Id}.`);
+      fail(
+        '2A-19c',
+        `Tag ${tag} requires population rank ${constraint.maxPopulationRank} or lower.`,
+      );
     if (constraint.minTechLevel !== undefined && inhabited.TechLevel < constraint.minTechLevel)
       fail('2A-19d', `Tag ${tag} requires higher technology on ${planet.Id}.`);
   }

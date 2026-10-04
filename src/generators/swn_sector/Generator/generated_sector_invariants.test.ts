@@ -64,7 +64,7 @@ function station(id: string, parentObjectId: string | null): OtherCelestialObjec
 
 function sector(objects: Array<Planet | OtherCelestialObject>): Sector {
   return {
-    SchemaVersion: 'merged-v8',
+    SchemaVersion: 'merged-v9',
     OriginalSeed: 'test',
     StartingWorldMode: 'UNRESTRICTED',
     StartingWorldId: null,
@@ -147,7 +147,7 @@ describe('merged-sector independent stations', () => {
     terrestrial.InhabitedInfo = {
       WorldTags: ['Abandoned Colony', 'Alien Ruins'],
       TerranBiosphere: 'None',
-      Population: 'Fewer than 500',
+      Population: 1,
       TechLevel: 4,
     };
     terrestrial.Culture = null;
@@ -206,7 +206,7 @@ describe('merged-sector independent stations', () => {
     world.InhabitedInfo = {
       WorldTags: ['Tomb World', 'Abandoned Colony'],
       TerranBiosphere: 'None',
-      Population: 'Fewer than a million inhabitants',
+      Population: 2,
       TechLevel: 4,
     };
     world.Culture = null;
@@ -228,7 +228,7 @@ describe('merged-sector independent stations', () => {
     world.InhabitedInfo = {
       WorldTags: ['Desert World', 'Alien Ruins'],
       TerranBiosphere: 'None',
-      Population: 'Fewer than 500',
+      Population: 1,
       TechLevel: 4,
     };
     world.Culture = null;
@@ -249,7 +249,7 @@ describe('merged-sector independent stations', () => {
     world.InhabitedInfo = {
       WorldTags: ['Alien Ruins', 'Anarchists'],
       TerranBiosphere: 'Significant',
-      Population: 'Fewer than 500',
+      Population: 1,
       TechLevel: 4,
     };
     world.Culture = null;

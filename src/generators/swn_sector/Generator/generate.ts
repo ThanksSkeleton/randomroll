@@ -95,7 +95,7 @@ export function generate(
   }
   const shipName = 'Player ship';
   const result: Sector = {
-    SchemaVersion: 'merged-v8',
+    SchemaVersion: 'merged-v9',
     OriginalSeed: seed,
     StartingWorldMode: startingWorldMode,
     SectorName: `Sector ${seed}`,
@@ -141,5 +141,5 @@ function eligibleStartingWorld(planet: Planet, mode: StartingWorldMode): boolean
   if (mode === 'UNRESTRICTED') return true;
   const { TechLevel, Population } = planet.InhabitedInfo;
   const qualifiesForTl4 = TechLevel >= 4;
-  return qualifiesForTl4 && (mode === 'TL4_PLUS' || Population !== 'Fewer than 500');
+  return qualifiesForTl4 && (mode === 'TL4_PLUS' || Population !== 1);
 }

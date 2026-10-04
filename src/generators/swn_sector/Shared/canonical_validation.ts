@@ -219,7 +219,8 @@ export function validateCanonicalShape(
         string(tag, `${path}.InhabitedInfo.WorldTags[${index}]`),
       ) &&
       string(item.InhabitedInfo.TerranBiosphere, `${path}.InhabitedInfo.TerranBiosphere`) &&
-      string(item.InhabitedInfo.Population, `${path}.InhabitedInfo.Population`) &&
+      typeof item.InhabitedInfo.Population === 'number' &&
+      [1, 2, 3, 4, 5].includes(item.InhabitedInfo.Population) &&
       typeof item.InhabitedInfo.TechLevel === 'number' &&
       [0, 1, 2, 3, 4, 4.1, 5].includes(item.InhabitedInfo.TechLevel)
     );
@@ -243,7 +244,7 @@ export function validateCanonicalShape(
       ],
       'Sector',
     ) ||
-    value.SchemaVersion !== 'merged-v8' ||
+    value.SchemaVersion !== 'merged-v9' ||
     !string(value.OriginalSeed, 'Sector.OriginalSeed') ||
     !['UNRESTRICTED', 'TL4_PLUS', 'TL4_PLUS_POP_GT_500'].includes(
       String(value.StartingWorldMode),

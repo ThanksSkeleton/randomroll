@@ -182,7 +182,7 @@
         ]
       },
       "constraints": {
-        "minPopulationPercentile": 10
+        "minPopulationRank": 2
       },
       "description": "The world’s government is fully aware of their local stellar neighbors, but the common populace has no idea about itand the government means to keep it that way. Trade with government officials in remote locations is possible, but any attempt to clue the commoners in on the truth will be met with lethal reprisals."
     },
@@ -413,7 +413,7 @@
         ]
       },
       "constraints": {
-        "minPopulationPercentile": 10
+        "minPopulationRank": 2
       },
       "description": "Two or more great powers control the planet, and they have a hostility to each other that’s just barely less than open warfare. The hostility might be ideological in nature, or it might revolve around control of some local resource."
     },
@@ -1116,7 +1116,7 @@
       },
       "constraints": {
         "minTechLevel": 3,
-        "minPopulationPercentile": 10
+        "minPopulationRank": 2
       },
       "description": "With interstellar transport so limited in the bulk it can move, worlds have to be largely self-sufficient in industry. Some worlds are more sufficient than others, however, and this planet has a thriving manufacturing sector capable of producing large amounts of goods appropriate to its tech level. The locals may enjoy a correspondingly higher lifestyle, or the products might be devoted towards vast projects for the aggrandizement of the rulers."
     },
@@ -1150,7 +1150,7 @@
       },
       "constraints": {
         "minTechLevel": 2,
-        "minPopulationPercentile": 10
+        "minPopulationRank": 2
       },
       "description": "This world has large stocks of valuable minerals, usually necessary for local industry, life support, or refinement into loads small enough to export offworld. Major mining efforts are necessary to extract the minerals, and many natives work in the industry."
     },
@@ -1412,7 +1412,7 @@
       },
       "constraints": {
         "minTechLevel": 4,
-        "minPopulationPercentile": 10
+        "minPopulationRank": 2
       },
       "description": "Most worlds of tech level 4 or greater have the necessary tech and orbital facilities to build spike drives and starships. This world is blessed with a major spaceyard facility, either inherited from before the Silence or painstakingly constructed in more recent decades. It can build even capital-class hulls, and do so more quickly and cheaply than its neighbors."
     },
@@ -1543,7 +1543,7 @@
       },
       "constraints": {
         "minTechLevel": 2,
-        "minPopulationPercentile": 10
+        "minPopulationRank": 2
       },
       "description": "The world is dominated by classic cyberpunk-esque megacorporations, each one far more important than the vestigial national remnants that encompass them. These megacorps are usually locked in a cold war, trading and dealing with each other even as they try to strike in deniable ways. An over-council of corporations usually acts to bring into line any that get excessively overt in their activities."
     },
@@ -1797,7 +1797,7 @@
       },
       "constraints": {
         "minTechLevel": 4,
-        "maxPopulationPercentile": 9
+        "maxPopulationRank": 1
       },
       "description": "The world is only a tiny outpost of human habitation planted by an offworld corporation or government. Perhaps the staff is there to serve as a refueling and repair stop for passing ships, or to oversee an automated mining and refinery complex. They might be there to study ancient ruins, or simply serve as a listening and monitoring post for traffic through the system. The outpost is likely well-equipped with defenses against casual piracy."
     },
@@ -1928,7 +1928,7 @@
         ]
       },
       "constraints": {
-        "minPopulationPercentile": 10
+        "minPopulationRank": 2
       },
       "description": "The world is a totalitarian police state. Any sign of disloyalty to the planet’s rulers is punished severely, and suspicion riddles society. Some worlds might operate by Soviet-style informers and indoctrination, while more technically sophisticated worlds might rely on omnipresent cameras or braked AI “guardian angels”. Outworlders are apt to be treated as a necessary evil at best, and “disappeared” if they become troublesome."
     },
@@ -2139,7 +2139,7 @@
       },
       "constraints": {
         "minTechLevel": 4,
-        "minPopulationPercentile": 10
+        "minPopulationRank": 2
       },
       "description": "This world is one of the few that have managed to redevelop the basics of psychic training. Without this education, a potential psychic is doomed to either madness or death unless they refrain from using their abilities. Psionic academies are rare enough that offworlders are often sent there to study by wealthy patrons. The secrets of psychic mentorship, the protocols and techniques that allow a psychic to successfully train another, are carefully guarded at these academies. Most are closely affiliated with the planetary government."
     },
@@ -2205,7 +2205,7 @@
         ]
       },
       "constraints": {
-        "minPopulationPercentile": 10
+        "minPopulationRank": 2
       },
       "description": "These natives view psionic powers as a visible gift of god or sign of superiority. If the world has a functional psychic training academy, psychics occupy almost all major positions of power and are considered the natural and proper rulers of the world. If the world lacks training facilities, it is likely a hodgepodge of demented cults, with each one dedicated to a marginally-coherent feral prophet and their psychopathic ravings."
     },
@@ -2307,7 +2307,7 @@
         ]
       },
       "constraints": {
-        "minPopulationPercentile": 10
+        "minPopulationRank": 2
       },
       "description": "The world teems with refugees, either exiles from another planet who managed to get here, or the human detritus of some local conflict that have fled to the remaining stable states. The natives usually regard the refugees with hostility, an attitude returned by many among their unwilling guests."
     },
@@ -2343,7 +2343,7 @@
       },
       "constraints": {
         "minTechLevel": 4,
-        "minPopulationPercentile": 10
+        "minPopulationRank": 2
       },
       "description": "This world has the technological sophistication, natural resources, and determined polity necessary to be a regional hegemon for the sector. Nearby worlds are likely either directly subservient to it or tack carefully to avoid its anger. It may even be the capital of a small stellar empire."
     },
@@ -2410,7 +2410,7 @@
         ]
       },
       "constraints": {
-        "minPopulationPercentile": 10
+        "minPopulationRank": 2
       },
       "description": "The locals formerly owned another world, or a major nation on the planet formerly owned an additional region of land. Something happened to take away this control or drive out the former rulers, and they’ve never forgotten it. The locals are obsessed with reclaiming their lost lands, and will allow no questions of practicality to interfere with their cause."
     },
@@ -2444,7 +2444,7 @@
         ]
       },
       "constraints": {
-        "minPopulationPercentile": 10
+        "minPopulationRank": 2
       },
       "description": "The world is convulsed by one or more bands of revolutionaries, with some nations perhaps in the grip of a current revolution. Most of these upheavals can be expected only to change the general flavor of problems in the polity, but the process of getting there usually produces a tremendous amount of suffering."
     },
@@ -2511,7 +2511,7 @@
       },
       "constraints": {
         "minTechLevel": 4,
-        "minPopulationPercentile": 10
+        "minPopulationRank": 2
       },
       "description": "This world is not yet a dominant power in the sector, but it’s well on its way there. Whether through newly-blossoming economic, military, or cultural power, they’re extending their influence over their neighbors and forging new arrangements between their government and the rulers of nearby worlds."
     },
@@ -2708,7 +2708,7 @@
         ]
       },
       "constraints": {
-        "minPopulationPercentile": 10
+        "minPopulationRank": 2
       },
       "description": "The world is torn by violent disagreement between sectarians of a particular faith. Each views the other as a damnable heresy in need of extirpation. Local government may be able to keep open war from breaking out, but the poisonous hatred divides communities. The nature of the faith may be religious, or it may be based on some secular ideology."
     },
@@ -2977,7 +2977,7 @@
       },
       "constraints": {
         "maxEnvironmentalHab": 1,
-        "maxPopulationPercentile": 9
+        "maxPopulationRank": 1
       },
       "description": "Tomb worlds are planets that were once inhabited by humans before the Silence. The sudden collapse of the jump gate network and the inability to bring in the massive food supplies required by the planet resulted in starvation, warfare, and death. Most tomb worlds are naturally hostile to human habitation and could not raise sufficient crops to maintain life. The few hydroponic facilities were usually destroyed in the fighting, and all that is left now are ruins, bones, and silence."
     },
@@ -3016,7 +3016,7 @@
       },
       "constraints": {
         "minTechLevel": 4,
-        "minPopulationPercentile": 10
+        "minPopulationRank": 2
       },
       "description": "This world is a major crossroads for local interstellar trade. It is well-positioned at the nexus of several short-drill trade routes, and has facilities for easy transfer of valuable cargoes and the fueling and repairing of starships. The natives are accustomed to outsiders, and a polyglot mass of people from every nearby world can be found trading here."
     },
@@ -3053,7 +3053,7 @@
         ]
       },
       "constraints": {
-        "minPopulationPercentile": 10
+        "minPopulationRank": 2
       },
       "description": "The local government is brutal and indifferent to the will of the people. Laws may or may not exist, but the only one that matters is the whim of the rulers on any given day. Their minions swagger through the streets while the common folk live in terror of their appetites. The only people who stay wealthy are friends and servants of the ruling class."
     },
@@ -3190,7 +3190,7 @@
         ]
       },
       "constraints": {
-        "minPopulationPercentile": 10
+        "minPopulationRank": 2
       },
       "description": "The world is plagued by warlords. Numerous powerful men and women control private armies sufficiently strong to cow whatever local government may exist. On the lands they claim, their word is law. Most spend their time oppressing their own subjects and murderously pillaging those of their neighbors. Most like to wrap themselves in the mantle of ideology, religious fervor, or an ostensibly legitimate right to rule."
     },

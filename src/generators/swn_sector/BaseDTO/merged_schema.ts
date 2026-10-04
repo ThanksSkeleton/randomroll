@@ -40,7 +40,7 @@ export interface SelectableEntity {
 }
 
 export interface Sector {
-  SchemaVersion: 'merged-v8';
+  SchemaVersion: 'merged-v9';
   /** Generation provenance; it is not a complete replay specification. */
   OriginalSeed: string;
   /** Starting-world eligibility mode selected when this sector was generated. */
@@ -337,12 +337,7 @@ export type NativeBiosphere = 'None' | 'Microbial' | 'Limited' | 'Significant' |
 
 export type TerranBiosphere = NativeBiosphere;
 
-export type Population =
-  | 'Fewer than 500'
-  | 'Fewer than a million inhabitants'
-  | 'Several million inhabitants'
-  | 'Hundreds of millions of inhabitants'
-  | 'Billions of inhabitants';
+export type Population = 1 | 2 | 3 | 4 | 5;
 
 export type TechLevel = 0 | 1 | 2 | 3 | 4 | 4.1 | 5;
 

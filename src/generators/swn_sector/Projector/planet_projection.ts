@@ -6,7 +6,6 @@ import {
   isTidallyLocked,
   planetSizeScan,
   planetTemperatureScan,
-  POPULATION_TIER,
 } from './planet_presentation_interpretation';
 import { displayBulkComposition } from './composition_presentation';
 import { projectObjectSpatial } from './object_spatial_projection';
@@ -14,6 +13,7 @@ import { projectClaims } from './politics_projection';
 import { projectPoiCount } from './poi_projection';
 import { formatAtmosphere, resolveAtmosphere } from '../Shared/atmosphere_interpretation';
 import { techLevelStrings } from '../Shared/tech_level_interpretation';
+import { populationStrings } from '../Shared/population_interpretation';
 
 const HABITABILITY_COLOR: Readonly<Record<number, string>> = {
   0: '#858b90',
@@ -52,7 +52,7 @@ export function projectPlanet(
   const starHabitability = STAR_HABITABILITY[system.Star.StarType];
   const habitabilityRating = planetHabitability(planet, starHabitability, spatial.temperature);
   const inhabited = planet.InhabitedInfo;
-  const populationTier = inhabited === false ? null : POPULATION_TIER[inhabited.Population];
+  const populationDetails = inhabited === false ? null : populationStrings(inhabited.Population);
   const technologyRating = inhabited === false ? null : inhabited.TechLevel;
   const technologyStrings = inhabited === false ? null : techLevelStrings(inhabited.TechLevel);
   const hostName = planet.Orbit.ParentObjectId
@@ -73,7 +73,7 @@ export function projectPlanet(
           lines: [
             `Terran: ${inhabited.TerranBiosphere}`,
             `Native: ${planet.NativeBiosphere}`,
-            `Human Population: ${inhabited.Population}`,
+            `Human Population: ${populationDetails!.longString}`,
           ],
         };
   const basicScan = {
@@ -130,8 +130,9 @@ export function projectPlanet(
         ? null
         : (HABITABILITY_COLOR[habitabilityRating] ?? HABITABILITY_COLOR[0]),
     tidallyLocked: isTidallyLocked(planet, system.Star.StarType),
-    populationTier,
-    population: inhabited === false ? null : inhabited.Population,
+    populationRank: inhabited === false ? null : inhabited.Population,
+    population: populationDetails?.longString ?? null,
+    populationShort: populationDetails?.shortString ?? null,
     technologyRating,
     technologyLevel: technologyStrings?.longString ?? null,
     technologyLevelShort: technologyStrings?.shortString ?? null,

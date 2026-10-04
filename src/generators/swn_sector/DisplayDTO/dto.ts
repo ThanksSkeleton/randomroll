@@ -51,8 +51,9 @@ export type PlanetDisplayDTO = {
   habitabilityRating: number | null;
   habitabilityColor: string | null;
   tidallyLocked: boolean;
-  populationTier: number | null;
+  populationRank: number | null;
   population: string | null;
+  populationShort: string | null;
   technologyRating: number | null;
   technologyLevel: string | null;
   technologyLevelShort: string | null;

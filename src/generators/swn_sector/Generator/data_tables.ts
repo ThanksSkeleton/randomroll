@@ -74,8 +74,3 @@ export const NATIVE_BIOSPHERE_MIN_PERCENTILE: Readonly<Record<Planet['NativeBios
   Object.fromEntries(
     rows('native_biosphere').map(({ roll, result }) => [result, rollSpan(roll)[0]]),
   ) as Record<Planet['NativeBiosphere'], number>;
-export const POPULATION_RANGE: Readonly<
-  Record<InhabitedInfo['Population'], readonly [number, number]>
-> = Object.fromEntries(
-  rows('population').map(({ roll, result }) => [result, rollSpan(roll)]),
-) as Record<InhabitedInfo['Population'], readonly [number, number]>;
