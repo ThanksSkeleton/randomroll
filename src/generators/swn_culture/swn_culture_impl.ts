@@ -173,6 +173,24 @@ function namedComponent(
   return { prompts, name: `${firstName} ${surname}`, gender };
 }
 
+export function generateSwnNpcLocationBank(
+  culturalTemplate: string,
+  seed: string,
+): { npcs: Array<{ name: string; gender: SwnCultureGender }>; locations: string[] } {
+  const rng = seedrandom(`${seed}:swn-culture:npc-location-bank`);
+  const placeNames = SWN_PLACE_NAMES.get(culturalTemplate);
+  if (!placeNames) throw new Error(`Missing place names for culture ${culturalTemplate}`);
+  const npcs = Array.from({ length: 5 }, () => {
+    const gender: SwnCultureGender = rng() < 0.5 ? 'Male' : 'Female';
+    const [firstName, surname] = full_name(rng, gender, culturalTemplate);
+    return { name: `${firstName} ${surname}`, gender };
+  });
+  const locations = Array.from({ length: 5 }, () =>
+    choose(rng, placeNames, `${culturalTemplate} place names`),
+  );
+  return { npcs, locations };
+}
+
 /** Generates one culture, including a random pair of distinct filtered World Tags. */
 export function generateSwnCulture(seed: string): SwnCulture {
   return generateSwnCultureForTags(rollRandomWorldTags(seed), seed);

@@ -179,6 +179,10 @@ export type CultureWorldDisplayDTO = {
   originalPolity: PolityDisplayDTO | null;
   claims: PoliticalClaimsDisplayDTO;
   culture: SwnCulture | null;
+  npcLocationBank: {
+    npcs: Array<{ name: string; gender: 'Male' | 'Female' }>;
+    locations: string[];
+  } | null;
   hpois: HabitablePoiDisplayDTO[];
 };
 export type CultureOverviewRowDisplayDTO = {

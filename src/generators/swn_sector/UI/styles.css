@@ -2784,6 +2784,18 @@ button.button-active:hover:not(:disabled) {
   grid-template-columns: minmax(0, 1fr);
   gap: 10px;
 }
+.culture-bank-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+.culture-bank-grid h5 {
+  margin: 0 0 6px;
+}
+.culture-bank-grid ul {
+  margin: 0;
+  padding-left: 20px;
+}
 .culture-component {
   padding: 10px;
   background: #14232e;
@@ -2830,6 +2842,9 @@ button.button-active:hover:not(:disabled) {
 }
 @media (max-width: 700px) {
   .culture-tag-grid {
+    grid-template-columns: 1fr;
+  }
+  .culture-bank-grid {
     grid-template-columns: 1fr;
   }
 }

@@ -66,7 +66,13 @@ function CultureSection({ title, children }: { title: string; children: ReactNod
   );
 }
 
-function CultureDetails({ culture }: { culture: NonNullable<CultureWorldDisplayDTO['culture']> }) {
+function CultureDetails({
+  culture,
+  npcLocationBank,
+}: {
+  culture: NonNullable<CultureWorldDisplayDTO['culture']>;
+  npcLocationBank: NonNullable<CultureWorldDisplayDTO['npcLocationBank']>;
+}) {
   const components = culture.adventureComponents;
   return (
     <div className="culture-info-grid">
@@ -87,6 +93,28 @@ function CultureDetails({ culture }: { culture: NonNullable<CultureWorldDisplayD
             ['Outsider Opinion', culture.outsiderOpinion],
           ]}
         />
+      </CultureSection>
+      <CultureSection title="NPC and Location Bank">
+        <div className="culture-bank-grid">
+          <div>
+            <h5>NPCs:</h5>
+            <ul>
+              {npcLocationBank.npcs.map((npc, index) => (
+                <li key={`${npc.name}-${index}`}>
+                  {npc.name} ({npc.gender === 'Male' ? 'M' : 'F'})
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <h5>Locations:</h5>
+            <ul>
+              {npcLocationBank.locations.map((location, index) => (
+                <li key={`${location}-${index}`}>{location}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
       </CultureSection>
       <CultureSection title="Adventure Components">
         <div className="culture-component-list">
@@ -113,12 +141,18 @@ function CultureDetails({ culture }: { culture: NonNullable<CultureWorldDisplayD
           })}
         </div>
       </CultureSection>
-      <CultureSection title="Security">
+      <CultureSection title="Terrestrial Security">
         <ValueRows
           rows={[
             ['Law Enforcement', culture.lawEnforcement.amount],
             ['Law Enforcement Style', culture.lawEnforcement.style],
             ['Special Law', culture.lawEnforcement.specialLaw],
+          ]}
+        />
+      </CultureSection>
+      <CultureSection title="Orbital Security">
+        <ValueRows
+          rows={[
             [
               'Trade and Smuggling Enforcement Amount',
               culture.planetaryDefenses.tradeAndSmugglingEnforcementAmount,
@@ -180,7 +214,11 @@ function WorldEntry({
           GENERATE CULTURE / COMPLETE WORLD
         </button>
       )}
-      {world.culture ? <CultureDetails culture={world.culture} /> : <p>—</p>}
+      {world.culture && world.npcLocationBank ? (
+        <CultureDetails culture={world.culture} npcLocationBank={world.npcLocationBank} />
+      ) : (
+        <p>—</p>
+      )}
       <details className="culture-hpoi-drawer">
         <summary>Habitable Points of Interest ({world.hpois.length})</summary>
         <div className="culture-hpoi-grid">
