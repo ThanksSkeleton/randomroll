@@ -8,7 +8,12 @@ describe('generated names', () => {
 
     for (const system of sector.Systems) {
       const coordinate = `${system.HexLocation.Column.toString().padStart(2, '0')}${system.HexLocation.Row.toString().padStart(2, '0')}`;
-      expect(system.NiceName).toMatch(/^[A-Z]{5}$/);
+      const namingWorld = system.Objects.find(
+        (object) => object.Kind === 'Planet' && object.InhabitedInfo !== false,
+      );
+      if (namingWorld?.Kind === 'Planet' && namingWorld.Culture)
+        expect(system.NiceName).toBe(namingWorld.Culture.homeworld);
+      else expect(system.NiceName).toMatch(/^[A-Z]{5}$/);
       expect(system.ProceduralName).toBe(coordinate);
       expect(system.Star.NiceName).toBe(`${system.NiceName} star`);
       expect(system.Star.ProceduralName).toBe(`${system.ProceduralName} star`);
@@ -23,7 +28,11 @@ describe('generated names', () => {
       directObjects.forEach((object) => {
         const letter = directLetters.get(object.Id)!;
         const suffix = `${object.Kind === 'Planet' ? '' : 'X '}${letter}`;
-        expect(object.NiceName).toBe(`${system.NiceName} ${suffix}`);
+        const prefix =
+          object.Kind === 'Planet' && object.InhabitedInfo !== false && object.Culture
+            ? object.Culture.homeworld
+            : system.NiceName;
+        expect(object.NiceName).toBe(`${prefix} ${suffix}`);
         expect(object.ProceduralName).toBe(`${system.ProceduralName} ${suffix}`);
       });
 
@@ -36,7 +45,11 @@ describe('generated names', () => {
         const moonIndex = moonIndexesByParent.get(parentId) ?? 0;
         moonIndexesByParent.set(parentId, moonIndex + 1);
         const suffix = `${parentLetter}${String.fromCharCode('a'.charCodeAt(0) + moonIndex)}`;
-        expect(moon.NiceName).toBe(`${system.NiceName} ${suffix}`);
+        const prefix =
+          moon.Kind === 'Planet' && moon.InhabitedInfo !== false && moon.Culture
+            ? moon.Culture.homeworld
+            : system.NiceName;
+        expect(moon.NiceName).toBe(`${prefix} ${suffix}`);
         expect(moon.ProceduralName).toBe(`${system.ProceduralName} ${suffix}`);
       }
     }

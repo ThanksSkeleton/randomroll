@@ -28,6 +28,7 @@ import {
 } from '../Shared/spatial_interpretation';
 import { assignPortraitIndex } from './portrait_selection';
 import { generateInhabitedPlanet } from './generate_inhabited_planet';
+import { applySystemNiceNames, lowercaseRomanNumeral } from './system_naming';
 import {
   generateTemplateOtherCelestialObject,
   generateTemplatePlanet,
@@ -173,94 +174,39 @@ function hexCoordinatePart(value: number): string {
   return value.toString().padStart(2, '0');
 }
 
-function lowercaseRomanNumeral(value: number): string {
-  if (!Number.isInteger(value) || value < 1)
-    throw new Error(`Invalid Roman numeral value ${value}`);
-  const numerals: Array<[number, string]> = [
-    [1000, 'm'],
-    [900, 'cm'],
-    [500, 'd'],
-    [400, 'cd'],
-    [100, 'c'],
-    [90, 'xc'],
-    [50, 'l'],
-    [40, 'xl'],
-    [10, 'x'],
-    [9, 'ix'],
-    [5, 'v'],
-    [4, 'iv'],
-    [1, 'i'],
-  ];
-  let remaining = value;
-  let result = '';
-  for (const [amount, numeral] of numerals) {
-    while (remaining >= amount) {
-      result += numeral;
-      remaining -= amount;
-    }
-  }
-  return result;
-}
-
 function applyGeneratedNames(seed: string, entityPath: string, system: StarSystem): StarSystem {
   const niceName = randomSystemName(seed, entityPath);
   const proceduralName = `${hexCoordinatePart(system.HexLocation.Column)}${hexCoordinatePart(system.HexLocation.Row)}`;
+  const named = applySystemNiceNames(system, niceName);
   const directObjects = system.Objects.filter((object) => object.Orbit.ParentObjectId === null);
-  const directLetters = new Map(
-    directObjects.map((object, index) => [
-      object.Id,
-      String.fromCharCode('A'.charCodeAt(0) + index),
-    ]),
+  const letters = new Map(
+    directObjects.map((object, index) => [object.Id, String.fromCharCode(65 + index)]),
   );
   const moonIndexes = new Map<string, number>();
-  const objects = system.Objects.map((object) => {
-    if (object.Orbit.ParentObjectId !== null && object.Kind === 'Planet') {
-      const parent = system.Objects.find(
-        (candidate) => candidate.Id === object.Orbit.ParentObjectId,
-      );
-      const parentLetter = parent === undefined ? undefined : directLetters.get(parent.Id);
-      if (parent === undefined || parent.Kind !== 'Planet' || parentLetter === undefined) {
-        throw new Error(`Missing named parent for moon ${object.Id}`);
-      }
-      const moonIndex = moonIndexes.get(parent.Id) ?? 0;
-      moonIndexes.set(parent.Id, moonIndex + 1);
-      const moonSuffix = String.fromCharCode('a'.charCodeAt(0) + moonIndex);
-      return {
-        ...object,
-        NiceName: `${niceName} ${parentLetter}${moonSuffix}`,
-        ProceduralName: `${proceduralName} ${parentLetter}${moonSuffix}`,
-      };
+  const objects = named.Objects.map((object) => {
+    const parentId = object.Orbit.ParentObjectId;
+    if (parentId !== null && object.Kind === 'Planet') {
+      const index = moonIndexes.get(parentId) ?? 0;
+      moonIndexes.set(parentId, index + 1);
+      const suffix = `${letters.get(parentId)}${String.fromCharCode(97 + index)}`;
+      return { ...object, ProceduralName: `${proceduralName} ${suffix}` };
     }
-    const letter = directLetters.get(object.Id);
-    if (letter === undefined) throw new Error(`Missing direct-orbit name for ${object.Id}`);
-    const suffix = `${object.Kind === 'Planet' ? '' : 'X '}${letter}`;
-    return {
-      ...object,
-      NiceName: `${niceName} ${suffix}`,
-      ProceduralName: `${proceduralName} ${suffix}`,
-    };
+    const suffix = `${object.Kind === 'Planet' ? '' : 'X '}${letters.get(object.Id)}`;
+    return { ...object, ProceduralName: `${proceduralName} ${suffix}` };
   });
   const poiIndexesByParent = new Map<string, number>();
-  const pointsOfInterest = system.PointsOfInterest.map((poi) => {
-    const parent = objects.find((object) => object.Id === poi.ParentObjectId);
-    if (parent === undefined) throw new Error(`Missing POI parent ${poi.ParentObjectId}`);
-    const poiIndex = (poiIndexesByParent.get(parent.Id) ?? 0) + 1;
-    poiIndexesByParent.set(parent.Id, poiIndex);
-    const ordinal = lowercaseRomanNumeral(poiIndex);
-    return {
-      ...poi,
-      NiceName: `${parent.NiceName}${ordinal}:${poi.POIType}`,
-      ProceduralName: `${parent.ProceduralName}${ordinal}:${poi.POIType}`,
-    };
+  const pointsOfInterest = named.PointsOfInterest.map((poi) => {
+    const parent = objects.find((object) => object.Id === poi.ParentObjectId)!;
+    const ordinal = (poiIndexesByParent.get(parent.Id) ?? 0) + 1;
+    poiIndexesByParent.set(parent.Id, ordinal);
+    const numeral = lowercaseRomanNumeral(ordinal);
+    return { ...poi, ProceduralName: `${parent.ProceduralName}${numeral}:${poi.POIType}` };
   });
-
   return {
-    ...system,
-    NiceName: niceName,
+    ...named,
     ProceduralName: proceduralName,
     Star: {
-      ...system.Star,
-      NiceName: `${niceName} star`,
+      ...named.Star,
       ProceduralName: `${proceduralName} star`,
     },
     Objects: objects,
