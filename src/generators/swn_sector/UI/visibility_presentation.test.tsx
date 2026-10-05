@@ -134,7 +134,7 @@ function visiblePlanet(sector: Sector): Planet {
 
 describe('scan visibility presentation', () => {
   it('shows atmosphere as a closed Basic Scan drawer with only gas percentages inside', () => {
-    const sector = generate('VISIBILITY-ATMOSPHERE-DRAWER');
+    const sector = generate({ seed: 'VISIBILITY-ATMOSPHERE-DRAWER' });
     const planet = visiblePlanet(sector);
     planet.Atmosphere = { Category: 'Breathable', SelectedGas: 'N2' };
     const view = renderDetail(sector, planet.Id);
@@ -161,7 +161,7 @@ describe('scan visibility presentation', () => {
   });
 
   it('shows Vacuum as an atmosphere drawer', () => {
-    const sector = generate('VISIBILITY-VACUUM-SIMPLE');
+    const sector = generate({ seed: 'VISIBILITY-VACUUM-SIMPLE' });
     const planet = visiblePlanet(sector);
     planet.Atmosphere = { Category: 'Vacuum' };
     const view = renderDetail(sector, planet.Id);
@@ -175,7 +175,7 @@ describe('scan visibility presentation', () => {
   });
 
   it('shows gravity with Earth mass and size class in a Basic Scan drawer', () => {
-    const sector = generate('VISIBILITY-SIZE-DRAWER');
+    const sector = generate({ seed: 'VISIBILITY-SIZE-DRAWER' });
     const planet = visiblePlanet(sector);
     planet.Size = 'Earth';
     const view = renderDetail(sector, planet.Id);
@@ -194,7 +194,7 @@ describe('scan visibility presentation', () => {
   });
 
   it('keeps projected player-preview visibility aligned with the existing presentation rule', () => {
-    const sector = generate('VISIBILITY-PROJECTION-PARITY');
+    const sector = generate({ seed: 'VISIBILITY-PROJECTION-PARITY' });
     const result = projectSector(sector, { preview: 'player', assetBaseUrl: '/' });
     expect(result.ok).toBe(true);
     if (!result.ok) return;
@@ -204,7 +204,7 @@ describe('scan visibility presentation', () => {
       );
   });
   it('lists the union of object claimants in system Politics 1 with their flags', () => {
-    const sector = generate('VISIBILITY-SYSTEM-POLITICS');
+    const sector = generate({ seed: 'VISIBILITY-SYSTEM-POLITICS' });
     const system = sector.Systems[0]!;
     system.Visibility = {
       BasicScan: true,
@@ -236,7 +236,7 @@ describe('scan visibility presentation', () => {
   });
 
   it('uses Politics Scan for nice names and retains the procedural secondary name', () => {
-    const sector = generate('VISIBILITY-NAMES');
+    const sector = generate({ seed: 'VISIBILITY-NAMES' });
     const planet = visiblePlanet(sector);
     const view = renderDetail(sector, planet.Id);
 
@@ -266,7 +266,7 @@ describe('scan visibility presentation', () => {
   });
 
   it('places bioscan facts in Basic and Politics stock while Deep stock is empty', () => {
-    const sector = generate('VISIBILITY-STOCK');
+    const sector = generate({ seed: 'VISIBILITY-STOCK' });
     const planet = visiblePlanet(sector);
     planet.Visibility.PoliticsScan = true;
     planet.Visibility.DeepPoliticsScan = true;
@@ -289,7 +289,7 @@ describe('scan visibility presentation', () => {
   });
 
   it('does not show signal counts in Detailed stock and keeps a dash for empty Deep stock', () => {
-    const sector = generate('VISIBILITY-SIGNALS');
+    const sector = generate({ seed: 'VISIBILITY-SIGNALS' });
     const object = sector.Systems.flatMap((system) => system.Objects).find(
       (candidate) =>
         candidate.Kind === 'OtherCelestialObject' ||
@@ -349,7 +349,7 @@ describe('scan visibility presentation', () => {
   });
 
   it("uses the route's Politics Scan for endpoint names", () => {
-    const sector = generate('VISIBILITY-ROUTE');
+    const sector = generate({ seed: 'VISIBILITY-ROUTE' });
     const route = sector.Routes[0]!;
     const endpoints = routeSystems(sector, route)!;
     endpoints.forEach((system, index) => {
@@ -384,7 +384,7 @@ describe('scan visibility presentation', () => {
   });
 
   it('gates symbolic population by Detailed and technology by Politics', () => {
-    const sector = generate('VISIBILITY-RATINGS');
+    const sector = generate({ seed: 'VISIBILITY-RATINGS' });
     const planet = visiblePlanet(sector);
     const system = sector.Systems.find((candidate) => candidate.Objects.includes(planet))!;
     const view = render(
@@ -418,7 +418,7 @@ describe('scan visibility presentation', () => {
   });
 
   it('uses Politics Scan for system names on the sector map', () => {
-    const sector = generate('VISIBILITY-MAP-NAMES');
+    const sector = generate({ seed: 'VISIBILITY-MAP-NAMES' });
     const system = sector.Systems[0]!;
     system.ProceduralName = 'PROC SYSTEM';
     system.NiceName = 'NICE SYSTEM';
@@ -441,7 +441,7 @@ describe('scan visibility presentation', () => {
   });
 
   it('tints a system hex with the sorted Politics 1 claimant union', () => {
-    const sector = generate('VISIBILITY-MAP-POLITIES');
+    const sector = generate({ seed: 'VISIBILITY-MAP-POLITIES' });
     const system = sector.Systems[0]!;
     system.Visibility.BasicScan = true;
     system.Visibility.PoliticsScan = true;

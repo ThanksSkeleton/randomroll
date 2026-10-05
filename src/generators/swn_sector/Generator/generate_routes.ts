@@ -1,11 +1,12 @@
 import type { Route, RoutePortal, StarSystem } from '../BaseDTO/merged_schema';
 import { deterministicId, randomFor } from './generation_random';
+import type { GenerationSettings } from './generation_settings';
 import { assignPortraitIndex } from './portrait_selection';
 
 type Edge = { left: StarSystem; right: StarSystem; distance: number; tie: number };
 const PORTAL_BEARING_OFFSET_DEGREES = 5;
 
-function edges(systems: readonly StarSystem[], seed: string): Edge[] {
+function edges(systems: readonly StarSystem[], generationSettings: GenerationSettings): Edge[] {
   return systems
     .flatMap((left, index) =>
       systems.slice(index + 1).map((right) => ({
@@ -15,7 +16,7 @@ function edges(systems: readonly StarSystem[], seed: string): Edge[] {
           left.HexLocation.Column - right.HexLocation.Column,
           left.HexLocation.Row - right.HexLocation.Row,
         ),
-        tie: randomFor(seed, `route-tie:${left.Id}:${right.Id}`)(),
+        tie: randomFor(generationSettings, `route-tie:${left.Id}:${right.Id}`)(),
       })),
     )
     .sort((a, b) => a.distance - b.distance || a.tie - b.tie);
@@ -35,7 +36,7 @@ function bearing(from: StarSystem, to: StarSystem): number {
 }
 
 export function generateRoutes(
-  seed: string,
+  generationSettings: GenerationSettings,
   systems: readonly StarSystem[],
 ): { Routes: Route[]; RoutePortals: RoutePortal[] } {
   const parents = new Map(systems.map((system) => [system.Id, system.Id]));
@@ -47,7 +48,7 @@ export function generateRoutes(
     return found;
   };
   const selected: Edge[] = [];
-  const available = edges(systems, seed);
+  const available = edges(systems, generationSettings);
   for (const edge of available)
     if (root(edge.left.Id) !== root(edge.right.Id)) {
       parents.set(root(edge.left.Id), root(edge.right.Id));
@@ -61,10 +62,10 @@ export function generateRoutes(
   const occupiedAngles = new Map<string, Set<number>>();
   for (const [index, edge] of selected.entries()) {
     const path = `route:${String(index + 1).padStart(2, '0')}`;
-    const routeId = deterministicId(seed, path);
+    const routeId = deterministicId(generationSettings, path);
     const portalIds = [
-      deterministicId(seed, `${path}:portal:left`),
-      deterministicId(seed, `${path}:portal:right`),
+      deterministicId(generationSettings, `${path}:portal:left`),
+      deterministicId(generationSettings, `${path}:portal:right`),
     ] as [string, string];
     Routes.push({
       Id: routeId,
@@ -85,7 +86,7 @@ export function generateRoutes(
         GM: '-',
       },
       PortalIds: portalIds,
-      PortraitIndex: assignPortraitIndex(seed, routeId),
+      PortraitIndex: assignPortraitIndex(generationSettings, routeId),
     });
     for (const [side, other, id] of [
       [edge.left, edge.right, portalIds[0]],
@@ -93,7 +94,9 @@ export function generateRoutes(
     ] as const) {
       let angle =
         bearing(side, other) +
-        randomFor(seed, `${path}:${side.Id}:angle`)() * PORTAL_BEARING_OFFSET_DEGREES * 2 -
+        randomFor(generationSettings, `${path}:${side.Id}:angle`)() *
+          PORTAL_BEARING_OFFSET_DEGREES *
+          2 -
         PORTAL_BEARING_OFFSET_DEGREES;
       angle = (angle + 360) % 360;
       const used = occupiedAngles.get(side.Id) ?? new Set<number>();

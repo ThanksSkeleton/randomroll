@@ -191,7 +191,7 @@ describe('simultaneous political resolution', () => {
       ['alpha-system', 'distant-system'],
     ]);
 
-    const result = resolvePolitics('dual-projection-range', systems, routes, portals);
+    const result = resolvePolitics({ seed: 'dual-projection-range' }, systems, routes, portals);
 
     expect(claims(result, nearbyStation.Id)).toEqual(['Alpha']);
     expect(claims(result, distantWorld.Id)).toEqual(['Distant']);
@@ -211,7 +211,7 @@ describe('simultaneous political resolution', () => {
       ]);
     });
 
-    const result = resolvePolitics('many-polities', systems, [], []);
+    const result = resolvePolitics({ seed: 'many-polities' }, systems, [], []);
     const colors = result.Polities.map((polity) => polity.Flag.FieldColor);
 
     expect(colors).toHaveLength(30);
@@ -230,7 +230,7 @@ describe('simultaneous political resolution', () => {
     const systems = [system('alpha-system', [alpha]), system('beta-system', [beta])];
     const { routes, portals } = connect([['alpha-system', 'beta-system']]);
 
-    const result = resolvePolitics('native-tie', systems, routes, portals);
+    const result = resolvePolitics({ seed: 'native-tie' }, systems, routes, portals);
 
     expect(claims(result, alpha.Id)).toEqual(['Alpha']);
     expect(
@@ -262,9 +262,9 @@ describe('simultaneous political resolution', () => {
       ['alpha-system', 'gamma-system'],
     ]);
 
-    const result = resolvePolitics('foreign-tie', systems, routes, portals);
+    const result = resolvePolitics({ seed: 'foreign-tie' }, systems, routes, portals);
     const reordered = resolvePolitics(
-      'foreign-tie',
+      { seed: 'foreign-tie' },
       [...systems].reverse(),
       [...routes].reverse(),
       [...portals].reverse(),
@@ -312,7 +312,7 @@ describe('simultaneous political resolution', () => {
       ['alpha-system', 'remote-system'],
     ]);
 
-    const result = resolvePolitics('transmigration', systems, routes, portals);
+    const result = resolvePolitics({ seed: 'transmigration' }, systems, routes, portals);
 
     expect(claims(result, alpha.Id)).toEqual(['Beta']);
     expect(claims(result, remoteStation.Id)).toEqual(['Alpha']);
@@ -336,7 +336,7 @@ describe('simultaneous political resolution', () => {
       system('shared-system', [primitive, industrial, emptyWorld, belt, kuiper, cloud, station]),
     ];
 
-    const result = resolvePolitics('same-system', systems, [], []);
+    const result = resolvePolitics({ seed: 'same-system' }, systems, [], []);
 
     expect(claims(result, primitive.Id)).toEqual(['Primitive']);
     for (const target of [emptyWorld, belt, kuiper, cloud, station])

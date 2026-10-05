@@ -1,5 +1,6 @@
 import { createInitialSectors } from './initialSectors';
 import { generate } from '../Generator/generate';
+import type { GenerationSettings } from '../Generator/generation_settings';
 import { completeWorld as generateWorldCulture } from '../Generator/culture';
 import type { ScanVisibility, Sector, StartingWorldMode } from '../BaseDTO/merged_schema';
 import type { ArchiveSectorDisplayDTO, DisplaySectorDTO } from '../DisplayDTO/dto';
@@ -67,11 +68,11 @@ export class PrototypeApplication {
   }
 
   generateSector(
-    seed: string,
+    generationSettings: GenerationSettings,
     startingWorldMode: StartingWorldMode = 'UNRESTRICTED',
     options: ProjectionOptions = { preview: 'gm', assetBaseUrl: '/' },
   ): GenerateSectorResult {
-    const generated = copy(generate(seed, startingWorldMode));
+    const generated = copy(generate(generationSettings, startingWorldMode));
     const projected = projectSector(generated, options);
     if (!projected.ok) return { ok: false, reason: 'invalid-projection' };
     this.sectors = [...this.sectors, generated];

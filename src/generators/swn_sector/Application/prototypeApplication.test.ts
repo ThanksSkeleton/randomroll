@@ -24,10 +24,10 @@ describe('PrototypeApplication', () => {
 
   it('generates and returns a detached projection of the requested seed', () => {
     const application = new PrototypeApplication(createInitialSectors());
-    const generated = application.generateSector('DELTA-7734', 'UNRESTRICTED', options);
+    const generated = application.generateSector({ seed: 'DELTA-7734' }, 'UNRESTRICTED', options);
     expect(generated.ok).toBe(true);
     if (!generated.ok) return;
-    const expected = projectSector(generate('DELTA-7734'), options);
+    const expected = projectSector(generate({ seed: 'DELTA-7734' }), options);
     expect(expected.ok).toBe(true);
     if (!expected.ok) return;
     expect(generated.display).toEqual(expected.value);

@@ -11,7 +11,7 @@ import { projectSystemSpatial } from './system_spatial_projection';
 import { applySectorEdits } from '../Application/sector_edits';
 
 test('star, system, object, and route projection is pure', () => {
-  const sector = generate('part-two-projection');
+  const sector = generate({ seed: 'part-two-projection' });
   const original = structuredClone(sector);
   const system = sector.Systems[0]!;
   const object = system.Objects[0]!;
@@ -30,7 +30,7 @@ test('star, system, object, and route projection is pure', () => {
 });
 
 test('every star type projects its existing presentation recipe', () => {
-  const sector = generate('part-two-stars');
+  const sector = generate({ seed: 'part-two-stars' });
   const system = sector.Systems[0]!;
   for (const [starType, presentation] of Object.entries(STAR_PRESENTATION)) {
     system.Star.StarType = starType as typeof system.Star.StarType;
@@ -47,7 +47,7 @@ test('every star type projects its existing presentation recipe', () => {
 });
 
 test('moons inherit their direct parent AU and temperature', () => {
-  const sector = generate('part-two-moons');
+  const sector = generate({ seed: 'part-two-moons' });
   const system = sector.Systems.find((candidate) =>
     candidate.Objects.some((object) => object.Orbit.ParentObjectId !== null),
   )!;
@@ -90,7 +90,7 @@ test('moons inherit their direct parent AU and temperature', () => {
 });
 
 test('route projection preserves hex steps and route-specific endpoint names', () => {
-  const sector = generate('part-two-route');
+  const sector = generate({ seed: 'part-two-route' });
   const route = sector.Routes[0]!;
   route.Visibility.PoliticsScan = false;
   const gm = projectRoute(sector, route.Id, 'gm')!;
@@ -114,7 +114,7 @@ test('route projection preserves hex steps and route-specific endpoint names', (
 });
 
 test('invalid links and orbit geometry do not produce invented display facts', () => {
-  const sector = generate('part-two-invalid');
+  const sector = generate({ seed: 'part-two-invalid' });
   const route = sector.Routes[0]!;
   const missingPortal = structuredClone(sector);
   missingPortal.RoutePortals = missingPortal.RoutePortals.filter(
@@ -139,7 +139,7 @@ test('invalid links and orbit geometry do not produce invented display facts', (
 });
 
 test('object kind labels follow canonical object and parent links', () => {
-  const sector = generate('part-two-kinds');
+  const sector = generate({ seed: 'part-two-kinds' });
   const system = sector.Systems[0]!;
   const planet = system.Objects.find((object) => object.Kind === 'Planet')!;
   expect(projectObjectKind(sector, system.Id)).toBe('SYSTEM');

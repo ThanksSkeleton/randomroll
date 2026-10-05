@@ -3,7 +3,7 @@ import { generate } from './generate';
 
 describe('generated route visibility', () => {
   it('gives every revealed starting-system route Politics 1', () => {
-    const sector = generate('ROUTE-POLITICS-ONE');
+    const sector = generate({ seed: 'ROUTE-POLITICS-ONE' });
     const revealedRoutes = sector.Routes.filter((route) => route.Visibility.BasicScan);
 
     expect(revealedRoutes.length).toBeGreaterThan(0);

@@ -9,7 +9,7 @@ import type { Planet } from '../BaseDTO/merged_schema';
 const seed = 'part-four-projection';
 
 test('politics and culture projection is deterministic and preserves historical snapshots', () => {
-  const sector = generate(seed);
+  const sector = generate({ seed: seed });
   const original = structuredClone(sector);
   const first = projectCultureScreen(sector);
   expect(first).toEqual(projectCultureScreen(sector));
@@ -44,7 +44,7 @@ test('politics and culture projection is deterministic and preserves historical 
 });
 
 test('completion command stores selected culture once and returns fresh projection', () => {
-  const sector = generate(seed);
+  const sector = generate({ seed: seed });
   const app = new PrototypeApplication([sector]);
   const incomplete = sector.Systems.flatMap((system) => system.Objects).find(
     (object) => object.Kind === 'Planet' && object.InhabitedInfo !== false && !object.Culture,
@@ -69,7 +69,7 @@ test('completion command stores selected culture once and returns fresh projecti
 });
 
 test('tag descriptions and HPOI text are projected without canonical copies', () => {
-  const sector = generate(seed);
+  const sector = generate({ seed: seed });
   const world = sector.Systems.flatMap((system) => system.Objects).find(
     (object) => object.Kind === 'Planet' && object.InhabitedInfo !== false && object.Culture,
   )!;

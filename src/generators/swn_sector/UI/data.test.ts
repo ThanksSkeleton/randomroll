@@ -26,7 +26,7 @@ describe('canonical sector data', () => {
   });
 
   it('preserves richer generator fields', () => {
-    const sector = generate('UI-CANONICAL-DATA');
+    const sector = generate({ seed: 'UI-CANONICAL-DATA' });
     const object = sector.Systems.flatMap((system) => system.Objects)[0];
     expect(object).not.toHaveProperty('Temperature');
     expect(object).toHaveProperty('Orbit');
@@ -34,7 +34,7 @@ describe('canonical sector data', () => {
   });
 
   it('supports canonical lookup and visibility updates', () => {
-    const sector = generate('UI-LOOKUP-DATA');
+    const sector = generate({ seed: 'UI-LOOKUP-DATA' });
     const system = sector.Systems[0];
     const object = system.Objects[0];
     expect(findObject(sector, object.Id)?.object).toBe(object);
@@ -47,7 +47,7 @@ describe('canonical sector data', () => {
   });
 
   it('indexes systems, stars, objects, POIs, route portals, routes, and the ship', () => {
-    const sector = generate('UI-SELECTABLE-GRAPH');
+    const sector = generate({ seed: 'UI-SELECTABLE-GRAPH' });
     const entries = objectEntries(sector);
     expect(entries).toEqual(
       expect.arrayContaining([

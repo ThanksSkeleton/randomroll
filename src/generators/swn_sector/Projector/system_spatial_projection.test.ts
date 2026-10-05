@@ -4,7 +4,7 @@ import { projectSystemSpatial } from './system_spatial_projection';
 import { temperatureForDirectOrbitAu } from '../Shared/spatial_interpretation';
 
 test('system spatial projection is repeatable and leaves the sector unchanged', () => {
-  const sector = generate('system-spatial-projection');
+  const sector = generate({ seed: 'system-spatial-projection' });
   const original = structuredClone(sector);
   const system = sector.Systems[0]!;
   const first = projectSystemSpatial(sector, system.Id);
@@ -15,7 +15,7 @@ test('system spatial projection is repeatable and leaves the sector unchanged', 
 });
 
 test('normal temperature bands preserve ordinary-star and remnant geometry', () => {
-  const sector = generate('system-spatial-bands');
+  const sector = generate({ seed: 'system-spatial-bands' });
   const system = sector.Systems[0]!;
   system.Star.StarType = 'G-type';
   const ordinary = projectSystemSpatial(sector, system.Id)!;
@@ -32,7 +32,7 @@ test('normal temperature bands preserve ordinary-star and remnant geometry', () 
 
 test('fixed-seed direct orbit AU resolves to a valid temperature band', () => {
   for (const seed of ['sector-one-seed', 'sector-two-seed', 'system-spatial-projection']) {
-    const sector = generate(seed);
+    const sector = generate({ seed: seed });
     for (const system of sector.Systems)
       for (const object of system.Objects) {
         if (object.Orbit.ParentObjectId !== null) continue;

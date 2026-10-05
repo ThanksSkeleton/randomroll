@@ -38,7 +38,7 @@ function sectorCount(): number {
 test('Stochastic Success', () => {
   for (let index = 0; index < sectorCount(); index += 1) {
     const seed = `stochastic-success-${randomUUID()}`;
-    const sector = generate(seed);
+    const sector = generate({ seed: seed });
     const outputPath = join('temp', `randomroll-stochastic-sector-${randomUUID()}.json`);
     writeFileSync(outputPath, `${JSON.stringify(sector, null, 2)}\n`, 'utf8');
     pruneOldArtifacts();

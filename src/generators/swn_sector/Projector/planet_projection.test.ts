@@ -22,7 +22,7 @@ test('star interpretation provides ratings for every canonical star type', () =>
 });
 
 test('projecting a planet is repeatable and leaves the sector unchanged', () => {
-  const sector = generate('planet-projection');
+  const sector = generate({ seed: 'planet-projection' });
   const original = structuredClone(sector);
   const planet = sector.Systems.flatMap((system) => system.Objects).find(
     (object) => object.Kind === 'Planet' && object.InhabitedInfo !== false,
@@ -43,7 +43,7 @@ test('projecting a planet is repeatable and leaves the sector unchanged', () => 
 });
 
 test('generated sectors store only canonical planet and star facts', () => {
-  const sector = generate('planet-projection-shape');
+  const sector = generate({ seed: 'planet-projection-shape' });
   expect(sector.SchemaVersion).toBe('merged-v9');
   for (const system of sector.Systems) {
     expect(system.Star).not.toHaveProperty('HabitabilityRating');
@@ -58,7 +58,7 @@ test('generated sectors store only canonical planet and star facts', () => {
 });
 
 test('projects an uninhabited cold moon with the player-visible host name', () => {
-  const sector = generate('planet-projection-moon');
+  const sector = generate({ seed: 'planet-projection-moon' });
   const system = sector.Systems.find((candidate) =>
     candidate.Objects.some(
       (object) => object.Kind === 'Planet' && object.Orbit.ParentObjectId === null,

@@ -11,7 +11,7 @@ import type { Planet, WorldTag } from '../../../BaseDTO/merged_schema';
 afterEach(cleanup);
 
 test('culture tab puts complete worlds first and keeps HPOIs closed', () => {
-  const sector = generate('culture-screen-layout');
+  const sector = generate({ seed: 'culture-screen-layout' });
   const { container } = render(
     <CultureScreen display={projectCultureScreen(sector)!} onCompleteWorld={() => {}} />,
   );
@@ -37,7 +37,7 @@ test('culture tab puts complete worlds first and keeps HPOIs closed', () => {
 });
 
 test('polity overview ranks current polities by inhabited-world count', () => {
-  const sector = generate('culture-polity-overview');
+  const sector = generate({ seed: 'culture-polity-overview' });
   const worlds = sector.Systems.flatMap((system) => system.Objects).filter(
     (object): object is Planet => object.Kind === 'Planet' && object.InhabitedInfo !== false,
   );

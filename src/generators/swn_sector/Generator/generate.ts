@@ -7,6 +7,7 @@ import {
   rollDie,
   shuffled,
 } from './generation_random';
+import type { GenerationSettings } from './generation_settings';
 import { STAR_TABLE } from './generation_rules';
 import { generateRoutes } from './generate_routes';
 import { generateCompleteSystem } from './generate_system';
@@ -15,12 +16,13 @@ import { completeWorld, createHabitablePointsOfInterest } from './culture';
 import { STAR_HABITABILITY } from '../Shared/planet_interpretation';
 
 export function generate(
-  seed: string,
+  generationSettings: GenerationSettings,
   startingWorldMode: StartingWorldMode = 'UNRESTRICTED',
 ): Sector {
-  const count = rollDie(randomFor(seed, 'sector:system-count'), 10) + 20;
+  const { seed } = generationSettings;
+  const count = rollDie(randomFor(generationSettings, 'sector:system-count'), 10) + 20;
   const cells = shuffled(
-    randomFor(seed, 'sector:grid'),
+    randomFor(generationSettings, 'sector:grid'),
     Array.from({ length: 77 }, (_, index) => ({
       Column: (index % 11) + 1,
       Row: Math.floor(index / 11) + 1,
@@ -28,17 +30,21 @@ export function generate(
   );
   const Systems = cells.slice(0, count).map((hexLocation, index) => {
     const path = `system:${String(index + 1).padStart(2, '0')}`;
-    const star = chooseWeighted(randomFor(seed, `${path}:star`), STAR_TABLE, 'star candidates');
+    const star = chooseWeighted(
+      randomFor(generationSettings, `${path}:star`),
+      STAR_TABLE,
+      'star candidates',
+    );
     return generateCompleteSystem({
-      seed,
+      generationSettings,
       entityPath: path,
       hexLocation,
       starType: star.Value as StarType,
       starHabitability: STAR_HABITABILITY[star.Value],
     });
   });
-  const { Routes, RoutePortals } = generateRoutes(seed, Systems);
-  const politics = resolvePolitics(seed, Systems, Routes, RoutePortals);
+  const { Routes, RoutePortals } = generateRoutes(generationSettings, Systems);
+  const politics = resolvePolitics(generationSettings, Systems, Routes, RoutePortals);
   for (const system of Systems)
     for (const object of system.Objects)
       object.ClaimedByPolityIds = politics.ClaimsByObjectId.get(object.Id) ?? [];
@@ -53,7 +59,7 @@ export function generate(
       `Starting-world mode ${startingWorldMode} failed: no eligible inhabited world was generated. Choose another mode or generate a different sector.`,
     );
   const startingWorld = choose(
-    randomFor(seed, 'starting-world'),
+    randomFor(generationSettings, 'starting-world'),
     candidates,
     'eligible starting worlds',
   );
@@ -105,7 +111,7 @@ export function generate(
     Polities: politics.Polities,
     ConquestEvents: politics.ConquestEvents,
     PlayerShip: {
-      Id: deterministicId(seed, 'player-ship'),
+      Id: deterministicId(generationSettings, 'player-ship'),
       ProceduralName: shipName,
       NiceName: shipName,
       Visibility: shipVisibility,
@@ -122,7 +128,7 @@ export function generate(
     StartingWorldId: startingWorld.Id,
   };
   for (const system of result.Systems) {
-    system.HabitablePointsOfInterest = createHabitablePointsOfInterest(seed, system);
+    system.HabitablePointsOfInterest = createHabitablePointsOfInterest(generationSettings, system);
     for (const object of system.Objects) {
       if (object.Kind !== 'Planet' || object.InhabitedInfo === false) continue;
       object.Culture = null;

@@ -1,6 +1,7 @@
 import type { InhabitedInfo, StarType, Temperature, WorldTag } from '../BaseDTO/merged_schema';
 import type { GeneratedOrbit as Orbit, GeneratedPlanet as Planet } from './generation_model';
 import { deterministicId, chooseWeighted, randomFor } from './generation_random';
+import type { GenerationSettings } from './generation_settings';
 import {
   BULK_COMPOSITION_TABLE,
   NATIVE_BIOSPHERE_TABLE,
@@ -42,7 +43,7 @@ type PhysicalProfile = {
 };
 
 export type InhabitedPlanetOptions = {
-  seed: string;
+  generationSettings: GenerationSettings;
   entityPath: string;
   starType: StarType;
   starHabitability: number;
@@ -68,7 +69,7 @@ function maximumPopulationRankForTags(tags: readonly WorldTag[]): number {
 }
 
 function chooseWithinHab<T extends string | number>(
-  seed: string,
+  generationSettings: GenerationSettings,
   path: string,
   rows: readonly { Value: T; Weight: number }[],
   habRequired: Readonly<Record<T, number>>,
@@ -76,7 +77,7 @@ function chooseWithinHab<T extends string | number>(
   context: string,
 ): T {
   const candidates = rows.filter((row) => habRequired[row.Value] <= currentHab);
-  return chooseWeighted(randomFor(seed, path), candidates, context).Value;
+  return chooseWeighted(randomFor(generationSettings, path), candidates, context).Value;
 }
 
 function waterState(
@@ -204,7 +205,7 @@ function maximumEnvironmentalHabForTags(tags: readonly WorldTag[]): number {
 }
 
 function selectTags(
-  seed: string,
+  generationSettings: GenerationSettings,
   path: string,
   starHabitability: number,
   allowedTemperatures: readonly Temperature[],
@@ -213,10 +214,10 @@ function selectTags(
   if (forcedTags !== undefined) {
     const tags = canonicalWorldTagPair(forcedTags);
     if (tags[0] === tags[1] || !tagPairHasIntersection(tags, starHabitability, allowedTemperatures))
-      throw new Error(`No feasible forced tag pair for ${seed}:${path}`);
+      throw new Error(`No feasible forced tag pair for ${generationSettings.seed}:${path}`);
     return tags;
   }
-  const random = randomFor(seed, `${path}:tags`);
+  const random = randomFor(generationSettings, `${path}:tags`);
   for (let attempt = 0; attempt < MAX_TAG_PAIR_ROLLS; attempt += 1) {
     const first = chooseWeighted(random, WORLD_TAG_TABLE, 'first world tag').Value;
     const second = chooseWeighted(random, WORLD_TAG_TABLE, 'second world tag').Value;
@@ -225,7 +226,7 @@ function selectTags(
       return tags;
   }
   throw new Error(
-    `No feasible world-tag pair after ${MAX_TAG_PAIR_ROLLS} rolls for ${seed}:${path}`,
+    `No feasible world-tag pair after ${MAX_TAG_PAIR_ROLLS} rolls for ${generationSettings.seed}:${path}`,
   );
 }
 
@@ -234,9 +235,11 @@ export function generateInhabitedPlanet(options: InhabitedPlanetOptions): Planet
     options.allowedTemperatures ?? directOrbitTemperatures(options.starType)
   ).filter((temperature) => directOrbitTemperatures(options.starType).includes(temperature));
   if (allowedTemperatures.length === 0)
-    throw new Error(`No direct-orbit temperatures for ${options.seed}:${options.entityPath}`);
+    throw new Error(
+      `No direct-orbit temperatures for ${options.generationSettings.seed}:${options.entityPath}`,
+    );
   const tags = selectTags(
-    options.seed,
+    options.generationSettings,
     options.entityPath,
     options.starHabitability,
     allowedTemperatures,
@@ -249,9 +252,9 @@ export function generateInhabitedPlanet(options: InhabitedPlanetOptions): Planet
   const rejectionCounts = new Map<string, number>();
   for (let attempt = 0; attempt < MAX_PROFILE_ROLLS; attempt += 1) {
     const path = `${options.entityPath}:profile:${attempt}`;
-    const Atmosphere = generateAtmosphere(options.seed, path);
+    const Atmosphere = generateAtmosphere(options.generationSettings, path);
     const Temperature = chooseWeighted(
-      randomFor(options.seed, `${path}:temperature`),
+      randomFor(options.generationSettings, `${path}:temperature`),
       TEMPERATURE_TABLE.filter((row) => allowedTemperatures.includes(row.Value)),
       'temperatures',
     ).Value;
@@ -261,12 +264,12 @@ export function generateInhabitedPlanet(options: InhabitedPlanetOptions): Planet
       TEMPERATURE_HAB[Temperature],
     );
     const NativeBiosphere = chooseWeighted(
-      randomFor(options.seed, `${path}:native-biosphere`),
+      randomFor(options.generationSettings, `${path}:native-biosphere`),
       NATIVE_BIOSPHERE_TABLE,
       'native biospheres',
     ).Value;
     const TerranBiosphere = chooseWithinHab(
-      options.seed,
+      options.generationSettings,
       `${path}:terran-biosphere`,
       TERRAN_BIOSPHERE_TABLE,
       TERRAN_BIOSPHERE_HAB_REQUIRED,
@@ -275,7 +278,7 @@ export function generateInhabitedPlanet(options: InhabitedPlanetOptions): Planet
     );
     currentHab = Math.min(currentHab, TERRAN_BIOSPHERE_HAB[TerranBiosphere]);
     const Size = chooseWeighted(
-      randomFor(options.seed, `${path}:size`),
+      randomFor(options.generationSettings, `${path}:size`),
       SIZE_TABLE.filter((row) => SIZE_HAB[row.Value] > 0),
       'sizes',
     ).Value;
@@ -294,7 +297,7 @@ export function generateInhabitedPlanet(options: InhabitedPlanetOptions): Planet
           )
         : BULK_COMPOSITION_TABLE;
     const BulkComposition = chooseWeighted(
-      randomFor(options.seed, `${path}:composition`),
+      randomFor(options.generationSettings, `${path}:composition`),
       compositionRows,
       'bulk compositions',
     ).Value;
@@ -313,7 +316,7 @@ export function generateInhabitedPlanet(options: InhabitedPlanetOptions): Planet
       Size,
       BulkComposition,
       Population: chooseWithinHab(
-        options.seed,
+        options.generationSettings,
         `${path}:population`,
         populationRows,
         POPULATION_HAB_REQUIRED,
@@ -322,7 +325,7 @@ export function generateInhabitedPlanet(options: InhabitedPlanetOptions): Planet
       ),
       TechLevel: isTombWorld
         ? chooseWithinHab(
-            options.seed,
+            options.generationSettings,
             `${path}:technology`,
             technologyRows,
             TECH_HAB_REQUIRED,
@@ -330,7 +333,7 @@ export function generateInhabitedPlanet(options: InhabitedPlanetOptions): Planet
             'Tomb World technology levels',
           )
         : chooseWeighted(
-            randomFor(options.seed, `${path}:technology`),
+            randomFor(options.generationSettings, `${path}:technology`),
             technologyRows,
             'technology levels',
           ).Value,
@@ -349,20 +352,20 @@ export function generateInhabitedPlanet(options: InhabitedPlanetOptions): Planet
       '; ',
     );
     throw new Error(
-      `No valid inhabited profile after ${MAX_PROFILE_ROLLS} rolls for ${options.seed}:${options.entityPath}; tags=${JSON.stringify(tags)}; lastProfile=${JSON.stringify(lastProfile)}; rejections=${rejections}`,
+      `No valid inhabited profile after ${MAX_PROFILE_ROLLS} rolls for ${options.generationSettings.seed}:${options.entityPath}; tags=${JSON.stringify(tags)}; lastProfile=${JSON.stringify(lastProfile)}; rejections=${rejections}`,
     );
   }
   const forcedWater = waterState(profile, tags);
   const surfaceWater =
     forcedWater ??
     chooseWeighted(
-      randomFor(options.seed, `${profilePath}:water`),
+      randomFor(options.generationSettings, `${profilePath}:water`),
       SURFACE_WATER_PRESENT_TABLE,
       'surface water presence',
     ).Value;
   const name = options.name ?? `Inhabited world ${options.entityPath}`;
   return {
-    Id: deterministicId(options.seed, options.entityPath),
+    Id: deterministicId(options.generationSettings, options.entityPath),
     ProceduralName: name,
     NiceName: name,
     Visibility: {

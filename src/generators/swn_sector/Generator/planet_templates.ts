@@ -5,6 +5,7 @@ import type {
   GeneratedOtherCelestialObject as OtherCelestialObject,
 } from './generation_model';
 import { choose, deterministicId, randomFor } from './generation_random';
+import type { GenerationSettings } from './generation_settings';
 import { directOrbitTemperatures } from '../Shared/spatial_interpretation';
 import { assignPortraitIndex } from './portrait_selection';
 import { presetAtmosphere } from './generate_atmosphere';
@@ -22,7 +23,7 @@ export type ExtraPlanetTemplate =
   | 'Neptunian';
 
 export type TemplatePlanetOptions = {
-  seed: string;
+  generationSettings: GenerationSettings;
   entityPath: string;
   starType: StarType;
   orbit: Orbit;
@@ -43,8 +44,7 @@ type TemplateFacts = Pick<
 
 function gasCompositionForTemplate(size: Planet['Size']): Planet['BulkComposition'] {
   const composition = GAS_COMPOSITION_BY_SIZE[size];
-  if (composition === undefined)
-    throw new Error(`Missing gas composition for ${size} template`);
+  if (composition === undefined) throw new Error(`Missing gas composition for ${size} template`);
   return composition;
 }
 
@@ -126,12 +126,12 @@ export function generateTemplatePlanet(options: TemplatePlanetOptions): Planet {
   const usableTemperatures = directOrbitTemperatures(options.starType);
   if (usableTemperatures.length === 0)
     throw new Error(
-      `No usable temperature for ${options.template} at ${options.seed}:${options.entityPath}`,
+      `No usable temperature for ${options.template} at ${options.generationSettings.seed}:${options.entityPath}`,
     );
   const temperature =
     options.temperature ??
     choose(
-      randomFor(options.seed, `${options.entityPath}:temperature`),
+      randomFor(options.generationSettings, `${options.entityPath}:temperature`),
       usableTemperatures,
       `${options.template} temperatures`,
     );
@@ -142,7 +142,7 @@ export function generateTemplatePlanet(options: TemplatePlanetOptions): Planet {
     facts.Atmosphere.Category !== 'Vacuum';
   const name = `${options.template} ${options.entityPath}`;
   return {
-    Id: deterministicId(options.seed, options.entityPath),
+    Id: deterministicId(options.generationSettings, options.entityPath),
     ProceduralName: name,
     NiceName: name,
     Visibility: {
@@ -162,7 +162,7 @@ export function generateTemplatePlanet(options: TemplatePlanetOptions): Planet {
     Orbit: options.orbit,
     Temperature: temperature,
     Kind: 'Planet',
-    PortraitIndex: assignPortraitIndex(options.seed, options.entityPath),
+    PortraitIndex: assignPortraitIndex(options.generationSettings, options.entityPath),
     Size: facts.Size,
     BulkComposition: facts.BulkComposition,
     SurfaceWaterPresent: surfaceWaterPresent,
@@ -174,7 +174,7 @@ export function generateTemplatePlanet(options: TemplatePlanetOptions): Planet {
 }
 
 export function generateTemplateOtherCelestialObject(options: {
-  seed: string;
+  generationSettings: GenerationSettings;
   entityPath: string;
   starType: StarType;
   orbit: Orbit;
@@ -189,18 +189,18 @@ export function generateTemplateOtherCelestialObject(options: {
   );
   if (allowedTemperatures.length === 0)
     throw new Error(
-      `No usable temperature for ${options.template} at ${options.seed}:${options.entityPath}`,
+      `No usable temperature for ${options.template} at ${options.generationSettings.seed}:${options.entityPath}`,
     );
   const temperature =
     options.temperature ??
     choose(
-      randomFor(options.seed, `${options.entityPath}:temperature`),
+      randomFor(options.generationSettings, `${options.entityPath}:temperature`),
       allowedTemperatures,
       `${options.template} temperatures`,
     );
   const name = `${options.template} ${options.entityPath}`;
   return {
-    Id: deterministicId(options.seed, options.entityPath),
+    Id: deterministicId(options.generationSettings, options.entityPath),
     ProceduralName: name,
     NiceName: name,
     Visibility: {
@@ -223,8 +223,8 @@ export function generateTemplateOtherCelestialObject(options: {
     Kind: 'OtherCelestialObject',
     ObjectType: options.template,
     PortraitIndex: assignPortraitIndex(
-      options.seed,
-      deterministicId(options.seed, options.entityPath),
+      options.generationSettings,
+      deterministicId(options.generationSettings, options.entityPath),
     ),
   };
 }

@@ -10,7 +10,7 @@ import {
 test('atmosphere rolls retain a valid class and only its conditional result', () => {
   const categories = new Set<string>();
   for (let index = 0; index < 500; index += 1) {
-    const outcome = generateAtmosphere(`atmosphere-${index}`, 'world');
+    const outcome = generateAtmosphere({ seed: `atmosphere-${index}` }, 'world');
     categories.add(outcome.Category);
     expect(isAtmosphere(outcome)).toBe(true);
     expect(resolveAtmosphere(outcome).HabRating).toBeGreaterThanOrEqual(0);

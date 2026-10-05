@@ -14,8 +14,8 @@ const EXPECTED: Record<string, string> = {
 test('fixed seed canonical output stays deterministic through portrait projection', () => {
   const observed: Record<string, string> = {};
   for (const seed of Object.keys(EXPECTED)) {
-    const sector = generate(seed);
-    expect(generate(seed)).toEqual(sector);
+    const sector = generate({ seed: seed });
+    expect(generate({ seed: seed })).toEqual(sector);
     expect(sector.SchemaVersion).toBe('merged-v9');
     for (const system of sector.Systems)
       for (const object of system.Objects) {

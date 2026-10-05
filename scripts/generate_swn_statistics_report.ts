@@ -234,7 +234,7 @@ try {
 
   for (let index = 1; index <= SECTOR_COUNT; index += 1) {
     const seed = `stats-sector-${String(index).padStart(3, '0')}`;
-    const sector = generate(seed, 'UNRESTRICTED');
+    const sector = generate({ seed }, 'UNRESTRICTED');
     let inhabitedWorlds = 0;
     for (const system of sector.Systems) {
       for (const object of system.Objects) {

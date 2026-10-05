@@ -19,6 +19,7 @@ import {
   rollDie,
   shuffled,
 } from './generation_random';
+import type { GenerationSettings } from './generation_settings';
 import { GAS_GIANT_MOON_TABLE, POI_DETAIL_COLUMNS_BY_TYPE, POI_TABLE } from './generation_rules';
 import { isPoiHostCompatible } from '../Shared/poi_host_interpretation';
 import {
@@ -39,7 +40,7 @@ import {
 
 /** Assign distinct open-interval AU values without changing any physical fact. */
 export function assignDirectOrbitAus(
-  seed: string,
+  generationSettings: GenerationSettings,
   entityPath: string,
   starType: StarType,
   objects: readonly SystemObject[],
@@ -55,11 +56,16 @@ export function assignDirectOrbitAus(
   for (const [temperature, group] of groups) {
     const [minimum, maximum] = directOrbitAuBand(starType, temperature);
     if (maximum <= minimum)
-      throw new Error(`No direct-orbit AU interval for ${seed}:${entityPath}:${temperature}`);
-    const ordered = shuffled(randomFor(seed, `${entityPath}:au:${temperature}`), group);
+      throw new Error(
+        `No direct-orbit AU interval for ${generationSettings.seed}:${entityPath}:${temperature}`,
+      );
+    const ordered = shuffled(
+      randomFor(generationSettings, `${entityPath}:au:${temperature}`),
+      group,
+    );
     const width = (maximum - minimum) / ordered.length;
     ordered.forEach((object, index) => {
-      const random = randomFor(seed, `${entityPath}:au:${temperature}:${object.Id}`);
+      const random = randomFor(generationSettings, `${entityPath}:au:${temperature}:${object.Id}`);
       auById.set(
         object.Id,
         sampleOpenRange(random, minimum + width * index, minimum + width * (index + 1)),
@@ -105,7 +111,7 @@ function deriveNonInhabitedPlanetFacts(planet: Planet): Planet {
 
 /** Places non-inhabited direct objects uniformly, then derives their temperature from AU. */
 export function assignUniformDirectOrbitAus(
-  seed: string,
+  generationSettings: GenerationSettings,
   entityPath: string,
   starType: StarType,
   objects: readonly SystemObject[],
@@ -116,8 +122,10 @@ export function assignUniformDirectOrbitAus(
     if (object.Orbit.ParentObjectId !== null) return object;
     const [minimum, maximum] = directObjectAuRange(starType, object);
     if (maximum <= minimum)
-      throw new Error(`No direct-orbit AU interval for ${seed}:${entityPath}:${object.Id}`);
-    const random = randomFor(seed, `${entityPath}:au:${object.Id}`);
+      throw new Error(
+        `No direct-orbit AU interval for ${generationSettings.seed}:${entityPath}:${object.Id}`,
+      );
+    const random = randomFor(generationSettings, `${entityPath}:au:${object.Id}`);
     let au = sampleOpenRange(random, minimum, maximum);
     while (occupied.has(au)) au = sampleOpenRange(random, minimum, maximum);
     occupied.add(au);
@@ -134,7 +142,7 @@ export function assignUniformDirectOrbitAus(
 }
 
 export type GenerateSystemOptions = {
-  seed: string;
+  generationSettings: GenerationSettings;
   entityPath: string;
   hexLocation: HexLocation;
   starType: StarType;
@@ -165,8 +173,8 @@ export const MAX_SYSTEM_GENERATION_RETRIES = 5;
 
 const SYSTEM_NAME_ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
-function randomSystemName(seed: string, entityPath: string): string {
-  const random = randomFor(seed, `${entityPath}:system-name`);
+function randomSystemName(generationSettings: GenerationSettings, entityPath: string): string {
+  const random = randomFor(generationSettings, `${entityPath}:system-name`);
   return Array.from({ length: 5 }, () => SYSTEM_NAME_ALPHABET[Math.floor(random() * 26)]).join('');
 }
 
@@ -174,8 +182,12 @@ function hexCoordinatePart(value: number): string {
   return value.toString().padStart(2, '0');
 }
 
-function applyGeneratedNames(seed: string, entityPath: string, system: StarSystem): StarSystem {
-  const niceName = randomSystemName(seed, entityPath);
+function applyGeneratedNames(
+  generationSettings: GenerationSettings,
+  entityPath: string,
+  system: StarSystem,
+): StarSystem {
+  const niceName = randomSystemName(generationSettings, entityPath);
   const proceduralName = `${hexCoordinatePart(system.HexLocation.Column)}${hexCoordinatePart(system.HexLocation.Row)}`;
   const named = applySystemNiceNames(system, niceName);
   const directObjects = system.Objects.filter((object) => object.Orbit.ParentObjectId === null);
@@ -215,8 +227,8 @@ function applyGeneratedNames(seed: string, entityPath: string, system: StarSyste
   };
 }
 
-function inhabitedCount(seed: string, path: string): number {
-  const roll = rollDie(randomFor(seed, `${path}:inhabited-count`), 100);
+function inhabitedCount(generationSettings: GenerationSettings, path: string): number {
+  const roll = rollDie(randomFor(generationSettings, `${path}:inhabited-count`), 100);
   return roll <= ONE_INHABITED_WORLD_MAX_ROLL ? 1 : 2;
 }
 
@@ -225,28 +237,33 @@ function inhabitedCount(seed: string, path: string): number {
  * its own deterministic random stream, so a seed remains reproducible.
  */
 export function retrySystemGeneration<T>(
-  seed: string,
+  generationSettings: GenerationSettings,
   entityPath: string,
-  generateAttempt: (attemptSeed: string) => T,
+  generateAttempt: (attemptSettings: GenerationSettings) => T,
 ): T {
   let lastError: unknown;
   for (let attempt = 0; attempt <= MAX_SYSTEM_GENERATION_RETRIES; attempt += 1) {
-    const attemptSeed =
-      attempt === 0 ? seed : `${seed}:${entityPath}:generation-retry:${String(attempt)}`;
+    const attemptSettings =
+      attempt === 0
+        ? generationSettings
+        : {
+            ...generationSettings,
+            seed: `${generationSettings.seed}:${entityPath}:generation-retry:${String(attempt)}`,
+          };
     try {
-      return generateAttempt(attemptSeed);
+      return generateAttempt(attemptSettings);
     } catch (error) {
       lastError = error;
       if (attempt === MAX_SYSTEM_GENERATION_RETRIES) break;
       const message = error instanceof Error ? error.message : String(error);
       console.warn(
-        `System generation failed for ${seed}:${entityPath} (attempt ${attempt + 1}/${MAX_SYSTEM_GENERATION_RETRIES + 1}): ${message}. Retrying.`,
+        `System generation failed for ${generationSettings.seed}:${entityPath} (attempt ${attempt + 1}/${MAX_SYSTEM_GENERATION_RETRIES + 1}): ${message}. Retrying.`,
       );
     }
   }
   const message = lastError instanceof Error ? lastError.message : String(lastError);
   throw new Error(
-    `Unable to generate system ${seed}:${entityPath} after ${MAX_SYSTEM_GENERATION_RETRIES + 1} attempts: ${message}`,
+    `Unable to generate system ${generationSettings.seed}:${entityPath} after ${MAX_SYSTEM_GENERATION_RETRIES + 1} attempts: ${message}`,
   );
 }
 
@@ -255,24 +272,24 @@ function generateSystemOnce(options: GenerateSystemOptions): StarSystem {
   const name = `System ${options.entityPath}`;
   const objects: SystemObject[] = [];
   const pendingMoons: Array<{ worldPath: string; parentId: string }> = [];
-  const count = inhabitedCount(options.seed, options.entityPath);
+  const count = inhabitedCount(options.generationSettings, options.entityPath);
   for (let index = 0; index < count; index += 1) {
     const worldPath = `${options.entityPath}:inhabited:${String(index + 1).padStart(2, '0')}`;
     const isMoon = chooseWeighted(
-      randomFor(options.seed, `${worldPath}:moon`),
+      randomFor(options.generationSettings, `${worldPath}:moon`),
       GAS_GIANT_MOON_TABLE,
       'gas giant moon',
     ).Value;
     if (!isMoon) {
       objects.push(
         generateInhabitedPlanet({
-          seed: options.seed,
+          generationSettings: options.generationSettings,
           entityPath: worldPath,
           starType: options.starType,
           starHabitability: options.starHabitability,
           orbit: {
             AU: 0,
-            AngleDegrees: randomFor(options.seed, `${worldPath}:angle`)() * 360,
+            AngleDegrees: randomFor(options.generationSettings, `${worldPath}:angle`)() * 360,
             ParentObjectId: null,
           },
         }),
@@ -281,14 +298,14 @@ function generateSystemOnce(options: GenerateSystemOptions): StarSystem {
     }
     const parentPath = `${worldPath}:parent`;
     const parent = generateTemplatePlanet({
-      seed: options.seed,
+      generationSettings: options.generationSettings,
       entityPath: parentPath,
       starType: options.starType,
       template: 'Jovian',
       temperature: 'Cryogenic',
       orbit: {
         AU: 0,
-        AngleDegrees: randomFor(options.seed, `${parentPath}:angle`)() * 360,
+        AngleDegrees: randomFor(options.generationSettings, `${parentPath}:angle`)() * 360,
         ParentObjectId: null,
       },
     });
@@ -297,7 +314,7 @@ function generateSystemOnce(options: GenerateSystemOptions): StarSystem {
   }
   const extraTarget = Math.min(
     5 - count,
-    rollDie(randomFor(options.seed, `${options.entityPath}:extra-count`), 3) + 1,
+    rollDie(randomFor(options.generationSettings, `${options.entityPath}:extra-count`), 3) + 1,
   );
   // A gas-giant parent of an inhabited moon is itself an extra object. Moons
   // live outside `objects` until final assembly, so include them here when
@@ -306,13 +323,13 @@ function generateSystemOnce(options: GenerateSystemOptions): StarSystem {
     const index = objects.length + 1;
     const path = `${options.entityPath}:extra:${String(index).padStart(2, '0')}`;
     const category = chooseWeighted(
-      randomFor(options.seed, `${path}:category`),
+      randomFor(options.generationSettings, `${path}:category`),
       EXTRA_OBJECT_TYPE_WEIGHTS,
       'extra-object categories',
     ).Value;
     const orbit = {
       AU: 0,
-      AngleDegrees: randomFor(options.seed, `${path}:angle`)() * 360,
+      AngleDegrees: randomFor(options.generationSettings, `${path}:angle`)() * 360,
       ParentObjectId: null,
     };
     if (category === 'Planet') {
@@ -321,11 +338,11 @@ function generateSystemOnce(options: GenerateSystemOptions): StarSystem {
       );
       objects.push(
         generateTemplatePlanet({
-          seed: options.seed,
+          generationSettings: options.generationSettings,
           entityPath: path,
           starType: options.starType,
           template: choose(
-            randomFor(options.seed, `${path}:template`),
+            randomFor(options.generationSettings, `${path}:template`),
             templates,
             'extra-world templates',
           ),
@@ -336,7 +353,7 @@ function generateSystemOnce(options: GenerateSystemOptions): StarSystem {
     } else {
       objects.push(
         generateTemplateOtherCelestialObject({
-          seed: options.seed,
+          generationSettings: options.generationSettings,
           entityPath: path,
           starType: options.starType,
           template: category,
@@ -358,13 +375,13 @@ function generateSystemOnce(options: GenerateSystemOptions): StarSystem {
       !(object.Kind === 'Planet' && object.InhabitedInfo !== false),
   );
   const placedInhabited = assignDirectOrbitAus(
-    options.seed,
+    options.generationSettings,
     options.entityPath,
     options.starType,
     inhabitedDirect,
   );
   const placedOther = assignUniformDirectOrbitAus(
-    options.seed,
+    options.generationSettings,
     options.entityPath,
     options.starType,
     nonInhabitedDirect,
@@ -377,24 +394,27 @@ function generateSystemOnce(options: GenerateSystemOptions): StarSystem {
   for (const pendingMoon of pendingMoons) {
     const parent = placedById.get(pendingMoon.parentId);
     if (parent === undefined || parent.Kind !== 'Planet')
-      throw new Error(`Missing moon parent for ${options.seed}:${pendingMoon.worldPath}`);
+      throw new Error(
+        `Missing moon parent for ${options.generationSettings.seed}:${pendingMoon.worldPath}`,
+      );
     placed.push(
       generateInhabitedPlanet({
-        seed: options.seed,
+        generationSettings: options.generationSettings,
         entityPath: pendingMoon.worldPath,
         starType: options.starType,
         starHabitability: options.starHabitability,
         allowedTemperatures: [parent.Temperature],
         orbit: {
           AU: parent.Orbit.AU,
-          AngleDegrees: randomFor(options.seed, `${pendingMoon.worldPath}:angle`)() * 360,
+          AngleDegrees:
+            randomFor(options.generationSettings, `${pendingMoon.worldPath}:angle`)() * 360,
           ParentObjectId: parent.Id,
         },
       }),
     );
   }
   return {
-    Id: deterministicId(options.seed, options.entityPath),
+    Id: deterministicId(options.generationSettings, options.entityPath),
     ProceduralName: name,
     NiceName: name,
     Visibility: {
@@ -413,7 +433,7 @@ function generateSystemOnce(options: GenerateSystemOptions): StarSystem {
     },
     HexLocation: options.hexLocation,
     Star: {
-      Id: deterministicId(options.seed, `${options.entityPath}:star`),
+      Id: deterministicId(options.generationSettings, `${options.entityPath}:star`),
       ProceduralName: `${name} star`,
       NiceName: `${name} star`,
       Visibility: {
@@ -432,8 +452,8 @@ function generateSystemOnce(options: GenerateSystemOptions): StarSystem {
       },
       StarType: options.starType,
       PortraitIndex: assignPortraitIndex(
-        options.seed,
-        deterministicId(options.seed, `${options.entityPath}:star`),
+        options.generationSettings,
+        deterministicId(options.generationSettings, `${options.entityPath}:star`),
       ),
     },
     Objects: placed.sort(
@@ -447,29 +467,37 @@ function generateSystemOnce(options: GenerateSystemOptions): StarSystem {
 
 /** Builds a system, retrying failed random draws with bounded deterministic attempts. */
 export function generateSystem(options: GenerateSystemOptions): StarSystem {
-  const system = retrySystemGeneration(options.seed, options.entityPath, (attemptSeed) =>
-    generateSystemOnce({ ...options, seed: attemptSeed }),
+  const system = retrySystemGeneration(
+    options.generationSettings,
+    options.entityPath,
+    (attemptSettings) => generateSystemOnce({ ...options, generationSettings: attemptSettings }),
   );
-  return applyGeneratedNames(options.seed, options.entityPath, system);
+  return applyGeneratedNames(options.generationSettings, options.entityPath, system);
 }
 
 /** Builds the complete system output, including POIs, under one retry budget. */
 export function generateCompleteSystem(
   options: GenerateSystemOptions,
 ): import('../BaseDTO/merged_schema').StarSystem {
-  const system = retrySystemGeneration(options.seed, options.entityPath, (attemptSeed) => {
-    const attemptOptions = { ...options, seed: attemptSeed };
-    return populatePointsOfInterest(
-      attemptSeed,
-      options.entityPath,
-      generateSystemOnce(attemptOptions),
-    );
-  });
-  return canonicalSystem(applyGeneratedNames(options.seed, options.entityPath, system));
+  const system = retrySystemGeneration(
+    options.generationSettings,
+    options.entityPath,
+    (attemptSettings) => {
+      const attemptOptions = { ...options, generationSettings: attemptSettings };
+      return populatePointsOfInterest(
+        attemptSettings,
+        options.entityPath,
+        generateSystemOnce(attemptOptions),
+      );
+    },
+  );
+  return canonicalSystem(
+    applyGeneratedNames(options.generationSettings, options.entityPath, system),
+  );
 }
 
 function rollPoiDetail(
-  seed: string,
+  generationSettings: GenerationSettings,
   path: string,
   column: {
     key: string;
@@ -487,7 +515,7 @@ function rollPoiDetail(
     return { entry, first, last };
   });
   const dieSides = Math.max(...ranges.map((range) => range.last));
-  const roll = rollDie(randomFor(seed, `${path}:detail:${column.key}`), dieSides);
+  const roll = rollDie(randomFor(generationSettings, `${path}:detail:${column.key}`), dieSides);
   const selected = ranges.find((range) => roll >= range.first && roll <= range.last);
   if (selected === undefined) {
     throw new Error(`No ${column.key} result for roll ${roll} on ${path}`);
@@ -496,19 +524,20 @@ function rollPoiDetail(
 }
 
 function makePoi(
-  seed: string,
+  generationSettings: GenerationSettings,
   path: string,
   parentObjectId: string,
   type: PointOfInterestType,
 ): PointOfInterest {
-  const temporaryNumber = Math.floor(randomFor(seed, `${path}:temporary-name`)() * 9000) + 1000;
+  const temporaryNumber =
+    Math.floor(randomFor(generationSettings, `${path}:temporary-name`)() * 9000) + 1000;
   const temporaryName = `${temporaryNumber}-TEMP`;
   const generatedDetails =
     (POI_DETAIL_COLUMNS_BY_TYPE[type] ?? [])
-      .map((column) => rollPoiDetail(seed, path, column))
+      .map((column) => rollPoiDetail(generationSettings, path, column))
       .join('\n') || '-';
   return {
-    Id: deterministicId(seed, path),
+    Id: deterministicId(generationSettings, path),
     ProceduralName: temporaryName,
     NiceName: temporaryName,
     Visibility: {
@@ -527,18 +556,21 @@ function makePoi(
     },
     ParentObjectId: parentObjectId,
     POIType: type,
-    AngleDegrees: randomFor(seed, `${path}:angle`)() * 360,
-    PortraitIndex: assignPortraitIndex(seed, deterministicId(seed, path)),
+    AngleDegrees: randomFor(generationSettings, `${path}:angle`)() * 360,
+    PortraitIndex: assignPortraitIndex(
+      generationSettings,
+      deterministicId(generationSettings, path),
+    ),
   };
 }
 
 /** Adds only constructively feasible POIs; it never generates and repairs an invalid host. */
 export function populatePointsOfInterest(
-  seed: string,
+  generationSettings: GenerationSettings,
   entityPath: string,
   system: StarSystem,
 ): StarSystem {
-  const target = rollDie(randomFor(seed, `${entityPath}:poi-count`), 4) + 1;
+  const target = rollDie(randomFor(generationSettings, `${entityPath}:poi-count`), 4) + 1;
   const objects = [...system.Objects];
   const pois: PointOfInterest[] = [];
   const capacity = new Map<string, number>();
@@ -574,18 +606,18 @@ export function populatePointsOfInterest(
         )
         .join(', ');
       throw new Error(
-        `No feasible POI candidates for ${seed}:${entityPath}:${index}; objects=${objects.length}; eligible=${eligible.length}; hosts=[${hostSummary}]`,
+        `No feasible POI candidates for ${generationSettings.seed}:${entityPath}:${index}; objects=${objects.length}; eligible=${eligible.length}; hosts=[${hostSummary}]`,
       );
     }
     const selected = chooseWeighted(
-      randomFor(seed, `${entityPath}:poi:${index}`),
+      randomFor(generationSettings, `${entityPath}:poi:${index}`),
       candidates,
       'POI candidates',
     ).Value;
     if (selected.type === 'Deep-space station') {
       const stationPath = `${entityPath}:station:${index}`;
       const station: OtherCelestialObject = {
-        Id: deterministicId(seed, stationPath),
+        Id: deterministicId(generationSettings, stationPath),
         ProceduralName: `Independent station ${stationPath}`,
         NiceName: `Independent station ${stationPath}`,
         Visibility: {
@@ -604,13 +636,16 @@ export function populatePointsOfInterest(
         },
         Kind: 'OtherCelestialObject',
         ObjectType: 'IndependentStation',
-        PortraitIndex: assignPortraitIndex(seed, deterministicId(seed, stationPath)),
+        PortraitIndex: assignPortraitIndex(
+          generationSettings,
+          deterministicId(generationSettings, stationPath),
+        ),
         // The final temperature is derived from the uniformly selected AU.
         Temperature: 'Cryogenic',
         ClaimedByPolityIds: [],
         Orbit: {
           AU: 0,
-          AngleDegrees: randomFor(seed, `${stationPath}:angle`)() * 360,
+          AngleDegrees: randomFor(generationSettings, `${stationPath}:angle`)() * 360,
           ParentObjectId: null,
         },
       };
@@ -618,7 +653,7 @@ export function populatePointsOfInterest(
         .filter((object) => object.Orbit.ParentObjectId === null)
         .map((object) => object.Orbit.AU);
       const [placedStation] = assignUniformDirectOrbitAus(
-        seed,
+        generationSettings,
         stationPath,
         system.Star.StarType,
         [station],
@@ -629,11 +664,15 @@ export function populatePointsOfInterest(
       if (!isPoiHostCompatible(selected.type, placedStation))
         throw new Error(`Generated station cannot host ${selected.type}`);
       objects.push(placedStation);
-      pois.push(makePoi(seed, `${entityPath}:poi:${index}`, placedStation.Id, selected.type));
+      pois.push(
+        makePoi(generationSettings, `${entityPath}:poi:${index}`, placedStation.Id, selected.type),
+      );
       capacity.set(placedStation.Id, 1);
       continue;
     }
-    pois.push(makePoi(seed, `${entityPath}:poi:${index}`, selected.host.Id, selected.type));
+    pois.push(
+      makePoi(generationSettings, `${entityPath}:poi:${index}`, selected.host.Id, selected.type),
+    );
     capacity.set(selected.host.Id, (capacity.get(selected.host.Id) ?? 0) + 1);
   }
   return {
@@ -642,7 +681,8 @@ export function populatePointsOfInterest(
       .map((object) => {
         if (object.Orbit.ParentObjectId === null) return object;
         const parent = objects.find((candidate) => candidate.Id === object.Orbit.ParentObjectId);
-        if (parent === undefined) throw new Error(`Missing moon parent for ${seed}:${object.Id}`);
+        if (parent === undefined)
+          throw new Error(`Missing moon parent for ${generationSettings.seed}:${object.Id}`);
         const placed = {
           ...object,
           Temperature: parent.Temperature,

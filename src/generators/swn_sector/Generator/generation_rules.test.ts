@@ -70,21 +70,21 @@ test('size table covers rocky planets and gas giants with matching habitability'
 
 test('new POIs use Kuiper belts and gas clouds as hosts', () => {
   const kuiperBelt = generateTemplateOtherCelestialObject({
-    seed: 'poi-hosts',
+    generationSettings: { seed: 'poi-hosts' },
     entityPath: 'kuiper',
     starType: 'G-type',
     template: 'KuiperBelt',
     orbit: { AU: 0, AngleDegrees: 0, ParentObjectId: null },
   });
   const gasCloud = generateTemplateOtherCelestialObject({
-    seed: 'poi-hosts',
+    generationSettings: { seed: 'poi-hosts' },
     entityPath: 'gas-cloud',
     starType: 'G-type',
     template: 'GasCloud',
     orbit: { AU: 0, AngleDegrees: 0, ParentObjectId: null },
   });
   const gasGiant = generateTemplatePlanet({
-    seed: 'poi-hosts',
+    generationSettings: { seed: 'poi-hosts' },
     entityPath: 'gas-giant',
     starType: 'G-type',
     template: 'Jovian',
@@ -102,42 +102,42 @@ test('every POI uses its JSON host predicate for compatible and incompatible obj
   const orbit = { AU: 1, AngleDegrees: 0, ParentObjectId: null };
   const starType = 'G-type' as const;
   const rockyPlanet = generateTemplatePlanet({
-    seed: 'poi-predicates',
+    generationSettings: { seed: 'poi-predicates' },
     entityPath: 'rocky',
     starType,
     template: 'Ioan',
     orbit,
   });
   const gasGiant = generateTemplatePlanet({
-    seed: 'poi-predicates',
+    generationSettings: { seed: 'poi-predicates' },
     entityPath: 'gas-giant',
     starType,
     template: 'Jovian',
     orbit,
   });
   const primaryPlanet = generateInhabitedPlanet({
-    seed: 'poi-predicates',
+    generationSettings: { seed: 'poi-predicates' },
     entityPath: 'primary',
     starType,
     starHabitability: 3,
     orbit,
   });
   const asteroidBelt = generateTemplateOtherCelestialObject({
-    seed: 'poi-predicates',
+    generationSettings: { seed: 'poi-predicates' },
     entityPath: 'asteroid-belt',
     starType,
     template: 'AsteroidBelt',
     orbit,
   });
   const kuiperBelt = generateTemplateOtherCelestialObject({
-    seed: 'poi-predicates',
+    generationSettings: { seed: 'poi-predicates' },
     entityPath: 'kuiper-belt',
     starType,
     template: 'KuiperBelt',
     orbit,
   });
   const gasCloud = generateTemplateOtherCelestialObject({
-    seed: 'poi-predicates',
+    generationSettings: { seed: 'poi-predicates' },
     entityPath: 'gas-cloud',
     starType,
     template: 'GasCloud',

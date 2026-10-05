@@ -205,7 +205,7 @@ export default function App() {
                 dispatch({ type: 'loadSector', index: archiveIndex });
             }}
             generate={(seed, mode) => {
-              const result = application.generateSector(seed, mode, commandOptions);
+              const result = application.generateSector({ seed }, mode, commandOptions);
               if (result.ok)
                 dispatch({
                   type: 'replaceSectors',

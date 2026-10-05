@@ -4,7 +4,7 @@ import { POI_DETAIL_COLUMNS_BY_TYPE } from './generation_rules';
 
 describe('generated names', () => {
   it('uses five-letter system names, hex coordinates, and ordered object suffixes', () => {
-    const sector = generate('GENERATED-NAMES');
+    const sector = generate({ seed: 'GENERATED-NAMES' });
 
     for (const system of sector.Systems) {
       const coordinate = `${system.HexLocation.Column.toString().padStart(2, '0')}${system.HexLocation.Row.toString().padStart(2, '0')}`;
@@ -58,10 +58,10 @@ describe('generated names', () => {
 
 describe('generated POI names', () => {
   it("numbers each parent's POIs in stable generation order and replaces temporary names", () => {
-    const sector = generate('GENERATED-POI-NAMES');
+    const sector = generate({ seed: 'GENERATED-POI-NAMES' });
     const romanNumerals = ['i', 'ii', 'iii', 'iv', 'v'];
 
-    const repeatedSector = generate('GENERATED-POI-NAMES');
+    const repeatedSector = generate({ seed: 'GENERATED-POI-NAMES' });
     expect(
       repeatedSector.Systems.map((system) =>
         system.PointsOfInterest.map((poi) => [poi.Id, poi.NiceName, poi.ProceduralName]),
@@ -94,8 +94,8 @@ describe('generated POI names', () => {
 
 describe('generated POI details', () => {
   it('stores deterministic labeled table results in the GM note only', () => {
-    const sector = generate('GENERATED-POI-DETAILS');
-    const repeatedSector = generate('GENERATED-POI-DETAILS');
+    const sector = generate({ seed: 'GENERATED-POI-DETAILS' });
+    const repeatedSector = generate({ seed: 'GENERATED-POI-DETAILS' });
 
     expect(
       repeatedSector.Systems.map((system) =>

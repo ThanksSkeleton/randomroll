@@ -9,7 +9,7 @@ function world(
   forcedTags?: Parameters<typeof generateInhabitedPlanet>[0]['forcedTags'],
 ) {
   return generateInhabitedPlanet({
-    seed,
+    generationSettings: { seed },
     entityPath: 'system:01:inhabited:01',
     starType: 'G-type',
     starHabitability: 3,
@@ -40,7 +40,7 @@ test('inhabited worlds never roll gas giant sizes, including on Hab 0 stars', ()
   ] as const) {
     for (let index = 0; index < 50; index += 1) {
       const planet = generateInhabitedPlanet({
-        seed: `size-${star.type}-${index}`,
+        generationSettings: { seed: `size-${star.type}-${index}` },
         entityPath: 'system:01:inhabited:01',
         starType: star.type,
         starHabitability: star.hab,
@@ -53,7 +53,7 @@ test('inhabited worlds never roll gas giant sizes, including on Hab 0 stars', ()
 
 test('filters compact-remnant worlds to usable direct-orbit temperatures', () => {
   const planet = generateInhabitedPlanet({
-    seed: 'compact-remnant',
+    generationSettings: { seed: 'compact-remnant' },
     entityPath: 'system:01:inhabited:01',
     starType: 'White dwarf',
     starHabitability: 0,
@@ -68,7 +68,7 @@ test('filters compact-remnant worlds to usable direct-orbit temperatures', () =>
 
 test('allows rank-2 population tags when star habitability is zero', () => {
   const planet = generateInhabitedPlanet({
-    seed: 'hab-zero-population-tags',
+    generationSettings: { seed: 'hab-zero-population-tags' },
     entityPath: 'system:01:inhabited:01',
     starType: 'White dwarf',
     starHabitability: 0,

@@ -2,15 +2,19 @@ import type { Atmosphere, AtmosphereCategory } from '../BaseDTO/merged_schema';
 import rawDetails from '../Data/Raw/Details/atmosphere.json';
 import { ATMOSPHERE_DATA } from '../Shared/atmosphere_table';
 import { choose, chooseWeighted, randomFor } from './generation_random';
+import type { GenerationSettings } from './generation_settings';
 import { ATMOSPHERE_TABLE } from './generation_rules';
 
-export function generateAtmosphere(seed: string, path: string): Atmosphere {
+export function generateAtmosphere(
+  generationSettings: GenerationSettings,
+  path: string,
+): Atmosphere {
   const category = chooseWeighted(
-    randomFor(seed, `${path}:atmosphere`),
+    randomFor(generationSettings, `${path}:atmosphere`),
     ATMOSPHERE_TABLE,
     'atmosphere classes',
   ).Value;
-  const random = randomFor(seed, `${path}:atmosphere-detail`);
+  const random = randomFor(generationSettings, `${path}:atmosphere-detail`);
   if (category === 'Pressure')
     return {
       Category: category,

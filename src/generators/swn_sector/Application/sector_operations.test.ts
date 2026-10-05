@@ -17,7 +17,7 @@ import { checkAllInvariants } from '../Generator/generated_sector_invariants';
 
 describe('canonical sector domain', () => {
   it('updates visibility immutably', () => {
-    const sector = generate('DOMAIN-VISIBILITY');
+    const sector = generate({ seed: 'DOMAIN-VISIBILITY' });
     const object = sector.Systems[0].Objects[0];
     const result = updateObjectScanVisibility(sector, object.Id, 'BasicScan', true);
     expect(result.ok).toBe(true);
@@ -27,7 +27,7 @@ describe('canonical sector domain', () => {
   });
 
   it('moves the ship to an object and derives its containing system', () => {
-    const sector = generate('DOMAIN-MOVEMENT');
+    const sector = generate({ seed: 'DOMAIN-MOVEMENT' });
     const targetSystem = sector.Systems[1];
     const target = targetSystem.Objects.find((object) => object.Kind === 'Planet');
     expect(target).toBeDefined();
@@ -41,14 +41,14 @@ describe('canonical sector domain', () => {
   });
 
   it('resolves route endpoints through portals', () => {
-    const sector = generate('DOMAIN-ROUTES');
+    const sector = generate({ seed: 'DOMAIN-ROUTES' });
     const systems = routeSystems(sector, sector.Routes[0]);
     expect(systems).toBeDefined();
     expect(systems?.[0].Id).not.toBe(systems?.[1].Id);
   });
 
   it('only considers a route relevant to systems at one of its endpoints', () => {
-    const sector = generate('DOMAIN-ROUTE-ENDPOINT-FILTER');
+    const sector = generate({ seed: 'DOMAIN-ROUTE-ENDPOINT-FILTER' });
     const route = sector.Routes[0];
     const endpoints = routeSystems(sector, route)!;
     const unrelatedSystem = sector.Systems.find(
@@ -61,7 +61,7 @@ describe('canonical sector domain', () => {
   });
 
   it('deletes a route and its portals while preserving the sector', () => {
-    const sector = generate('DOMAIN-ROUTE-DELETION');
+    const sector = generate({ seed: 'DOMAIN-ROUTE-DELETION' });
     const route = sector.Routes[0];
     const portals = routePortals(sector, route)!;
     const result = deleteSectorObject(sector, route.Id);
@@ -74,13 +74,13 @@ describe('canonical sector domain', () => {
   });
 
   it('does not allow movement to a route or route portal', () => {
-    const sector = generate('DOMAIN-MOVEMENT-RESTRICTIONS');
+    const sector = generate({ seed: 'DOMAIN-MOVEMENT-RESTRICTIONS' });
     expect(relocatePlayerShip(sector, sector.Routes[0].Id).ok).toBe(false);
     expect(relocatePlayerShip(sector, sector.RoutePortals[0].Id).ok).toBe(false);
   });
 
   it('deletes an object and hosted POIs without invalidating the sector', () => {
-    const sector = generate('DOMAIN-DELETION');
+    const sector = generate({ seed: 'DOMAIN-DELETION' });
     const system = sector.Systems.find((candidate) => candidate.PointsOfInterest.length > 0)!;
     const object = system.Objects.find((candidate) =>
       system.PointsOfInterest.some((poi) => poi.ParentObjectId === candidate.Id),

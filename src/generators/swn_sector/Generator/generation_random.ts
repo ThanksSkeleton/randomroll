@@ -1,10 +1,14 @@
 import seedrandom from 'seedrandom';
+import type { GenerationSettings } from './generation_settings';
 
 /** A random stream isolated to one semantic part of a generated sector. */
 export type RandomSource = seedrandom.PRNG;
 
-export function randomFor(seed: string, entityPath: string): RandomSource {
-  return seedrandom(`${seed}:${entityPath}`);
+export function randomFor(
+  generationSettings: GenerationSettings,
+  entityPath: string,
+): RandomSource {
+  return seedrandom(`${generationSettings.seed}:${entityPath}`);
 }
 
 export function rollDie(random: RandomSource, sides: number): number {
@@ -56,8 +60,11 @@ function fnv1a(value: string, offset: number): number {
 }
 
 /** A stable opaque UUID-shaped identifier derived from a seed and semantic path. */
-export function deterministicId(seed: string, entityPath: string): string {
-  const input = `${seed}\u0000${entityPath}`;
+export function deterministicId(
+  generationSettings: GenerationSettings,
+  entityPath: string,
+): string {
+  const input = `${generationSettings.seed}\u0000${entityPath}`;
   const words = [0x811c9dc5, 0x01000193, 0x9e3779b9, 0x85ebca6b].map((offset) =>
     fnv1a(input, offset),
   );

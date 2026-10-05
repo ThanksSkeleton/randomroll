@@ -46,7 +46,7 @@ function Inspector({
   );
 }
 
-const sector = generate('PORTRAIT-CHECK');
+const sector = generate({ seed: 'PORTRAIT-CHECK' });
 const system = sector.Systems.find((candidate) => candidate.Star.PortraitIndex !== undefined)!;
 const planet = sector.Systems.flatMap((candidate) => candidate.Objects).find(
   (object) => object.Kind === 'Planet' && object.InhabitedInfo === false,
@@ -117,7 +117,7 @@ describe('sector portrait assets', () => {
     expect(restored.Routes.find((item: typeof route) => item.Id === route.Id).PortraitIndex).toBe(
       route.PortraitIndex,
     );
-    expect(generate('PORTRAIT-CHECK').Routes[0]?.PortraitIndex).toBe(route.PortraitIndex);
+    expect(generate({ seed: 'PORTRAIT-CHECK' }).Routes[0]?.PortraitIndex).toBe(route.PortraitIndex);
   });
 
   it.each([-1, 18, 1.5])('rejects invalid portrait index %s', (index) => {
@@ -135,8 +135,8 @@ describe('sector portrait assets', () => {
     for (const category of portraitCategoryKeys) {
       const seed = 'PORTRAIT-CHECK';
       const id = 'stable-entity';
-      const oldChoice = choose(randomFor(seed, `${id}:portrait`), portraitIdsFor(category));
-      expect(portraitAt(category, assignPortraitIndex(seed, id))?.variantId).toBe(oldChoice);
+      const oldChoice = choose(randomFor({ seed }, `${id}:portrait`), portraitIdsFor(category));
+      expect(portraitAt(category, assignPortraitIndex({ seed }, id))?.variantId).toBe(oldChoice);
     }
   });
 

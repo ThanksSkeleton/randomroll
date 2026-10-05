@@ -5,7 +5,7 @@ import { generate } from './generate';
 import type { Planet } from '../BaseDTO/merged_schema';
 
 test('initial completion follows world visibility and later completion is stable', () => {
-  const sector = generate('culture-integration');
+  const sector = generate({ seed: 'culture-integration' });
   const worlds = sector.Systems.flatMap((system) => system.Objects).filter(
     (object): object is Planet => object.Kind === 'Planet' && object.InhabitedInfo !== false,
   );
@@ -35,7 +35,7 @@ test('initial completion follows world visibility and later completion is stable
 });
 
 test('contested worlds suppress infrastructure and assign one garrison per claimant', () => {
-  const sector = generate('culture-contest');
+  const sector = generate({ seed: 'culture-contest' });
   const system = sector.Systems.find((candidate) =>
     candidate.Objects.some((object) => object.Kind === 'Planet' && object.InhabitedInfo !== false),
   )!;
@@ -43,7 +43,10 @@ test('contested worlds suppress infrastructure and assign one garrison per claim
     (object): object is Planet => object.Kind === 'Planet' && object.InhabitedInfo !== false,
   )!;
   world.ClaimedByPolityIds = sector.Polities.slice(0, 2).map((polity) => polity.Id);
-  system.HabitablePointsOfInterest = createHabitablePointsOfInterest(sector.OriginalSeed, system);
+  system.HabitablePointsOfInterest = createHabitablePointsOfInterest(
+    { seed: sector.OriginalSeed },
+    system,
+  );
   const completed = completeWorld(
     {
       ...sector,

@@ -8,6 +8,7 @@ import type {
   StarSystem,
 } from '../BaseDTO/merged_schema';
 import { deterministicId, randomFor } from './generation_random';
+import type { GenerationSettings } from './generation_settings';
 import { applySystemNiceNames } from './system_naming';
 
 const INFRASTRUCTURE_TYPES: HabitablePointOfInterestType[] = [
@@ -17,7 +18,7 @@ const INFRASTRUCTURE_TYPES: HabitablePointOfInterestType[] = [
 ];
 
 function shell(
-  seed: string,
+  generationSettings: GenerationSettings,
   world: Planet,
   type: HabitablePointOfInterestType,
   polityId: string | null,
@@ -25,13 +26,13 @@ function shell(
   const path = `hpoi:${world.Id}:${type}:${polityId ?? 'world'}`;
   const label = type === 'Garrison' ? `Garrison ${polityId}` : type;
   return {
-    Id: deterministicId(seed, path),
+    Id: deterministicId(generationSettings, path),
     ProceduralName: label,
     NiceName: label,
     ParentWorldId: world.Id,
     HPOIType: type,
     AssignedPolityId: polityId,
-    AngleDegrees: randomFor(seed, `${path}:angle`)() * 360,
+    AngleDegrees: randomFor(generationSettings, `${path}:angle`)() * 360,
     Visibility: {
       BasicScan: false,
       DetailedScan: false,
@@ -50,14 +51,14 @@ function shell(
 }
 
 export function createHabitablePointsOfInterest(
-  seed: string,
+  generationSettings: GenerationSettings,
   system: StarSystem,
 ): HabitablePointOfInterest[] {
   return system.Objects.flatMap((object) => {
     if (object.Kind !== 'Planet' || object.InhabitedInfo === false) return [];
     return [
-      ...INFRASTRUCTURE_TYPES.map((type) => shell(seed, object, type, null)),
-      ...object.ClaimedByPolityIds.map((id) => shell(seed, object, 'Garrison', id)),
+      ...INFRASTRUCTURE_TYPES.map((type) => shell(generationSettings, object, type, null)),
+      ...object.ClaimedByPolityIds.map((id) => shell(generationSettings, object, 'Garrison', id)),
     ];
   });
 }

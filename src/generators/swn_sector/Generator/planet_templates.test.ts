@@ -29,7 +29,7 @@ test('every planet template expands to a complete canonical uninhabited planet',
   ] as const;
   for (const template of templates) {
     const planet = generateTemplatePlanet({
-      seed: 'templates',
+      generationSettings: { seed: 'templates' },
       entityPath: template,
       starType: 'G-type',
       template,
@@ -42,20 +42,20 @@ test('every planet template expands to a complete canonical uninhabited planet',
 
 test('equal-temperature direct objects receive distinct in-band AUs', () => {
   const first = generateTemplatePlanet({
-    seed: 'aus',
+    generationSettings: { seed: 'aus' },
     entityPath: 'first',
     starType: 'G-type',
     template: 'Ioan',
     orbit: { AU: 0, AngleDegrees: 0, ParentObjectId: null },
   });
   const second = generateTemplatePlanet({
-    seed: 'aus',
+    generationSettings: { seed: 'aus' },
     entityPath: 'second',
     starType: 'G-type',
     template: 'Ioan',
     orbit: { AU: 0, AngleDegrees: 1, ParentObjectId: null },
   });
-  const placed = assignDirectOrbitAus('aus', 'system:01', 'G-type', [
+  const placed = assignDirectOrbitAus({ seed: 'aus' }, 'system:01', 'G-type', [
     { ...first, Temperature: 'Furance' },
     { ...second, Temperature: 'Furance' },
   ]);
@@ -68,14 +68,14 @@ test('equal-temperature direct objects receive distinct in-band AUs', () => {
 
 test('non-inhabited objects use class AU ranges and derive temperature from AU', () => {
   const asteroid = generateTemplateOtherCelestialObject({
-    seed: 'uniform-aus',
+    generationSettings: { seed: 'uniform-aus' },
     entityPath: 'asteroid',
     starType: 'G-type',
     template: 'AsteroidBelt',
     orbit: { AU: 0, AngleDegrees: 0, ParentObjectId: null },
   });
   const kuiperBelt = generateTemplateOtherCelestialObject({
-    seed: 'uniform-aus',
+    generationSettings: { seed: 'uniform-aus' },
     entityPath: 'kuiper',
     starType: 'G-type',
     template: 'KuiperBelt',
@@ -84,7 +84,7 @@ test('non-inhabited objects use class AU ranges and derive temperature from AU',
   const [minimum, maximum] = directOrbitAuRange('G-type');
   const [coldMinimum, coldMaximum] = directOrbitAuBand('G-type', 'Cryogenic');
   const [placedAsteroid, placedKuiper] = assignUniformDirectOrbitAus(
-    'uniform-aus',
+    { seed: 'uniform-aus' },
     'system:01',
     'G-type',
     [asteroid, kuiperBelt],
@@ -103,7 +103,7 @@ test('non-inhabited objects use class AU ranges and derive temperature from AU',
 test('system object construction gives moons their parent temperature and AU', () => {
   for (let index = 0; index < 30; index += 1) {
     const system = generateSystem({
-      seed: `system-${index}`,
+      generationSettings: { seed: `system-${index}` },
       entityPath: 'system:01',
       hexLocation: { Column: 1, Row: 1 },
       starType: 'G-type',
@@ -123,10 +123,10 @@ test('system object construction gives moons their parent temperature and AU', (
 test('POIs are assigned only to compatible hosts with bounded capacity', () => {
   for (let index = 0; index < 20; index += 1) {
     const system = populatePointsOfInterest(
-      `pois-${index}`,
+      { seed: `pois-${index}` },
       'system:01',
       generateSystem({
-        seed: `pois-${index}`,
+        generationSettings: { seed: `pois-${index}` },
         entityPath: 'system:01',
         hexLocation: { Column: 1, Row: 1 },
         starType: 'G-type',
@@ -151,8 +151,8 @@ test('failed system generation is logged and retried with deterministic attempt 
   const warning = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
   const attempts: string[] = [];
   try {
-    const result = retrySystemGeneration('retry-seed', 'system:01', (attemptSeed) => {
-      attempts.push(attemptSeed);
+    const result = retrySystemGeneration({ seed: 'retry-seed' }, 'system:01', (attemptSettings) => {
+      attempts.push(attemptSettings.seed);
       if (attempts.length < 3) throw new Error('incompatible random tag pair');
       return 'generated';
     });
@@ -176,7 +176,7 @@ test('system generation throws after its retry limit', () => {
   const warning = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
   try {
     expect(() =>
-      retrySystemGeneration('failed-seed', 'system:01', () => {
+      retrySystemGeneration({ seed: 'failed-seed' }, 'system:01', () => {
         throw new Error('no valid planet');
       }),
     ).toThrow(`after ${MAX_SYSTEM_GENERATION_RETRIES + 1} attempts: no valid planet`);

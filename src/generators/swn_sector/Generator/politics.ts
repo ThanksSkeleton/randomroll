@@ -8,6 +8,7 @@ import type {
   StarSystem,
 } from '../BaseDTO/merged_schema';
 import { choose, deterministicId, randomFor } from './generation_random';
+import type { GenerationSettings } from './generation_settings';
 
 import { POLITY_FLAG_COLORS } from '../Shared/polity_flag_colors';
 import { capabilityFor, type Capability } from '../Shared/politics_interpretation';
@@ -37,15 +38,15 @@ function hslToHex(hue: number, saturation = 0.72, lightness = 0.46): string {
   return `#${componentToHex(channel(0))}${componentToHex(channel(8))}${componentToHex(channel(4))}`;
 }
 
-function uniqueFieldColors(seed: string, count: number): string[] {
+function uniqueFieldColors(generationSettings: GenerationSettings, count: number): string[] {
   if (count === 0) return [];
-  const offset = randomFor(seed, 'polity-flag-field-colors')() * 360;
+  const offset = randomFor(generationSettings, 'polity-flag-field-colors')() * 360;
   return Array.from({ length: count }, (_, index) => hslToHex(offset + (index * 360) / count));
 }
 
 /** Resolves one simultaneous, non-recursive initial politics pass. */
 export function resolvePolitics(
-  seed: string,
+  generationSettings: GenerationSettings,
   systems: readonly StarSystem[],
   routes: readonly Route[],
   routePortals: readonly RoutePortal[],
@@ -54,8 +55,8 @@ export function resolvePolitics(
   for (const system of systems)
     for (const object of system.Objects) {
       if (object.Kind !== 'Planet' || object.InhabitedInfo === false) continue;
-      const polityId = deterministicId(seed, `polity:${object.Id}`);
-      const flagRandom = randomFor(seed, `polity-flag:${polityId}`);
+      const polityId = deterministicId(generationSettings, `polity:${object.Id}`);
+      const flagRandom = randomFor(generationSettings, `polity-flag:${polityId}`);
       const CircleColor = choose(flagRandom, POLITY_FLAG_COLORS, 'polity flag circle colors');
       homeworlds.push({
         world: object,
@@ -70,7 +71,7 @@ export function resolvePolitics(
       });
     }
   homeworlds.sort((left, right) => left.polity.Id.localeCompare(right.polity.Id));
-  const fieldColors = uniqueFieldColors(seed, homeworlds.length);
+  const fieldColors = uniqueFieldColors(generationSettings, homeworlds.length);
   homeworlds.forEach(({ polity }, index) => {
     polity.Flag.FieldColor = fieldColors[index]!;
   });
@@ -131,7 +132,7 @@ export function resolvePolitics(
       const distance = distancesByPolityId.get(attacker.Id)?.get(defender.system.Id);
       if (distance === undefined) continue;
       ConquestEvents.push({
-        Id: deterministicId(seed, `conquest:${attacker.Id}:${defender.world.Id}`),
+        Id: deterministicId(generationSettings, `conquest:${attacker.Id}:${defender.world.Id}`),
         AttackerPolityId: attacker.Id,
         DefenderPolityId: defender.polity.Id,
         TargetWorldId: defender.world.Id,
