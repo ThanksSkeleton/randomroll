@@ -8,6 +8,7 @@ import {
   shuffled,
 } from './generation_random';
 import type { GenerationSettings } from './generation_settings';
+import { DEFAULT_GENERATION_SETTINGS } from './generation_settings';
 import { STAR_TABLE } from './generation_rules';
 import { generateRoutes } from './generate_routes';
 import { generateCompleteSystem } from './generate_system';
@@ -20,15 +21,49 @@ export function generate(
   startingWorldMode: StartingWorldMode = 'UNRESTRICTED',
 ): Sector {
   const { seed } = generationSettings;
-  const count = rollDie(randomFor(generationSettings, 'sector:system-count'), 10) + 20;
+  const settings = { ...DEFAULT_GENERATION_SETTINGS, ...generationSettings };
+  const {
+    sectorWidth,
+    sectorHeight,
+    inhabSystemsMin,
+    inhabSystemsMax,
+    uninhabSystemsMin,
+    uninhabSystemsMax,
+  } = settings;
+  if (
+    !Number.isInteger(sectorWidth) ||
+    !Number.isInteger(sectorHeight) ||
+    sectorWidth < 1 ||
+    sectorHeight < 1 ||
+    !Number.isInteger(inhabSystemsMin) ||
+    !Number.isInteger(inhabSystemsMax) ||
+    !Number.isInteger(uninhabSystemsMin) ||
+    !Number.isInteger(uninhabSystemsMax) ||
+    inhabSystemsMin < 1 ||
+    inhabSystemsMax < inhabSystemsMin ||
+    uninhabSystemsMin < 0 ||
+    uninhabSystemsMax < uninhabSystemsMin ||
+    inhabSystemsMax + uninhabSystemsMax > sectorWidth * sectorHeight
+  )
+    throw new Error('Generation settings need a valid sector size and system-count range.');
+  const rollCount = (minimum: number, maximum: number, path: string) =>
+    maximum === 0
+      ? 0
+      : minimum + rollDie(randomFor(generationSettings, path), maximum - minimum + 1) - 1;
+  const inhabCount = rollCount(inhabSystemsMin, inhabSystemsMax, 'sector:system-count');
+  const uninhabCount = rollCount(
+    uninhabSystemsMin,
+    uninhabSystemsMax,
+    'sector:uninhab-system-count',
+  );
   const cells = shuffled(
     randomFor(generationSettings, 'sector:grid'),
-    Array.from({ length: 77 }, (_, index) => ({
-      Column: (index % 11) + 1,
-      Row: Math.floor(index / 11) + 1,
+    Array.from({ length: sectorWidth * sectorHeight }, (_, index) => ({
+      Column: (index % sectorWidth) + 1,
+      Row: Math.floor(index / sectorWidth) + 1,
     })),
   );
-  const Systems = cells.slice(0, count).map((hexLocation, index) => {
+  const makeSystem = (hexLocation: (typeof cells)[number], index: number, inhabited: boolean) => {
     const path = `system:${String(index + 1).padStart(2, '0')}`;
     const star = chooseWeighted(
       randomFor(generationSettings, `${path}:star`),
@@ -41,8 +76,16 @@ export function generate(
       hexLocation,
       starType: star.Value as StarType,
       starHabitability: STAR_HABITABILITY[star.Value],
+      inhabited,
     });
-  });
+  };
+  const inhabitedSystems = cells
+    .slice(0, inhabCount)
+    .map((hexLocation, index) => makeSystem(hexLocation, index, true));
+  const uninhabitedSystems = cells
+    .slice(inhabCount, inhabCount + uninhabCount)
+    .map((hexLocation, index) => makeSystem(hexLocation, inhabCount + index, false));
+  const Systems = [...inhabitedSystems, ...uninhabitedSystems];
   const { Routes, RoutePortals } = generateRoutes(generationSettings, Systems);
   const politics = resolvePolitics(generationSettings, Systems, Routes, RoutePortals);
   for (const system of Systems)

@@ -100,6 +100,40 @@ select:focus-visible {
   padding: 0 22px;
   border-left: 1px solid var(--line);
 }
+.generation-topbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  font: 10px 'IBM Plex Mono';
+  color: var(--muted);
+}
+.seed-display {
+  max-width: 170px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.preset-select-label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+}
+.preset-select-label select,
+.reroll-button {
+  background: #0c1418;
+  border: 1px solid #2b3b42;
+  color: #a8b9bd;
+  padding: 7px 8px;
+  font: 10px 'IBM Plex Mono';
+}
+.reroll-button { cursor: pointer; color: var(--green); }
+.segmented button:disabled {
+  color: #46565b;
+  cursor: not-allowed;
+  opacity: .65;
+}
 .role {
   font: 11px 'IBM Plex Mono';
   letter-spacing: 0.08em;
@@ -1651,6 +1685,17 @@ button.detail-tab {
   line-height: 1.6;
   max-width: 530px;
 }
+.generation-settings {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  border: 1px solid var(--line);
+  padding: 14px;
+  margin: 18px 0;
+}
+.generation-settings legend { padding: 0 7px; color: var(--blue); font: 10px 'IBM Plex Mono'; letter-spacing: .08em; }
+.generation-settings label { display: grid; gap: 6px; color: var(--muted); font: 10px 'IBM Plex Mono'; }
+.generation-settings input { width: 100%; background: #0c1418; border: 1px solid #2b3b42; color: #dce9e8; padding: 9px; }
 .generator label,
 .saved label {
   display: block;

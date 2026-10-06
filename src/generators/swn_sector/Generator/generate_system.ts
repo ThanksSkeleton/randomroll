@@ -147,6 +147,7 @@ export type GenerateSystemOptions = {
   hexLocation: HexLocation;
   starType: StarType;
   starHabitability: number;
+  inhabited?: boolean;
 };
 
 const EXTRA_TEMPLATES: readonly ExtraPlanetTemplate[] = [
@@ -272,7 +273,10 @@ function generateSystemOnce(options: GenerateSystemOptions): StarSystem {
   const name = `System ${options.entityPath}`;
   const objects: SystemObject[] = [];
   const pendingMoons: Array<{ worldPath: string; parentId: string }> = [];
-  const count = inhabitedCount(options.generationSettings, options.entityPath);
+  const count =
+    options.inhabited === false
+      ? 0
+      : inhabitedCount(options.generationSettings, options.entityPath);
   for (let index = 0; index < count; index += 1) {
     const worldPath = `${options.entityPath}:inhabited:${String(index + 1).padStart(2, '0')}`;
     const isMoon = chooseWeighted(

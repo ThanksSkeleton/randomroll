@@ -1,4 +1,5 @@
 import type { Preview, View } from '../../application/appState';
+import type { GenerationPresetId } from '../../../Generator/generation_settings';
 import { IconButton } from './IconButton';
 
 export function AppChrome({
@@ -6,11 +7,19 @@ export function AppChrome({
   preview,
   setPreview,
   go,
+  seed,
+  onReroll,
+  preset,
+  onPresetChange,
 }: {
   view: View;
   preview: Preview;
   setPreview: (p: Preview) => void;
   go: (v: View) => void;
+  seed: string;
+  onReroll: () => void;
+  preset: GenerationPresetId;
+  onPresetChange: (preset: GenerationPresetId) => void;
 }) {
   return (
     <header className="chrome">
@@ -42,16 +51,37 @@ export function AppChrome({
         )}
       </nav>
       <div className="role-controls">
+        <div className="generation-topbar">
+          <span className="seed-display" aria-label={`Seed: ${seed}`}>
+            SEED: {seed}
+          </span>
+          <label className="preset-select-label">
+            PRESET
+            <select
+              aria-label="Generation settings preset"
+              value={preset}
+              onChange={(event) => onPresetChange(event.target.value as GenerationPresetId)}
+            >
+              <option value="default">Default</option>
+              <option value="plus-uninhab">PlusUninhab</option>
+            </select>
+          </label>
+          <button className="reroll-button" onClick={onReroll}>
+            REROLL ↻
+          </button>
+        </div>
         <div className="segmented" aria-label="Preview mode">
           <button
             className={`preview-option preview-option-gm ${preview === 'gm' ? 'button-active' : 'button-allowed'}`}
             onClick={() => setPreview('gm')}
+            disabled
           >
             GM VIEW
           </button>
           <button
             className={`preview-option preview-option-player ${preview === 'player' ? 'button-active' : 'button-allowed'}`}
             onClick={() => setPreview('player')}
+            disabled
           >
             PLAYER VIEW
           </button>

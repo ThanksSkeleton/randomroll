@@ -12,6 +12,7 @@ import { SystemViewer } from './features/system-viewer/SystemViewer';
 import { SymbolicSystem as FeatureSymbolicSystem } from './features/system-viewer/SymbolicSystem';
 import { TopDown as FeatureTopDown } from './features/system-viewer/TopDown';
 import type { DisplaySectorDTO } from '../DisplayDTO/dto';
+import { GENERATION_PRESETS, type GenerationPresetId } from '../Generator/generation_settings';
 import { isVisibleToPlayerDisplay } from './visibility_presentation';
 import {
   createPrototypeApplication,
@@ -40,6 +41,7 @@ export default function App() {
   const [application] = useState(createPrototypeApplication);
   const [showTemperatureOverlay, setShowTemperatureOverlay] = useState(false);
   const [showPolityOverlay, setShowPolityOverlay] = useState(false);
+  const [generationPreset, setGenerationPreset] = useState<GenerationPresetId>('default');
   const [state, dispatch] = useReducer(appReducer, undefined, () =>
     createAppState(readDisplays(application, 'gm')),
   );
@@ -181,7 +183,30 @@ export default function App() {
   };
   return (
     <div className={`app ${preview === 'player' ? 'player-mode' : ''}`}>
-      <AppChrome view={view} preview={preview} setPreview={setPreviewMode} go={go} />
+      <AppChrome
+        view={view}
+        preview={preview}
+        setPreview={setPreviewMode}
+        go={go}
+        seed={application.readArchiveSectors()[activeIndex]?.originalSeed ?? '—'}
+        preset={generationPreset}
+        onPresetChange={setGenerationPreset}
+        onReroll={() => {
+          const seed = globalThis.crypto?.randomUUID?.() ?? `${Date.now()}`;
+          const result = application.generateSector(
+            { seed, ...GENERATION_PRESETS[generationPreset] },
+            'UNRESTRICTED',
+            commandOptions,
+          );
+          if (result.ok)
+            dispatch({
+              type: 'replaceSectors',
+              sectors: [...sectors, result.display],
+              archiveIndex: sectors.length,
+              activeIndex: sectors.length,
+            });
+        }}
+      />
       {view === 'culture' && preview === 'gm' && isGmSession ? (
         display ? (
           <CultureScreen
@@ -204,8 +229,8 @@ export default function App() {
               if (application.readSector(archiveIndex, commandOptions).ok)
                 dispatch({ type: 'loadSector', index: archiveIndex });
             }}
-            generate={(seed, mode) => {
-              const result = application.generateSector({ seed }, mode, commandOptions);
+            generate={(settings, mode) => {
+              const result = application.generateSector(settings, mode, commandOptions);
               if (result.ok)
                 dispatch({
                   type: 'replaceSectors',
@@ -240,6 +265,7 @@ export default function App() {
                 });
               }
             }}
+            preset={generationPreset}
           />
         </main>
       ) : (
