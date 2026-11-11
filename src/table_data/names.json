@@ -17394,12 +17394,6 @@
     "Source": "SWN"
   },
   {
-    "Name": "Christodoulos",
-    "Type": "Male",
-    "Group": "Greek",
-    "Source": "SWN"
-  },
-  {
     "Name": "Charis",
     "Type": "Female",
     "Group": "Greek",
@@ -17534,12 +17528,6 @@
   {
     "Name": "Metaxas",
     "Type": "Surname",
-    "Group": "Greek",
-    "Source": "SWN"
-  },
-  {
-    "Name": "Konstantinos",
-    "Type": "Male",
     "Group": "Greek",
     "Source": "SWN"
   },
@@ -99402,12 +99390,6 @@
     "Source": "GygaxFantasyNames"
   },
   {
-    "Name": "Phramberzond",
-    "Type": "Surname",
-    "Group": "Fantasy",
-    "Source": "GygaxFantasyNames"
-  },
-  {
     "Name": "Phranzulet",
     "Type": "Surname",
     "Group": "Fantasy",
@@ -101323,12 +101305,6 @@
   },
   {
     "Name": "Slenlior",
-    "Type": "Surname",
-    "Group": "Fantasy",
-    "Source": "GygaxFantasyNames"
-  },
-  {
-    "Name": "Slevindralsk",
     "Type": "Surname",
     "Group": "Fantasy",
     "Source": "GygaxFantasyNames"
