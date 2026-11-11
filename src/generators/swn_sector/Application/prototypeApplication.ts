@@ -184,6 +184,6 @@ export class PrototypeApplication {
   }
 }
 
-export function createPrototypeApplication(): PrototypeApplication {
-  return new PrototypeApplication();
+export function createPrototypeApplication(seed: string): PrototypeApplication {
+  return new PrototypeApplication(createInitialSectors(seed));
 }

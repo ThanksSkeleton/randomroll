@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useReducer, useState } from 'react';
+import { ensureSeedInUrl, randomSeed, setSeedInUrl } from '../../../framework';
 import { appReducer, createAppState } from './application/appState';
 import type { EditDraft, Preview, View } from './application/appState';
 import { AppChrome, StageNav } from './features/navigation/AppChrome';
@@ -36,7 +37,7 @@ function objectKind(display: DisplaySectorDTO | null, id: string | null): string
 }
 
 export default function App() {
-  const [application] = useState(createPrototypeApplication);
+  const [application] = useState(() => createPrototypeApplication(ensureSeedInUrl()));
   const [showTemperatureOverlay, setShowTemperatureOverlay] = useState(false);
   const [showPolityOverlay, setShowPolityOverlay] = useState(false);
   const [state, dispatch] = useReducer(appReducer, undefined, () =>
@@ -63,6 +64,17 @@ export default function App() {
   }, [preview, selected, display]);
   const setSelected = (id: string | null) => dispatch({ type: 'selectObject', id });
   const commandOptions = { preview, assetBaseUrl: import.meta.env.BASE_URL };
+  useEffect(() => {
+    const restoreSeed = () => {
+      const result = application.generateSector(
+        { seed: ensureSeedInUrl() },
+        { preview, assetBaseUrl: import.meta.env.BASE_URL },
+      );
+      if (result.ok) dispatch({ type: 'replaceSector', display: result.display });
+    };
+    window.addEventListener('popstate', restoreSeed);
+    return () => window.removeEventListener('popstate', restoreSeed);
+  }, [application, preview]);
   const applyCommand = (result: SectorCommandResult) => {
     if (!result.ok) return;
     dispatch({ type: 'updateSector', display: result.display });
@@ -186,9 +198,12 @@ export default function App() {
         go={go}
         seed={application.readSeed(activeIndex) ?? '—'}
         onReroll={() => {
-          const seed = globalThis.crypto?.randomUUID?.() ?? `${Date.now()}`;
+          const seed = randomSeed();
           const result = application.generateSector({ seed }, commandOptions);
-          if (result.ok) dispatch({ type: 'replaceSector', display: result.display });
+          if (result.ok) {
+            setSeedInUrl(seed);
+            dispatch({ type: 'replaceSector', display: result.display });
+          }
         }}
       />
       {view === 'culture' && preview === 'gm' && isGmSession ? (

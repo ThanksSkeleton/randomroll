@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
-import { afterEach, beforeAll, describe, expect, it } from 'vitest';
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import App from './App';
 
 function renderApp() {
@@ -9,6 +9,7 @@ function renderApp() {
 }
 
 afterEach(() => cleanup());
+beforeEach(() => window.history.replaceState({}, '', '/swn_sector/?seed=sector-one-seed'));
 
 beforeAll(() => {
   class TestResizeObserver {
@@ -23,6 +24,29 @@ function firstSystemButton() {
 }
 
 describe('prototype application workflows', () => {
+  it('uses the shared URL seed for loading, rerolling, and browser history', () => {
+    window.history.replaceState({}, '', '/swn_sector/?seed=shared-seed');
+    renderApp();
+    expect(screen.getByLabelText('Seed: shared-seed')).toBeTruthy();
+
+    fireEvent.click(screen.getByRole('button', { name: 'REROLL ↻' }));
+    const rerolledSeed = new URL(window.location.href).searchParams.get('seed');
+    expect(rerolledSeed).toMatch(/^[a-z0-9]{5}$/);
+    expect(screen.getByLabelText(`Seed: ${rerolledSeed}`)).toBeTruthy();
+
+    window.history.replaceState({}, '', '/swn_sector/?seed=shared-seed');
+    fireEvent.popState(window);
+    expect(screen.getByLabelText('Seed: shared-seed')).toBeTruthy();
+  });
+
+  it('adds a shared-format seed when the URL has none', () => {
+    window.history.replaceState({}, '', '/swn_sector/');
+    renderApp();
+    const seed = new URL(window.location.href).searchParams.get('seed');
+    expect(seed).toMatch(/^[a-z0-9]{5}$/);
+    expect(screen.getByLabelText(`Seed: ${seed}`)).toBeTruthy();
+  });
+
   it('starts in the GM sector map with all systems and no target', () => {
     renderApp();
 
@@ -162,5 +186,4 @@ describe('prototype application workflows', () => {
     expect(screen.queryByDisplayValue('UNSAVED NAVIGATION EDIT')).toBeNull();
     expect(screen.getByRole('button', { name: '▣ LOCKED' })).toBeTruthy();
   });
-
 });
