@@ -4,6 +4,7 @@ import type {
   PointOfInterestType,
   StarType,
 } from '../BaseDTO/merged_schema';
+import { Filter } from 'bad-words';
 import type {
   GeneratedOtherCelestialObject as OtherCelestialObject,
   GeneratedPlanet as Planet,
@@ -173,10 +174,16 @@ const ONE_INHABITED_WORLD_MAX_ROLL = 85;
 export const MAX_SYSTEM_GENERATION_RETRIES = 5;
 
 const SYSTEM_NAME_ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+const SYSTEM_NAME_FILTER = new Filter();
 
 function randomSystemName(generationSettings: GenerationSettings, entityPath: string): string {
   const random = randomFor(generationSettings, `${entityPath}:system-name`);
-  return Array.from({ length: 5 }, () => SYSTEM_NAME_ALPHABET[Math.floor(random() * 26)]).join('');
+  let word: string;
+  do {
+    word = Array.from({ length: 3 }, () => SYSTEM_NAME_ALPHABET[Math.floor(random() * 26)]).join('');
+  } while (SYSTEM_NAME_FILTER.isProfane(word));
+  const digits = Array.from({ length: 2 }, () => Math.floor(random() * 10)).join('');
+  return `${word} ${digits}`;
 }
 
 function hexCoordinatePart(value: number): string {

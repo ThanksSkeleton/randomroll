@@ -3,7 +3,7 @@ import { generate } from './generate';
 import { POI_DETAIL_COLUMNS_BY_TYPE } from './generation_rules';
 
 describe('generated names', () => {
-  it('uses five-letter system names, hex coordinates, and ordered object suffixes', () => {
+  it('uses formatted system names, hex coordinates, and ordered object suffixes', () => {
     const sector = generate({ seed: 'GENERATED-NAMES' });
 
     for (const system of sector.Systems) {
@@ -13,7 +13,7 @@ describe('generated names', () => {
       );
       if (namingWorld?.Kind === 'Planet' && namingWorld.Culture)
         expect(system.NiceName).toBe(namingWorld.Culture.homeworld);
-      else expect(system.NiceName).toMatch(/^[A-Z]{5}$/);
+      else expect(system.NiceName).toMatch(/^[A-Z]{3} \d{2}$/);
       expect(system.ProceduralName).toBe(coordinate);
       expect(system.Star.NiceName).toBe(`${system.NiceName} star`);
       expect(system.Star.ProceduralName).toBe(`${system.ProceduralName} star`);
