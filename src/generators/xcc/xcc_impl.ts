@@ -93,7 +93,21 @@ const XCC_GOD_ALIGNMENTS = {
   Trivia: 'Neutral',
   Vulcan: 'Lawful',
 } as const;
-const NAME_GROUP = 'US';
+const XCC_NAME_GROUPS: Record<
+  string,
+  { firstNames: readonly string[]; surnames: readonly string[] }
+> = {
+  Dwarf: { firstNames: ['Dwarf'], surnames: ['HighFantasy'] },
+  Elf: { firstNames: ['Elf'], surnames: ['Fantasy'] },
+  Gnome: { firstNames: ['Gnome'], surnames: ['Fantasy'] },
+  'Half-Elf': { firstNames: ['Elf', 'US'], surnames: ['Fantasy', 'US'] },
+  'Half-Orc': {
+    firstNames: ['Orc', 'US'],
+    surnames: ['Orc', 'US', 'HighFantasy', 'Fantasy'],
+  },
+  Halfling: { firstNames: ['Halfling', 'US'], surnames: ['Halfling', 'US'] },
+  Human: { firstNames: ['US'], surnames: ['US'] },
+};
 const BASE_ARMOR_CLASS = 10;
 const DEFAULT_MOJO = 0;
 const DEFAULT_FAME = 0;
@@ -167,8 +181,14 @@ export function default_build(seed: string): ExportFormat<XccCharacter> {
 
 export function buildXccCharacter(rng: seedrandom.PRNG): XccCharacter {
   const gender = random_multi(rng, [...GENDERS]);
-  const [firstName, lastName] = full_name(rng, gender, NAME_GROUP);
   const occupation = random_multi(rng, occupations);
+  const nameGroups = requireMapping(XCC_NAME_GROUPS, occupation.Race, 'XCC name groups');
+  const [firstName, lastName] = full_name(
+    rng,
+    gender,
+    nameGroups.firstNames,
+    nameGroups.surnames,
+  );
   const race = requireMapping(raceNotes, occupation.Race, 'race notes');
   const pack =
     occupation.AdventurePack === ''

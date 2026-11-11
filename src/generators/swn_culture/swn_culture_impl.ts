@@ -1,8 +1,9 @@
 import seedrandom from 'seedrandom';
 import { buildExportFormat, type ExportFormat } from '../../framework';
 import { full_name } from '../../names_framework';
+import type { NamesRow } from '../../table_data/names';
+import rawNames from '../../table_data/names.json';
 import rawCultureData from '../../../swn_culture/swn_culture_data.json';
-import rawPlaceNamesCsv from '../../../temp/swn_place_names.csv?raw';
 import {
   WORLD_TAG_DEFINITIONS,
   WORLD_TAG_TABLE,
@@ -60,30 +61,32 @@ import type {
 } from '../swn_sector/BaseDTO/culture';
 
 const cultureData = rawCultureData as CultureData;
+const names = rawNames as NamesRow[];
 const availableWorldTagSet = new Set<WorldTag>(WORLD_TAG_TABLE.map((row) => row.Value));
 const worldTagDefinitionByName = new Map(
   WORLD_TAG_DEFINITIONS.map((definition) => [definition.tag, definition]),
 );
 
-export const SWN_PLACE_NAMES = parsePlaceNames(rawPlaceNamesCsv);
-export const SWN_CULTURAL_TEMPLATES = [...SWN_PLACE_NAMES.keys()];
+export const SWN_PLACE_NAMES = getPlaceNames(names);
+export const SWN_CULTURAL_TEMPLATES = [...SWN_PLACE_NAMES.keys()].filter((culture) => {
+  const types = new Set(names.filter((row) => row.Group === culture).map((row) => row.Type));
+  return (
+    types.has('Surname') &&
+    (types.has('Male') || types.has('Unisex')) &&
+    (types.has('Female') || types.has('Unisex'))
+  );
+});
 
-function parsePlaceNames(csv: string): Map<string, readonly string[]> {
-  const lines = csv.trim().split(/\r?\n/);
-  if (lines.shift() !== 'NAME,CULTURE') throw new Error('Unexpected SWN place-name header');
-  const names = new Map<string, string[]>();
-  for (const [index, line] of lines.entries()) {
-    const separator = line.lastIndexOf(',');
-    if (separator < 0) throw new Error(`Malformed SWN place-name row ${index + 2}`);
-    const name = line.slice(0, separator).trim();
-    const culture = line.slice(separator + 1).trim();
-    if (!name || !culture) throw new Error(`Incomplete SWN place-name row ${index + 2}`);
-    const group = names.get(culture) ?? [];
-    group.push(name);
-    names.set(culture, group);
+function getPlaceNames(rows: readonly NamesRow[]): Map<string, readonly string[]> {
+  const placeNames = new Map<string, string[]>();
+  for (const row of rows) {
+    if (row.Type !== 'Location') continue;
+    const group = placeNames.get(row.Group) ?? [];
+    group.push(row.Name);
+    placeNames.set(row.Group, group);
   }
-  if (names.size === 0) throw new Error('SWN place-name table is empty');
-  return names;
+  if (placeNames.size === 0) throw new Error('SWN place-name table is empty');
+  return placeNames;
 }
 
 function choose<T>(rng: seedrandom.PRNG, values: readonly T[], tableName: string): T {
