@@ -96,12 +96,6 @@
     "Source": "Github"
   },
   {
-    "Name": "Ibuki",
-    "Type": "Female",
-    "Group": "Japanese",
-    "Source": "Github"
-  },
-  {
     "Name": "Urara",
     "Type": "Female",
     "Group": "Japanese",
@@ -247,12 +241,6 @@
   },
   {
     "Name": "Kazuyo",
-    "Type": "Female",
-    "Group": "Japanese",
-    "Source": "Github"
-  },
-  {
-    "Name": "Kazuki",
     "Type": "Female",
     "Group": "Japanese",
     "Source": "Github"
@@ -660,12 +648,6 @@
     "Source": "Github"
   },
   {
-    "Name": "Chiaki",
-    "Type": "Female",
-    "Group": "Japanese",
-    "Source": "Github"
-  },
-  {
     "Name": "Chie",
     "Type": "Female",
     "Group": "Japanese",
@@ -721,12 +703,6 @@
   },
   {
     "Name": "Chihiro",
-    "Type": "Female",
-    "Group": "Japanese",
-    "Source": "Github"
-  },
-  {
-    "Name": "Tsukasa",
     "Type": "Female",
     "Group": "Japanese",
     "Source": "Github"
@@ -930,12 +906,6 @@
     "Source": "Github"
   },
   {
-    "Name": "Hikari",
-    "Type": "Female",
-    "Group": "Japanese",
-    "Source": "Github"
-  },
-  {
     "Name": "Hisae",
     "Type": "Female",
     "Group": "Japanese",
@@ -967,12 +937,6 @@
   },
   {
     "Name": "Hinatsu",
-    "Type": "Female",
-    "Group": "Japanese",
-    "Source": "Github"
-  },
-  {
-    "Name": "Hibiki",
     "Type": "Female",
     "Group": "Japanese",
     "Source": "Github"
@@ -1117,12 +1081,6 @@
   },
   {
     "Name": "Madoka",
-    "Type": "Female",
-    "Group": "Japanese",
-    "Source": "Github"
-  },
-  {
-    "Name": "Mahiro",
     "Type": "Female",
     "Group": "Japanese",
     "Source": "Github"
@@ -1279,12 +1237,6 @@
   },
   {
     "Name": "Yuka",
-    "Type": "Female",
-    "Group": "Japanese",
-    "Source": "Github"
-  },
-  {
-    "Name": "Yuki",
     "Type": "Female",
     "Group": "Japanese",
     "Source": "Github"
@@ -1710,12 +1662,6 @@
     "Source": "Github"
   },
   {
-    "Name": "Ibuki",
-    "Type": "Male",
-    "Group": "Japanese",
-    "Source": "Github"
-  },
-  {
     "Name": "Eichi",
     "Type": "Male",
     "Group": "Japanese",
@@ -1795,12 +1741,6 @@
   },
   {
     "Name": "Kazuo",
-    "Type": "Male",
-    "Group": "Japanese",
-    "Source": "Github"
-  },
-  {
-    "Name": "Kazuki",
     "Type": "Male",
     "Group": "Japanese",
     "Source": "Github"
@@ -3576,19 +3516,7 @@
     "Source": "Github"
   },
   {
-    "Name": "Chiaki",
-    "Type": "Male",
-    "Group": "Japanese",
-    "Source": "Github"
-  },
-  {
     "Name": "Chikara",
-    "Type": "Male",
-    "Group": "Japanese",
-    "Source": "Github"
-  },
-  {
-    "Name": "Tsukasa",
     "Type": "Male",
     "Group": "Japanese",
     "Source": "Github"
@@ -4302,12 +4230,6 @@
     "Source": "Github"
   },
   {
-    "Name": "Hikari",
-    "Type": "Male",
-    "Group": "Japanese",
-    "Source": "Github"
-  },
-  {
     "Name": "Hikaru",
     "Type": "Male",
     "Group": "Japanese",
@@ -4441,12 +4363,6 @@
   },
   {
     "Name": "Hinata",
-    "Type": "Male",
-    "Group": "Japanese",
-    "Source": "Github"
-  },
-  {
-    "Name": "Hibiki",
     "Type": "Male",
     "Group": "Japanese",
     "Source": "Github"
@@ -4777,12 +4693,6 @@
   },
   {
     "Name": "Manabu",
-    "Type": "Male",
-    "Group": "Japanese",
-    "Source": "Github"
-  },
-  {
-    "Name": "Mahiro",
     "Type": "Male",
     "Group": "Japanese",
     "Source": "Github"
@@ -5173,12 +5083,6 @@
   },
   {
     "Name": "Yuichi",
-    "Type": "Male",
-    "Group": "Japanese",
-    "Source": "Github"
-  },
-  {
-    "Name": "Yuki",
     "Type": "Male",
     "Group": "Japanese",
     "Source": "Github"
@@ -16752,12 +16656,6 @@
     "Source": "SWN"
   },
   {
-    "Name": "Niu",
-    "Type": "Female",
-    "Group": "Chinese",
-    "Source": "SWN"
-  },
-  {
     "Name": "Huang",
     "Type": "Surname",
     "Group": "Chinese",
@@ -16778,12 +16676,6 @@
   {
     "Name": "Lei",
     "Type": "Surname",
-    "Group": "Chinese",
-    "Source": "SWN"
-  },
-  {
-    "Name": "Niu",
-    "Type": "Male",
     "Group": "Chinese",
     "Source": "SWN"
   },
@@ -18762,12 +18654,6 @@
     "Source": "SWN"
   },
   {
-    "Name": "Tsukasa",
-    "Type": "Male",
-    "Group": "Japanese",
-    "Source": "SWN"
-  },
-  {
     "Name": "Yorimi",
     "Type": "Female",
     "Group": "Japanese",
@@ -20598,12 +20484,6 @@
     "Source": "SWN"
   },
   {
-    "Name": "Michael",
-    "Type": "Male",
-    "Group": "US",
-    "Source": "Census"
-  },
-  {
     "Name": "Lisa",
     "Type": "Female",
     "Group": "US",
@@ -20868,12 +20748,6 @@
     "Source": "Census"
   },
   {
-    "Name": "Kelly",
-    "Type": "Female",
-    "Group": "US",
-    "Source": "Census"
-  },
-  {
     "Name": "Ronald",
     "Type": "Male",
     "Group": "US",
@@ -20936,12 +20810,6 @@
   {
     "Name": "Todd",
     "Type": "Male",
-    "Group": "US",
-    "Source": "Census"
-  },
-  {
-    "Name": "Tracy",
-    "Type": "Female",
     "Group": "US",
     "Source": "Census"
   },
@@ -21090,12 +20958,6 @@
     "Source": "Census"
   },
   {
-    "Name": "Terry",
-    "Type": "Male",
-    "Group": "US",
-    "Source": "Census"
-  },
-  {
     "Name": "Maria",
     "Type": "Female",
     "Group": "US",
@@ -21128,12 +20990,6 @@
   {
     "Name": "Frank",
     "Type": "Male",
-    "Group": "US",
-    "Source": "Census"
-  },
-  {
-    "Name": "Robin",
-    "Type": "Female",
     "Group": "US",
     "Source": "Census"
   },
@@ -21180,12 +21036,6 @@
     "Source": "Census"
   },
   {
-    "Name": "Kim",
-    "Type": "Female",
-    "Group": "US",
-    "Source": "Census"
-  },
-  {
     "Name": "Tony",
     "Type": "Male",
     "Group": "US",
@@ -21194,12 +21044,6 @@
   {
     "Name": "Jill",
     "Type": "Female",
-    "Group": "US",
-    "Source": "Census"
-  },
-  {
-    "Name": "Shawn",
-    "Type": "Male",
     "Group": "US",
     "Source": "Census"
   },
@@ -21306,12 +21150,6 @@
     "Source": "Census"
   },
   {
-    "Name": "Chris",
-    "Type": "Male",
-    "Group": "US",
-    "Source": "Census"
-  },
-  {
     "Name": "Carolyn",
     "Type": "Female",
     "Group": "US",
@@ -21384,12 +21222,6 @@
     "Source": "Census"
   },
   {
-    "Name": "Leslie",
-    "Type": "Female",
-    "Group": "US",
-    "Source": "Census"
-  },
-  {
     "Name": "Lawrence",
     "Type": "Male",
     "Group": "US",
@@ -21420,12 +21252,6 @@
     "Source": "Census"
   },
   {
-    "Name": "Stacey",
-    "Type": "Female",
-    "Group": "US",
-    "Source": "Census"
-  },
-  {
     "Name": "Johnny",
     "Type": "Male",
     "Group": "US",
@@ -21440,12 +21266,6 @@
   {
     "Name": "Jon",
     "Type": "Male",
-    "Group": "US",
-    "Source": "Census"
-  },
-  {
-    "Name": "Dana",
-    "Type": "Female",
     "Group": "US",
     "Source": "Census"
   },
@@ -21476,12 +21296,6 @@
   {
     "Name": "Jimmy",
     "Type": "Male",
-    "Group": "US",
-    "Source": "Census"
-  },
-  {
-    "Name": "Stacy",
-    "Type": "Female",
     "Group": "US",
     "Source": "Census"
   },
@@ -21528,12 +21342,6 @@
     "Source": "Census"
   },
   {
-    "Name": "Tracey",
-    "Type": "Female",
-    "Group": "US",
-    "Source": "Census"
-  },
-  {
     "Name": "Steve",
     "Type": "Male",
     "Group": "US",
@@ -21560,12 +21368,6 @@
   {
     "Name": "Walter",
     "Type": "Male",
-    "Group": "US",
-    "Source": "Census"
-  },
-  {
-    "Name": "Lynn",
-    "Type": "Female",
     "Group": "US",
     "Source": "Census"
   },
@@ -21774,12 +21576,6 @@
     "Source": "Census"
   },
   {
-    "Name": "Tracy",
-    "Type": "Male",
-    "Group": "US",
-    "Source": "Census"
-  },
-  {
     "Name": "Janice",
     "Type": "Female",
     "Group": "US",
@@ -21804,26 +21600,8 @@
     "Source": "Census"
   },
   {
-    "Name": "Shannon",
-    "Type": "Female",
-    "Group": "US",
-    "Source": "Census"
-  },
-  {
-    "Name": "Kelly",
-    "Type": "Male",
-    "Group": "US",
-    "Source": "Census"
-  },
-  {
     "Name": "Bonnie",
     "Type": "Female",
-    "Group": "US",
-    "Source": "Census"
-  },
-  {
-    "Name": "Lee",
-    "Type": "Male",
     "Group": "US",
     "Source": "Census"
   },
@@ -22272,12 +22050,6 @@
     "Source": "Census"
   },
   {
-    "Name": "Jamie",
-    "Type": "Female",
-    "Group": "US",
-    "Source": "Census"
-  },
-  {
     "Name": "Darrin",
     "Type": "Male",
     "Group": "US",
@@ -22526,12 +22298,6 @@
   {
     "Name": "Natalie",
     "Type": "Female",
-    "Group": "US",
-    "Source": "Census"
-  },
-  {
-    "Name": "Stacy",
-    "Type": "Male",
     "Group": "US",
     "Source": "Census"
   },
@@ -22824,12 +22590,6 @@
     "Source": "Census"
   },
   {
-    "Name": "Jackie",
-    "Type": "Female",
-    "Group": "US",
-    "Source": "Census"
-  },
-  {
     "Name": "Mario",
     "Type": "Male",
     "Group": "US",
@@ -22920,12 +22680,6 @@
     "Source": "Census"
   },
   {
-    "Name": "Jody",
-    "Type": "Female",
-    "Group": "US",
-    "Source": "Census"
-  },
-  {
     "Name": "Leon",
     "Type": "Male",
     "Group": "US",
@@ -22962,12 +22716,6 @@
     "Source": "Census"
   },
   {
-    "Name": "Shannon",
-    "Type": "Male",
-    "Group": "US",
-    "Source": "Census"
-  },
-  {
     "Name": "Jeanne",
     "Type": "Female",
     "Group": "US",
@@ -22992,20 +22740,8 @@
     "Source": "Census"
   },
   {
-    "Name": "Shawn",
-    "Type": "Female",
-    "Group": "US",
-    "Source": "Census"
-  },
-  {
     "Name": "Herbert",
     "Type": "Male",
-    "Group": "US",
-    "Source": "Census"
-  },
-  {
-    "Name": "Terry",
-    "Type": "Female",
     "Group": "US",
     "Source": "Census"
   },
@@ -23054,12 +22790,6 @@
   {
     "Name": "Lorraine",
     "Type": "Female",
-    "Group": "US",
-    "Source": "Census"
-  },
-  {
-    "Name": "Kerry",
-    "Type": "Male",
     "Group": "US",
     "Source": "Census"
   },
@@ -23130,12 +22860,6 @@
     "Source": "Census"
   },
   {
-    "Name": "Leslie",
-    "Type": "Male",
-    "Group": "US",
-    "Source": "Census"
-  },
-  {
     "Name": "Katrina",
     "Type": "Female",
     "Group": "US",
@@ -23166,12 +22890,6 @@
     "Source": "Census"
   },
   {
-    "Name": "Jody",
-    "Type": "Male",
-    "Group": "US",
-    "Source": "Census"
-  },
-  {
     "Name": "Phyllis",
     "Type": "Female",
     "Group": "US",
@@ -23190,32 +22908,14 @@
     "Source": "Census"
   },
   {
-    "Name": "Jamie",
-    "Type": "Male",
-    "Group": "US",
-    "Source": "Census"
-  },
-  {
     "Name": "Tracie",
     "Type": "Female",
     "Group": "US",
     "Source": "Census"
   },
   {
-    "Name": "Dana",
-    "Type": "Male",
-    "Group": "US",
-    "Source": "Census"
-  },
-  {
     "Name": "Leigh",
     "Type": "Female",
-    "Group": "US",
-    "Source": "Census"
-  },
-  {
-    "Name": "Stacey",
-    "Type": "Male",
     "Group": "US",
     "Source": "Census"
   },
@@ -23360,12 +23060,6 @@
   {
     "Name": "Francisco",
     "Type": "Male",
-    "Group": "US",
-    "Source": "Census"
-  },
-  {
-    "Name": "Kerry",
-    "Type": "Female",
     "Group": "US",
     "Source": "Census"
   },
@@ -23562,18 +23256,6 @@
     "Source": "Census"
   },
   {
-    "Name": "Jackie",
-    "Type": "Male",
-    "Group": "US",
-    "Source": "Census"
-  },
-  {
-    "Name": "Lee",
-    "Type": "Female",
-    "Group": "US",
-    "Source": "Census"
-  },
-  {
     "Name": "Charlie",
     "Type": "Male",
     "Group": "US",
@@ -23606,12 +23288,6 @@
   {
     "Name": "Sherrie",
     "Type": "Female",
-    "Group": "US",
-    "Source": "Census"
-  },
-  {
-    "Name": "Jessie",
-    "Type": "Male",
     "Group": "US",
     "Source": "Census"
   },
@@ -23694,12 +23370,6 @@
     "Source": "Census"
   },
   {
-    "Name": "Angel",
-    "Type": "Male",
-    "Group": "US",
-    "Source": "Census"
-  },
-  {
     "Name": "Janine",
     "Type": "Female",
     "Group": "US",
@@ -23762,12 +23432,6 @@
   {
     "Name": "Marlene",
     "Type": "Female",
-    "Group": "US",
-    "Source": "Census"
-  },
-  {
-    "Name": "Rene",
-    "Type": "Male",
     "Group": "US",
     "Source": "Census"
   },
@@ -24050,12 +23714,6 @@
   {
     "Name": "Kerri",
     "Type": "Female",
-    "Group": "US",
-    "Source": "Census"
-  },
-  {
-    "Name": "Robin",
-    "Type": "Male",
     "Group": "US",
     "Source": "Census"
   },
@@ -24402,12 +24060,6 @@
     "Source": "Census"
   },
   {
-    "Name": "Tracey",
-    "Type": "Male",
-    "Group": "US",
-    "Source": "Census"
-  },
-  {
     "Name": "Ruby",
     "Type": "Female",
     "Group": "US",
@@ -24480,12 +24132,6 @@
     "Source": "Census"
   },
   {
-    "Name": "Chris",
-    "Type": "Female",
-    "Group": "US",
-    "Source": "Census"
-  },
-  {
     "Name": "Chester",
     "Type": "Male",
     "Group": "US",
@@ -24500,12 +24146,6 @@
   {
     "Name": "Eduardo",
     "Type": "Male",
-    "Group": "US",
-    "Source": "Census"
-  },
-  {
-    "Name": "Kris",
-    "Type": "Female",
     "Group": "US",
     "Source": "Census"
   },
@@ -24774,12 +24414,6 @@
     "Source": "Census"
   },
   {
-    "Name": "Kim",
-    "Type": "Male",
-    "Group": "US",
-    "Source": "Census"
-  },
-  {
     "Name": "Louise",
     "Type": "Female",
     "Group": "US",
@@ -24870,12 +24504,6 @@
     "Source": "Census"
   },
   {
-    "Name": "Lynn",
-    "Type": "Male",
-    "Group": "US",
-    "Source": "Census"
-  },
-  {
     "Name": "Trisha",
     "Type": "Female",
     "Group": "US",
@@ -24932,12 +24560,6 @@
   {
     "Name": "Malcolm",
     "Type": "Male",
-    "Group": "US",
-    "Source": "Census"
-  },
-  {
-    "Name": "Rene",
-    "Type": "Female",
     "Group": "US",
     "Source": "Census"
   },
@@ -25542,12 +25164,6 @@
     "Source": "Census"
   },
   {
-    "Name": "Marion",
-    "Type": "Male",
-    "Group": "US",
-    "Source": "Census"
-  },
-  {
     "Name": "Myra",
     "Type": "Female",
     "Group": "US",
@@ -25698,12 +25314,6 @@
     "Source": "Census"
   },
   {
-    "Name": "Kris",
-    "Type": "Male",
-    "Group": "US",
-    "Source": "Census"
-  },
-  {
     "Name": "Melisa",
     "Type": "Female",
     "Group": "US",
@@ -25820,12 +25430,6 @@
   {
     "Name": "Forrest",
     "Type": "Male",
-    "Group": "US",
-    "Source": "Census"
-  },
-  {
-    "Name": "Marion",
-    "Type": "Female",
     "Group": "US",
     "Source": "Census"
   },
@@ -26268,12 +25872,6 @@
     "Source": "Census"
   },
   {
-    "Name": "Guadalupe",
-    "Type": "Female",
-    "Group": "US",
-    "Source": "Census"
-  },
-  {
     "Name": "Wilson",
     "Type": "Male",
     "Group": "US",
@@ -26288,12 +25886,6 @@
   {
     "Name": "Abel",
     "Type": "Male",
-    "Group": "US",
-    "Source": "Census"
-  },
-  {
-    "Name": "Angel",
-    "Type": "Female",
     "Group": "US",
     "Source": "Census"
   },
@@ -26378,12 +25970,6 @@
   {
     "Name": "Thelma",
     "Type": "Female",
-    "Group": "US",
-    "Source": "Census"
-  },
-  {
-    "Name": "Guadalupe",
-    "Type": "Male",
     "Group": "US",
     "Source": "Census"
   },
@@ -26532,20 +26118,8 @@
     "Source": "Census"
   },
   {
-    "Name": "Jessie",
-    "Type": "Female",
-    "Group": "US",
-    "Source": "Census"
-  },
-  {
     "Name": "Freddy",
     "Type": "Male",
-    "Group": "US",
-    "Source": "Census"
-  },
-  {
-    "Name": "Michael",
-    "Type": "Female",
     "Group": "US",
     "Source": "Census"
   },
@@ -26593,6 +26167,216 @@
   },
   {
     "Name": "Nichelle",
+    "Type": "Female",
+    "Group": "US",
+    "Source": "Census"
+  },
+  {
+    "Name": "Niu",
+    "Type": "Unisex",
+    "Group": "Chinese",
+    "Source": "SWN"
+  },
+  {
+    "Name": "Chiaki",
+    "Type": "Unisex",
+    "Group": "Japanese",
+    "Source": "Github"
+  },
+  {
+    "Name": "Hibiki",
+    "Type": "Unisex",
+    "Group": "Japanese",
+    "Source": "Github"
+  },
+  {
+    "Name": "Hikari",
+    "Type": "Unisex",
+    "Group": "Japanese",
+    "Source": "Github"
+  },
+  {
+    "Name": "Ibuki",
+    "Type": "Unisex",
+    "Group": "Japanese",
+    "Source": "Github"
+  },
+  {
+    "Name": "Kazuki",
+    "Type": "Unisex",
+    "Group": "Japanese",
+    "Source": "Github"
+  },
+  {
+    "Name": "Mahiro",
+    "Type": "Unisex",
+    "Group": "Japanese",
+    "Source": "Github"
+  },
+  {
+    "Name": "Tsukasa",
+    "Type": "Unisex",
+    "Group": "Japanese",
+    "Source": "Github"
+  },
+  {
+    "Name": "Yuki",
+    "Type": "Unisex",
+    "Group": "Japanese",
+    "Source": "Github"
+  },
+  {
+    "Name": "Angel",
+    "Type": "Unisex",
+    "Group": "US",
+    "Source": "Census"
+  },
+  {
+    "Name": "Chris",
+    "Type": "Unisex",
+    "Group": "US",
+    "Source": "Census"
+  },
+  {
+    "Name": "Dana",
+    "Type": "Unisex",
+    "Group": "US",
+    "Source": "Census"
+  },
+  {
+    "Name": "Guadalupe",
+    "Type": "Unisex",
+    "Group": "US",
+    "Source": "Census"
+  },
+  {
+    "Name": "Jackie",
+    "Type": "Unisex",
+    "Group": "US",
+    "Source": "Census"
+  },
+  {
+    "Name": "Jamie",
+    "Type": "Unisex",
+    "Group": "US",
+    "Source": "Census"
+  },
+  {
+    "Name": "Jessie",
+    "Type": "Unisex",
+    "Group": "US",
+    "Source": "Census"
+  },
+  {
+    "Name": "Jody",
+    "Type": "Unisex",
+    "Group": "US",
+    "Source": "Census"
+  },
+  {
+    "Name": "Kelly",
+    "Type": "Unisex",
+    "Group": "US",
+    "Source": "Census"
+  },
+  {
+    "Name": "Kerry",
+    "Type": "Unisex",
+    "Group": "US",
+    "Source": "Census"
+  },
+  {
+    "Name": "Kim",
+    "Type": "Unisex",
+    "Group": "US",
+    "Source": "Census"
+  },
+  {
+    "Name": "Kris",
+    "Type": "Unisex",
+    "Group": "US",
+    "Source": "Census"
+  },
+  {
+    "Name": "Lee",
+    "Type": "Unisex",
+    "Group": "US",
+    "Source": "Census"
+  },
+  {
+    "Name": "Leslie",
+    "Type": "Female",
+    "Group": "US",
+    "Source": "Census"
+  },
+  {
+    "Name": "Lynn",
+    "Type": "Female",
+    "Group": "US",
+    "Source": "Census"
+  },
+  {
+    "Name": "Marion",
+    "Type": "Unisex",
+    "Group": "US",
+    "Source": "Census"
+  },
+  {
+    "Name": "Michael",
+    "Type": "Male",
+    "Group": "US",
+    "Source": "Census"
+  },
+  {
+    "Name": "Rene",
+    "Type": "Unisex",
+    "Group": "US",
+    "Source": "Census"
+  },
+  {
+    "Name": "Robin",
+    "Type": "Unisex",
+    "Group": "US",
+    "Source": "Census"
+  },
+  {
+    "Name": "Shannon",
+    "Type": "Female",
+    "Group": "US",
+    "Source": "Census"
+  },
+  {
+    "Name": "Shawn",
+    "Type": "Unisex",
+    "Group": "US",
+    "Source": "Census"
+  },
+  {
+    "Name": "Stacey",
+    "Type": "Female",
+    "Group": "US",
+    "Source": "Census"
+  },
+  {
+    "Name": "Stacy",
+    "Type": "Female",
+    "Group": "US",
+    "Source": "Census"
+  },
+  {
+    "Name": "Terry",
+    "Type": "Male",
+    "Group": "US",
+    "Source": "Census"
+  },
+  {
+    "Name": "Tracey",
+    "Type": "Female",
+    "Group": "US",
+    "Source": "Census"
+  },
+  {
+    "Name": "Tracy",
     "Type": "Female",
     "Group": "US",
     "Source": "Census"

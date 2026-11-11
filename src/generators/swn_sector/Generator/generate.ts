@@ -8,7 +8,10 @@ import {
   shuffled,
 } from './generation_random';
 import type { GenerationSettings } from './generation_settings';
-import { DEFAULT_GENERATION_SETTINGS } from './generation_settings';
+import {
+  DEFAULT_GENERATION_SETTINGS,
+  DEFAULT_STARTING_WORLD_MODE,
+} from './generation_defaults';
 import { STAR_TABLE } from './generation_rules';
 import { generateRoutes } from './generate_routes';
 import { generateCompleteSystem } from './generate_system';
@@ -145,7 +148,7 @@ export function generate(
   const result: Sector = {
     SchemaVersion: 'merged-v9',
     OriginalSeed: seed,
-    StartingWorldMode: 'UNRESTRICTED',
+    StartingWorldMode: DEFAULT_STARTING_WORLD_MODE,
     SectorName: `Sector ${seed}`,
     Systems,
     Routes,

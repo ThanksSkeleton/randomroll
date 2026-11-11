@@ -8,12 +8,3 @@ export type SectorGenerationDefaults = Readonly<{
   uninhabSystemsMin?: number;
   uninhabSystemsMax?: number;
 }>;
-
-export const DEFAULT_GENERATION_SETTINGS: Required<SectorGenerationDefaults> = {
-  sectorWidth: 11,
-  sectorHeight: 7,
-  inhabSystemsMin: 21,
-  inhabSystemsMax: 30,
-  uninhabSystemsMin: 0,
-  uninhabSystemsMax: 0,
-};

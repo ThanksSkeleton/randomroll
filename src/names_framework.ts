@@ -9,7 +9,7 @@ const SURNAME = 'Surname';
 
 export function full_name(rng: seedrandom.PRNG, gender: string, group: string): [string, string] {
   let filtered_group = names.filter((r) => r.Group == group);
-  let gendered_first = filtered_group.filter((r) => r.Type == gender);
+  let gendered_first = filtered_group.filter((r) => r.Type == gender || r.Type == 'Unisex');
   let surnames = filtered_group.filter((r) => r.Type == SURNAME);
   let first = random_multi(rng, gendered_first).Name;
   let surname = random_multi(rng, surnames).Name;

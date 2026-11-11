@@ -74,7 +74,9 @@ test('enemy and friend names use their rolled gender and cultural template', () 
     for (const person of [result.adventureComponents.enemy, result.adventureComponents.friend]) {
       seenGenders.add(person.gender);
       const firstNames = rawNames.filter(
-        (row) => row.Group === result.culturalTemplate && row.Type === person.gender,
+        (row) =>
+          row.Group === result.culturalTemplate &&
+          (row.Type === person.gender || row.Type === 'Unisex'),
       );
       const surnames = rawNames.filter(
         (row) => row.Group === result.culturalTemplate && row.Type === 'Surname',

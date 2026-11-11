@@ -27,7 +27,11 @@ export function buildSyntheticLongestXccCharacter(): XccCharacter {
     ...baseline,
     firstName: longestString(
       names
-        .filter((name) => name.Group === 'US' && (name.Type === 'Male' || name.Type === 'Female'))
+        .filter(
+          (name) =>
+            name.Group === 'US' &&
+            (name.Type === 'Male' || name.Type === 'Female' || name.Type === 'Unisex'),
+        )
         .map((name) => name.Name),
     ),
     lastName: longestString(

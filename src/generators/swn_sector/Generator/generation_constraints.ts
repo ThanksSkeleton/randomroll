@@ -15,7 +15,6 @@ const tagDetails = rawWorldTagDetails.tags as Record<
   string,
   { constraints?: Omit<TagConstraint, 'tag'> }
 >;
-export const DEFAULT_HAS_ALIENS = false;
 export const WORLD_TAG_CONSTRAINTS = new Map(
   Object.entries(tagDetails).flatMap(([tag, detail]) =>
     detail.constraints ? [[tag, { tag, ...detail.constraints } as TagConstraint]] : [],
