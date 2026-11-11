@@ -58,8 +58,9 @@ test('each adventure component contains one valid prompt from each tag', () => {
 });
 
 test('culture and place names come directly from the SWN place-name CSV', () => {
-  expect(SWN_CULTURAL_TEMPLATES).toHaveLength(10);
-  expect([...SWN_PLACE_NAMES.values()].flat()).toHaveLength(500);
+  expect(SWN_CULTURAL_TEMPLATES).toHaveLength(11);
+  expect([...SWN_PLACE_NAMES.values()].flat()).toHaveLength(7931);
+  expect(SWN_PLACE_NAMES.get('Fantasy')).toHaveLength(7431);
   const result = generateSwnCulture('place-names');
   const names = SWN_PLACE_NAMES.get(result.culturalTemplate);
   expect(names).toContain(result.homeworld);
