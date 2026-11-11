@@ -10,7 +10,6 @@ import type {
   IntelligenceText,
   ScanVisibility,
   SelectableObjectKind,
-  StartingWorldMode,
 } from '../BaseDTO/merged_schema';
 import type { SectorCulture, SwnCulture } from '../BaseDTO/culture';
 import type { StarPresentation } from '../Data/Projection/star_presentation';
@@ -252,13 +251,4 @@ export type DisplaySectorDTO = {
   polities: PolityDisplayDTO[];
   conquests: ConquestDisplayDTO[];
   culture: CultureScreenDisplayDTO;
-};
-
-export type ArchiveSectorDisplayDTO = {
-  index: number;
-  name: string;
-  originalSeed: string;
-  startingWorldMode: StartingWorldMode;
-  startingWorldId: string | null;
-  startingWorldName: string | null;
 };

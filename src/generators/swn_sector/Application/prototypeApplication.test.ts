@@ -13,71 +13,42 @@ function read(application: PrototypeApplication, index: number) {
 }
 
 describe('PrototypeApplication', () => {
-  it('starts with two projected sectors and reports a GM session', () => {
+  it('starts with one projected sector and reports a GM session', () => {
     const application = new PrototypeApplication(createInitialSectors());
-    expect(application.readArchiveSectors().map((sector) => sector.name)).toEqual([
-      'Sector sector-one-seed',
-      'Sector sector-two-seed',
-    ]);
+    expect(application.readSeed(0)).toBe('sector-one-seed');
+    expect(application.readSectors(options)).toHaveLength(1);
     expect(application.getCurrentSession()).toEqual({ role: 'gm' });
   });
 
   it('generates and returns a detached projection of the requested seed', () => {
     const application = new PrototypeApplication(createInitialSectors());
-    const generated = application.generateSector({ seed: 'DELTA-7734' }, 'UNRESTRICTED', options);
+    const generated = application.generateSector({ seed: 'DELTA-7734' }, options);
     expect(generated.ok).toBe(true);
     if (!generated.ok) return;
     const expected = projectSector(generate({ seed: 'DELTA-7734' }), options);
     expect(expected.ok).toBe(true);
     if (!expected.ok) return;
     expect(generated.display).toEqual(expected.value);
-    expect(generated.archive[2].originalSeed).toBe('DELTA-7734');
-    expect(application.readArchiveSectors()).toHaveLength(3);
+    expect(application.readSeed(0)).toBe('DELTA-7734');
     generated.display.name = 'Changed outside the application';
     generated.display.entities[generated.display.systems[0].id].proceduralName = 'Changed';
-    expect(read(application, 2).name).not.toBe('Changed outside the application');
-    expect(read(application, 2).entities[generated.display.systems[0].id].proceduralName).not.toBe(
+    expect(read(application, 0).name).not.toBe('Changed outside the application');
+    expect(read(application, 0).entities[generated.display.systems[0].id].proceduralName).not.toBe(
       'Changed',
     );
   });
 
-  it('preserves archive operations and chooses a valid index after deletion', () => {
-    const application = new PrototypeApplication(createInitialSectors());
-    const renamed = application.renameSector(0, '  Renamed Sector  ', options);
-    expect(renamed.ok).toBe(true);
-    if (!renamed.ok) return;
-    expect(renamed.display.name).toBe('Renamed Sector');
-    expect(read(application, 1).name).toBe('Sector sector-two-seed');
-    const result = application.deleteSector(1);
-    expect(result).toEqual(expect.objectContaining({ ok: true, nextIndex: 0 }));
-    expect(application.readArchiveSectors()).toHaveLength(1);
-    expect(application.deleteSector(0)).toEqual({ ok: false, reason: 'last-sector' });
-  });
-
-  it('rejects invalid archive writes and indexes', () => {
+  it('rejects invalid indexes', () => {
     const application = new PrototypeApplication(createInitialSectors());
     expect(application.readSector(-1, options)).toEqual({ ok: false, reason: 'invalid-index' });
     expect(
       application.editSector(20, { sectorName: read(application, 0).name, details: {} }, options),
     ).toEqual({ ok: false, reason: 'invalid-index' });
-    expect(application.renameSector(0, '   ', options)).toEqual({
-      ok: false,
-      reason: 'invalid-name',
-    });
-    expect(application.deleteSector(20)).toEqual({ ok: false, reason: 'invalid-index' });
   });
 
-  it('projects archive summaries and commits explicit edits atomically', () => {
+  it('commits explicit edits atomically', () => {
     const application = new PrototypeApplication(createInitialSectors());
     const original = createInitialSectors()[0];
-    expect(application.readArchiveSectors()[0]).toEqual(
-      expect.objectContaining({
-        index: 0,
-        name: original.SectorName,
-        originalSeed: original.OriginalSeed,
-        startingWorldId: original.StartingWorldId,
-      }),
-    );
     const systemId = original.Systems[0].Id;
     const result = application.editSector(
       0,

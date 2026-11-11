@@ -1,6 +1,5 @@
 import type { Sector, SelectableEntity, SelectableObjectKind } from '../BaseDTO/merged_schema';
 import type {
-  ArchiveSectorDisplayDTO,
   DisplaySectorDTO,
   DisplaySelectableDTO,
   DisplaySystemDTO,
@@ -19,20 +18,6 @@ import { projectSystemSpatial } from './system_spatial_projection';
 
 export type SectorProjectionResult =
   { ok: true; value: DisplaySectorDTO } | { ok: false; reason: 'invalid-reference'; path: string };
-
-export function projectArchiveSector(sector: Sector, index: number): ArchiveSectorDisplayDTO {
-  const startingWorld = sector.Systems.flatMap((system) => system.Objects).find(
-    (object) => object.Id === sector.StartingWorldId,
-  );
-  return {
-    index,
-    name: sector.SectorName,
-    originalSeed: sector.OriginalSeed,
-    startingWorldMode: sector.StartingWorldMode,
-    startingWorldId: sector.StartingWorldId,
-    startingWorldName: startingWorld?.NiceName ?? null,
-  };
-}
 
 /** Assemble existing projections into a detached read graph. No generator is called here. */
 export function projectSector(

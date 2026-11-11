@@ -2,13 +2,9 @@ import { createInitialSectors } from './initialSectors';
 import { generate } from '../Generator/generate';
 import type { GenerationSettings } from '../Generator/generation_settings';
 import { completeWorld as generateWorldCulture } from '../Generator/culture';
-import type { ScanVisibility, Sector, StartingWorldMode } from '../BaseDTO/merged_schema';
-import type { ArchiveSectorDisplayDTO, DisplaySectorDTO } from '../DisplayDTO/dto';
-import {
-  projectArchiveSector,
-  projectSector,
-  type SectorProjectionResult,
-} from '../Projector/sector_projection';
+import type { ScanVisibility, Sector } from '../BaseDTO/merged_schema';
+import type { DisplaySectorDTO } from '../DisplayDTO/dto';
+import { projectSector, type SectorProjectionResult } from '../Projector/sector_projection';
 import { checkAllInvariants } from '../Generator/generated_sector_invariants';
 import { applySectorEdits, validSectorEdits, type SectorEdits } from './sector_edits';
 import {
@@ -21,21 +17,13 @@ import {
 
 export type LocalSession = { role: 'gm' };
 
-export type DeleteSectorResult =
-  | { ok: true; archive: ArchiveSectorDisplayDTO[]; nextIndex: number }
-  | { ok: false; reason: 'invalid-index' | 'last-sector' };
-
 export type CompleteWorldResult =
   | { ok: true; display: DisplaySectorDTO }
   | { ok: false; reason: 'invalid-index' | 'invalid-world' | 'invalid-projection' };
 
 export type GenerateSectorResult =
-  | { ok: true; display: DisplaySectorDTO; archive: ArchiveSectorDisplayDTO[] }
+  | { ok: true; display: DisplaySectorDTO }
   | { ok: false; reason: 'invalid-projection' };
-
-export type RenameSectorResult =
-  | { ok: true; display: DisplaySectorDTO; archive: ArchiveSectorDisplayDTO[] }
-  | { ok: false; reason: 'invalid-index' | 'invalid-name' | 'invalid-projection' };
 
 export type ProjectionOptions = { preview: 'gm' | 'player'; assetBaseUrl: string };
 
@@ -69,18 +57,13 @@ export class PrototypeApplication {
 
   generateSector(
     generationSettings: GenerationSettings,
-    startingWorldMode: StartingWorldMode = 'UNRESTRICTED',
     options: ProjectionOptions = { preview: 'gm', assetBaseUrl: '/' },
   ): GenerateSectorResult {
-    const generated = copy(generate(generationSettings, startingWorldMode));
+    const generated = copy(generate(generationSettings));
     const projected = projectSector(generated, options);
     if (!projected.ok) return { ok: false, reason: 'invalid-projection' };
-    this.sectors = [...this.sectors, generated];
-    return { ok: true, display: projected.value, archive: this.readArchiveSectors() };
-  }
-
-  readArchiveSectors(): ArchiveSectorDisplayDTO[] {
-    return this.sectors.map(projectArchiveSector);
+    this.sectors = [generated];
+    return { ok: true, display: projected.value };
   }
 
   private loadCanonical(index: number): Sector | undefined {
@@ -101,6 +84,10 @@ export class PrototypeApplication {
     assetBaseUrl: string;
   }): SectorProjectionResult[] {
     return this.sectors.map((sector) => projectSector(sector, options));
+  }
+
+  readSeed(index: number): string | undefined {
+    return this.sectors[index]?.OriginalSeed;
   }
 
   editSector(
@@ -190,24 +177,6 @@ export class PrototypeApplication {
       currentIndex === index ? copy(next) : sector,
     );
     return { ok: true, display: projected.value };
-  }
-
-  renameSector(index: number, name: string, options: ProjectionOptions): RenameSectorResult {
-    const trimmedName = name.trim();
-    if (index < 0 || index >= this.sectors.length) return { ok: false, reason: 'invalid-index' };
-    if (!trimmedName) return { ok: false, reason: 'invalid-name' };
-    const next = { ...this.sectors[index], SectorName: trimmedName };
-    const projected = projectSector(next, options);
-    if (!projected.ok) return { ok: false, reason: 'invalid-projection' };
-    this.sectors[index] = next;
-    return { ok: true, display: projected.value, archive: this.readArchiveSectors() };
-  }
-
-  deleteSector(index: number): DeleteSectorResult {
-    if (index < 0 || index >= this.sectors.length) return { ok: false, reason: 'invalid-index' };
-    if (this.sectors.length <= 1) return { ok: false, reason: 'last-sector' };
-    this.sectors = this.sectors.filter((_, currentIndex) => currentIndex !== index);
-    return { ok: true, archive: this.readArchiveSectors(), nextIndex: Math.max(0, index - 1) };
   }
 
   getCurrentSession(): LocalSession {

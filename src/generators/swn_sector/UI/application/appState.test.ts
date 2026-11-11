@@ -40,8 +40,8 @@ describe('application state transitions', () => {
     expect(next).toMatchObject({ view: 'all', editDraft: null, locked: true, selectedId: null });
   });
 
-  it('switching preview from archive returns to the sector map', () => {
-    const state = { ...createAppState(displaySectors()), view: 'sectors' as const };
+  it('switching preview from culture returns to the sector map', () => {
+    const state = { ...createAppState(displaySectors()), view: 'culture' as const };
     const next = appReducer(state, {
       type: 'changePreview',
       preview: 'player',

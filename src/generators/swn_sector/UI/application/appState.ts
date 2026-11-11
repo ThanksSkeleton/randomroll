@@ -1,6 +1,6 @@
 import type { DisplaySectorDTO } from '../../DisplayDTO/dto';
 
-export type View = 'hex' | 'system' | 'all' | 'sectors' | 'culture';
+export type View = 'hex' | 'system' | 'all' | 'culture';
 export type Preview = 'gm' | 'player';
 export type SystemMode = 'symbolic' | 'topdown';
 export type EditableDetailField =
@@ -13,7 +13,6 @@ export type EditDraft = {
 export type AppState = {
   sectors: DisplaySectorDTO[];
   activeIndex: number;
-  archiveIndex: number;
   view: View;
   preview: Preview;
   selectedId: string | null;
@@ -37,20 +36,12 @@ export type AppAction =
   | { type: 'discardEditing' }
   | { type: 'saveEditing'; display: DisplaySectorDTO }
   | { type: 'updateSector'; display: DisplaySectorDTO }
-  | { type: 'loadSector'; index: number }
-  | { type: 'setArchiveIndex'; index: number }
-  | {
-      type: 'replaceSectors';
-      sectors: DisplaySectorDTO[];
-      archiveIndex?: number;
-      activeIndex?: number;
-    };
+  | { type: 'replaceSector'; display: DisplaySectorDTO };
 
 export function createAppState(sectors: DisplaySectorDTO[]): AppState {
   return {
     sectors,
     activeIndex: 0,
-    archiveIndex: 0,
     view: 'hex',
     preview: 'gm',
     selectedId: null,
@@ -75,7 +66,7 @@ export function appReducer(state: AppState, action: AppAction): AppState {
     case 'changePreview': {
       const playerRestricted =
         action.preview === 'player' &&
-        (state.view === 'all' || state.view === 'sectors' || state.view === 'culture');
+        (state.view === 'all' || state.view === 'culture');
       if (playerRestricted)
         return {
           ...clearNavigation(state),
@@ -142,16 +133,13 @@ export function appReducer(state: AppState, action: AppAction): AppState {
           index === state.activeIndex ? action.display : sector,
         ),
       };
-    case 'loadSector':
-      return { ...clearNavigation(state), activeIndex: action.index, view: 'hex' };
-    case 'setArchiveIndex':
-      return { ...state, archiveIndex: action.index };
-    case 'replaceSectors':
+    case 'replaceSector':
       return {
-        ...state,
-        sectors: action.sectors,
-        ...(action.archiveIndex === undefined ? {} : { archiveIndex: action.archiveIndex }),
-        ...(action.activeIndex === undefined ? {} : { activeIndex: action.activeIndex }),
+        ...clearNavigation(state),
+        sectors: [action.display],
+        activeIndex: 0,
+        view: 'hex',
+        currentSystemId: null,
       };
   }
 }

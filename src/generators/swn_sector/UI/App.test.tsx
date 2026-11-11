@@ -154,7 +154,7 @@ describe('prototype application workflows', () => {
 
     const nameEditor = document.querySelector<HTMLInputElement>('.object-name-editor');
     fireEvent.change(nameEditor!, { target: { value: 'UNSAVED NAVIGATION EDIT' } });
-    fireEvent.click(screen.getByRole('button', { name: 'SECTOR ARCHIVE' }));
+    fireEvent.click(screen.getByRole('button', { name: 'CULTURE' }));
     fireEvent.click(screen.getByRole('button', { name: 'SECTOR' }));
     fireEvent.click(firstSystemButton());
 
@@ -163,27 +163,4 @@ describe('prototype application workflows', () => {
     expect(screen.getByRole('button', { name: '▣ LOCKED' })).toBeTruthy();
   });
 
-  it('generates, renames, loads, and deletes an archive entry', () => {
-    renderApp();
-    fireEvent.click(screen.getByRole('button', { name: 'SECTOR ARCHIVE' }));
-    const archive = screen.getByRole('combobox', { name: 'Available sectors' });
-
-    expect(archive.querySelectorAll('option')).toHaveLength(2);
-    fireEvent.change(screen.getByRole('textbox', { name: 'ORIGIN SEED' }), {
-      target: { value: 'CHARACTERIZATION' },
-    });
-    fireEvent.click(screen.getByRole('button', { name: /GENERATE SECTOR/ }));
-    expect(archive.querySelectorAll('option')).toHaveLength(3);
-    expect(archive.textContent).toContain('Sector CHARACTERIZATION');
-
-    fireEvent.change(archive, { target: { value: '2' } });
-    fireEvent.change(screen.getByRole('textbox', { name: 'RENAME SECTOR' }), {
-      target: { value: 'Renamed Test Sector' },
-    });
-    fireEvent.click(screen.getByRole('button', { name: 'APPLY NAME' }));
-    expect(archive.textContent).toContain('Renamed Test Sector');
-
-    fireEvent.click(screen.getByRole('button', { name: 'DELETE FROM ARCHIVE' }));
-    expect(archive.querySelectorAll('option')).toHaveLength(2);
-  });
 });

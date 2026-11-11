@@ -1,4 +1,4 @@
-import type { Planet, Sector, StarType, StartingWorldMode } from '../BaseDTO/merged_schema';
+import type { Planet, Sector, StarType } from '../BaseDTO/merged_schema';
 import {
   choose,
   chooseWeighted,
@@ -18,7 +18,6 @@ import { STAR_HABITABILITY } from '../Shared/planet_interpretation';
 
 export function generate(
   generationSettings: GenerationSettings,
-  startingWorldMode: StartingWorldMode = 'UNRESTRICTED',
 ): Sector {
   const { seed } = generationSettings;
   const settings = { ...DEFAULT_GENERATION_SETTINGS, ...generationSettings };
@@ -95,11 +94,11 @@ export function generate(
     .filter(
       (object): object is Planet => object.Kind === 'Planet' && object.InhabitedInfo !== false,
     )
-    .filter((planet) => eligibleStartingWorld(planet, startingWorldMode))
+    .filter((planet) => eligibleStartingWorld(planet))
     .sort((a, b) => a.Id.localeCompare(b.Id));
   if (candidates.length === 0)
     throw new Error(
-      `Starting-world mode ${startingWorldMode} failed: no eligible inhabited world was generated. Choose another mode or generate a different sector.`,
+      'No eligible inhabited world was generated. Generate a different sector.',
     );
   const startingWorld = choose(
     randomFor(generationSettings, 'starting-world'),
@@ -146,7 +145,7 @@ export function generate(
   const result: Sector = {
     SchemaVersion: 'merged-v9',
     OriginalSeed: seed,
-    StartingWorldMode: startingWorldMode,
+    StartingWorldMode: 'UNRESTRICTED',
     SectorName: `Sector ${seed}`,
     Systems,
     Routes,
@@ -185,10 +184,6 @@ export function generate(
   return completed;
 }
 
-function eligibleStartingWorld(planet: Planet, mode: StartingWorldMode): boolean {
-  if (planet.InhabitedInfo === false) return false;
-  if (mode === 'UNRESTRICTED') return true;
-  const { TechLevel, Population } = planet.InhabitedInfo;
-  const qualifiesForTl4 = TechLevel >= 4;
-  return qualifiesForTl4 && (mode === 'TL4_PLUS' || Population !== 1);
+function eligibleStartingWorld(planet: Planet): boolean {
+  return planet.InhabitedInfo !== false;
 }

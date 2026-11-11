@@ -1,5 +1,4 @@
 import type { Preview, View } from '../../application/appState';
-import type { GenerationPresetId } from '../../../Generator/generation_settings';
 import { IconButton } from './IconButton';
 
 export function AppChrome({
@@ -9,8 +8,6 @@ export function AppChrome({
   go,
   seed,
   onReroll,
-  preset,
-  onPresetChange,
 }: {
   view: View;
   preview: Preview;
@@ -18,8 +15,6 @@ export function AppChrome({
   go: (v: View) => void;
   seed: string;
   onReroll: () => void;
-  preset: GenerationPresetId;
-  onPresetChange: (preset: GenerationPresetId) => void;
 }) {
   return (
     <header className="chrome">
@@ -30,16 +25,10 @@ export function AppChrome({
         {preview === 'gm' && (
           <>
             <button
-              className={`nav-item nav-item-sector ${view !== 'sectors' && view !== 'culture' ? 'button-active' : 'button-allowed'}`}
+              className={`nav-item nav-item-sector ${view !== 'culture' ? 'button-active' : 'button-allowed'}`}
               onClick={() => go('hex')}
             >
               SECTOR
-            </button>
-            <button
-              className={`nav-item nav-item-archive ${view === 'sectors' ? 'button-active' : 'button-allowed'}`}
-              onClick={() => go('sectors')}
-            >
-              SECTOR ARCHIVE
             </button>
             <button
               className={`nav-item ${view === 'culture' ? 'button-active' : 'button-allowed'}`}
@@ -55,17 +44,6 @@ export function AppChrome({
           <span className="seed-display" aria-label={`Seed: ${seed}`}>
             SEED: {seed}
           </span>
-          <label className="preset-select-label">
-            PRESET
-            <select
-              aria-label="Generation settings preset"
-              value={preset}
-              onChange={(event) => onPresetChange(event.target.value as GenerationPresetId)}
-            >
-              <option value="default">Default</option>
-              <option value="plus-uninhab">PlusUninhab</option>
-            </select>
-          </label>
           <button className="reroll-button" onClick={onReroll}>
             REROLL ↻
           </button>

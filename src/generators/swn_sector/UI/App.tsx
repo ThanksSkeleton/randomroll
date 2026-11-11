@@ -3,7 +3,6 @@ import { appReducer, createAppState } from './application/appState';
 import type { EditDraft, Preview, View } from './application/appState';
 import { AppChrome, StageNav } from './features/navigation/AppChrome';
 import type { StageMode } from './features/navigation/AppChrome';
-import { SectorArchive } from './features/sector-archive/SectorArchive';
 import { CultureScreen } from './features/culture/CultureScreen';
 import { DetailBar as FeatureDetailBar } from './features/object-inspector/DetailBar';
 import { GMEditBar as FeatureGMEditBar } from './features/sector-editor/GMEditBar';
@@ -12,7 +11,6 @@ import { SystemViewer } from './features/system-viewer/SystemViewer';
 import { SymbolicSystem as FeatureSymbolicSystem } from './features/system-viewer/SymbolicSystem';
 import { TopDown as FeatureTopDown } from './features/system-viewer/TopDown';
 import type { DisplaySectorDTO } from '../DisplayDTO/dto';
-import { GENERATION_PRESETS, type GenerationPresetId } from '../Generator/generation_settings';
 import { isVisibleToPlayerDisplay } from './visibility_presentation';
 import {
   createPrototypeApplication,
@@ -41,7 +39,6 @@ export default function App() {
   const [application] = useState(createPrototypeApplication);
   const [showTemperatureOverlay, setShowTemperatureOverlay] = useState(false);
   const [showPolityOverlay, setShowPolityOverlay] = useState(false);
-  const [generationPreset, setGenerationPreset] = useState<GenerationPresetId>('default');
   const [state, dispatch] = useReducer(appReducer, undefined, () =>
     createAppState(readDisplays(application, 'gm')),
   );
@@ -49,7 +46,6 @@ export default function App() {
   const {
     sectors,
     activeIndex,
-    archiveIndex,
     view,
     preview,
     selectedId: selected,
@@ -188,23 +184,11 @@ export default function App() {
         preview={preview}
         setPreview={setPreviewMode}
         go={go}
-        seed={application.readArchiveSectors()[activeIndex]?.originalSeed ?? '—'}
-        preset={generationPreset}
-        onPresetChange={setGenerationPreset}
+        seed={application.readSeed(activeIndex) ?? '—'}
         onReroll={() => {
           const seed = globalThis.crypto?.randomUUID?.() ?? `${Date.now()}`;
-          const result = application.generateSector(
-            { seed, ...GENERATION_PRESETS[generationPreset] },
-            'UNRESTRICTED',
-            commandOptions,
-          );
-          if (result.ok)
-            dispatch({
-              type: 'replaceSectors',
-              sectors: [...sectors, result.display],
-              archiveIndex: sectors.length,
-              activeIndex: sectors.length,
-            });
+          const result = application.generateSector({ seed }, commandOptions);
+          if (result.ok) dispatch({ type: 'replaceSector', display: result.display });
         }}
       />
       {view === 'culture' && preview === 'gm' && isGmSession ? (
@@ -219,55 +203,6 @@ export default function App() {
         ) : (
           <main role="alert">Sector display unavailable.</main>
         )
-      ) : view === 'sectors' ? (
-        <main className="workspace no-inspector">
-          <SectorArchive
-            sectors={application.readArchiveSectors()}
-            selectedIndex={archiveIndex}
-            setSelectedIndex={(index) => dispatch({ type: 'setArchiveIndex', index })}
-            load={() => {
-              if (application.readSector(archiveIndex, commandOptions).ok)
-                dispatch({ type: 'loadSector', index: archiveIndex });
-            }}
-            generate={(settings, mode) => {
-              const result = application.generateSector(settings, mode, commandOptions);
-              if (result.ok)
-                dispatch({
-                  type: 'replaceSectors',
-                  sectors: [...sectors, result.display],
-                  archiveIndex: sectors.length,
-                });
-            }}
-            rename={(name) => {
-              const result = application.renameSector(archiveIndex, name, commandOptions);
-              if (result.ok)
-                dispatch({
-                  type: 'replaceSectors',
-                  sectors: sectors.map((sector, index) =>
-                    index === archiveIndex ? result.display : sector,
-                  ),
-                });
-            }}
-            remove={() => {
-              const result = application.deleteSector(archiveIndex);
-              if (result.ok) {
-                const nextActiveIndex =
-                  activeIndex === archiveIndex
-                    ? result.nextIndex
-                    : activeIndex > archiveIndex
-                      ? activeIndex - 1
-                      : activeIndex;
-                dispatch({
-                  type: 'replaceSectors',
-                  sectors: sectors.filter((_, index) => index !== archiveIndex),
-                  archiveIndex: result.nextIndex,
-                  activeIndex: nextActiveIndex,
-                });
-              }
-            }}
-            preset={generationPreset}
-          />
-        </main>
       ) : (
         <>
           <main className="workspace">

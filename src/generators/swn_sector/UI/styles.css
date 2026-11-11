@@ -114,13 +114,6 @@ select:focus-visible {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.preset-select-label {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  white-space: nowrap;
-}
-.preset-select-label select,
 .reroll-button {
   background: #0c1418;
   border: 1px solid #2b3b42;
@@ -129,6 +122,18 @@ select:focus-visible {
   font: 10px 'IBM Plex Mono';
 }
 .reroll-button { cursor: pointer; color: var(--green); }
+input,
+select {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+  height: 45px;
+  border: 1px solid #2b3f46;
+  background: #091015;
+  color: #d8e5e4;
+  padding: 0 13px;
+  font: 12px 'IBM Plex Mono';
+}
 .segmented button:disabled {
   color: #46565b;
   cursor: not-allowed;
@@ -1663,140 +1668,6 @@ button.detail-tab {
 .player-mode {
   padding-bottom: 0;
 }
-.archive {
-  min-height: calc(100vh - 76px);
-  display: grid;
-  grid-template-columns: 1.4fr 1fr;
-  max-width: 1100px;
-  margin: auto;
-}
-.generator {
-  padding: 75px 80px;
-  position: relative;
-  border-right: 1px solid var(--line);
-}
-.generator h1 {
-  font-size: 42px;
-  max-width: 460px;
-  margin: 12px 0;
-}
-.generator > p:not(.eyebrow) {
-  color: #90a4a6;
-  line-height: 1.6;
-  max-width: 530px;
-}
-.generation-settings {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  border: 1px solid var(--line);
-  padding: 14px;
-  margin: 18px 0;
-}
-.generation-settings legend { padding: 0 7px; color: var(--blue); font: 10px 'IBM Plex Mono'; letter-spacing: .08em; }
-.generation-settings label { display: grid; gap: 6px; color: var(--muted); font: 10px 'IBM Plex Mono'; }
-.generation-settings input { width: 100%; background: #0c1418; border: 1px solid #2b3b42; color: #dce9e8; padding: 9px; }
-.generator label,
-.saved label {
-  display: block;
-  margin-top: 38px;
-  font: 9px 'IBM Plex Mono';
-  letter-spacing: 0.1em;
-  color: var(--muted);
-}
-input,
-select {
-  display: block;
-  width: 100%;
-  margin-top: 8px;
-  height: 45px;
-  border: 1px solid #2b3f46;
-  background: #091015;
-  color: #d8e5e4;
-  padding: 0 13px;
-  font: 12px 'IBM Plex Mono';
-}
-.generator .primary {
-  width: 100%;
-  margin-top: 12px;
-}
-.generation-error {
-  border-left: 2px solid var(--red);
-  padding: 10px 12px;
-  color: #ff9a9c;
-  background: #281316;
-  font: 11px 'IBM Plex Mono';
-  line-height: 1.5;
-}
-.starting-world-summary {
-  margin: 20px 0 0;
-  color: #90a4a6;
-  font: 11px 'IBM Plex Mono';
-}
-.starting-world-summary strong {
-  color: var(--green);
-}
-.generator-graphic {
-  height: 230px;
-  margin-top: 50px;
-  border: 1px solid var(--line);
-  position: relative;
-  display: grid;
-  place-items: center;
-  overflow: hidden;
-}
-.generator-graphic span {
-  font-size: 60px;
-  color: #ffe29b;
-  z-index: 2;
-}
-.generator-graphic i {
-  position: absolute;
-  width: 120px;
-  height: 120px;
-  border: 1px dashed #29434a;
-  border-radius: 50%;
-}
-.generator-graphic i:nth-of-type(2) {
-  width: 210px;
-  height: 210px;
-}
-.generator-graphic i:nth-of-type(3) {
-  width: 310px;
-  height: 310px;
-}
-.saved {
-  padding: 75px 45px;
-  background: #090e12;
-}
-.saved .panel-label {
-  margin-bottom: 25px;
-}
-.saved button:not(.primary) {
-  width: 100%;
-  height: 42px;
-  margin-top: 9px;
-  background: #0d161a;
-  border: 1px solid #2a3d43;
-  font: 9px 'IBM Plex Mono';
-  letter-spacing: 0.1em;
-}
-.saved button.danger {
-  color: var(--red);
-  border-color: #563035;
-  margin-top: 0;
-}
-.saved small {
-  display: block;
-  margin-top: 30px;
-  color: #50656b;
-  font: 8px 'IBM Plex Mono';
-  text-align: center;
-}
-.archive-rule {
-  border-top: 1px solid var(--line);
-  margin-top: 32px;
-}
 @media (max-width: 1200px) {
   .chrome {
     grid-template-columns: 230px 1fr auto;
@@ -1812,12 +1683,6 @@ select {
   }
   .symbolic-system {
     margin: 14px;
-  }
-  .archive {
-    max-width: none;
-  }
-  .generator {
-    padding: 55px;
   }
 }
 
@@ -2642,8 +2507,7 @@ button.button-bold-allowed {
   color: #06100d;
 }
 button.button-scary-allowed,
-.edit-bar button.button-scary-allowed,
-.saved button.button-scary-allowed {
+.edit-bar button.button-scary-allowed {
   background: #0c1418;
   color: var(--red);
   border-color: #583236;
@@ -2667,15 +2531,13 @@ button.button-active:hover:not(:disabled) {
 }
 .chrome nav button.button-active,
 .segmented button.button-active,
-.edit-bar button.button-active,
-.saved button.button-active {
+.edit-bar button.button-active {
   background: var(--green);
   color: #06100d;
 }
 .chrome nav button.button-allowed,
 .segmented button.button-allowed,
-.edit-bar button.button-allowed,
-.saved button.button-allowed {
+.edit-bar button.button-allowed {
   background: #0c1418;
   color: var(--green);
 }
@@ -2686,13 +2548,11 @@ button.button-active:hover:not(:disabled) {
   color: #06100d;
   border-color: var(--green);
 }
-.edit-bar button.button-bold-allowed,
-.saved button.button-bold-allowed {
+.edit-bar button.button-bold-allowed {
   background: #ffe39a;
   color: #06100d;
 }
-.edit-bar button.button-disabled,
-.saved button.button-disabled {
+.edit-bar button.button-disabled {
   background: #0c1418;
   color: #778b92;
   border-color: #2b3d43;
