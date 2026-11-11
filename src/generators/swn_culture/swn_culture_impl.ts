@@ -67,26 +67,65 @@ const worldTagDefinitionByName = new Map(
   WORLD_TAG_DEFINITIONS.map((definition) => [definition.tag, definition]),
 );
 
-export const SWN_PLACE_NAMES = getPlaceNames(names);
-export const SWN_CULTURAL_TEMPLATES = [...SWN_PLACE_NAMES.keys()].filter((culture) => {
-  const types = new Set(names.filter((row) => row.Group === culture).map((row) => row.Type));
-  return (
-    types.has('Surname') &&
-    (types.has('Male') || types.has('Unisex')) &&
-    (types.has('Female') || types.has('Unisex'))
-  );
-});
+const ORIGINAL_SWN_CULTURES = [
+  'Arabic',
+  'Chinese',
+  'English',
+  'Greek',
+  'Indian',
+  'Japanese',
+  'Latin',
+  'Nigerian',
+  'Russian',
+  'Spanish',
+] as const;
 
-function getPlaceNames(rows: readonly NamesRow[]): Map<string, readonly string[]> {
-  const placeNames = new Map<string, string[]>();
+export const SWN_CULTURAL_TEMPLATES = [...ORIGINAL_SWN_CULTURES, 'Future'] as const;
+const EXCLUDED_FROM_DEFAULT_CULTURES = new Set(['Arabic', 'Indian', 'Nigerian']);
+export const SWN_DEFAULT_CULTURAL_TEMPLATES = SWN_CULTURAL_TEMPLATES.filter(
+  (culture) => !EXCLUDED_FROM_DEFAULT_CULTURES.has(culture),
+);
+const NAME_GROUP_BY_TEMPLATE: Record<(typeof SWN_CULTURAL_TEMPLATES)[number], string> = {
+  Arabic: 'Arabic',
+  Chinese: 'Chinese',
+  English: 'English',
+  Greek: 'Greek',
+  Indian: 'Indian',
+  Japanese: 'Japanese',
+  Latin: 'Latin',
+  Nigerian: 'Nigerian',
+  Russian: 'Russian',
+  Spanish: 'Spanish',
+  Future: 'Fantasy',
+};
+
+export const SWN_PLACE_NAMES = getPlaceNames(names, NAME_GROUP_BY_TEMPLATE);
+
+function getPlaceNames(
+  rows: readonly NamesRow[],
+  groupByTemplate: Record<(typeof SWN_CULTURAL_TEMPLATES)[number], string>,
+): Map<string, readonly string[]> {
+  const placeNamesByGroup = new Map<string, string[]>();
   for (const row of rows) {
     if (row.Type !== 'Location') continue;
-    const group = placeNames.get(row.Group) ?? [];
+    const group = placeNamesByGroup.get(row.Group) ?? [];
     group.push(row.Name);
-    placeNames.set(row.Group, group);
+    placeNamesByGroup.set(row.Group, group);
   }
-  if (placeNames.size === 0) throw new Error('SWN place-name table is empty');
-  return placeNames;
+  const templates = new Map<string, readonly string[]>();
+  for (const template of SWN_CULTURAL_TEMPLATES) {
+    const backingGroup = groupByTemplate[template];
+    const placeNames = placeNamesByGroup.get(backingGroup);
+    if (!placeNames) throw new Error(`Missing place names for culture template ${template}`);
+    templates.set(template, placeNames);
+  }
+  return templates;
+}
+
+function personalNameGroup(culturalTemplate: string): string {
+  const group = NAME_GROUP_BY_TEMPLATE[culturalTemplate as keyof typeof NAME_GROUP_BY_TEMPLATE];
+  if (!group) throw new Error(`Missing personal-name group for culture template ${culturalTemplate}`);
+  return group;
 }
 
 function choose<T>(rng: seedrandom.PRNG, values: readonly T[], tableName: string): T {
@@ -172,7 +211,7 @@ function namedComponent(
   prompts: [SwnCulturePrompt, SwnCulturePrompt],
 ): SwnCultureNamedComponent {
   const gender: SwnCultureGender = rng() < 0.5 ? 'Male' : 'Female';
-  const [firstName, surname] = full_name(rng, gender, culturalTemplate);
+  const [firstName, surname] = full_name(rng, gender, personalNameGroup(culturalTemplate));
   return { prompts, name: `${firstName} ${surname}`, gender };
 }
 
@@ -185,7 +224,7 @@ export function generateSwnNpcLocationBank(
   if (!placeNames) throw new Error(`Missing place names for culture ${culturalTemplate}`);
   const npcs = Array.from({ length: 5 }, () => {
     const gender: SwnCultureGender = rng() < 0.5 ? 'Male' : 'Female';
-    const [firstName, surname] = full_name(rng, gender, culturalTemplate);
+    const [firstName, surname] = full_name(rng, gender, personalNameGroup(culturalTemplate));
     return { name: `${firstName} ${surname}`, gender };
   });
   const locations = Array.from({ length: 5 }, () =>
@@ -206,7 +245,11 @@ export function generateSwnCultureForTags(
 ): SwnCulture {
   const worldTags = validateWorldTags(worldTagsInput);
   const rng = seedrandom(`${seed}:swn-culture:body`);
-  const culturalTemplate = choose(rng, SWN_CULTURAL_TEMPLATES, 'cultural templates');
+  const culturalTemplate = choose(
+    rng,
+    SWN_DEFAULT_CULTURAL_TEMPLATES,
+    'default cultural templates',
+  );
   const placeNames = SWN_PLACE_NAMES.get(culturalTemplate);
   if (!placeNames) throw new Error(`Missing place names for culture ${culturalTemplate}`);
 

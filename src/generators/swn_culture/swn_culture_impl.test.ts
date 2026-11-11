@@ -58,11 +58,23 @@ test('each adventure component contains one valid prompt from each tag', () => {
 });
 
 test('culture and place names come directly from the shared names table', () => {
-  expect(SWN_CULTURAL_TEMPLATES).toHaveLength(11);
-  expect([...SWN_PLACE_NAMES.values()].flat()).toHaveLength(8212);
-  expect(SWN_PLACE_NAMES.get('Fantasy')).toHaveLength(7429);
-  expect(SWN_PLACE_NAMES.get('HighFantasy')).toHaveLength(295);
-  expect(SWN_CULTURAL_TEMPLATES).not.toContain('HighFantasy');
+  expect(SWN_CULTURAL_TEMPLATES).toEqual([
+    'Arabic',
+    'Chinese',
+    'English',
+    'Greek',
+    'Indian',
+    'Japanese',
+    'Latin',
+    'Nigerian',
+    'Russian',
+    'Spanish',
+    'Future',
+  ]);
+  expect([...SWN_PLACE_NAMES.values()].flat()).toHaveLength(7917);
+  expect(SWN_PLACE_NAMES.get('Future')).toHaveLength(7429);
+  expect(SWN_PLACE_NAMES.has('Fantasy')).toBe(false);
+  expect(SWN_PLACE_NAMES.has('HighFantasy')).toBe(false);
   const result = generateSwnCulture('place-names');
   const names = SWN_PLACE_NAMES.get(result.culturalTemplate);
   expect(names).toContain(result.homeworld);
