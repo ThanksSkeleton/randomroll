@@ -1,5 +1,4 @@
 import { expect, test } from 'vitest';
-import { PrototypeApplication } from '../Application/prototypeApplication';
 import { generate } from '../Generator/generate';
 import { projectCultureScreen, projectHabitablePoi } from './culture_projection';
 import { projectClaims, projectConquest, projectPolity } from './politics_projection';
@@ -41,31 +40,6 @@ test('politics and culture projection is deterministic and preserves historical 
       },
     ),
   );
-});
-
-test('completion command stores selected culture once and returns fresh projection', () => {
-  const sector = generate({ seed: seed });
-  const app = new PrototypeApplication([sector]);
-  const incomplete = sector.Systems.flatMap((system) => system.Objects).find(
-    (object) => object.Kind === 'Planet' && object.InhabitedInfo !== false && !object.Culture,
-  )!;
-  expect(incomplete).toBeDefined();
-  expect(app.completeWorld(4, incomplete.Id)).toEqual({ ok: false, reason: 'invalid-index' });
-  expect(app.completeWorld(0, 'missing')).toEqual({ ok: false, reason: 'invalid-world' });
-  const first = app.completeWorld(0, incomplete.Id);
-  expect(first.ok).toBe(true);
-  if (!first.ok) return;
-  expect(first.display.culture.worlds.find((world) => world.id === incomplete.Id)?.complete).toBe(
-    true,
-  );
-  expect(first.display.entities[incomplete.Id].selectedCulture).toBeTruthy();
-  const second = app.completeWorld(0, incomplete.Id);
-  expect(second).toEqual(first);
-  expect(
-    sector.Systems.flatMap((system) => system.Objects).find(
-      (object): object is Planet => object.Id === incomplete.Id && object.Kind === 'Planet',
-    )?.Culture,
-  ).toBeNull();
 });
 
 test('tag descriptions and HPOI text are projected without canonical copies', () => {

@@ -1,7 +1,6 @@
 import { createInitialSectors } from './initialSectors';
 import { generate } from '../Generator/generate';
 import type { GenerationSettings } from '../Generator/generation_settings';
-import { completeWorld as generateWorldCulture } from '../Generator/culture';
 import type { ScanVisibility, Sector } from '../BaseDTO/merged_schema';
 import type { DisplaySectorDTO } from '../DisplayDTO/dto';
 import { projectSector, type SectorProjectionResult } from '../Projector/sector_projection';
@@ -16,10 +15,6 @@ import {
 } from './sector_operations';
 
 export type LocalSession = { role: 'gm' };
-
-export type CompleteWorldResult =
-  | { ok: true; display: DisplaySectorDTO }
-  | { ok: false; reason: 'invalid-index' | 'invalid-world' | 'invalid-projection' };
 
 export type GenerateSectorResult =
   | { ok: true; display: DisplaySectorDTO }
@@ -153,30 +148,6 @@ export class PrototypeApplication {
     options: { preview: 'gm' | 'player'; assetBaseUrl: string },
   ): SectorCommandResult {
     return this.updateSectorByCommand(index, (sector) => deleteSectorObject(sector, id), options);
-  }
-
-  completeWorld(
-    index: number,
-    worldId: string,
-    options: ProjectionOptions = { preview: 'gm', assetBaseUrl: '/' },
-  ): CompleteWorldResult {
-    const current = this.loadCanonical(index);
-    if (!current) return { ok: false, reason: 'invalid-index' };
-    const eligible = current.Systems.some((system) =>
-      system.Objects.some(
-        (object) =>
-          object.Id === worldId && object.Kind === 'Planet' && object.InhabitedInfo !== false,
-      ),
-    );
-    if (!eligible) return { ok: false, reason: 'invalid-world' };
-    const next = generateWorldCulture(current, worldId);
-    if (checkAllInvariants(next).length) return { ok: false, reason: 'invalid-projection' };
-    const projected = projectSector(next, options);
-    if (!projected.ok) return { ok: false, reason: 'invalid-projection' };
-    this.sectors = this.sectors.map((sector, currentIndex) =>
-      currentIndex === index ? copy(next) : sector,
-    );
-    return { ok: true, display: projected.value };
   }
 
   getCurrentSession(): LocalSession {

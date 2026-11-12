@@ -172,6 +172,7 @@ export type CultureWorldDisplayDTO = {
   kindLabel: 'Moon' | 'Planet';
   complete: boolean;
   startingWorld: boolean;
+  realizationTier: 'Primary' | 'Secondary' | 'Tertiary' | null;
   techLevel: string;
   population: string;
   tags: [WorldTagDisplayDTO, WorldTagDisplayDTO];
@@ -189,6 +190,7 @@ export type CultureOverviewRowDisplayDTO = {
   worldName: string;
   startingWorld: boolean;
   complete: boolean;
+  realizationTier: 'Primary' | 'Secondary' | 'Tertiary' | null;
   originalPolity: PolityDisplayDTO | null;
   currentPolities: PolityDisplayDTO[];
 };

@@ -17,6 +17,7 @@ import { projectClaims, projectPolity } from './politics_projection';
 import { projectWorldTag } from './world_tag_projection';
 import { HPOI_MARKER } from '../Data/Projection/poi_presentation';
 import { generateSwnNpcLocationBank } from '../../swn_culture/swn_culture_impl';
+import { cultureRealizationTiers } from '../Shared/culture_realization_tiers';
 
 export function hpoiWorld(sector: Sector, hpoi: HabitablePointOfInterest): Planet | undefined {
   const system = sector.Systems.find((candidate) =>
@@ -232,6 +233,7 @@ export function projectHabitablePoi(
 export function projectCultureWorld(
   sector: Sector,
   worldId: string,
+  realizationTiers = cultureRealizationTiers(sector),
 ): CultureWorldDisplayDTO | undefined {
   const system = sector.Systems.find((candidate) =>
     candidate.Objects.some((object) => object.Id === worldId),
@@ -256,6 +258,7 @@ export function projectCultureWorld(
     kindLabel: world.Orbit.ParentObjectId ? 'Moon' : 'Planet',
     complete: Boolean(world.Culture),
     startingWorld: sector.StartingWorldId === world.Id,
+    realizationTier: realizationTiers.get(system.Id) ?? null,
     techLevel: techLevelStrings(world.InhabitedInfo.TechLevel).shortString,
     population: populationStrings(world.InhabitedInfo.Population).shortString,
     tags: world.InhabitedInfo.WorldTags.map(projectWorldTag) as CultureWorldDisplayDTO['tags'],
@@ -273,12 +276,13 @@ export function projectCultureWorld(
 }
 
 export function projectCultureScreen(sector: Sector): CultureScreenDisplayDTO | undefined {
+  const realizationTiers = cultureRealizationTiers(sector);
   const worldIds = sector.Systems.flatMap((system) =>
     system.Objects.filter(
       (object) => object.Kind === 'Planet' && object.InhabitedInfo !== false,
     ).map((object) => object.Id),
   );
-  const worlds = worldIds.map((id) => projectCultureWorld(sector, id));
+  const worlds = worldIds.map((id) => projectCultureWorld(sector, id, realizationTiers));
   if (worlds.some((world) => !world)) return undefined;
   const present = worlds as CultureWorldDisplayDTO[];
   const compare = (a: PolityDisplayDTO, b: PolityDisplayDTO) =>
@@ -289,6 +293,7 @@ export function projectCultureScreen(sector: Sector): CultureScreenDisplayDTO | 
       worldName: world.name,
       startingWorld: world.startingWorld,
       complete: world.complete,
+      realizationTier: world.realizationTier,
       originalPolity: world.originalPolity,
       currentPolities: [...world.claims.claimants].sort(compare),
     }))

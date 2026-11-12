@@ -18,6 +18,7 @@ import { generateCompleteSystem } from './generate_system';
 import { resolvePolitics } from './politics';
 import { completeWorld, createHabitablePointsOfInterest } from './culture';
 import { STAR_HABITABILITY } from '../Shared/planet_interpretation';
+import { cultureRealizationTiers } from '../Shared/culture_realization_tiers';
 
 export function generate(
   generationSettings: GenerationSettings,
@@ -179,11 +180,14 @@ export function generate(
       object.Culture = null;
     }
   }
+  const realizationTiers = cultureRealizationTiers(result);
   let completed = result;
-  for (const system of result.Systems)
+  for (const system of result.Systems) {
+    if (!realizationTiers.has(system.Id)) continue;
     for (const object of system.Objects)
-      if (object.Kind === 'Planet' && object.InhabitedInfo !== false && object.Visibility.BasicScan)
+      if (object.Kind === 'Planet' && object.InhabitedInfo !== false)
         completed = completeWorld(completed, object.Id);
+  }
   return completed;
 }
 

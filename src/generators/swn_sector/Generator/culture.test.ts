@@ -4,34 +4,49 @@ import { completeWorld, createHabitablePointsOfInterest } from './culture';
 import { generate } from './generate';
 import type { Planet } from '../BaseDTO/merged_schema';
 
-test('initial completion follows world visibility and later completion is stable', () => {
+test('initial completion follows the central, secondary, and tertiary system set', () => {
   const sector = generate({ seed: 'culture-integration' });
   const worlds = sector.Systems.flatMap((system) => system.Objects).filter(
     (object): object is Planet => object.Kind === 'Planet' && object.InhabitedInfo !== false,
   );
   expect(worlds.length).toBeGreaterThan(0);
+  const centralSystem = sector.Systems.find((system) =>
+    system.Objects.some((object) => object.Id === sector.StartingWorldId),
+  )!;
+  const centralAndSecondarySystemIds = new Set([centralSystem.Id]);
+  for (const route of sector.Routes) {
+    const portals = route.PortalIds.map((id) =>
+      sector.RoutePortals.find((portal) => portal.Id === id)!,
+    );
+    if (!portals.some((portal) => portal.SystemId === centralSystem.Id)) continue;
+    for (const portal of portals) centralAndSecondarySystemIds.add(portal.SystemId);
+  }
+  const systemIdByWorldId = new Map(
+    sector.Systems.flatMap((system) =>
+      system.Objects.map((object) => [object.Id, system.Id] as const),
+    ),
+  );
+  const polityHomeSystemId = new Map(
+    sector.Polities.map((polity) => [polity.Id, systemIdByWorldId.get(polity.HomeworldId)]),
+  );
+  const expectedCultureSystemIds = new Set(centralAndSecondarySystemIds);
+  for (const system of sector.Systems) {
+    if (!centralAndSecondarySystemIds.has(system.Id)) continue;
+    for (const object of system.Objects)
+      for (const polityId of object.ClaimedByPolityIds) {
+        const homeSystemId = polityHomeSystemId.get(polityId);
+        if (homeSystemId) expectedCultureSystemIds.add(homeSystemId);
+      }
+  }
   for (const world of worlds) {
-    expect(Boolean(world.Culture)).toBe(world.Visibility.BasicScan);
-    expect(world.Culture === null).toBe(!world.Visibility.BasicScan);
+    const systemId = systemIdByWorldId.get(world.Id)!;
+    expect(Boolean(world.Culture)).toBe(expectedCultureSystemIds.has(systemId));
     const hpois = sector.Systems.flatMap((system) => system.HabitablePointsOfInterest).filter(
       (hpoi) => hpoi.ParentWorldId === world.Id,
     );
     expect(hpois.length).toBe(3 + world.ClaimedByPolityIds.length);
     expect(hpois.every((hpoi) => !hpoi.Visibility.BasicScan)).toBe(true);
   }
-  const incomplete = worlds.find((world) => !world.Culture)!;
-  expect(incomplete).toBeDefined();
-  const completed = completeWorld(sector, incomplete.Id);
-  const filled = completed.Systems.flatMap((system) => system.Objects).find(
-    (object) => object.Id === incomplete.Id,
-  ) as Planet;
-  expect(filled.Culture).not.toBeNull();
-  expect(filled.InhabitedInfo && filled.InhabitedInfo.WorldTags).toEqual(
-    incomplete.InhabitedInfo && incomplete.InhabitedInfo.WorldTags,
-  );
-  expect(filled.Visibility).toEqual(incomplete.Visibility);
-  expect(completeWorld(completed, incomplete.Id)).toBe(completed);
-  expect(completeWorld(sector, incomplete.Id)).toEqual(completed);
 });
 
 test('contested worlds suppress infrastructure and assign one garrison per claimant', () => {

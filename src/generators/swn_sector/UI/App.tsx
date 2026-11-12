@@ -210,10 +210,6 @@ export default function App() {
         display ? (
           <CultureScreen
             display={display.culture}
-            onCompleteWorld={(worldId) => {
-              const result = application.completeWorld(activeIndex, worldId, commandOptions);
-              if (result.ok) dispatch({ type: 'updateSector', display: result.display });
-            }}
           />
         ) : (
           <main role="alert">Sector display unavailable.</main>

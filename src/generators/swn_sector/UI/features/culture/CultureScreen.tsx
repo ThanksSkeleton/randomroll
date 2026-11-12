@@ -169,13 +169,7 @@ function CultureDetails({
   );
 }
 
-function WorldEntry({
-  world,
-  onCompleteWorld,
-}: {
-  world: CultureWorldDisplayDTO;
-  onCompleteWorld: (worldId: string) => void;
-}) {
+function WorldEntry({ world }: { world: CultureWorldDisplayDTO }) {
   return (
     <article className="culture-world" id={`culture-world-${world.id}`}>
       <h3>
@@ -209,11 +203,6 @@ function WorldEntry({
           ))}
         </div>
       </section>
-      {!world.complete && (
-        <button type="button" onClick={() => onCompleteWorld(world.id)}>
-          GENERATE CULTURE / COMPLETE WORLD
-        </button>
-      )}
       {world.culture && world.npcLocationBank ? (
         <CultureDetails culture={world.culture} npcLocationBank={world.npcLocationBank} />
       ) : (
@@ -231,14 +220,20 @@ function WorldEntry({
   );
 }
 
-function WorldOverview({ rows }: { rows: CultureScreenDisplayDTO['overview'] }) {
+function WorldOverview({
+  rows,
+  showStatus,
+}: {
+  rows: CultureScreenDisplayDTO['overview'];
+  showStatus: boolean;
+}) {
   return (
     <div className="culture-polity-table-scroll">
       <table className="culture-polity-table">
         <thead>
           <tr>
             <th scope="col">World Name</th>
-            <th scope="col">Status</th>
+            {showStatus && <th scope="col">Status</th>}
             <th scope="col">Original Polity Name</th>
             <th scope="col">Flag</th>
             <th scope="col">Current Polity Name</th>
@@ -251,9 +246,21 @@ function WorldOverview({ rows }: { rows: CultureScreenDisplayDTO['overview'] }) 
               <th scope="row">
                 <a href={`#culture-world-${row.worldId}`}>{row.worldName}</a>
               </th>
-              <td className="culture-world-status">
-                {row.startingWorld ? '★' : row.complete ? '✓' : ''}
-              </td>
+              {showStatus && (
+                <td className="culture-world-status">
+                  {row.realizationTier ? (
+                    <>
+                      <span
+                        className={`culture-tier-mark culture-tier-mark--${row.realizationTier.toLowerCase()}`}
+                        aria-hidden="true"
+                      />
+                      <span>{row.realizationTier}</span>
+                    </>
+                  ) : (
+                    '—'
+                  )}
+                </td>
+              )}
               <td>{row.originalPolity?.NiceName ?? 'None'}</td>
               <td>
                 <PolityFlag polity={row.originalPolity ?? undefined} />
@@ -286,10 +293,8 @@ function WorldOverview({ rows }: { rows: CultureScreenDisplayDTO['overview'] }) 
 
 export function CultureScreen({
   display,
-  onCompleteWorld,
 }: {
   display: CultureScreenDisplayDTO;
-  onCompleteWorld: (worldId: string) => void;
 }) {
   return (
     <main className="culture-screen">
@@ -308,10 +313,10 @@ export function CultureScreen({
       ].map((group) => (
         <section className="culture-world-group" aria-label={group.title} key={group.title}>
           <h2>{group.title}</h2>
-          <WorldOverview rows={group.overview} />
+          <WorldOverview rows={group.overview} showStatus={group.title === 'Completed Worlds'} />
           <div className="culture-world-details">
             {group.worlds.map((world) => (
-              <WorldEntry key={world.id} world={world} onCompleteWorld={onCompleteWorld} />
+              <WorldEntry key={world.id} world={world} />
             ))}
           </div>
         </section>

@@ -2615,10 +2615,26 @@ button.button-active:hover:not(:disabled) {
   background: #14232e;
 }
 .culture-polity-table .culture-world-status {
-  width: 58px;
-  text-align: center;
-  font-size: 1.2rem;
-  line-height: 1;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+.culture-tier-mark {
+  display: inline-block;
+  width: 0.9em;
+  height: 0.9em;
+  margin-right: 7px;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  vertical-align: -0.08em;
+}
+.culture-tier-mark--primary {
+  background: currentColor;
+}
+.culture-tier-mark--secondary {
+  background: conic-gradient(currentColor 0deg 180deg, transparent 180deg 360deg);
+}
+.culture-tier-mark--tertiary {
+  background: conic-gradient(currentColor 0deg 120deg, transparent 120deg 360deg);
 }
 .culture-polity-table a {
   color: #a9dff3;

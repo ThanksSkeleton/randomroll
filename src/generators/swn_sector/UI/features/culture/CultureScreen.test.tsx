@@ -13,7 +13,7 @@ afterEach(cleanup);
 test('culture tab puts complete worlds first and keeps HPOIs closed', () => {
   const sector = generate({ seed: 'culture-screen-layout' });
   const { container } = render(
-    <CultureScreen display={projectCultureScreen(sector)!} onCompleteWorld={() => {}} />,
+    <CultureScreen display={projectCultureScreen(sector)!} />,
   );
   const cards = [...container.querySelectorAll('.culture-world')];
   expect(cards.length).toBeGreaterThan(1);
@@ -54,7 +54,7 @@ test('polity overview ranks current polities by inhabited-world count', () => {
   worlds[2]!.Culture = structuredClone(sampleCulture);
   worlds[3]!.Culture = null;
   const { container } = render(
-    <CultureScreen display={projectCultureScreen(sector)!} onCompleteWorld={() => {}} />,
+    <CultureScreen display={projectCultureScreen(sector)!} />,
   );
   const rows = [...container.querySelectorAll('.culture-polity-table tbody tr')];
   expect(rows).toHaveLength(worlds.length);
@@ -67,14 +67,17 @@ test('polity overview ranks current polities by inhabited-world count', () => {
   );
   expect(rowWorldIds[0]).toBe(`#culture-world-${worlds[2]!.Id}`);
   expect(rowWorldIds[1]).toBe(`#culture-world-${worlds[1]!.Id}`);
-  expect(rows[0]!.querySelector('.culture-world-status')?.textContent).toBe('★');
-  expect(rows[1]!.querySelector('.culture-world-status')?.textContent).toBe('✓');
-  expect(rows.slice(6).every((row) => row.children[4]?.textContent === 'None')).toBe(true);
+  expect(rows[0]!.querySelector('.culture-world-status')?.textContent).toBe('Primary');
+  expect(rows[1]!.querySelector('.culture-world-status')?.textContent).toBeTruthy();
   const contestedRow = rows.find(
     (row) => row.querySelector('a')?.getAttribute('href') === `#culture-world-${worlds[0]!.Id}`,
   )!;
-  expect(contestedRow.querySelector('.culture-world-status')?.textContent).toBe('');
+  expect(contestedRow.querySelector('.culture-world-status')).toBeNull();
   expect(contestedRow.querySelectorAll('td:last-child .polity-flag')).toHaveLength(2);
-  expect(contestedRow.children[4]?.firstElementChild?.textContent).toBe(largest!.NiceName);
-  expect(container.querySelectorAll('.culture-polity-table thead th')).toHaveLength(6);
+  expect(contestedRow.children[3]?.firstElementChild?.textContent).toBe(largest!.NiceName);
+  const incompleteGroup = container.querySelector('[aria-label="Incomplete Worlds"]')!;
+  expect(incompleteGroup.querySelector('thead')?.textContent).not.toContain('Status');
+  expect(incompleteGroup.querySelectorAll('thead th')).toHaveLength(5);
+  const completedGroup = container.querySelector('[aria-label="Completed Worlds"]')!;
+  expect(completedGroup.querySelectorAll('thead th')).toHaveLength(6);
 });
