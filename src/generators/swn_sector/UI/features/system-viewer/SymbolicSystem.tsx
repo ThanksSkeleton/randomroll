@@ -350,7 +350,10 @@ export function SymbolicSystem({
     .map((id) => display.entities[id])
     .filter(
       (route) =>
-        route.route?.endpointSystemIds.includes(system.id) && visible(route.id, display, preview),
+        route.route?.endpointSystemIds.includes(system.id) &&
+        visible(route.id, display, preview) &&
+        (preview === 'gm' ||
+          route.route.endpointSystemIds.every((id) => visible(id, display, preview))),
     );
   const systemD = details(system.id, display);
   const starDisplay = system.star;

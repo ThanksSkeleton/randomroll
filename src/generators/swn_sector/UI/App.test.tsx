@@ -2,6 +2,7 @@
 
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
+import { generate } from '../Generator/generate';
 import App from './App';
 
 function renderApp() {
@@ -9,7 +10,7 @@ function renderApp() {
 }
 
 afterEach(() => cleanup());
-beforeEach(() => window.history.replaceState({}, '', '/swn_sector/?seed=sector-one-seed'));
+beforeEach(() => window.history.replaceState({}, '', '/swn_sector/gm/?seed=sector-one-seed'));
 
 beforeAll(() => {
   class TestResizeObserver {
@@ -25,7 +26,7 @@ function firstSystemButton() {
 
 describe('prototype application workflows', () => {
   it('uses the shared URL seed for loading, rerolling, and browser history', () => {
-    window.history.replaceState({}, '', '/swn_sector/?seed=shared-seed');
+    window.history.replaceState({}, '', '/swn_sector/gm/?seed=shared-seed');
     renderApp();
     expect(screen.getByLabelText('Seed: shared-seed')).toBeTruthy();
 
@@ -34,13 +35,13 @@ describe('prototype application workflows', () => {
     expect(rerolledSeed).toMatch(/^[a-z0-9]{5}$/);
     expect(screen.getByLabelText(`Seed: ${rerolledSeed}`)).toBeTruthy();
 
-    window.history.replaceState({}, '', '/swn_sector/?seed=shared-seed');
+    window.history.replaceState({}, '', '/swn_sector/gm/?seed=shared-seed');
     fireEvent.popState(window);
     expect(screen.getByLabelText('Seed: shared-seed')).toBeTruthy();
   });
 
   it('adds a shared-format seed when the URL has none', () => {
-    window.history.replaceState({}, '', '/swn_sector/');
+    window.history.replaceState({}, '', '/swn_sector/gm/');
     renderApp();
     const seed = new URL(window.location.href).searchParams.get('seed');
     expect(seed).toMatch(/^[a-z0-9]{5}$/);
@@ -50,10 +51,33 @@ describe('prototype application workflows', () => {
   it('starts in the GM sector map with all systems and no target', () => {
     renderApp();
 
-    expect(screen.getByRole('button', { name: 'GM VIEW' }).className).toContain('button-active');
+    expect(screen.getByText('GM VIEW')).toBeTruthy();
     expect(screen.getAllByRole('button', { name: /^System / }).length).toBeGreaterThanOrEqual(20);
     expect(screen.getByRole('heading', { name: 'NO TARGET' })).toBeTruthy();
     expect(screen.queryByRole('button', { name: '⌫ DELETE TARGET' })).toBeNull();
+  });
+
+  it('loads the same seed in player mode without GM controls or hidden systems', () => {
+    renderApp();
+    const gmSystemCount = screen.getAllByRole('button', { name: /^System / }).length;
+    cleanup();
+
+    window.history.replaceState({}, '', '/swn_sector/player/?seed=sector-one-seed');
+    renderApp();
+    const playerSystems = screen.getAllByRole('button', { name: /^System / });
+    expect(playerSystems.length).toBeGreaterThan(0);
+    expect(playerSystems.length).toBeLessThan(gmSystemCount);
+    expect(window.location.search).toBe('?seed=sector-one-seed');
+    expect(screen.getByText('PLAYER VIEW')).toBeTruthy();
+    expect(screen.queryByRole('button', { name: 'CULTURE' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'REROLL ↻' })).toBeNull();
+    expect(screen.queryByLabelText('Seed: sector-one-seed')).toBeNull();
+    expect(screen.queryByRole('tab', { name: 'GM' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'GM VIEW' })).toBeNull();
+
+    fireEvent.click(playerSystems[0]);
+    expect(screen.queryByRole('heading', { name: 'NO TARGET' })).toBeNull();
+    expect(screen.queryByRole('tab', { name: 'GM' })).toBeNull();
   });
 
   it('preserves a selected system across symbolic/map and sector/system transitions', () => {
@@ -88,8 +112,14 @@ describe('prototype application workflows', () => {
     fireEvent.click(overlayButton);
     expect(document.querySelectorAll('.hex-polity-tint').length).toBeGreaterThan(0);
 
-    fireEvent.click(firstSystemButton());
+    const sector = generate({ seed: 'sector-one-seed' });
+    const claimedSystem = sector.Systems.find((system) =>
+      system.Objects.some((object) => object.ClaimedByPolityIds.length > 0),
+    );
+    expect(claimedSystem).toBeDefined();
+    fireEvent.click(screen.getByRole('button', { name: `System ${claimedSystem!.NiceName}` }));
     fireEvent.click(screen.getByRole('button', { name: /^SYSTEM$/ }));
+    fireEvent.click(screen.getByRole('button', { name: /^SYMBOLIC$/ }));
     expect(overlayButton).toHaveProperty('disabled', false);
 
     expect(overlayButton.className).toContain('button-active');

@@ -7,7 +7,6 @@ export type AppState = {
   sectors: DisplaySectorDTO[];
   activeIndex: number;
   view: View;
-  preview: Preview;
   selectedId: string | null;
   routeContextSystemId: string | null;
   currentSystemId: string | null;
@@ -17,7 +16,6 @@ export type AppState = {
 export type AppAction =
   | { type: 'selectObject'; id: string | null }
   | { type: 'selectRoute'; id: string; contextSystemId: string }
-  | { type: 'changePreview'; preview: Preview; sectors: DisplaySectorDTO[] }
   | { type: 'changeView'; view: View }
   | { type: 'openSystem'; systemId: string; mode: SystemMode }
   | { type: 'changeRepresentation'; mode: SystemMode }
@@ -29,7 +27,6 @@ export function createAppState(sectors: DisplaySectorDTO[]): AppState {
     sectors,
     activeIndex: 0,
     view: 'hex',
-    preview: 'gm',
     selectedId: null,
     routeContextSystemId: null,
     currentSystemId: null,
@@ -47,23 +44,6 @@ export function appReducer(state: AppState, action: AppAction): AppState {
       return { ...state, selectedId: action.id, routeContextSystemId: null };
     case 'selectRoute':
       return { ...state, selectedId: action.id, routeContextSystemId: action.contextSystemId };
-    case 'changePreview': {
-      const playerRestricted =
-        action.preview === 'player' && (state.view === 'all' || state.view === 'culture');
-      if (playerRestricted)
-        return {
-          ...clearNavigation(state),
-          preview: action.preview,
-          sectors: action.sectors,
-          view: 'hex',
-          currentSystemId: null,
-        };
-      return {
-        ...state,
-        preview: action.preview,
-        sectors: action.sectors,
-      };
-    }
     case 'changeView':
       return {
         ...clearNavigation(state),

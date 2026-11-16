@@ -33,7 +33,7 @@ Keep this operation separate from ordinary sector generation in Milestone 0. The
 
 ## 3. Create GM and player sector URLs
 
-Expose two directly loadable static pages, `/swn_sector/gm/` and `/swn_sector/player/`, using the same sector UI and `?seed=` URL convention. Keep `/swn_sector/` working as a GM entry or redirect so existing links continue to work. Both URLs must load correctly after a production Vite build, including a direct visit or reload. The selected role comes from the entry URL; remove the disabled preview switch.
+Expose two directly loadable static pages, `/swn_sector/gm/` and `/swn_sector/player/`, using the same sector UI and `?seed=` URL convention. Retire `/swn_sector/` and link both new pages from the top-level index. Both URLs must load correctly after a production Vite build, including a direct visit or reload. The selected role comes from the entry URL; remove the disabled preview switch.
 
 - **GM URL:** show the complete generated sector, including systems outside player visibility and the GM-only culture and inspector information. Keep whole-sector reroll and seed display.
 - **Player URL:** use the existing visibility rules for sector map, routes, system views, object selection, names, and inspector fields. Do not show the GM culture screen, GM-only inspector tab, or GM generation controls. A hidden object cannot be selected through normal UI navigation.

@@ -76,8 +76,7 @@ select:focus-visible {
   display: flex;
   justify-content: center;
 }
-.chrome nav button,
-.segmented button {
+.chrome nav button {
   background: transparent;
   border: 0;
   border-bottom: 2px solid transparent;
@@ -99,6 +98,12 @@ select:focus-visible {
   gap: 18px;
   padding: 0 22px;
   border-left: 1px solid var(--line);
+}
+.role-indicator {
+  color: var(--green);
+  font: 11px 'IBM Plex Mono';
+  letter-spacing: 0.08em;
+  white-space: nowrap;
 }
 .generation-topbar {
   display: flex;
@@ -134,11 +139,6 @@ select {
   padding: 0 13px;
   font: 12px 'IBM Plex Mono';
 }
-.segmented button:disabled {
-  color: #46565b;
-  cursor: not-allowed;
-  opacity: .65;
-}
 .role {
   font: 11px 'IBM Plex Mono';
   letter-spacing: 0.08em;
@@ -152,19 +152,6 @@ select {
   border-radius: 50%;
   box-shadow: 0 0 8px var(--green);
   margin-right: 7px;
-}
-.segmented {
-  display: flex;
-  border: 1px solid #2b3b42;
-  height: 34px;
-}
-.segmented button {
-  padding: 0 12px;
-  border: 0;
-}
-.segmented button.active {
-  color: #06100d;
-  background: var(--green);
 }
 .workspace {
   display: grid;
@@ -2530,13 +2517,11 @@ button.button-active:hover:not(:disabled) {
   color: #06100d;
 }
 .chrome nav button.button-active,
-.segmented button.button-active,
 .edit-bar button.button-active {
   background: var(--green);
   color: #06100d;
 }
 .chrome nav button.button-allowed,
-.segmented button.button-allowed,
 .edit-bar button.button-allowed {
   background: #0c1418;
   color: var(--green);

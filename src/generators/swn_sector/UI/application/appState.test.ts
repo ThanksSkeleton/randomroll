@@ -40,15 +40,10 @@ describe('application state transitions', () => {
     expect(next).toMatchObject({ view: 'all', selectedId: null });
   });
 
-  it('switching preview from culture returns to the sector map', () => {
+  it('returns from culture to the sector map', () => {
     const state = { ...createAppState(displaySectors()), view: 'culture' as const };
-    const next = appReducer(state, {
-      type: 'changePreview',
-      preview: 'player',
-      sectors: state.sectors,
-    });
+    const next = appReducer(state, { type: 'changeView', view: 'hex' });
     expect(next).toMatchObject({
-      preview: 'player',
       view: 'hex',
       currentSystemId: null,
       selectedId: null,

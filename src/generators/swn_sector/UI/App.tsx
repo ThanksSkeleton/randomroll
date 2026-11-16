@@ -2,6 +2,7 @@ import { useEffect, useMemo, useReducer, useState } from 'react';
 import { ensureSeedInUrl, randomSeed, setSeedInUrl } from '../../../framework';
 import { appReducer, createAppState } from './application/appState';
 import type { Preview, View } from './application/appState';
+import { sectorRoleFromPath } from './application/sectorRole';
 import { AppChrome, StageNav } from './features/navigation/AppChrome';
 import type { StageMode } from './features/navigation/AppChrome';
 import { CultureScreen } from './features/culture/CultureScreen';
@@ -35,17 +36,17 @@ function objectKind(display: DisplaySectorDTO | null, id: string | null): string
 }
 
 export default function App() {
+  const preview = sectorRoleFromPath(window.location.pathname);
   const [application] = useState(() => createPrototypeApplication(ensureSeedInUrl()));
   const [showTemperatureOverlay, setShowTemperatureOverlay] = useState(false);
   const [showPolityOverlay, setShowPolityOverlay] = useState(false);
   const [state, dispatch] = useReducer(appReducer, undefined, () =>
-    createAppState(readDisplays(application, 'gm')),
+    createAppState(readDisplays(application, preview)),
   );
   const {
     sectors,
     activeIndex,
     view,
-    preview,
     selectedId: selected,
     routeContextSystemId,
     currentSystemId,
@@ -57,24 +58,29 @@ export default function App() {
     if (preview === 'player' && selected && !isVisible(selected, display, preview))
       dispatch({ type: 'selectObject', id: null });
   }, [preview, selected, display]);
-  const setSelected = (id: string | null) => dispatch({ type: 'selectObject', id });
+  const setSelected = (id: string | null) =>
+    dispatch({ type: 'selectObject', id: id && !isVisible(id, display, preview) ? null : id });
   const commandOptions = { preview, assetBaseUrl: import.meta.env.BASE_URL };
   useEffect(() => {
     const restoreSeed = () => {
       const result = application.generateSector(
         { seed: ensureSeedInUrl() },
-        { preview, assetBaseUrl: import.meta.env.BASE_URL },
+        {
+          preview: sectorRoleFromPath(window.location.pathname),
+          assetBaseUrl: import.meta.env.BASE_URL,
+        },
       );
       if (result.ok) dispatch({ type: 'replaceSector', display: result.display });
     };
     window.addEventListener('popstate', restoreSeed);
     return () => window.removeEventListener('popstate', restoreSeed);
-  }, [application, preview]);
+  }, [application]);
   const selectRoute = (id: string, contextSystemId: string) =>
-    dispatch({ type: 'selectRoute', id, contextSystemId });
-  const go = (v: View) => dispatch({ type: 'changeView', view: v });
-  const setPreviewMode = (next: Preview) =>
-    dispatch({ type: 'changePreview', preview: next, sectors: readDisplays(application, next) });
+    isVisible(id, display, preview) && dispatch({ type: 'selectRoute', id, contextSystemId });
+  const go = (v: View) => {
+    if (preview === 'player' && v === 'culture') return;
+    dispatch({ type: 'changeView', view: v });
+  };
   const selectedSystemId = useMemo(() => {
     if (!selected || !display) return null;
     const entity = display.entities[selected];
@@ -94,9 +100,11 @@ export default function App() {
         ) ?? null)
       : null;
   }, [currentSystemId, display, routeContextSystemId, selected, selectedSystemId, view]);
-  const canTravel = Boolean(travelDestinationId);
+  const canTravel = Boolean(
+    travelDestinationId && isVisible(travelDestinationId, display, preview),
+  );
   const travelToSelectedSystem = () => {
-    if (!travelDestinationId) return;
+    if (!travelDestinationId || !isVisible(travelDestinationId, display, preview)) return;
     if (view === 'system')
       dispatch({ type: 'openSystem', systemId: travelDestinationId, mode: systemMode });
     else dispatch({ type: 'selectObject', id: travelDestinationId });
@@ -153,7 +161,6 @@ export default function App() {
       <AppChrome
         view={view}
         preview={preview}
-        setPreview={setPreviewMode}
         go={go}
         seed={application.readSeed(activeIndex) ?? '—'}
         onReroll={() => {

@@ -4,14 +4,12 @@ import { IconButton } from './IconButton';
 export function AppChrome({
   view,
   preview,
-  setPreview,
   go,
   seed,
   onReroll,
 }: {
   view: View;
   preview: Preview;
-  setPreview: (p: Preview) => void;
   go: (v: View) => void;
   seed: string;
   onReroll: () => void;
@@ -21,15 +19,15 @@ export function AppChrome({
       <button className="brand" onClick={() => go('hex')}>
         <span className="brand-title">SECTOR NAVIGATION</span>
       </button>
-      <nav aria-label="GM navigation">
+      <nav aria-label="Sector navigation">
+        <button
+          className={`nav-item nav-item-sector ${view !== 'culture' ? 'button-active' : 'button-allowed'}`}
+          onClick={() => go('hex')}
+        >
+          SECTOR
+        </button>
         {preview === 'gm' && (
           <>
-            <button
-              className={`nav-item nav-item-sector ${view !== 'culture' ? 'button-active' : 'button-allowed'}`}
-              onClick={() => go('hex')}
-            >
-              SECTOR
-            </button>
             <button
               className={`nav-item ${view === 'culture' ? 'button-active' : 'button-allowed'}`}
               onClick={() => go('culture')}
@@ -40,30 +38,17 @@ export function AppChrome({
         )}
       </nav>
       <div className="role-controls">
-        <div className="generation-topbar">
-          <span className="seed-display" aria-label={`Seed: ${seed}`}>
-            SEED: {seed}
-          </span>
-          <button className="reroll-button" onClick={onReroll}>
-            REROLL ↻
-          </button>
-        </div>
-        <div className="segmented" aria-label="Preview mode">
-          <button
-            className={`preview-option preview-option-gm ${preview === 'gm' ? 'button-active' : 'button-allowed'}`}
-            onClick={() => setPreview('gm')}
-            disabled
-          >
-            GM VIEW
-          </button>
-          <button
-            className={`preview-option preview-option-player ${preview === 'player' ? 'button-active' : 'button-allowed'}`}
-            onClick={() => setPreview('player')}
-            disabled
-          >
-            PLAYER VIEW
-          </button>
-        </div>
+        {preview === 'gm' && (
+          <div className="generation-topbar">
+            <span className="seed-display" aria-label={`Seed: ${seed}`}>
+              SEED: {seed}
+            </span>
+            <button className="reroll-button" onClick={onReroll}>
+              REROLL ↻
+            </button>
+          </div>
+        )}
+        <span className="role-indicator">{preview === 'gm' ? 'GM VIEW' : 'PLAYER VIEW'}</span>
       </div>
     </header>
   );
