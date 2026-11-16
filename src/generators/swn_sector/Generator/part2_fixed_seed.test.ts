@@ -6,9 +6,9 @@ import { projectPolity } from '../Projector/politics_projection';
 import type { WorldTag } from '../BaseDTO/merged_schema';
 
 const EXPECTED: Record<string, string> = {
-  'sector-one-seed': '7e5c0b87dacf39330564456f7e669a42e32463e29edbcaf5a91d12cf81b25da8',
-  'sector-two-seed': '67b075f0d7204a9bab36c5e41daea453481da187d15c8cc3e9701cfa06002864',
-  'part-two-regression': '3752424321e32b21fcd7f00b8ddfc62a2cbb32a374d3232c50e06b349337f275',
+  'sector-one-seed': '588833e9d2acaa8bbb92726fd069ba2a1b71d718905d3804c8206e93c13c9bf4',
+  'sector-two-seed': '33ec88e4ca3492c607c4b23becd5e729d76ce62258c1a423c742ef707e34380c',
+  'part-two-regression': 'd92a2e8c90e659daff183045021f7f7cd8253c5ca3e053e68eb1a8dfad50a820',
 };
 
 test('fixed seed canonical output stays deterministic through portrait projection', () => {
@@ -17,6 +17,12 @@ test('fixed seed canonical output stays deterministic through portrait projectio
     const sector = generate({ seed: seed });
     expect(generate({ seed: seed })).toEqual(sector);
     expect(sector.SchemaVersion).toBe('merged-v9');
+    expect(
+      sector.Systems.flatMap((system) => system.Objects).every(
+        (object) =>
+          object.Kind !== 'Planet' || object.InhabitedInfo === false || Boolean(object.Culture),
+      ),
+    ).toBe(true);
     for (const system of sector.Systems)
       for (const object of system.Objects) {
         expect(object).not.toHaveProperty('Temperature');

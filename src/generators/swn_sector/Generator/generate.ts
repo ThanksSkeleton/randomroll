@@ -8,21 +8,16 @@ import {
   shuffled,
 } from './generation_random';
 import type { GenerationSettings } from './generation_settings';
-import {
-  DEFAULT_GENERATION_SETTINGS,
-  DEFAULT_STARTING_WORLD_MODE,
-} from './generation_defaults';
+import { DEFAULT_GENERATION_SETTINGS, DEFAULT_STARTING_WORLD_MODE } from './generation_defaults';
 import { STAR_TABLE } from './generation_rules';
 import { generateRoutes } from './generate_routes';
 import { generateCompleteSystem } from './generate_system';
 import { resolvePolitics } from './politics';
-import { completeWorld, createHabitablePointsOfInterest } from './culture';
+import { createHabitablePointsOfInterest } from './culture';
 import { STAR_HABITABILITY } from '../Shared/planet_interpretation';
-import { cultureRealizationTiers } from '../Shared/culture_realization_tiers';
+import { realizeSector } from './realize_sector';
 
-export function generate(
-  generationSettings: GenerationSettings,
-): Sector {
+export function generate(generationSettings: GenerationSettings): Sector {
   const { seed } = generationSettings;
   const settings = { ...DEFAULT_GENERATION_SETTINGS, ...generationSettings };
   const {
@@ -101,9 +96,7 @@ export function generate(
     .filter((planet) => eligibleStartingWorld(planet))
     .sort((a, b) => a.Id.localeCompare(b.Id));
   if (candidates.length === 0)
-    throw new Error(
-      'No eligible inhabited world was generated. Generate a different sector.',
-    );
+    throw new Error('No eligible inhabited world was generated. Generate a different sector.');
   const startingWorld = choose(
     randomFor(generationSettings, 'starting-world'),
     candidates,
@@ -180,15 +173,7 @@ export function generate(
       object.Culture = null;
     }
   }
-  const realizationTiers = cultureRealizationTiers(result);
-  let completed = result;
-  for (const system of result.Systems) {
-    if (!realizationTiers.has(system.Id)) continue;
-    for (const object of system.Objects)
-      if (object.Kind === 'Planet' && object.InhabitedInfo !== false)
-        completed = completeWorld(completed, object.Id);
-  }
-  return completed;
+  return realizeSector(result);
 }
 
 function eligibleStartingWorld(planet: Planet): boolean {

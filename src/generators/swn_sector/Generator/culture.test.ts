@@ -2,10 +2,24 @@ import { hpoiProjection, hpoiVisible } from '../Projector/culture_projection';
 import { expect, test } from 'vitest';
 import { completeWorld, createHabitablePointsOfInterest } from './culture';
 import { generate } from './generate';
+import { realizeStartingArea } from './realize_starting_area';
 import type { Planet } from '../BaseDTO/merged_schema';
 
-test('initial completion follows the central, secondary, and tertiary system set', () => {
+test('ordinary generation completes every inhabited world', () => {
   const sector = generate({ seed: 'culture-integration' });
+  const worlds = sector.Systems.flatMap((system) => system.Objects).filter(
+    (object): object is Planet => object.Kind === 'Planet' && object.InhabitedInfo !== false,
+  );
+  expect(worlds.length).toBeGreaterThan(0);
+  expect(worlds.every((world) => world.Culture !== null)).toBe(true);
+});
+
+test('retained starting-area completion follows the central, secondary, and tertiary system set', () => {
+  const unrealized = structuredClone(generate({ seed: 'culture-integration' }));
+  for (const system of unrealized.Systems)
+    for (const object of system.Objects)
+      if (object.Kind === 'Planet' && object.InhabitedInfo !== false) object.Culture = null;
+  const sector = realizeStartingArea(unrealized);
   const worlds = sector.Systems.flatMap((system) => system.Objects).filter(
     (object): object is Planet => object.Kind === 'Planet' && object.InhabitedInfo !== false,
   );
