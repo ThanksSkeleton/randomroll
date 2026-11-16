@@ -2576,8 +2576,17 @@ button.button-active:hover:not(:disabled) {
 .culture-polity-overview {
   margin: 24px 0 32px;
 }
-.culture-world-group > h2 {
-  margin: 0 0 12px;
+.culture-world-group > summary,
+.culture-world > summary {
+  cursor: pointer;
+}
+.culture-world-group > summary > h2,
+.culture-world > summary > h3 {
+  display: inline-block;
+  margin: 0;
+}
+.culture-world-group[open] > summary {
+  margin-bottom: 12px;
 }
 .culture-world-group {
   margin: 28px 0;
@@ -2654,6 +2663,12 @@ button.button-active:hover:not(:disabled) {
   padding: 20px;
   border: 1px solid #496278;
   background: #192b38;
+}
+.culture-world > summary {
+  margin-bottom: 12px;
+}
+.culture-world:not([open]) > summary {
+  margin-bottom: 0;
 }
 .culture-world > p {
   margin: 6px 0;

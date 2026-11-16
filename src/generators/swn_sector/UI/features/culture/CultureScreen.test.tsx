@@ -83,8 +83,8 @@ test('polity overview keeps starting-world priority and groups worlds by visibil
   expect(unlabeledRows).toHaveLength(
     projected.overview.filter((row) => row.realizationTier === null).length,
   );
-  expect(labeledRows[0]!.querySelector('a')?.getAttribute('href')).toBe(
-    `#culture-world-${worlds[2]!.Id}`,
+  expect(labeledRows[0]!.querySelector('th[scope="row"]')?.textContent).toBe(
+    projected.overview.find((row) => row.worldId === worlds[2]!.Id)?.worldName,
   );
   expect(labeledRows[0]!.querySelector('.culture-world-status')?.textContent).toBe('Primary');
   expect(
@@ -116,7 +116,9 @@ test('polity overview keeps starting-world priority and groups worlds by visibil
       .sort((a, b) => a.localeCompare(b)),
   );
   const contestedRow = [...labeledRows, ...unlabeledRows].find(
-    (row) => row.querySelector('a')?.getAttribute('href') === `#culture-world-${worlds[0]!.Id}`,
+    (row) =>
+      row.querySelector('th[scope="row"]')?.textContent ===
+      projected.overview.find((entry) => entry.worldId === worlds[0]!.Id)?.worldName,
   )!;
   expect(contestedRow.querySelector('.culture-world-status')?.textContent).toBe(
     projected.overview.find((row) => row.worldId === worlds[0]!.Id)?.realizationTier ?? '—',

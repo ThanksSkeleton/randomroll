@@ -176,11 +176,13 @@ function WorldEntry({ world }: { world: CultureWorldDisplayDTO }) {
     world.claims.claimants[0]?.id === world.originalPolity.id;
 
   return (
-    <article className="culture-world" id={`culture-world-${world.id}`}>
-      <h3>
-        {world.name}
-        {world.startingWorld ? ' ★ Starting world' : ''}
-      </h3>
+    <details className="culture-world">
+      <summary>
+        <h3>
+          {world.name}
+          {world.startingWorld ? ' ★ Starting world' : ''}
+        </h3>
+      </summary>
       <p>
         TL {world.techLevel}, {world.population}
       </p>
@@ -226,7 +228,7 @@ function WorldEntry({ world }: { world: CultureWorldDisplayDTO }) {
           ))}
         </div>
       </details>
-    </article>
+    </details>
   );
 }
 
@@ -247,7 +249,7 @@ function WorldOverview({ rows }: { rows: CultureScreenDisplayDTO['overview'] }) 
           {rows.map((row) => (
             <tr key={row.worldId}>
               <th scope="row">
-                <a href={`#culture-world-${row.worldId}`}>{row.worldName}</a>
+                {row.worldName}
               </th>
               <td>{row.systemName}</td>
               <td className="culture-world-status">
@@ -329,15 +331,17 @@ export function CultureScreen({
           worlds: display.worlds.filter((world) => world.realizationTier === null),
         },
       ].map((group) => (
-        <section className="culture-world-group" aria-label={group.title} key={group.title}>
-          <h2>{group.title}</h2>
+        <details className="culture-world-group" aria-label={group.title} key={group.title}>
+          <summary>
+            <h2>{group.title}</h2>
+          </summary>
           <WorldOverview rows={group.overview} />
           <div className="culture-world-details">
             {group.worlds.map((world) => (
               <WorldEntry key={world.id} world={world} />
             ))}
           </div>
-        </section>
+        </details>
       ))}
     </main>
   );
