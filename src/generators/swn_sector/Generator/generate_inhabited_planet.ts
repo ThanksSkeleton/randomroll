@@ -196,14 +196,6 @@ function tagPairHasIntersection(
   return minimumPopulationRank <= maximumPopulationRank;
 }
 
-function maximumEnvironmentalHabForTags(tags: readonly WorldTag[]): number {
-  return tags.reduce(
-    (maximum, tag) =>
-      Math.min(maximum, WORLD_TAG_CONSTRAINTS.get(tag)?.maxEnvironmentalHab ?? Infinity),
-    Infinity,
-  );
-}
-
 function selectTags(
   generationSettings: GenerationSettings,
   path: string,
@@ -283,22 +275,9 @@ export function generateInhabitedPlanet(options: InhabitedPlanetOptions): Planet
       'sizes',
     ).Value;
     currentHab = Math.min(currentHab, SIZE_HAB[Size]);
-    const environmentalHabBeforeComposition = Math.min(
-      resolveAtmosphere(Atmosphere).HabRating,
-      TEMPERATURE_HAB[Temperature],
-      TERRAN_BIOSPHERE_HAB[TerranBiosphere],
-      SIZE_HAB[Size],
-    );
-    const maximumEnvironmentalHab = maximumEnvironmentalHabForTags(tags);
-    const compositionRows =
-      isTombWorld && environmentalHabBeforeComposition > maximumEnvironmentalHab
-        ? BULK_COMPOSITION_TABLE.filter(
-            (row) => BULK_COMPOSITION_HAB[row.Value] <= maximumEnvironmentalHab,
-          )
-        : BULK_COMPOSITION_TABLE;
     const BulkComposition = chooseWeighted(
       randomFor(options.generationSettings, `${path}:composition`),
-      compositionRows,
+      BULK_COMPOSITION_TABLE,
       'bulk compositions',
     ).Value;
     currentHab = Math.min(currentHab, BULK_COMPOSITION_HAB[BulkComposition]);

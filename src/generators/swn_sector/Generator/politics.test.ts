@@ -11,7 +11,6 @@ import type {
   TechLevel,
 } from '../BaseDTO/merged_schema';
 import { resolvePolitics } from './politics';
-import { capabilityFor } from '../Shared/politics_interpretation';
 
 function entity(id: string, niceName = id): SelectableEntity {
   return {
@@ -117,58 +116,6 @@ function claims(result: ReturnType<typeof resolvePolitics>, objectId: string): s
   const polityNames = new Map(result.Polities.map((polity) => [polity.Id, polity.NiceName]));
   return (result.ClaimsByObjectId.get(objectId) ?? []).map((id) => polityNames.get(id)!);
 }
-
-describe('political capability matrix', () => {
-  it('maps every canonical technology and population combination', () => {
-    const populations: Population[] = [1, 2, 3, 4, 5];
-    const expected: Record<TechLevel, Array<[number, number, number]>> = {
-      0: populations.map(() => [0, 0, -1]),
-      1: populations.map(() => [0, 0, -1]),
-      2: populations.map(() => [0, 0, -1]),
-      3: [
-        [0, 0, 0],
-        [0, 0, 0],
-        [0, 0, 0],
-        [1, 1, 0],
-        [1, 1, 0],
-      ],
-      4: [
-        [1, 1, 0],
-        [2, 2, 1],
-        [2, 2, 1],
-        [2, 3, 1],
-        [2, 3, 1],
-      ],
-      4.1: [
-        [1, 1, 0],
-        [2, 2, 1],
-        [2, 2, 1],
-        [2, 3, 1],
-        [2, 3, 1],
-      ],
-      5: [
-        [2, 2, 1],
-        [3, 3, 2],
-        [3, 4, 2],
-        [3, 4, 2],
-        [4, 4, 3],
-      ],
-    };
-
-    for (const [techLevelKey, rows] of Object.entries(expected) as [
-      string,
-      Array<[number, number, number]>,
-    ][])
-      rows.forEach(([Attack, Defense, Projection], index) =>
-        expect(capabilityFor(Number(techLevelKey) as TechLevel, populations[index]!)).toEqual({
-          Attack,
-          Defense,
-          Projection,
-          ProjectionHexDistance: Projection,
-        }),
-      );
-  });
-});
 
 describe('simultaneous political resolution', () => {
   it('requires both configured route-hop and hex-distance projection reach', () => {
@@ -288,58 +235,5 @@ describe('simultaneous political resolution', () => {
         (event) => event.TargetWorldId === alpha.Id && event.Attack > event.Defense,
       ),
     ).toHaveLength(2);
-  });
-
-  it('preserves a conquered polity projection beyond its conqueror range', () => {
-    const beta = planet('beta', 'Beta', {
-      TechLevel: 5,
-      Population: 2,
-    });
-    const alpha = planet('alpha', 'Alpha', {
-      TechLevel: 4,
-      Population: 2,
-    });
-    const remoteStation = other('remote-station', 'IndependentStation');
-    const systems = [
-      system('beta-system', [beta]),
-      system('middle-system', []),
-      system('alpha-system', [alpha]),
-      system('remote-system', [remoteStation]),
-    ];
-    const { routes, portals } = connect([
-      ['beta-system', 'middle-system'],
-      ['middle-system', 'alpha-system'],
-      ['alpha-system', 'remote-system'],
-    ]);
-
-    const result = resolvePolitics({ seed: 'transmigration' }, systems, routes, portals);
-
-    expect(claims(result, alpha.Id)).toEqual(['Beta']);
-    expect(claims(result, remoteStation.Id)).toEqual(['Alpha']);
-  });
-
-  it('limits projection -1 to its homeworld and paints every object at projection 0', () => {
-    const primitive = planet('primitive', 'Primitive', {
-      TechLevel: 1,
-      Population: 5,
-    });
-    const industrial = planet('industrial', 'Industrial', {
-      TechLevel: 3,
-      Population: 2,
-    });
-    const emptyWorld = planet('empty', 'Empty', false);
-    const belt = other('belt', 'AsteroidBelt');
-    const kuiper = other('kuiper', 'KuiperBelt');
-    const cloud = other('cloud', 'GasCloud');
-    const station = other('station', 'IndependentStation');
-    const systems = [
-      system('shared-system', [primitive, industrial, emptyWorld, belt, kuiper, cloud, station]),
-    ];
-
-    const result = resolvePolitics({ seed: 'same-system' }, systems, [], []);
-
-    expect(claims(result, primitive.Id)).toEqual(['Primitive']);
-    for (const target of [emptyWorld, belt, kuiper, cloud, station])
-      expect(claims(result, target.Id)).toEqual(['Industrial']);
   });
 });

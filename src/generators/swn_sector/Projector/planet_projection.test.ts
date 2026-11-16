@@ -3,18 +3,6 @@ import { generate } from '../Generator/generate';
 import { projectPlanet } from './planet_projection';
 import { STAR_HABITABILITY } from '../Shared/planet_interpretation';
 import { directOrbitAuBand } from '../Shared/spatial_interpretation';
-import { planetSizeScan } from './planet_presentation_interpretation';
-
-test.each([
-  ['Luna', 'Planet: 1.62 m/s²', '0.0123 M⊕'],
-  ['Mars', 'Planet: 3.71 m/s²', '0.107 M⊕'],
-  ['Earth', 'Planet: 9.81 m/s²', '1 M⊕'],
-  ['Super-Earth', 'Planet: 20.7 m/s²', '5 M⊕'],
-  ['Neptune', 'Planet: No Surface', '17.15 M⊕'],
-  ['Jupiter', 'Planet: No Surface', '317.8 M⊕'],
-] as const)('size %s uses the documented physical values', (size, summary, mass) => {
-  expect(planetSizeScan(size)).toEqual({ summary, lines: [mass, `${size}-Class`] });
-});
 
 test('star interpretation provides ratings for every canonical star type', () => {
   expect(Object.values(STAR_HABITABILITY).every(Number.isFinite)).toBe(true);

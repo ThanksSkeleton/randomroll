@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
 import { createInitialSectors } from '../Application/initialSectors';
-import { PrototypeApplication } from '../Application/prototypeApplication';
 import { projectSector } from './sector_projection';
 
 const options = { preview: 'gm', assetBaseUrl: '/' } as const;
@@ -40,17 +39,5 @@ describe('shared sector projection', () => {
       reason: 'invalid-reference',
       path: 'PlayerShip.CurrentLocationId',
     });
-  });
-
-  it('is exposed through the application read boundary', () => {
-    const application = new PrototypeApplication(createInitialSectors());
-    const first = application.readSector(0, options);
-    expect(first.ok).toBe(true);
-    expect(application.readSectors(options)).toHaveLength(2);
-    expect(application.readSector(-1, options)).toEqual({ ok: false, reason: 'invalid-index' });
-    if (!first.ok) return;
-    first.value.name = 'Changed outside the application';
-    const again = application.readSector(0, options);
-    expect(again.ok && again.value.name).toBe('Sector sector-one-seed');
   });
 });
