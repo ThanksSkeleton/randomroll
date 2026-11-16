@@ -24,6 +24,20 @@ function displayName(info: DisplaySelectableDTO | undefined, preview: Preview) {
 function showProceduralName(info: DisplaySelectableDTO, preview: Preview) {
   return preview === 'gm' || info.visibility.PoliticsScan;
 }
+function symbolicFlagLayout(count: number) {
+  if (count >= 7) return 'symbolic-polity-flags--three-columns';
+  if (count >= 4) return 'symbolic-polity-flags--two-columns';
+  return '';
+}
+function symbolicFlagClassName(count: number) {
+  return [
+    'polity-overlay-flags',
+    'symbolic-polity-flags',
+    symbolicFlagLayout(count),
+  ]
+    .filter(Boolean)
+    .join(' ');
+}
 function ContentText({ content }: { content: string }) {
   return <>{content}</>;
 }
@@ -99,13 +113,14 @@ function WorldSymbol({
   const hpois = system.habitablePoiIds
     .map((id) => display.entities[id])
     .filter((poi) => poi?.habitablePoi?.hostId === world.id && visible(poi.id, display, preview));
+  const claimants = world.claims?.claimants ?? [];
   const scale = world.spatial?.parentId ? 0.55 : (worldScale[world.size?.toLowerCase() ?? ''] ?? 1);
   return (
     <div className={`world-unit ${world.spatial?.parentId ? 'moon-unit' : ''}`}>
       {showPolityOverlay && (preview === 'gm' || d.visibility.PoliticsScan) && (
         <PolityFlagList
-          polities={world.claims?.claimants ?? []}
-          className="polity-overlay-flags symbolic-polity-flags"
+          polities={claimants}
+          className={symbolicFlagClassName(claimants.length)}
         />
       )}
       <div className="orbital-tick" />
@@ -227,6 +242,7 @@ function OtherObjectSymbol({
   const d = object;
   const label = displayName(d, preview) ?? object.otherObjectType ?? 'OtherCelestialObject';
   const glyphClass = `other-object-glyph ${object.spatial?.glyphClass}`;
+  const claimants = object.claims?.claimants ?? [];
   const pois = system.poiIds
     .map((id) => display.entities[id])
     .filter((poi) => poi?.poi?.hostId === object.id && visible(poi.id, display, preview));
@@ -235,8 +251,8 @@ function OtherObjectSymbol({
     <div className="world-unit other-object-unit">
       {showPolityOverlay && (preview === 'gm' || d.visibility.PoliticsScan) && (
         <PolityFlagList
-          polities={object.claims?.claimants ?? []}
-          className="polity-overlay-flags symbolic-polity-flags"
+          polities={claimants}
+          className={symbolicFlagClassName(claimants.length)}
         />
       )}
       <div className="orbital-tick" />

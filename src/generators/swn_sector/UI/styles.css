@@ -2265,7 +2265,7 @@ button.detail-tab {
   z-index: 0;
 }
 .symbolic-track {
-  padding-top: 0;
+  padding-top: 4px;
   padding-bottom: 0;
 }
 .symbolic-object-grid .world-column {
@@ -2483,6 +2483,16 @@ button.detail-tab {
   left: 50%;
   transform: translate(-50%, -100%);
 }
+.symbolic-polity-flags--two-columns {
+  display: grid;
+  grid-template-columns: repeat(2, 32px);
+  justify-content: center;
+}
+.symbolic-polity-flags--three-columns {
+  display: grid;
+  grid-template-columns: repeat(3, 32px);
+  justify-content: center;
+}
 /* Reusable button-state vocabulary. */
 button.button-active {
   background: var(--green);
@@ -2581,7 +2591,7 @@ button.button-active:hover:not(:disabled) {
 }
 .culture-polity-table {
   width: 100%;
-  min-width: 680px;
+  min-width: 560px;
   border-collapse: collapse;
   background: #192b38;
 }
@@ -2626,6 +2636,18 @@ button.button-active:hover:not(:disabled) {
 }
 .culture-polity-table td .polity-flag {
   margin: 1px 0 3px;
+}
+.culture-overview-polity {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+}
+.culture-polity-table .culture-overview-polity .polity-flag {
+  margin: 0;
+}
+.culture-overview-claimants > div + div {
+  margin-top: 4px;
 }
 .culture-world {
   margin: 14px 0;

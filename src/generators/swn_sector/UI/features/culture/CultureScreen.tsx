@@ -170,6 +170,11 @@ function CultureDetails({
 }
 
 function WorldEntry({ world }: { world: CultureWorldDisplayDTO }) {
+  const claimsMatchOriginal =
+    world.originalPolity !== null &&
+    world.claims.claimants.length === 1 &&
+    world.claims.claimants[0]?.id === world.originalPolity.id;
+
   return (
     <article className="culture-world" id={`culture-world-${world.id}`}>
       <h3>
@@ -180,16 +185,21 @@ function WorldEntry({ world }: { world: CultureWorldDisplayDTO }) {
         TL {world.techLevel}, {world.population}
       </p>
       <p>
-        Original polity: <PolityName polity={world.originalPolity} /> · Current claims:{' '}
-        {world.claims.claimants.length ? (
-          world.claims.claimants.map((polity, index) => (
-            <span key={polity.id}>
-              {index > 0 ? ', ' : ''}
-              <PolityName polity={polity} />
-            </span>
-          ))
-        ) : (
-          <PolityName polity={null} />
+        Polity: <PolityName polity={world.originalPolity} />
+        {!claimsMatchOriginal && (
+          <>
+            {' · '}Claimants:{' '}
+            {world.claims.claimants.length ? (
+              world.claims.claimants.map((polity, index) => (
+                <span key={polity.id}>
+                  {index > 0 ? ', ' : ''}
+                  <PolityName polity={polity} />
+                </span>
+              ))
+            ) : (
+              <PolityName polity={null} />
+            )}
+          </>
         )}
       </p>
       <section className="culture-tag-section">
@@ -220,24 +230,17 @@ function WorldEntry({ world }: { world: CultureWorldDisplayDTO }) {
   );
 }
 
-function WorldOverview({
-  rows,
-  showStatus,
-}: {
-  rows: CultureScreenDisplayDTO['overview'];
-  showStatus: boolean;
-}) {
+function WorldOverview({ rows }: { rows: CultureScreenDisplayDTO['overview'] }) {
   return (
     <div className="culture-polity-table-scroll">
       <table className="culture-polity-table">
         <thead>
           <tr>
             <th scope="col">World Name</th>
-            {showStatus && <th scope="col">Status</th>}
-            <th scope="col">Original Polity Name</th>
-            <th scope="col">Flag</th>
-            <th scope="col">Current Polity Name</th>
-            <th scope="col">Flag</th>
+            <th scope="col">System</th>
+            <th scope="col">Visibility status</th>
+            <th scope="col">Polity Name</th>
+            <th scope="col">Claimants</th>
           </tr>
         </thead>
         <tbody>
@@ -246,41 +249,41 @@ function WorldOverview({
               <th scope="row">
                 <a href={`#culture-world-${row.worldId}`}>{row.worldName}</a>
               </th>
-              {showStatus && (
-                <td className="culture-world-status">
-                  {row.realizationTier ? (
-                    <>
-                      <span
-                        className={`culture-tier-mark culture-tier-mark--${row.realizationTier.toLowerCase()}`}
-                        aria-hidden="true"
-                      />
-                      <span>{row.realizationTier}</span>
-                    </>
-                  ) : (
-                    '—'
-                  )}
-                </td>
-              )}
-              <td>{row.originalPolity?.NiceName ?? 'None'}</td>
-              <td>
-                <PolityFlag polity={row.originalPolity ?? undefined} />
+              <td>{row.systemName}</td>
+              <td className="culture-world-status">
+                {row.realizationTier ? (
+                  <>
+                    <span
+                      className={`culture-tier-mark culture-tier-mark--${row.realizationTier.toLowerCase()}`}
+                      aria-hidden="true"
+                    />
+                    <span>{row.realizationTier}</span>
+                  </>
+                ) : (
+                  '—'
+                )}
               </td>
               <td>
-                {row.currentPolities.length
-                  ? row.currentPolities.map((polity) => (
-                      <div key={polity.id}>{polity.NiceName}</div>
-                    ))
-                  : 'None'}
+                <span className="culture-overview-polity">
+                  {row.originalPolity?.NiceName ?? 'None'}{' '}
+                  <PolityFlag polity={row.originalPolity ?? undefined} />
+                </span>
               </td>
-              <td>
+              <td className="culture-overview-claimants">
                 {row.currentPolities.length ? (
                   row.currentPolities.map((polity) => (
-                    <div key={polity.id}>
-                      <PolityFlag polity={polity} />
+                    <div className="culture-overview-claimant" key={polity.id}>
+                      <span className="culture-overview-polity">
+                        {polity.NiceName} <PolityFlag polity={polity} />
+                      </span>
                     </div>
                   ))
                 ) : (
-                  <PolityFlag />
+                  <div className="culture-overview-claimant">
+                    <span className="culture-overview-polity">
+                      None <PolityFlag />
+                    </span>
+                  </div>
                 )}
               </td>
             </tr>
@@ -296,24 +299,39 @@ export function CultureScreen({
 }: {
   display: CultureScreenDisplayDTO;
 }) {
+  const visibilityRank = { Primary: 0, Secondary: 1, Tertiary: 2 } as const;
+  const byVisibility = <T extends { realizationTier: 'Primary' | 'Secondary' | 'Tertiary' | null }>(
+    values: T[],
+  ) =>
+    [...values].sort(
+      (a, b) =>
+        visibilityRank[a.realizationTier!] - visibilityRank[b.realizationTier!],
+    );
+  const overviewByVisibilityAndSystem = [...display.overview].sort(
+    (a, b) =>
+      (a.realizationTier ? visibilityRank[a.realizationTier] : 3) -
+        (b.realizationTier ? visibilityRank[b.realizationTier] : 3) ||
+      a.systemName.localeCompare(b.systemName),
+  );
+
   return (
     <main className="culture-screen">
       <h1>CULTURE</h1>
       {[
         {
-          title: 'Completed Worlds',
-          overview: display.overview.filter((row) => row.startingWorld || row.complete),
-          worlds: display.worlds.filter((world) => world.startingWorld || world.complete),
+          title: 'Visibility status: Visible',
+          overview: overviewByVisibilityAndSystem.filter((row) => row.realizationTier !== null),
+          worlds: byVisibility(display.worlds.filter((world) => world.realizationTier !== null)),
         },
         {
-          title: 'Incomplete Worlds',
-          overview: display.overview.filter((row) => !row.startingWorld && !row.complete),
-          worlds: display.worlds.filter((world) => !world.startingWorld && !world.complete),
+          title: 'Visibility status: Unlabeled',
+          overview: overviewByVisibilityAndSystem.filter((row) => row.realizationTier === null),
+          worlds: display.worlds.filter((world) => world.realizationTier === null),
         },
       ].map((group) => (
         <section className="culture-world-group" aria-label={group.title} key={group.title}>
           <h2>{group.title}</h2>
-          <WorldOverview rows={group.overview} showStatus={group.title === 'Completed Worlds'} />
+          <WorldOverview rows={group.overview} />
           <div className="culture-world-details">
             {group.worlds.map((world) => (
               <WorldEntry key={world.id} world={world} />

@@ -291,6 +291,7 @@ export function projectCultureScreen(sector: Sector): CultureScreenDisplayDTO | 
     .map((world) => ({
       worldId: world.id,
       worldName: world.name,
+      systemName: world.systemName,
       startingWorld: world.startingWorld,
       complete: world.complete,
       realizationTier: world.realizationTier,

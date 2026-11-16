@@ -10,9 +10,10 @@ import type { Planet, WorldTag } from '../../../BaseDTO/merged_schema';
 
 afterEach(cleanup);
 
-test('culture tab shows every generated world as complete and keeps HPOIs closed', () => {
+test('culture tab shows every generated world by visibility status and keeps HPOIs closed', () => {
   const sector = generate({ seed: 'culture-screen-layout' });
-  const { container } = render(<CultureScreen display={projectCultureScreen(sector)!} />);
+  const display = projectCultureScreen(sector)!;
+  const { container } = render(<CultureScreen display={display} />);
   const cards = [...container.querySelectorAll('.culture-world')];
   expect(cards.length).toBeGreaterThan(1);
   expect(cards).toHaveLength(
@@ -21,7 +22,23 @@ test('culture tab shows every generated world as complete and keeps HPOIs closed
     ).length,
   );
   expect(cards.every((card) => card.querySelector('.culture-info-grid'))).toBe(true);
-  expect(container.querySelector('[aria-label="Incomplete Worlds"] .culture-world')).toBeNull();
+  const labeledGroup = container.querySelector(
+    '[aria-label="Visibility status: Visible"]',
+  )!;
+  const unlabeledGroup = container.querySelector('[aria-label="Visibility status: Unlabeled"]')!;
+  expect(labeledGroup.querySelectorAll('.culture-world')).toHaveLength(
+    display.worlds.filter((world) => world.realizationTier !== null).length,
+  );
+  expect(unlabeledGroup.querySelectorAll('.culture-world')).toHaveLength(
+    display.worlds.filter((world) => world.realizationTier === null).length,
+  );
+  for (const table of container.querySelectorAll('.culture-polity-table')) {
+    expect(table.querySelector('thead')?.textContent).toContain('Visibility status');
+    expect(table.querySelector('thead')?.textContent).toContain('System');
+    expect(table.querySelector('thead')?.textContent).toContain('Polity Name');
+    expect(table.querySelector('thead')?.textContent).toContain('Claimants');
+    expect(table.querySelectorAll('thead th')).toHaveLength(5);
+  }
   expect(container.querySelectorAll('.culture-visibility, input')).toHaveLength(0);
   const first = cards[0]!;
   const boxes = first.querySelectorAll('.culture-tag-box');
@@ -35,7 +52,7 @@ test('culture tab shows every generated world as complete and keeps HPOIs closed
   expect(drawer.open).toBe(true);
 });
 
-test('polity overview keeps starting-world priority and groups incomplete worlds', () => {
+test('polity overview keeps starting-world priority and groups worlds by visibility status', () => {
   const sector = generate({ seed: 'culture-polity-overview' });
   const worlds = sector.Systems.flatMap((system) => system.Objects).filter(
     (object): object is Planet => object.Kind === 'Planet' && object.InhabitedInfo !== false,
@@ -53,30 +70,65 @@ test('polity overview keeps starting-world priority and groups incomplete worlds
   worlds[2]!.Culture = structuredClone(sampleCulture);
   worlds[3]!.Culture = null;
   const { container } = render(<CultureScreen display={projectCultureScreen(sector)!} />);
-  const completedGroup = container.querySelector('[aria-label="Completed Worlds"]')!;
-  const incompleteGroup = container.querySelector('[aria-label="Incomplete Worlds"]')!;
-  const completedRows = [...completedGroup.querySelectorAll('.culture-polity-table tbody tr')];
-  const incompleteRows = [...incompleteGroup.querySelectorAll('.culture-polity-table tbody tr')];
-  expect(completedRows).toHaveLength(worlds.length - 2);
-  expect(incompleteRows).toHaveLength(2);
-  expect(completedRows[0]!.querySelector('a')?.getAttribute('href')).toBe(
+  const labeledGroup = container.querySelector(
+    '[aria-label="Visibility status: Visible"]',
+  )!;
+  const unlabeledGroup = container.querySelector('[aria-label="Visibility status: Unlabeled"]')!;
+  const labeledRows = [...labeledGroup.querySelectorAll('.culture-polity-table tbody tr')];
+  const unlabeledRows = [...unlabeledGroup.querySelectorAll('.culture-polity-table tbody tr')];
+  const projected = projectCultureScreen(sector)!;
+  expect(labeledRows).toHaveLength(
+    projected.overview.filter((row) => row.realizationTier !== null).length,
+  );
+  expect(unlabeledRows).toHaveLength(
+    projected.overview.filter((row) => row.realizationTier === null).length,
+  );
+  expect(labeledRows[0]!.querySelector('a')?.getAttribute('href')).toBe(
     `#culture-world-${worlds[2]!.Id}`,
   );
-  expect(completedRows[0]!.querySelector('.culture-world-status')?.textContent).toBe('Primary');
+  expect(labeledRows[0]!.querySelector('.culture-world-status')?.textContent).toBe('Primary');
   expect(
-    new Set(incompleteRows.map((row) => row.querySelector('a')?.getAttribute('href'))),
-  ).toEqual(new Set([worlds[0], worlds[3]].map((world) => `#culture-world-${world!.Id}`)));
-  const contestedRow = incompleteRows.find(
+    labeledRows.map((row) => row.querySelector('.culture-world-status')?.textContent),
+  ).toEqual(['Primary', 'Secondary', 'Tertiary'].filter((tier) =>
+    projected.overview.some((row) => row.realizationTier === tier),
+  ).flatMap((tier) =>
+    projected.overview
+      .filter((row) => row.realizationTier === tier)
+      .map(() => tier),
+  ));
+  for (const tier of ['Primary', 'Secondary', 'Tertiary'] as const) {
+    const systemsInGrid = labeledRows
+      .filter((row) => row.querySelector('.culture-world-status')?.textContent === tier)
+      .map((row) => row.children[1]?.textContent);
+    expect(systemsInGrid).toEqual(
+      projected.overview
+        .filter((row) => row.realizationTier === tier)
+        .map((row) => row.systemName)
+        .sort((a, b) => a.localeCompare(b)),
+    );
+  }
+  expect(
+    unlabeledRows.map((row) => row.children[1]?.textContent),
+  ).toEqual(
+    projected.overview
+      .filter((row) => row.realizationTier === null)
+      .map((row) => row.systemName)
+      .sort((a, b) => a.localeCompare(b)),
+  );
+  const contestedRow = [...labeledRows, ...unlabeledRows].find(
     (row) => row.querySelector('a')?.getAttribute('href') === `#culture-world-${worlds[0]!.Id}`,
   )!;
-  expect(contestedRow.querySelector('.culture-world-status')).toBeNull();
-  expect(contestedRow.querySelectorAll('td:last-child .polity-flag')).toHaveLength(2);
-  expect(
-    new Set(
-      [...contestedRow.children[3]!.querySelectorAll('div')].map((entry) => entry.textContent),
-    ),
-  ).toEqual(new Set([largest!.NiceName, second!.NiceName]));
-  expect(incompleteGroup.querySelector('thead')?.textContent).not.toContain('Status');
-  expect(incompleteGroup.querySelectorAll('thead th')).toHaveLength(5);
-  expect(completedGroup.querySelectorAll('thead th')).toHaveLength(6);
+  expect(contestedRow.querySelector('.culture-world-status')?.textContent).toBe(
+    projected.overview.find((row) => row.worldId === worlds[0]!.Id)?.realizationTier ?? '—',
+  );
+  expect(contestedRow.querySelectorAll('.culture-overview-claimants .polity-flag')).toHaveLength(2);
+  expect(contestedRow.querySelector('.culture-overview-claimants')?.textContent).toContain(
+    largest!.NiceName,
+  );
+  expect(contestedRow.querySelector('.culture-overview-claimants')?.textContent).toContain(
+    second!.NiceName,
+  );
+  expect(unlabeledGroup.querySelector('thead')?.textContent).toContain('Visibility status');
+  expect(unlabeledGroup.querySelectorAll('thead th')).toHaveLength(5);
+  expect(labeledGroup.querySelectorAll('thead th')).toHaveLength(5);
 });

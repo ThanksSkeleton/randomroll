@@ -188,6 +188,7 @@ export type CultureWorldDisplayDTO = {
 export type CultureOverviewRowDisplayDTO = {
   worldId: string;
   worldName: string;
+  systemName: string;
   startingWorld: boolean;
   complete: boolean;
   realizationTier: 'Primary' | 'Secondary' | 'Tertiary' | null;
