@@ -1,12 +1,11 @@
 import { useEffect, useMemo, useReducer, useState } from 'react';
 import { ensureSeedInUrl, randomSeed, setSeedInUrl } from '../../../framework';
 import { appReducer, createAppState } from './application/appState';
-import type { EditDraft, Preview, View } from './application/appState';
+import type { Preview, View } from './application/appState';
 import { AppChrome, StageNav } from './features/navigation/AppChrome';
 import type { StageMode } from './features/navigation/AppChrome';
 import { CultureScreen } from './features/culture/CultureScreen';
 import { DetailBar as FeatureDetailBar } from './features/object-inspector/DetailBar';
-import { GMEditBar as FeatureGMEditBar } from './features/sector-editor/GMEditBar';
 import { HexMap as FeatureHexMap } from './features/sector-map/HexMap';
 import { SystemViewer } from './features/system-viewer/SystemViewer';
 import { SymbolicSystem as FeatureSymbolicSystem } from './features/system-viewer/SymbolicSystem';
@@ -16,7 +15,6 @@ import { isVisibleToPlayerDisplay } from './visibility_presentation';
 import {
   createPrototypeApplication,
   type PrototypeApplication,
-  type SectorCommandResult,
 } from '../Application/prototypeApplication';
 
 function readDisplays(application: PrototypeApplication, preview: Preview): DisplaySectorDTO[] {
@@ -43,7 +41,6 @@ export default function App() {
   const [state, dispatch] = useReducer(appReducer, undefined, () =>
     createAppState(readDisplays(application, 'gm')),
   );
-  const isGmSession = application.getCurrentSession().role === 'gm';
   const {
     sectors,
     activeIndex,
@@ -53,8 +50,6 @@ export default function App() {
     routeContextSystemId,
     currentSystemId,
     systemMode,
-    locked,
-    editDraft,
   } = state;
   const display = sectors[activeIndex] ?? null;
   const currentSystem = display?.systems.find((s) => s.id === currentSystemId) ?? null;
@@ -75,45 +70,11 @@ export default function App() {
     window.addEventListener('popstate', restoreSeed);
     return () => window.removeEventListener('popstate', restoreSeed);
   }, [application, preview]);
-  const applyCommand = (result: SectorCommandResult) => {
-    if (!result.ok) return;
-    dispatch({ type: 'updateSector', display: result.display });
-    if (selected && !result.display.entities[selected]) setSelected(null);
-  };
-  const setLocked = (next: boolean) => {
-    if (next) dispatch({ type: 'discardEditing' });
-  };
-  const updateDraft = (update: (draft: EditDraft) => EditDraft) =>
-    dispatch({
-      type: 'updateDraft',
-      draft: update(editDraft ?? { sectorName: display?.name ?? '', details: {} }),
-    });
-  const discardEdit = () => dispatch({ type: 'discardEditing' });
-  const beginEdit = () =>
-    dispatch({ type: 'beginEditing', draft: { sectorName: display?.name ?? '', details: {} } });
-  const saveEdit = () => {
-    if (!editDraft) return;
-    const result = application.editSector(activeIndex, editDraft, {
-      preview,
-      assetBaseUrl: import.meta.env.BASE_URL,
-    });
-    if (result.ok) dispatch({ type: 'saveEditing', display: result.display });
-  };
   const selectRoute = (id: string, contextSystemId: string) =>
     dispatch({ type: 'selectRoute', id, contextSystemId });
   const go = (v: View) => dispatch({ type: 'changeView', view: v });
   const setPreviewMode = (next: Preview) =>
     dispatch({ type: 'changePreview', preview: next, sectors: readDisplays(application, next) });
-  const canMove = useMemo(() => {
-    const k = objectKind(display, selected);
-    const targetIsMovable =
-      view === 'hex'
-        ? k === 'SYSTEM'
-        : view === 'system' || view === 'all'
-          ? ['SYSTEM', 'WORLD', 'MOON'].includes(k)
-          : false;
-    return !locked && targetIsMovable;
-  }, [locked, display, selected, view]);
   const selectedSystemId = useMemo(() => {
     if (!selected || !display) return null;
     const entity = display.entities[selected];
@@ -136,7 +97,6 @@ export default function App() {
   const canTravel = Boolean(travelDestinationId);
   const travelToSelectedSystem = () => {
     if (!travelDestinationId) return;
-    discardEdit();
     if (view === 'system')
       dispatch({ type: 'openSystem', systemId: travelDestinationId, mode: systemMode });
     else dispatch({ type: 'selectObject', id: travelDestinationId });
@@ -156,7 +116,6 @@ export default function App() {
           ? 'single-symbolic'
           : 'single-map';
   const switchStageMode = (nextMode: StageMode) => {
-    discardEdit();
     const enteringSingle = nextMode.startsWith('single');
     // A representation change inside an already-open system must not replace a
     // selected world, POI, route, or ship with the system itself.
@@ -206,11 +165,9 @@ export default function App() {
           }
         }}
       />
-      {view === 'culture' && preview === 'gm' && isGmSession ? (
+      {view === 'culture' && preview === 'gm' ? (
         display ? (
-          <CultureScreen
-            display={display.culture}
-          />
+          <CultureScreen display={display.culture} />
         ) : (
           <main role="alert">Sector display unavailable.</main>
         )
@@ -233,31 +190,6 @@ export default function App() {
                 onSelectShip={() => setSelected(display?.playerShipId ?? null)}
                 onTravel={travelToSelectedSystem}
               />
-              {isGmSession && display ? (
-                <FeatureGMEditBar
-                  hidden={preview !== 'gm'}
-                  locked={locked}
-                  setLocked={setLocked}
-                  canMove={canMove}
-                  selected={selected}
-                  display={display}
-                  onMove={(targetId) =>
-                    applyCommand(application.moveShip(activeIndex, targetId, commandOptions))
-                  }
-                  onVisibility={(id, visibility) =>
-                    applyCommand(
-                      application.setScanVisibility(activeIndex, id, visibility, commandOptions),
-                    )
-                  }
-                  onDelete={(id) =>
-                    applyCommand(application.deleteObject(activeIndex, id, commandOptions))
-                  }
-                  view={view}
-                  draft={editDraft}
-                  beginEdit={beginEdit}
-                  saveEdit={saveEdit}
-                />
-              ) : null}
             </aside>
             <section
               className={`stage ${
@@ -332,14 +264,7 @@ export default function App() {
               )}
             </section>
             {display ? (
-              <FeatureDetailBar
-                display={display}
-                selectedId={selected}
-                preview={preview}
-                locked={locked}
-                draft={editDraft}
-                setDraft={updateDraft}
-              />
+              <FeatureDetailBar display={display} selectedId={selected} preview={preview} />
             ) : (
               <aside className="detail-bar" role="alert">
                 Sector display unavailable.

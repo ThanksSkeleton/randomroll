@@ -3,13 +3,6 @@ import type { DisplaySectorDTO } from '../../DisplayDTO/dto';
 export type View = 'hex' | 'system' | 'all' | 'culture';
 export type Preview = 'gm' | 'player';
 export type SystemMode = 'symbolic' | 'topdown';
-export type EditableDetailField =
-  'NiceName' | 'BasicScan' | 'DetailedScan' | 'PoliticsScan' | 'DeepPoliticsScan' | 'GM';
-export type EditDraft = {
-  sectorName: string;
-  details: Record<string, Partial<Record<EditableDetailField, string>>>;
-};
-
 export type AppState = {
   sectors: DisplaySectorDTO[];
   activeIndex: number;
@@ -19,8 +12,6 @@ export type AppState = {
   routeContextSystemId: string | null;
   currentSystemId: string | null;
   systemMode: SystemMode;
-  locked: boolean;
-  editDraft: EditDraft | null;
 };
 
 export type AppAction =
@@ -31,11 +22,6 @@ export type AppAction =
   | { type: 'openSystem'; systemId: string; mode: SystemMode }
   | { type: 'changeRepresentation'; mode: SystemMode }
   | { type: 'returnToSector'; view: 'hex' | 'all' }
-  | { type: 'beginEditing'; draft: EditDraft }
-  | { type: 'updateDraft'; draft: EditDraft }
-  | { type: 'discardEditing' }
-  | { type: 'saveEditing'; display: DisplaySectorDTO }
-  | { type: 'updateSector'; display: DisplaySectorDTO }
   | { type: 'replaceSector'; display: DisplaySectorDTO };
 
 export function createAppState(sectors: DisplaySectorDTO[]): AppState {
@@ -48,13 +34,11 @@ export function createAppState(sectors: DisplaySectorDTO[]): AppState {
     routeContextSystemId: null,
     currentSystemId: null,
     systemMode: 'symbolic',
-    locked: true,
-    editDraft: null,
   };
 }
 
 function clearNavigation(state: AppState): AppState {
-  return { ...state, selectedId: null, routeContextSystemId: null, editDraft: null, locked: true };
+  return { ...state, selectedId: null, routeContextSystemId: null };
 }
 
 export function appReducer(state: AppState, action: AppAction): AppState {
@@ -65,8 +49,7 @@ export function appReducer(state: AppState, action: AppAction): AppState {
       return { ...state, selectedId: action.id, routeContextSystemId: action.contextSystemId };
     case 'changePreview': {
       const playerRestricted =
-        action.preview === 'player' &&
-        (state.view === 'all' || state.view === 'culture');
+        action.preview === 'player' && (state.view === 'all' || state.view === 'culture');
       if (playerRestricted)
         return {
           ...clearNavigation(state),
@@ -79,8 +62,6 @@ export function appReducer(state: AppState, action: AppAction): AppState {
         ...state,
         preview: action.preview,
         sectors: action.sectors,
-        editDraft: null,
-        locked: true,
       };
     }
     case 'changeView':
@@ -97,41 +78,15 @@ export function appReducer(state: AppState, action: AppAction): AppState {
         systemMode: action.mode,
         selectedId: action.systemId,
         routeContextSystemId: null,
-        editDraft: null,
-        locked: true,
       };
     case 'changeRepresentation':
-      return { ...state, systemMode: action.mode, editDraft: null, locked: true };
+      return { ...state, systemMode: action.mode };
     case 'returnToSector':
       return {
         ...state,
         view: action.view,
         currentSystemId: null,
         routeContextSystemId: null,
-        editDraft: null,
-        locked: true,
-      };
-    case 'beginEditing':
-      return { ...state, editDraft: action.draft, locked: false };
-    case 'updateDraft':
-      return { ...state, editDraft: action.draft };
-    case 'discardEditing':
-      return { ...state, editDraft: null, locked: true };
-    case 'saveEditing':
-      return {
-        ...state,
-        sectors: state.sectors.map((sector, index) =>
-          index === state.activeIndex ? action.display : sector,
-        ),
-        editDraft: null,
-        locked: true,
-      };
-    case 'updateSector':
-      return {
-        ...state,
-        sectors: state.sectors.map((sector, index) =>
-          index === state.activeIndex ? action.display : sector,
-        ),
       };
     case 'replaceSector':
       return {

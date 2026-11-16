@@ -31,22 +31,10 @@ function Inspector({
   sector: Sector;
   selectedId: string;
   preview: 'gm' | 'player';
-  locked: boolean;
-  draft: null;
-  setDraft: () => void;
 }) {
   const result = projectSector(sector, { preview, assetBaseUrl: '/' });
   if (!result.ok) throw new Error(`Projection failed at ${result.path}`);
-  return (
-    <DetailBar
-      display={result.value}
-      selectedId={selectedId}
-      preview={preview}
-      locked={true}
-      draft={null}
-      setDraft={() => {}}
-    />
-  );
+  return <DetailBar display={result.value} selectedId={selectedId} preview={preview} />;
 }
 
 function ProjectedHexMap({
@@ -104,16 +92,7 @@ function ProjectedSymbolicSystem({
 }
 
 const renderDetail = (sector: Sector, selectedId: string) =>
-  render(
-    <Inspector
-      sector={sector}
-      selectedId={selectedId}
-      preview="player"
-      locked={true}
-      draft={null}
-      setDraft={() => {}}
-    />,
-  );
+  render(<Inspector sector={sector} selectedId={selectedId} preview="player" />);
 
 function visiblePlanet(sector: Sector): Planet {
   const planet = sector.Systems.flatMap((system) => system.Objects).find(
@@ -246,16 +225,7 @@ describe('scan visibility presentation', () => {
     expect(view.container.querySelector('.object-procedural-name')).toBeNull();
 
     planet.Visibility.PoliticsScan = true;
-    view.rerender(
-      <Inspector
-        sector={sector}
-        selectedId={planet.Id}
-        preview="player"
-        locked={true}
-        draft={null}
-        setDraft={() => {}}
-      />,
-    );
+    view.rerender(<Inspector sector={sector} selectedId={planet.Id} preview="player" />);
 
     expect(view.container.querySelector('.object-name')?.getAttribute('aria-label')).toBe(
       'NICE WORLD',
@@ -318,31 +288,13 @@ describe('scan visibility presentation', () => {
     ).toBe(`ClaimedBy: ${names.length === 0 ? 'None' : names.join(', ')}`);
 
     object.ClaimedByPolityIds = sector.Polities.slice(0, 2).map((polity) => polity.Id);
-    view.rerender(
-      <Inspector
-        sector={sector}
-        selectedId={object.Id}
-        preview="player"
-        locked={true}
-        draft={null}
-        setDraft={() => {}}
-      />,
-    );
+    view.rerender(<Inspector sector={sector} selectedId={object.Id} preview="player" />);
     expect(
       view.container.querySelector('.scan-politicsscan .detail-stock-content')?.textContent,
     ).toBe(`ClaimedBy: ${sector.Polities[0]!.NiceName}, ${sector.Polities[1]!.NiceName}`);
 
     object.ClaimedByPolityIds = [];
-    view.rerender(
-      <Inspector
-        sector={sector}
-        selectedId={object.Id}
-        preview="player"
-        locked={true}
-        draft={null}
-        setDraft={() => {}}
-      />,
-    );
+    view.rerender(<Inspector sector={sector} selectedId={object.Id} preview="player" />);
     expect(
       view.container.querySelector('.scan-politicsscan .detail-stock-content')?.textContent,
     ).toBe('ClaimedBy: None');
@@ -368,16 +320,7 @@ describe('scan visibility presentation', () => {
     );
 
     route.Visibility.PoliticsScan = true;
-    view.rerender(
-      <Inspector
-        sector={sector}
-        selectedId={route.Id}
-        preview="player"
-        locked={true}
-        draft={null}
-        setDraft={() => {}}
-      />,
-    );
+    view.rerender(<Inspector sector={sector} selectedId={route.Id} preview="player" />);
     expect(view.container.querySelector('.scan-basicscan')?.textContent).toContain(
       'NICE 1 <=> NICE 2',
     );

@@ -28,22 +28,10 @@ function Inspector({
   sector: Sector;
   selectedId: string;
   preview: 'gm' | 'player';
-  locked: boolean;
-  draft: null;
-  setDraft: () => void;
 }) {
   const result = projectSector(source, { preview, assetBaseUrl: '/' });
   if (!result.ok) throw new Error(`Projection failed at ${result.path}`);
-  return (
-    <DetailBar
-      display={result.value}
-      selectedId={selectedId}
-      preview={preview}
-      locked={true}
-      draft={null}
-      setDraft={() => {}}
-    />
-  );
+  return <DetailBar display={result.value} selectedId={selectedId} preview={preview} />;
 }
 
 const sector = generate({ seed: 'PORTRAIT-CHECK' });
@@ -153,30 +141,14 @@ describe('sector portrait assets', () => {
     expect(projectPortrait(selected, planet.Id, 'gm', '/assets/')).toEqual(first);
     expect(selected).toEqual(before);
     const { container } = render(
-      <Inspector
-        sector={selected}
-        selectedId={planet.Id}
-        preview="gm"
-        locked={true}
-        draft={null}
-        setDraft={() => {}}
-      />,
+      <Inspector sector={selected} selectedId={planet.Id} preview="gm" />,
     );
     expect(container.querySelector('.object-art img')).not.toBeNull();
   });
 
   it('uses a source image with CSS variants in the inspector', () => {
     const portrait = projectPortrait(sector, planet.Id, 'gm', '/')!;
-    const { container } = render(
-      <Inspector
-        sector={sector}
-        selectedId={planet.Id}
-        preview="gm"
-        locked={true}
-        draft={null}
-        setDraft={() => {}}
-      />,
-    );
+    const { container } = render(<Inspector sector={sector} selectedId={planet.Id} preview="gm" />);
     const image = container.querySelector('.object-art img') as HTMLImageElement;
     expect(image.alt).toContain(`Portrait of ${planet.NiceName}`);
     expect(image.getAttribute('src')).toContain(portrait.url);
@@ -187,16 +159,7 @@ describe('sector portrait assets', () => {
   });
 
   it('shows the selected system’s star portrait', () => {
-    const { container } = render(
-      <Inspector
-        sector={sector}
-        selectedId={system.Id}
-        preview="gm"
-        locked={true}
-        draft={null}
-        setDraft={() => {}}
-      />,
-    );
+    const { container } = render(<Inspector sector={sector} selectedId={system.Id} preview="gm" />);
     const image = container.querySelector('.object-art img') as HTMLImageElement;
     expect(image.getAttribute('src')).toContain(projectPortrait(sector, system.Id, 'gm', '/')!.url);
     expect(image.alt).toContain(`${system.Star.StarType} star`);
@@ -204,26 +167,10 @@ describe('sector portrait assets', () => {
 
   it('replaces the image element when the selected portrait changes', () => {
     const { container, rerender } = render(
-      <Inspector
-        sector={sector}
-        selectedId={planet.Id}
-        preview="gm"
-        locked={true}
-        draft={null}
-        setDraft={() => {}}
-      />,
+      <Inspector sector={sector} selectedId={planet.Id} preview="gm" />,
     );
     const firstImage = container.querySelector('.object-art img');
-    rerender(
-      <Inspector
-        sector={sector}
-        selectedId={route.Id}
-        preview="gm"
-        locked={true}
-        draft={null}
-        setDraft={() => {}}
-      />,
-    );
+    rerender(<Inspector sector={sector} selectedId={route.Id} preview="gm" />);
     const nextImage = container.querySelector('.object-art img');
     expect(nextImage).not.toBe(firstImage);
     expect(nextImage?.getAttribute('src')).toContain(
@@ -237,27 +184,11 @@ describe('sector portrait assets', () => {
     );
     if (!inhabitedPlanet) throw new Error('Expected an inhabited planet in the test sector');
     const { container, rerender } = render(
-      <Inspector
-        sector={sector}
-        selectedId={sector.PlayerShip.Id}
-        preview="gm"
-        locked={true}
-        draft={null}
-        setDraft={() => {}}
-      />,
+      <Inspector sector={sector} selectedId={sector.PlayerShip.Id} preview="gm" />,
     );
     expect(container.querySelector('.portrait-no-data')?.textContent).toBe('NO DATA');
     expect(container.querySelector('.object-art-glyph')).toBeNull();
-    rerender(
-      <Inspector
-        sector={sector}
-        selectedId={inhabitedPlanet.Id}
-        preview="gm"
-        locked={true}
-        draft={null}
-        setDraft={() => {}}
-      />,
-    );
+    rerender(<Inspector sector={sector} selectedId={inhabitedPlanet.Id} preview="gm" />);
     expect(container.querySelector('.portrait-no-data')?.textContent).toBe('NO DATA');
   });
 
@@ -277,28 +208,12 @@ describe('sector portrait assets', () => {
       ),
     };
     const { container, rerender } = render(
-      <Inspector
-        sector={visibleSector}
-        selectedId={route.Id}
-        preview="player"
-        locked={true}
-        draft={null}
-        setDraft={() => {}}
-      />,
+      <Inspector sector={visibleSector} selectedId={route.Id} preview="player" />,
     );
     expect(container.querySelector('.object-art img')?.getAttribute('alt')).toMatch(
       /Portrait of Route 1, route/i,
     );
-    rerender(
-      <Inspector
-        sector={visibleSector}
-        selectedId={routePortal.Id}
-        preview="player"
-        locked={true}
-        draft={null}
-        setDraft={() => {}}
-      />,
-    );
+    rerender(<Inspector sector={visibleSector} selectedId={routePortal.Id} preview="player" />);
     expect(container.querySelector('.object-art img')?.getAttribute('alt')).toMatch(
       /Portrait of Portal/i,
     );
@@ -306,14 +221,7 @@ describe('sector portrait assets', () => {
 
   it('does not show a portrait before basic visibility', () => {
     const { container } = render(
-      <Inspector
-        sector={sector}
-        selectedId={planet.Id}
-        preview="player"
-        locked={true}
-        draft={null}
-        setDraft={() => {}}
-      />,
+      <Inspector sector={sector} selectedId={planet.Id} preview="player" />,
     );
     expect(container.querySelector('.object-art img')).toBeNull();
   });

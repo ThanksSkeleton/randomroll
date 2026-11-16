@@ -3,7 +3,6 @@ import { generate } from '../Generator/generate';
 import { projectCultureScreen, projectHabitablePoi } from './culture_projection';
 import { projectClaims, projectConquest, projectPolity } from './politics_projection';
 import { projectWorldTag } from './world_tag_projection';
-import type { Planet } from '../BaseDTO/merged_schema';
 
 const seed = 'part-four-projection';
 

@@ -3,7 +3,7 @@ import type {
   DisplaySectorDTO,
   DisplaySelectableDTO,
 } from '../../../DisplayDTO/dto';
-import type { EditDraft, Preview, EditableDetailField } from '../../application/appState';
+import type { Preview } from '../../application/appState';
 import { useState } from 'react';
 import { PolityFlag } from '../politics/PolityFlag';
 
@@ -15,16 +15,6 @@ function displayName(info: DisplaySelectableDTO | undefined, preview: Preview) {
 }
 function showProceduralName(info: DisplaySelectableDTO, preview: Preview) {
   return preview === 'gm' || info.visibility.PoliticsScan;
-}
-function draftValue(
-  draft: EditDraft | null,
-  info: DisplaySelectableDTO,
-  field: EditableDetailField,
-) {
-  return (
-    draft?.details[info.id]?.[field] ??
-    (field === 'NiceName' ? info.niceName : info.intelligence[field])
-  );
 }
 function ContentText({ content }: { content: string }) {
   return <>{content}</>;
@@ -124,14 +114,14 @@ function PoliticsScanField({ info }: { info: DisplaySelectableDTO }) {
               </div>
             ))
           ) : claimants.length === 1 ? (
-            <div className="politics-scan-claimant">
-              Claimed By: {claimants[0]!.NiceName}
-            </div>
+            <div className="politics-scan-claimant">Claimed By: {claimants[0]!.NiceName}</div>
           ) : null}
         </div>
       </details>
       <details className="basic-scan-element basic-scan-drawer">
-        <summary>Tech Level: {planet.technologyRating} - {planet.technologyLevelShort}</summary>
+        <summary>
+          Tech Level: {planet.technologyRating} - {planet.technologyLevelShort}
+        </summary>
         <div className="basic-scan-drawer-content">{planet.technologyLevel}</div>
       </details>
       <details className="basic-scan-element basic-scan-drawer">
@@ -142,38 +132,14 @@ function PoliticsScanField({ info }: { info: DisplaySelectableDTO }) {
   );
 }
 
-function EditableText({
-  value,
-  multiline = false,
-  className = '',
-  onChange,
-}: {
-  value: string;
-  multiline?: boolean;
-  className?: string;
-  onChange: (value: string) => void;
-}) {
-  return multiline ? (
-    <textarea className={className} value={value} onChange={(e) => onChange(e.target.value)} />
-  ) : (
-    <input className={className} value={value} onChange={(e) => onChange(e.target.value)} />
-  );
-}
-
 export function DetailBar({
   display,
   selectedId,
   preview,
-  locked,
-  draft,
-  setDraft,
 }: {
   display: DisplaySectorDTO;
   selectedId: string | null;
   preview: Preview;
-  locked: boolean;
-  draft: EditDraft | null;
-  setDraft: (update: (draft: EditDraft) => EditDraft) => void;
 }) {
   const info = selectedId ? display.entities[selectedId] : undefined;
   const kind = info?.kindLabel ?? '';
@@ -214,23 +180,7 @@ export function DetailBar({
             className={`object-name object-name-${kind.toLowerCase().replaceAll(' ', '-')}`}
             aria-label={displayName(info, preview)}
           >
-            {preview === 'gm' && !locked ? (
-              <EditableText
-                className="object-name-editor"
-                value={draftValue(draft, info, 'NiceName')}
-                onChange={(value) =>
-                  setDraft((old) => ({
-                    ...old,
-                    details: {
-                      ...old.details,
-                      [info.id]: { ...old.details[info.id], NiceName: value },
-                    },
-                  }))
-                }
-              />
-            ) : (
-              displayName(info, preview)
-            )}
+            {displayName(info, preview)}
             {showProceduralName(info, preview) && (
               <span
                 className={`object-procedural-name object-procedural-name-${kind.toLowerCase().replaceAll(' ', '-')}`}
@@ -240,39 +190,16 @@ export function DetailBar({
               </span>
             )}
           </h1>
-          <DetailBox
-            info={info}
-            preview={preview}
-            locked={locked}
-            draft={draft}
-            setDraft={setDraft}
-          />
+          <DetailBox info={info} preview={preview} />
         </>
       )}
     </aside>
   );
 }
 
-function DetailBox({
-  info,
-  preview,
-  locked,
-  draft,
-  setDraft,
-}: {
-  info: DisplaySelectableDTO;
-  preview: Preview;
-  locked: boolean;
-  draft: EditDraft | null;
-  setDraft: (update: (draft: EditDraft) => EditDraft) => void;
-}) {
+function DetailBox({ info, preview }: { info: DisplaySelectableDTO; preview: Preview }) {
   const [activeTab, setActiveTab] = useState<'basic' | 'detailed' | 'gm'>('basic');
   const visibleTab = preview !== 'gm' && activeTab === 'gm' ? 'basic' : activeTab;
-  const edit = (field: EditableDetailField) => (value: string) =>
-    setDraft((old) => ({
-      ...old,
-      details: { ...old.details, [info.id]: { ...old.details[info.id], [field]: value } },
-    }));
   const stock = info.inspectorStock;
   if (preview === 'player' && !info.visibility.BasicScan)
     return (
@@ -324,20 +251,11 @@ function DetailBox({
               {(field === 'DetailedScan' || field === 'DeepPoliticsScan') && (
                 <div className="detail-small-divider" aria-hidden="true" />
               )}
-              {(field === 'DetailedScan' || field === 'DeepPoliticsScan') &&
-              preview === 'gm' &&
-              !locked ? (
-                <EditableText
-                  className="detail-editable"
-                  multiline
-                  value={draftValue(draft, info, field)}
-                  onChange={edit(field)}
-                />
-              ) : field === 'DetailedScan' || field === 'DeepPoliticsScan' ? (
+              {(field === 'DetailedScan' || field === 'DeepPoliticsScan') && (
                 <p className="detail-section-description">
                   <ContentText content={info.intelligence[field]} />
                 </p>
-              ) : null}
+              )}
             </section>
           ) : null,
         )}
@@ -409,18 +327,9 @@ function DetailBox({
               {JSON.stringify(info.selectedCulture, null, 2)}
             </pre>
           )}
-          {!locked ? (
-            <EditableText
-              className="detail-editable"
-              multiline
-              value={draftValue(draft, info, 'GM')}
-              onChange={edit('GM')}
-            />
-          ) : (
-            <p className="detail-section-description">
-              <ContentText content={info.intelligence.GM} />
-            </p>
-          )}
+          <p className="detail-section-description">
+            <ContentText content={info.intelligence.GM} />
+          </p>
         </section>
       ) : null}
     </div>

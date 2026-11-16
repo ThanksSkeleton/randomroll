@@ -30,14 +30,14 @@ describe('application state transitions', () => {
     });
   });
 
-  it('discards an edit draft when navigation changes', () => {
+  it('clears selection when navigation changes', () => {
     const state = createAppState(displaySectors());
-    const editing = appReducer(state, {
-      type: 'beginEditing',
-      draft: { sectorName: 'Draft', details: {} },
+    const selected = appReducer(state, {
+      type: 'selectObject',
+      id: state.sectors[0].systems[0].id,
     });
-    const next = appReducer(editing, { type: 'changeView', view: 'all' });
-    expect(next).toMatchObject({ view: 'all', editDraft: null, locked: true, selectedId: null });
+    const next = appReducer(selected, { type: 'changeView', view: 'all' });
+    expect(next).toMatchObject({ view: 'all', selectedId: null });
   });
 
   it('switching preview from culture returns to the sector map', () => {
@@ -52,7 +52,6 @@ describe('application state transitions', () => {
       view: 'hex',
       currentSystemId: null,
       selectedId: null,
-      locked: true,
     });
   });
 });
