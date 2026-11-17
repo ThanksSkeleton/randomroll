@@ -1,5 +1,7 @@
 Create sector JSON export
 
+Vault page naming and duplicate handling are tracked in [M1_Obsidian_Naming.md](M1_Obsidian_Naming.md).
+
 ## Sector JSON export steps
 
 1. Create an API that returns a JSON sector for a given seed, using the default creation parameters.

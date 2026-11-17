@@ -297,7 +297,7 @@ I’m using your clarifications throughout:
 
 - :codex-annotation{index="1" id="42887006-c192-4dba-88ec-f369b5c498a7"} Security is out of scope. I’ll treat GM/player views as presentation for your group, not require a secure separation.
 - :codex-annotation{index="2" id="bc9908eb-febd-413e-a646-b1b4b51d0c3a"} With every system realized up front, P2a and P3a become one hard-data viewing use case.
-- :codex-annotation{index="3" id="aa968f86-70ce-40a7-b004-45c16bb7224c"} Seed results changing across code releases is an accepted tradeoff.
+- :codex-annotation{index="3" id="aa968f86-70ce-40a7-b004-45c16bb7224c"} Seed results changing across code releases is an accepted tradeoff. See [Random Stability Is Not Required](../random-stablity-not-required.md).
 - :codex-annotation{index="4" id="54691138-81cf-4cb3-8645-b8b86302ed87"} “Vision” refers to the existing visibility rules, not a new tag or mechanism.
 
 | Topic | Current written plan | Milestone proposal |

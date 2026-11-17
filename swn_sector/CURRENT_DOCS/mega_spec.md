@@ -2,6 +2,8 @@
 
 This is the current high-level milestone proposal for the SWN Sector tool. Detailed requirements and decisions belong in milestone-specific specs. Previous plans and specifications are retained in [`ARCHIVE/`](../ARCHIVE/) as design history.
 
+Seed output stability across updates is not required while the project is in v0; see [Random Stability Is Not Required](../random-stablity-not-required.md).
+
 ## Milestone 0 — Cleanup
 
 - Remove or neutralize the remaining editing controls in the app.

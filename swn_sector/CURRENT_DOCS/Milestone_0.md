@@ -4,6 +4,8 @@
 
 Prepare the existing SWN Sector prototype for the seeded, read-only MVP described in [mega_spec.md](mega_spec.md). Milestone 0 removes the editing interface, provides a tested way to realize every generated system, and gives GM and player views separate URLs. It does not yet make global realization the default generation path; Milestone 1 does that.
 
+Seed output stability across updates is not required during v0 development; see [Random Stability Is Not Required](../random-stablity-not-required.md).
+
 ## Current starting point
 
 - One static page at `/swn_sector/` generates a sector from the URL seed. The React application starts in GM mode, and its GM/player switch is disabled.

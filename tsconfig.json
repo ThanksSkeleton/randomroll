@@ -4,7 +4,7 @@
     "module": "esnext",
     "jsx": "react-jsx",
     "lib": ["ES2023", "DOM", "DOM.Iterable"],
-    "types": ["vite/client"],
+    "types": ["vite/client", "node"],
     "skipLibCheck": true,
 
     /* Bundler mode */
@@ -20,5 +20,5 @@
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src", "scripts/from_sql.ts"]
+  "include": ["src", "scripts/from_sql.ts", "swn_sector/Obsidian/**/*.ts"]
 }
