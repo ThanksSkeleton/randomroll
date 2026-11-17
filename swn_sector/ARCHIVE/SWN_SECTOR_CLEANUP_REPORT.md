@@ -4,53 +4,6 @@ Date: 2026-09-21
 
 ## Executive summary
 
-The fused application is now rooted at `swn_sector/index.html`, which loads
-`src/generators/swn_sector/ui/main.tsx`. The UI reaches the canonical
-`merged-v1` generator through `ui/application/prototypeApplication.ts` and
-`ui/data.ts`, both of which call `generate()` from
-`src/generators/swn_sector/generate.ts`.
-
-The main cleanup opportunity is a disconnected legacy V1–V4 implementation:
-
-- `src/generators/swn_sector/sector.ts`
-- `src/generators/swn_sector/sector_shared.ts`
-- `src/generators/swn_sector/visualizer.ts`
-- `src/test/swn_sector_v4.test.ts`
-
-The first two production files are reached only by the old V4 test and the
-disconnected visualizer. The visualizer is not loaded by any HTML entry point.
-These four files can be removed as one unit after deciding that the historical
-V4 artifact test is no longer required.
-
-Two smaller TypeScript compatibility barrels have no importers anywhere and
-are safe deletion candidates now:
-
-- `src/generators/swn_sector/ui/types.ts`
-- `src/generators/swn_sector/ui/domain/sector/index.ts`
-
-The documentation contains two completed histories: the original RAW/V1–V4
-design and the merged-generator/UI-fusion process. Most can be archived or
-deleted. `ui/agent-project-guide.md` should instead be rewritten because it is
-the apparent current guide but contradicts the fused implementation.
-
-## Evidence and method
-
-The audit used these roots and classifications:
-
-1. Production root: the module script in `swn_sector/index.html`.
-2. Test roots: all `*.test.ts` and `*.test.tsx` files discovered by Vitest.
-3. Tool roots: package scripts plus intentionally standalone scripts.
-4. Static reachability: local `import`, `export ... from`, and dynamic import
-   edges, resolved with TypeScript/JavaScript extensions and index modules.
-5. Repository history: the old generator predates the `new sector UI`,
-   `migration part 1`, `get rid of model.ts`, and `continued integration with
-   UI map` commits. The live HTML entry changed to the React UI in the new-UI
-   commit.
-
-This is a reachability report, not an automatic deletion list. A file can have
-no importers because it is an HTML entry, a test, a declaration file, or a
-manual command-line tool.
-
 ## JavaScript and TypeScript cleanup candidates
 
 ### Remove together: disconnected legacy V1–V4 application
@@ -72,30 +25,11 @@ artifacts are considered.
 | `src/generators/swn_sector/ui/types.ts` | Three-line re-export of `merged_schema`; no code or test imports it. | Delete. High confidence. |
 | `src/generators/swn_sector/ui/domain/sector/index.ts` | Five-line barrel; no code or test imports it. Callers already import the concrete modules. | Delete. High confidence. |
 
-### Review before deletion
+### Review before deletion (Human Note: Done, delete it)
 
 | File | Why it looks leftover | Why it is not an automatic deletion |
 | --- | --- | --- |
 | `src/test/swn_sector_v2_constraints.test.ts` | It tests the V2-era raw table model and implements its own exhaustive compatibility checker. It does not test the canonical generator. | Vitest still runs it, and some raw-data integrity checks are not duplicated exactly by `generation_rules.test.ts`. Either retain it as data validation or port the valuable assertions before deletion. Medium confidence. |
-| `swn_sector/extract_tables.mjs` | No importer or package script references it. It belongs to the original PDF extraction phase and writes `world_attributes.json`, while the live generator consumes `world_attributes_2.json`. | It is a standalone provenance/regeneration tool. Archive it with extraction documentation, or update and document it if reproducible data extraction is still desired. Do not run it casually because it overwrites JSON data. Medium-high confidence that it is obsolete in its current form. |
-
-### Confirmed non-leftovers
-
-- `src/generators/swn_sector/invariants.ts` is not in the browser bundle, but it
-  is the oracle used by `stochastic_success.test.ts` and should remain.
-- Every canonical generator module from `generate.ts` through
-  `generate_system.ts`, `generate_inhabited_planet.ts`, `generate_routes.ts`,
-  `planet_templates.ts`, `generation_rules.ts`, `generation_random.ts`,
-  `tables.ts`, and `merged_schema.ts` is reachable from the live UI.
-- The UI feature, application, and concrete domain modules are reachable from
-  `ui/main.tsx`; only the two barrels listed above are disconnected.
-- `ui/vite-env.d.ts` is an ambient Vite declaration file. It is expected to
-  have no importer.
-- Test files generally have no importers because Vitest discovers them; this
-  alone is not evidence that they are dead.
-- Elsewhere in the repository, `src/counter.ts` has no importer and appears to
-  be the untouched Vite scaffold counter. It is outside SWN Sector but is a
-  high-confidence repository-level cleanup candidate.
 
 ## Documents associated with the old design
 
