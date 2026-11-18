@@ -1,20 +1,15 @@
-# M1 Obsidian Vault Naming — Collision Problem
+# Generated Name Uniqueness
 
 ## Requirement
 
-Vault pages should use human-readable names rather than GUIDs. Duplicate page names must cause a clear error instead of receiving an automatic GUID suffix or silent overwrite.
+Generated entity names must be unique within each entity type. Name allocation happens while the generator assigns names and is independent of JSON export, Obsidian, or other consumers. Different entity types may share a name; in particular, a polity may share its homeworld's name.
 
-## Current conflict
+## Generation rule
 
-- The current converter uses GUIDs in folders, filenames, links, and `source_id` properties. It checks duplicate IDs and paths, but not duplicate human-readable names.
-- The existing `sector-one-seed` JSON contains two systems named **Novosibirsk**. A strict system-name rule would reject this sector.
-- Every inhabited world produces a polity whose name initially matches its homeworld. Separate WorldPolity and WorldInfo pages therefore collide by design if names must be unique across all page types.
+- Compare names within their generated entity type only, using trimmed, case-insensitive names with repeated whitespace collapsed.
+- Resolve a collision when the name is assigned by choosing another candidate. If no candidate remains, generation fails clearly rather than inventing a suffix.
+- Derived names must use the already allocated source name. For example, a polity continues to match its homeworld, while system and hosted-object names are derived from the final generated names.
 
-## Decisions for this sub-spec
+## Obsidian note
 
-1. Define where uniqueness is required: across the entire vault, within each page type, or within each folder. Define whether names that differ only by case, spacing, or filename normalization count as duplicates.
-2. Define the human-readable names and paths for WorldPolity, WorldInfo, System, Route, and POI pages, including the intentional world/polity name pair.
-3. Decide whether GUIDs are forbidden only in page names and links or also inside page content and metadata.
-4. Decide whether duplicate source names are prevented during sector generation, rejected during JSON export, or rejected by the vault converter. No automatic renaming should be introduced without an explicit change to this requirement.
-
-The converter should detect all resulting page-path collisions before writing any vault files and report the conflicting source entities and proposed path.
+Vault path and link naming remains a consumer concern. A vault converter may choose human-readable paths, but it does not own or perform entity-name deduplication.

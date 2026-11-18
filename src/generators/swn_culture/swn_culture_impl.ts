@@ -124,7 +124,8 @@ function getPlaceNames(
 
 function personalNameGroup(culturalTemplate: string): string {
   const group = NAME_GROUP_BY_TEMPLATE[culturalTemplate as keyof typeof NAME_GROUP_BY_TEMPLATE];
-  if (!group) throw new Error(`Missing personal-name group for culture template ${culturalTemplate}`);
+  if (!group)
+    throw new Error(`Missing personal-name group for culture template ${culturalTemplate}`);
   return group;
 }
 
@@ -242,6 +243,7 @@ export function generateSwnCulture(seed: string): SwnCulture {
 export function generateSwnCultureForTags(
   worldTagsInput: readonly [WorldTag, WorldTag],
   seed: string,
+  usedHomeworldNames: ReadonlySet<string> = new Set(),
 ): SwnCulture {
   const worldTags = validateWorldTags(worldTagsInput);
   const rng = seedrandom(`${seed}:swn-culture:body`);
@@ -265,10 +267,34 @@ export function generateSwnCultureForTags(
   const pcReason = choose(rng, cultureData.pc_cares_about_reasons, 'PC care-about reasons');
   const conflict = rollDiceOutcome(rng, cultureData.biggest_conflicts, 'biggest conflicts');
 
+  const availableHomeworldNames = placeNames.filter(
+    (name) => !usedHomeworldNames.has(normalizeGeneratedName(name)),
+  );
+  if (availableHomeworldNames.length === 0)
+    throw new Error(`No unused ${culturalTemplate} homeworld names remain`);
+  const homeworld = choose(rng, availableHomeworldNames, `${culturalTemplate} unused place names`);
+  const cityNameKeys = new Set([normalizeGeneratedName(homeworld)]);
+  const cityNames = placeNames.filter((name) => {
+    const key = normalizeGeneratedName(name);
+    if (cityNameKeys.has(key)) return false;
+    cityNameKeys.add(key);
+    return true;
+  });
+  if (cityNames.length < 3) throw new Error(`Not enough ${culturalTemplate} city names`);
+  const takeCity = (): string => {
+    const index = Math.floor(rng() * cityNames.length);
+    return cityNames.splice(index, 1)[0]!;
+  };
+  const capitalCity = takeCity();
+  const secondaryCities: [string, string] = [takeCity(), takeCity()];
+
   return {
     worldTags,
     culturalTemplate,
-    homeworld: choose(rng, placeNames, `${culturalTemplate} place names`),
+    homeworld,
+    capitalCity,
+    secondaryCities,
+    npcLocationBank: generateSwnNpcLocationBank(culturalTemplate, `${seed}:npc-location-bank`),
     adventureComponents: { enemy, friend, complication, thing, place },
     pcCaresAbout: {
       category: pcReason.result,
@@ -325,6 +351,10 @@ export function generateSwnCultureForTags(
       ),
     },
   };
+}
+
+function normalizeGeneratedName(name: string): string {
+  return name.trim().replace(/\s+/g, ' ').toLocaleLowerCase('en-US');
 }
 
 export function default_build(seed: string): ExportFormat<SwnCulture> {

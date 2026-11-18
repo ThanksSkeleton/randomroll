@@ -80,22 +80,23 @@ test('culture and place names come directly from the shared names table', () => 
   expect(names).toContain(result.homeworld);
   expect(names).toContain(result.adventureComponents.place.placeName);
   expect(names).toContain(result.majorStarport.name);
+  expect(names).toContain(result.capitalCity);
+  for (const city of result.secondaryCities) expect(names).toContain(city);
+  expect(new Set([result.capitalCity, ...result.secondaryCities]).size).toBe(3);
+  expect([result.capitalCity, ...result.secondaryCities]).not.toContain(result.homeworld);
 });
 
 test('enemy and friend names use their rolled gender and cultural template', () => {
   const seenGenders = new Set<string>();
   for (let index = 0; index < 40; index += 1) {
     const result = generateSwnCulture(`personal-name-${index}`);
+    const nameGroup = result.culturalTemplate === 'Future' ? 'Fantasy' : result.culturalTemplate;
     for (const person of [result.adventureComponents.enemy, result.adventureComponents.friend]) {
       seenGenders.add(person.gender);
       const firstNames = rawNames.filter(
-        (row) =>
-          row.Group === result.culturalTemplate &&
-          (row.Type === person.gender || row.Type === 'Unisex'),
+        (row) => row.Group === nameGroup && (row.Type === person.gender || row.Type === 'Unisex'),
       );
-      const surnames = rawNames.filter(
-        (row) => row.Group === result.culturalTemplate && row.Type === 'Surname',
-      );
+      const surnames = rawNames.filter((row) => row.Group === nameGroup && row.Type === 'Surname');
       expect(firstNames.some((row) => person.name.startsWith(`${row.Name} `))).toBe(true);
       expect(surnames.some((row) => person.name.endsWith(` ${row.Name}`))).toBe(true);
     }

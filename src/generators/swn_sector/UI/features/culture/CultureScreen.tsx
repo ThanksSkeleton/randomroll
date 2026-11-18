@@ -81,6 +81,8 @@ function CultureDetails({
           rows={[
             ['Cultural Template', culture.culturalTemplate],
             ['Homeworld', culture.homeworld],
+            ['Capital City', culture.capitalCity],
+            ['Secondary Cities', culture.secondaryCities.join(', ')],
             ['Major Starport', `${culture.majorStarport.name} (${culture.majorStarport.type})`],
             [
               'PC Interest',
@@ -248,9 +250,7 @@ function WorldOverview({ rows }: { rows: CultureScreenDisplayDTO['overview'] }) 
         <tbody>
           {rows.map((row) => (
             <tr key={row.worldId}>
-              <th scope="row">
-                {row.worldName}
-              </th>
+              <th scope="row">{row.worldName}</th>
               <td>{row.systemName}</td>
               <td className="culture-world-status">
                 {row.realizationTier ? (
@@ -296,18 +296,13 @@ function WorldOverview({ rows }: { rows: CultureScreenDisplayDTO['overview'] }) 
   );
 }
 
-export function CultureScreen({
-  display,
-}: {
-  display: CultureScreenDisplayDTO;
-}) {
+export function CultureScreen({ display }: { display: CultureScreenDisplayDTO }) {
   const visibilityRank = { Primary: 0, Secondary: 1, Tertiary: 2 } as const;
   const byVisibility = <T extends { realizationTier: 'Primary' | 'Secondary' | 'Tertiary' | null }>(
     values: T[],
   ) =>
     [...values].sort(
-      (a, b) =>
-        visibilityRank[a.realizationTier!] - visibilityRank[b.realizationTier!],
+      (a, b) => visibilityRank[a.realizationTier!] - visibilityRank[b.realizationTier!],
     );
   const overviewByVisibilityAndSystem = [...display.overview].sort(
     (a, b) =>

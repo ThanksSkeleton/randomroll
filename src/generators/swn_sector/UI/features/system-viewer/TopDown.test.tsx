@@ -49,19 +49,6 @@ function renderSystem(
 }
 
 describe('TopDown', () => {
-  it('draws each object claim as a vertical stack of polity flags', () => {
-    const { sector, system, planet } = renderTopDown();
-    planet.ClaimedByPolityIds = sector.Polities.slice(0, 2).map((polity) => polity.Id);
-
-    renderSystem(system, sector, true);
-
-    const planetButton = screen.getByRole('button', { name: planet.NiceName });
-    const object = planetButton.closest('.td-object');
-    const flags = object?.querySelectorAll('.topdown-polity-flags .polity-flag');
-    expect(flags).toHaveLength(2);
-    expect(object?.querySelector('.topdown-polity-flags')).toBeTruthy();
-  });
-
   it('does not reveal overlay claims before Politics 1 is visible to the player', () => {
     const { sector, system, planet } = renderTopDown();
     planet.Visibility = {

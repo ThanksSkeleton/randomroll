@@ -15,6 +15,9 @@ export type SwnCulture = {
   worldTags: [WorldTag, WorldTag];
   culturalTemplate: string;
   homeworld: string;
+  capitalCity: string;
+  secondaryCities: [string, string];
+  npcLocationBank: { npcs: Array<{ name: string; gender: SwnCultureGender }>; locations: string[] };
   adventureComponents: {
     enemy: SwnCultureNamedComponent;
     friend: SwnCultureNamedComponent;

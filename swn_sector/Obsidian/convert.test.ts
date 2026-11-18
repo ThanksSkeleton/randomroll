@@ -3,17 +3,24 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { expect, it } from 'vitest';
 import { generate } from '../../src/generators/swn_sector/Generator/generate';
-import { buildVaultNotes, convertJsonToVault } from './convert';
+import type { Planet } from '../../src/generators/swn_sector/BaseDTO/merged_schema';
+import { buildFlagAssets, buildVaultNotes, convertJsonToVault } from './convert';
 
 const sector = generate({ seed: 'sector-one-seed' });
 
 it('creates linked notes for the sector hierarchy and relationships', () => {
+  const originalJson = JSON.stringify(sector);
   const notes = buildVaultNotes(sector);
+  const assets = buildFlagAssets(sector);
+  expect(buildVaultNotes(sector)).toEqual(notes);
+  expect(buildFlagAssets(sector)).toEqual(assets);
+  expect(JSON.stringify(sector)).toBe(originalJson);
   expect(notes.has('Sector.md')).toBe(true);
 
   for (const content of notes.values()) {
     for (const match of content.matchAll(/\[\[([^|\]]+)(?:\|[^\]]+)?\]\]/g)) {
-      expect(notes.has(`${match[1]}.md`), `Broken link: ${match[0]}`).toBe(true);
+      const target = match[1]!.endsWith('.svg') ? match[1]! : `${match[1]}.md`;
+      expect(notes.has(target) || assets.has(target), `Broken link: ${match[0]}`).toBe(true);
     }
   }
 
@@ -33,6 +40,18 @@ it('creates linked notes for the sector hierarchy and relationships', () => {
   expect(notes.get(poiPath!)).toContain(`[[Systems/${system.Id}/System|`);
 
   expect([...notes.keys()].some((path) => path.includes('Conquest'))).toBe(false);
+  const polity = sector.Polities[0]!;
+  const polityNote = notes.get(`Polities/${polity.Id}.md`)!;
+  expect(polityNote).toContain('## LoreBuilderForWorldPolity');
+  expect(polityNote).toContain('### NPCs');
+  expect(polityNote).toContain('### Habitable points of interest');
+  expect(assets.get(`Assets/Flags/${polity.Id}.svg`)).toContain('<circle');
+  const homeworld = sector.Systems.flatMap((system) => system.Objects).find(
+    (object): object is Planet => object.Id === polity.HomeworldId && object.Kind === 'Planet',
+  );
+  expect(homeworld?.Culture).toBeTruthy();
+  expect(polityNote).toContain(homeworld!.Culture!.npcLocationBank.npcs[0]!.name);
+  expect(JSON.stringify(homeworld!.Culture)).not.toContain('description');
 });
 
 it('refuses to overwrite an existing vault', async () => {

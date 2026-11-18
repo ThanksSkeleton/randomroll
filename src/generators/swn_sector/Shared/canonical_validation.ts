@@ -44,6 +44,9 @@ export function validateCanonicalShape(
         [
           'culturalTemplate',
           'homeworld',
+          'capitalCity',
+          'secondaryCities',
+          'npcLocationBank',
           'adventureComponents',
           'pcCaresAbout',
           'biggestConflict',
@@ -60,9 +63,38 @@ export function validateCanonicalShape(
     if (
       !string(item.culturalTemplate, `${path}.culturalTemplate`) ||
       !string(item.homeworld, `${path}.homeworld`) ||
+      !string(item.capitalCity, `${path}.capitalCity`) ||
+      !array(item.secondaryCities, `${path}.secondaryCities`) ||
+      item.secondaryCities.length !== 2 ||
+      !item.secondaryCities.every((city, index) =>
+        string(city, `${path}.secondaryCities[${index}]`),
+      ) ||
       !string(item.outsiderOpinion, `${path}.outsiderOpinion`)
     )
       return false;
+    const cities = [item.capitalCity, ...item.secondaryCities] as string[];
+    if (
+      cities.some((city) => city.trim() === '') ||
+      new Set(cities.map((city) => city.trim().toLocaleLowerCase('en-US'))).size !== 3
+    )
+      return invalid(`${path}.cities`, 'three distinct nonblank city names');
+    if (
+      !record(item.npcLocationBank, `${path}.npcLocationBank`) ||
+      !array(item.npcLocationBank.npcs, `${path}.npcLocationBank.npcs`) ||
+      !array(item.npcLocationBank.locations, `${path}.npcLocationBank.locations`) ||
+      item.npcLocationBank.npcs.length !== 5 ||
+      item.npcLocationBank.locations.length !== 5
+    )
+      return invalid(`${path}.npcLocationBank`, 'five NPCs and five locations');
+    for (const [index, npc] of item.npcLocationBank.npcs.entries())
+      if (
+        !record(npc, `${path}.npcLocationBank.npcs[${index}]`) ||
+        !string(npc.name, `${path}.npcLocationBank.npcs[${index}].name`) ||
+        !['Male', 'Female'].includes(String(npc.gender))
+      )
+        return false;
+    for (const [index, location] of item.npcLocationBank.locations.entries())
+      if (!string(location, `${path}.npcLocationBank.locations[${index}]`)) return false;
     for (const kind of ['enemy', 'friend', 'complication', 'thing', 'place']) {
       const component = item.adventureComponents[kind];
       const componentPath = `${path}.adventureComponents.${kind}`;
@@ -500,6 +532,9 @@ export function checkNoUnknownSchemaProperties(
             [
               'culturalTemplate',
               'homeworld',
+              'capitalCity',
+              'secondaryCities',
+              'npcLocationBank',
               'adventureComponents',
               'pcCaresAbout',
               'biggestConflict',

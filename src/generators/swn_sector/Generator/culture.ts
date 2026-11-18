@@ -1,4 +1,7 @@
-import { generateSwnCultureForTags } from '../../swn_culture/swn_culture_impl';
+import {
+  generateSwnCultureForTags,
+  generateSwnNpcLocationBank,
+} from '../../swn_culture/swn_culture_impl';
 import type { SectorCulture } from '../BaseDTO/culture';
 import type {
   HabitablePointOfInterest,
@@ -22,9 +25,13 @@ function shell(
   world: Planet,
   type: HabitablePointOfInterestType,
   polityId: string | null,
+  polityName?: string,
 ): HabitablePointOfInterest {
   const path = `hpoi:${world.Id}:${type}:${polityId ?? 'world'}`;
-  const label = type === 'Garrison' ? `Garrison ${polityId}` : type;
+  const label =
+    type === 'Garrison'
+      ? `Garrison of ${polityName ?? polityId} at ${world.NiceName}`
+      : `${type} at ${world.NiceName}`;
   return {
     Id: deterministicId(generationSettings, path),
     ProceduralName: label,
@@ -53,12 +60,15 @@ function shell(
 export function createHabitablePointsOfInterest(
   generationSettings: GenerationSettings,
   system: StarSystem,
+  polityNameById: ReadonlyMap<string, string> = new Map(),
 ): HabitablePointOfInterest[] {
   return system.Objects.flatMap((object) => {
     if (object.Kind !== 'Planet' || object.InhabitedInfo === false) return [];
     return [
       ...INFRASTRUCTURE_TYPES.map((type) => shell(generationSettings, object, type, null)),
-      ...object.ClaimedByPolityIds.map((id) => shell(generationSettings, object, 'Garrison', id)),
+      ...object.ClaimedByPolityIds.map((id) =>
+        shell(generationSettings, object, 'Garrison', id, polityNameById.get(id)),
+      ),
     ];
   });
 }
@@ -124,11 +134,21 @@ export function completeWorld(sector: Sector, worldId: string): Sector {
   if (world.Culture) return sector;
   const inhabited = world.InhabitedInfo;
   if (inhabited === false) throw new Error('Only an inhabited world can be completed.');
+  const usedPlanetNames = new Set(
+    next.Systems.flatMap((system) => system.Objects)
+      .filter((object) => object.Kind === 'Planet' && object.Id !== world.Id)
+      .map((object) => object.NiceName.trim().replace(/\s+/g, ' ').toLocaleLowerCase('en-US')),
+  );
   const generated = generateSwnCultureForTags(
     inhabited.WorldTags,
     `${sector.OriginalSeed}:world-culture:${world.Id}`,
+    usedPlanetNames,
   );
   const { worldTags: _worldTags, ...selected } = generated;
+  selected.npcLocationBank = generateSwnNpcLocationBank(
+    selected.culturalTemplate,
+    `${sector.OriginalSeed}:world-npc-location-bank:${world.Id}`,
+  );
   selected.adventureComponents = Object.fromEntries(
     Object.entries(selected.adventureComponents).map(([kind, component]) => [
       kind,

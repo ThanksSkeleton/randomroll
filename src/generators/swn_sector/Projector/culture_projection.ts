@@ -16,7 +16,6 @@ import { populationStrings } from '../Shared/population_interpretation';
 import { projectClaims, projectPolity } from './politics_projection';
 import { projectWorldTag } from './world_tag_projection';
 import { HPOI_MARKER } from '../Data/Projection/poi_presentation';
-import { generateSwnNpcLocationBank } from '../../swn_culture/swn_culture_impl';
 import { cultureRealizationTiers } from '../Shared/culture_realization_tiers';
 
 export function hpoiWorld(sector: Sector, hpoi: HabitablePointOfInterest): Planet | undefined {
@@ -265,12 +264,7 @@ export function projectCultureWorld(
     originalPolity: originalPolity ?? null,
     claims,
     culture,
-    npcLocationBank: culture
-      ? generateSwnNpcLocationBank(
-          culture.culturalTemplate,
-          `${sector.OriginalSeed}:world-npc-location-bank:${world.Id}`,
-        )
-      : null,
+    npcLocationBank: culture ? world.Culture!.npcLocationBank : null,
     hpois: hpois as HabitablePoiDisplayDTO[],
   };
 }

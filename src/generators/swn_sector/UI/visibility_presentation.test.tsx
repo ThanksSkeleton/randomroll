@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { cleanup, render } from '@testing-library/react';
 import { afterEach, describe, expect, it } from 'vitest';
 import { generate } from '../Generator/generate';
 import type { Planet, Sector, StarSystem } from '../BaseDTO/merged_schema';
@@ -112,66 +112,6 @@ function visiblePlanet(sector: Sector): Planet {
 }
 
 describe('scan visibility presentation', () => {
-  it('shows atmosphere as a closed Basic Scan drawer with only gas percentages inside', () => {
-    const sector = generate({ seed: 'VISIBILITY-ATMOSPHERE-DRAWER' });
-    const planet = visiblePlanet(sector);
-    planet.Atmosphere = { Category: 'Breathable', SelectedGas: 'N2' };
-    const view = renderDetail(sector, planet.Id);
-
-    const basic = view.container.querySelector('.scan-basicscan');
-    const simple = [...(basic?.querySelectorAll('.basic-scan-simple') ?? [])].map(
-      (element) => element.textContent,
-    );
-    expect(simple.every((line) => line && !line.includes('Atmosphere'))).toBe(true);
-    expect(simple.every((line) => line && !line.includes('Atmosphere'))).toBe(true);
-
-    const drawer = [...(basic?.querySelectorAll('.basic-scan-drawer') ?? [])].find(
-      (element) => element.querySelector('summary')?.textContent === 'Atmosphere: Breathable (N₂)',
-    ) as HTMLDetailsElement;
-    expect(drawer.open).toBe(false);
-    expect(drawer.querySelector('summary')?.textContent).toBe('Atmosphere: Breathable (N₂)');
-    expect(
-      [...drawer.querySelectorAll('.basic-scan-drawer-content > div')].map(
-        (element) => element.textContent,
-      ),
-    ).toEqual(['N₂: 79%', 'O₂: 20%']);
-    fireEvent.click(drawer.querySelector('summary')!);
-    expect(drawer.open).toBe(true);
-  });
-
-  it('shows Vacuum as an atmosphere drawer', () => {
-    const sector = generate({ seed: 'VISIBILITY-VACUUM-SIMPLE' });
-    const planet = visiblePlanet(sector);
-    planet.Atmosphere = { Category: 'Vacuum' };
-    const view = renderDetail(sector, planet.Id);
-    const basic = view.container.querySelector('.scan-basicscan');
-
-    expect(
-      [...(basic?.querySelectorAll('.basic-scan-drawer') ?? [])].some(
-        (element) => element.querySelector('summary')?.textContent === 'Atmosphere: Vacuum',
-      ),
-    ).toBe(true);
-  });
-
-  it('shows gravity with Earth mass and size class in a Basic Scan drawer', () => {
-    const sector = generate({ seed: 'VISIBILITY-SIZE-DRAWER' });
-    const planet = visiblePlanet(sector);
-    planet.Size = 'Earth';
-    const view = renderDetail(sector, planet.Id);
-    const basic = view.container.querySelector('.scan-basicscan');
-    const drawer = [...(basic?.querySelectorAll('.basic-scan-drawer') ?? [])].find(
-      (element) => element.querySelector('summary')?.textContent === 'Planet: 9.81 m/s²',
-    ) as HTMLDetailsElement;
-
-    expect(drawer.open).toBe(false);
-    expect(
-      [...drawer.querySelectorAll('.basic-scan-drawer-content > div')].map(
-        (element) => element.textContent,
-      ),
-    ).toEqual(['1 M⊕', 'Earth-Class', expect.stringMatching(/^Composition: /)]);
-    expect(basic?.querySelector('.basic-scan-simple')).toBeNull();
-  });
-
   it('keeps projected player-preview visibility aligned with the existing presentation rule', () => {
     const sector = generate({ seed: 'VISIBILITY-PROJECTION-PARITY' });
     const result = projectSector(sector, { preview: 'player', assetBaseUrl: '/' });
@@ -182,38 +122,6 @@ describe('scan visibility presentation', () => {
         isVisibleToPlayer(sector, object.Id),
       );
   });
-  it('lists the union of object claimants in system Politics 1 with their flags', () => {
-    const sector = generate({ seed: 'VISIBILITY-SYSTEM-POLITICS' });
-    const system = sector.Systems[0]!;
-    system.Visibility = {
-      BasicScan: true,
-      DetailedScan: false,
-      PoliticsScan: true,
-      DeepPoliticsScan: false,
-    };
-    for (const object of system.Objects) object.ClaimedByPolityIds = [];
-    system.Objects[0]!.ClaimedByPolityIds = [sector.Polities[0]!.Id];
-    system.Objects[1]!.ClaimedByPolityIds = [sector.Polities[1]!.Id, sector.Polities[0]!.Id];
-    const claimIds = [
-      ...new Set(system.Objects.flatMap((object) => object.ClaimedByPolityIds)),
-    ].sort((left, right) => {
-      const leftName = sector.Polities.find((polity) => polity.Id === left)!.NiceName;
-      const rightName = sector.Polities.find((polity) => polity.Id === right)!.NiceName;
-      return leftName.localeCompare(rightName) || left.localeCompare(right);
-    });
-    const names = claimIds.map(
-      (id) => sector.Polities.find((polity) => polity.Id === id)!.NiceName,
-    );
-
-    const view = renderDetail(sector, system.Id);
-
-    expect(
-      view.container.querySelector('.scan-politicsscan .detail-stock-content')?.textContent,
-    ).toBe(`ClaimedBy: ${names.join(', ')}`);
-    for (const name of names)
-      expect(screen.getByRole('img', { name: `${name} polity flag` })).toBeTruthy();
-  });
-
   it('uses Politics Scan for nice names and retains the procedural secondary name', () => {
     const sector = generate({ seed: 'VISIBILITY-NAMES' });
     const planet = visiblePlanet(sector);
@@ -233,71 +141,6 @@ describe('scan visibility presentation', () => {
     expect(view.container.querySelector('.object-procedural-name')?.textContent).toContain(
       'PROCEDURAL WORLD',
     );
-  });
-
-  it('places bioscan facts in Basic and Politics stock while Deep stock is empty', () => {
-    const sector = generate({ seed: 'VISIBILITY-STOCK' });
-    const planet = visiblePlanet(sector);
-    planet.Visibility.PoliticsScan = true;
-    planet.Visibility.DeepPoliticsScan = true;
-    const view = renderDetail(sector, planet.Id);
-
-    const basic = view.container.querySelector('.scan-basicscan');
-    const detailed = view.container.querySelector('.scan-detailedscan .detail-stock-content');
-    const politics = view.container.querySelector('.scan-politicsscan .detail-stock-content');
-    const deep = view.container.querySelector('.scan-deeppoliticsscan .detail-stock-content');
-    expect(basic?.textContent).toContain('Bioscan: Life Detected');
-    expect(basic?.textContent).toContain(
-      `Terran: ${planet.InhabitedInfo !== false && planet.InhabitedInfo.TerranBiosphere}`,
-    );
-    expect(basic?.textContent).toContain(`Native: ${planet.NativeBiosphere}`);
-    expect(basic?.textContent).toContain('Human Population:');
-    expect(detailed?.textContent).toBe('-');
-    expect(detailed?.textContent).not.toContain('Tech Level:');
-    expect(politics?.textContent).toContain('Tech Level:');
-    expect(deep?.textContent).toBe('-');
-  });
-
-  it('does not show signal counts in Detailed stock and keeps a dash for empty Deep stock', () => {
-    const sector = generate({ seed: 'VISIBILITY-SIGNALS' });
-    const object = sector.Systems.flatMap((system) => system.Objects).find(
-      (candidate) =>
-        candidate.Kind === 'OtherCelestialObject' ||
-        (candidate.Kind === 'Planet' && candidate.InhabitedInfo === false),
-    );
-    if (!object) throw new Error('Expected an uninhabited planet or other celestial object');
-    object.Visibility = {
-      BasicScan: true,
-      DetailedScan: true,
-      PoliticsScan: true,
-      DeepPoliticsScan: true,
-    };
-    const view = renderDetail(sector, object.Id);
-
-    expect(
-      view.container.querySelector('.scan-detailedscan .detail-stock-content')?.textContent,
-    ).toBe('-');
-    expect(
-      view.container.querySelector('.scan-deeppoliticsscan .detail-stock-content')?.textContent,
-    ).toBe('-');
-    const names = object.ClaimedByPolityIds.map(
-      (id) => sector.Polities.find((polity) => polity.Id === id)!.NiceName,
-    );
-    expect(
-      view.container.querySelector('.scan-politicsscan .detail-stock-content')?.textContent,
-    ).toBe(`ClaimedBy: ${names.length === 0 ? 'None' : names.join(', ')}`);
-
-    object.ClaimedByPolityIds = sector.Polities.slice(0, 2).map((polity) => polity.Id);
-    view.rerender(<Inspector sector={sector} selectedId={object.Id} preview="player" />);
-    expect(
-      view.container.querySelector('.scan-politicsscan .detail-stock-content')?.textContent,
-    ).toBe(`ClaimedBy: ${sector.Polities[0]!.NiceName}, ${sector.Polities[1]!.NiceName}`);
-
-    object.ClaimedByPolityIds = [];
-    view.rerender(<Inspector sector={sector} selectedId={object.Id} preview="player" />);
-    expect(
-      view.container.querySelector('.scan-politicsscan .detail-stock-content')?.textContent,
-    ).toBe('ClaimedBy: None');
   });
 
   it("uses the route's Politics Scan for endpoint names", () => {

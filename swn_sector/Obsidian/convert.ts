@@ -9,6 +9,16 @@ import type {
   SelectableEntity,
 } from '../../src/generators/swn_sector/BaseDTO/merged_schema';
 import { checkAllInvariants } from '../../src/generators/swn_sector/Generator/generated_sector_invariants';
+import {
+  projectCultureWorld,
+  hpoiProjection,
+} from '../../src/generators/swn_sector/Projector/culture_projection';
+import { populationStrings } from '../../src/generators/swn_sector/Shared/population_interpretation';
+import { techLevelStrings } from '../../src/generators/swn_sector/Shared/tech_level_interpretation';
+import { biosphereName } from '../../src/generators/swn_sector/Shared/biosphere_interpretation';
+import { projectWorldTag } from '../../src/generators/swn_sector/Projector/world_tag_projection';
+import { polityFlagColorValue } from '../../src/generators/swn_sector/UI/features/politics/PolityFlag';
+import { partitionHubPolities } from './hub_visibility';
 
 type Poi = PointOfInterest | HabitablePointOfInterest;
 type Target = { path: string; name: string };
@@ -75,33 +85,64 @@ function visibility(entity: SelectableEntity): string {
   ])}`;
 }
 
-function cultureSummary(world: Planet): string {
-  const culture = world.Culture;
-  if (!culture) return '';
-  const conflict = culture.biggestConflict;
-  const interests = culture.pcCaresAbout;
-  const starport = culture.majorStarport;
-  const adventure = culture.adventureComponents;
-  const prompts = (component: { prompts: [{ prompt: string }, { prompt: string }] }) =>
-    component.prompts.map((entry) => entry.prompt).join(' / ');
+/** SVG uses the same color interpretation and geometry as the application flag. */
+export function buildFlagAssets(sector: Sector): Map<string, string> {
+  return new Map(
+    sector.Polities.map((polity) => [
+      `Assets/Flags/${safeId(polity.Id)}.svg`,
+      `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 16"><rect x="0.5" y="0.5" width="31" height="15" fill="${polityFlagColorValue(polity.Flag.FieldColor)}" stroke="#ffffff"/><circle cx="16" cy="8" r="5" fill="${polityFlagColorValue(polity.Flag.CircleColor)}"/></svg>\n`,
+    ]),
+  );
+}
+
+function expandedCulture(sector: Sector, world: Planet): string {
+  if (!world.Culture || world.InhabitedInfo === false) return '';
+  const projected = projectCultureWorld(sector, world.Id);
+  if (!projected?.culture || !projected.npcLocationBank)
+    throw new Error(`Cannot project culture for world ${world.Id}`);
+  const culture = projected.culture;
+  const bank = projected.npcLocationBank;
+  const components = Object.entries(culture.adventureComponents).map(([kind, component]) => {
+    const identity =
+      'name' in component
+        ? `${component.name} (${component.gender})`
+        : 'placeName' in component
+          ? component.placeName
+          : '';
+    return `- ${kind}: ${identity}${identity ? ' — ' : ''}${component.prompts.map((prompt) => `${prompt.sourceTag}: ${prompt.prompt}`).join(' / ')}`;
+  });
+  const hpois = sector.Systems.flatMap((system) => system.HabitablePointsOfInterest)
+    .filter((poi) => poi.ParentWorldId === world.Id)
+    .map((poi) => {
+      const result = hpoiProjection(sector, poi);
+      return `- ${poi.HPOIType}: ${result.reason ? `NONE (${result.reason}); ` : ''}${result.fields.map(([name, value]) => `${name}: ${value}`).join('; ')}`;
+    });
   return [
-    '## Culture summary',
-    list([
-      `Cultural template: ${culture.culturalTemplate}`,
-      `Homeworld name: ${culture.homeworld}`,
-      `Biggest conflict: ${conflict.category} — ${conflict.details}`,
+    '## LoreBuilderForWorldPolity',
+    `### World tags\n\n${list(projected.tags.map((tag) => `${tag.tag}: ${tag.description}`))}`,
+    `### Culture and cities\n\n${list([
+      `Template: ${culture.culturalTemplate}`,
+      `Capital: ${culture.capitalCity}`,
+      `Secondary cities: ${culture.secondaryCities.join(', ')}`,
+      `Population: ${projected.population}`,
+      `Tech level: ${projected.techLevel}`,
       `Outsider opinion: ${culture.outsiderOpinion}`,
-      `PC interest: ${interests.category} / ${interests.type}${interests.commoditySize ? ` / ${interests.commoditySize}` : ''}`,
-      `Major starport: ${starport.name} (${starport.type})`,
-    ]),
-    '### Adventure ingredients',
-    list([
-      `Enemy: ${adventure.enemy.name} — ${prompts(adventure.enemy)}`,
-      `Friend: ${adventure.friend.name} — ${prompts(adventure.friend)}`,
-      `Complication: ${prompts(adventure.complication)}`,
-      `Thing: ${prompts(adventure.thing)}`,
-      `Place: ${adventure.place.placeName} — ${prompts(adventure.place)}`,
-    ]),
+      `PC interest: ${culture.pcCaresAbout.category} / ${culture.pcCaresAbout.type}${culture.pcCaresAbout.commoditySize ? ` / ${culture.pcCaresAbout.commoditySize}` : ''}`,
+      `Biggest conflict: ${culture.biggestConflict.category} — ${culture.biggestConflict.details}`,
+      `Starport: ${culture.majorStarport.name} (${culture.majorStarport.type})`,
+    ])}`,
+    `### NPCs\n\n${list(bank.npcs.map((npc) => `${npc.name} (${npc.gender})`))}`,
+    `### Locations\n\n${list(bank.locations)}`,
+    `### Adventure components\n\n${list(components)}`,
+    `### Security\n\n${list([
+      `Law enforcement: ${culture.lawEnforcement.amount}; ${culture.lawEnforcement.style}; ${culture.lawEnforcement.specialLaw}`,
+      `Orbital station: ${culture.planetaryDefenses.orbitingStationStyle}; ${culture.planetaryDefenses.orbitingStationType}`,
+      `Trade enforcement: ${culture.planetaryDefenses.tradeAndSmugglingEnforcementAmount}`,
+      `Customs and visas: ${culture.planetaryDefenses.customsAndVisaEmphasis}`,
+      `Patrol boats: ${culture.planetaryDefenses.patrolBoatPresence}`,
+      `Gun turrets: ${culture.planetaryDefenses.planetaryGunTurrets}`,
+    ])}`,
+    `### Habitable points of interest\n\n${list(hpois)}`,
   ].join('\n\n');
 }
 
@@ -162,6 +203,23 @@ export function buildVaultNotes(sector: Sector): Map<string, string> {
   for (const polity of sector.Polities)
     register(polity.Id, `Polities/${safeId(polity.Id)}.md`, polity.NiceName);
 
+  const hubPolities = partitionHubPolities(sector);
+  add(
+    'SectorHub.md',
+    note('sector hub', sector.OriginalSeed, 'SectorHub', [
+      `## Visible WorldPolities\n\n${list(hubPolities.visible.map((polity) => link(polity.Id)))}`,
+      `## Visible systems\n\n${list(sector.Systems.filter((system) => system.Visibility.BasicScan).map((system) => link(system.Id)))}`,
+      '[[UnseenSectorHub|Unseen WorldPolities]]',
+    ]),
+  );
+  add(
+    'UnseenSectorHub.md',
+    note('unseen sector hub', sector.OriginalSeed, 'UnseenSectorHub', [
+      `## Unseen WorldPolities\n\n${list(hubPolities.unseen.map((polity) => link(polity.Id)))}`,
+      '[[SectorHub|Visible WorldPolities]]',
+    ]),
+  );
+
   add(
     'Sector.md',
     note('sector', sector.OriginalSeed, sector.SectorName, [
@@ -209,9 +267,8 @@ export function buildVaultNotes(sector: Sector): Map<string, string> {
           pathOf(object.Id),
           note(object.Orbit.ParentObjectId ? 'moon' : 'planet', object.Id, object.NiceName, [
             ...shared.slice(0, 1),
-            `- **Size:** ${object.Size}\n- **Composition:** ${object.BulkComposition}\n- **Surface water:** ${object.SurfaceWaterPresent ? 'yes' : 'no'}\n- **Atmosphere:** ${atmosphere(object)}\n- **Native biosphere:** ${object.NativeBiosphere}${inhabited ? `\n- **World tags:** ${inhabited.WorldTags.join(', ')}\n- **Population:** ${inhabited.Population}\n- **Tech level:** ${inhabited.TechLevel}\n- **Terran biosphere:** ${inhabited.TerranBiosphere}` : '\n- **Inhabited:** no'}`,
+            `- **Size:** ${object.Size}\n- **Composition:** ${object.BulkComposition}\n- **Surface water:** ${object.SurfaceWaterPresent ? 'yes' : 'no'}\n- **Atmosphere:** ${atmosphere(object)}\n- **Native biosphere:** ${biosphereName(object.NativeBiosphere)}${inhabited ? `\n- **World tags:** ${inhabited.WorldTags.map((tag) => `${tag} — ${projectWorldTag(tag).description}`).join('; ')}\n- **Population:** ${populationStrings(inhabited.Population).longString}\n- **Tech level:** ${techLevelStrings(inhabited.TechLevel).longString}\n- **Terran biosphere:** ${biosphereName(inhabited.TerranBiosphere)}` : '\n- **Inhabited:** no'}`,
             ...shared.slice(1),
-            cultureSummary(object),
             visibility(object),
             intelligence(object),
           ]),
@@ -263,11 +320,16 @@ export function buildVaultNotes(sector: Sector): Map<string, string> {
   const objects = sector.Systems.flatMap((system) => system.Objects);
   for (const polity of sector.Polities) {
     const claimed = objects.filter((object) => object.ClaimedByPolityIds.includes(polity.Id));
+    const homeworld = objects.find(
+      (object): object is Planet => object.Id === polity.HomeworldId && object.Kind === 'Planet',
+    );
+    if (!homeworld) throw new Error(`Missing homeworld for polity ${polity.Id}`);
     add(
       pathOf(polity.Id),
       note('polity', polity.Id, polity.NiceName, [
-        `- **Sector:** [[Sector]]\n- **Homeworld:** ${link(polity.HomeworldId)}\n- **Flag field color:** ${polity.Flag.FieldColor}\n- **Flag circle color:** ${polity.Flag.CircleColor}`,
+        `![[Assets/Flags/${safeId(polity.Id)}.svg|${wikiLabel(polity.NiceName)} flag]]\n\n- **Sector:** [[Sector]]\n- **Homeworld:** ${link(polity.HomeworldId)}`,
         `## Claims\n\n${list(claimed.map((object) => link(object.Id)))}`,
+        expandedCulture(sector, homeworld),
         '## Player-facing lore\n\n<!-- Add player-facing lore here. -->',
         '## GM notes\n\n<!-- Add GM notes here. -->',
       ]),
@@ -284,11 +346,12 @@ export async function convertJsonToVault(inputPath: string, outputDir: string): 
   if (violations.length)
     throw new Error(`Invalid sector JSON: ${violations[0]!.RuleId}: ${violations[0]!.Message}`);
   const notes = buildVaultNotes(raw as Sector);
+  const assets = buildFlagAssets(raw as Sector);
   const destination = resolve(outputDir);
   await mkdir(dirname(destination), { recursive: true });
   await mkdir(destination);
   try {
-    for (const [relativePath, content] of notes) {
+    for (const [relativePath, content] of [...notes, ...assets]) {
       const path = join(destination, relativePath);
       await mkdir(dirname(path), { recursive: true });
       await writeFile(path, content, { flag: 'wx' });
@@ -297,7 +360,7 @@ export async function convertJsonToVault(inputPath: string, outputDir: string): 
     await rm(destination, { recursive: true, force: true });
     throw error;
   }
-  return notes.size;
+  return notes.size + assets.size;
 }
 
 async function main(): Promise<void> {

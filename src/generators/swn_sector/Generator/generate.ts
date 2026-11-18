@@ -173,7 +173,17 @@ export function generate(generationSettings: GenerationSettings): Sector {
       object.Culture = null;
     }
   }
-  return realizeSector(result);
+  const realized = realizeSector(result);
+  const polityNameById = new Map(realized.Polities.map(({ Id, NiceName }) => [Id, NiceName]));
+  for (const system of realized.Systems) {
+    const refreshed = createHabitablePointsOfInterest(generationSettings, system, polityNameById);
+    const refreshedById = new Map(refreshed.map((poi) => [poi.Id, poi]));
+    for (const poi of system.HabitablePointsOfInterest) {
+      const name = refreshedById.get(poi.Id)?.NiceName;
+      if (name) poi.NiceName = name;
+    }
+  }
+  return realized;
 }
 
 function eligibleStartingWorld(planet: Planet): boolean {
