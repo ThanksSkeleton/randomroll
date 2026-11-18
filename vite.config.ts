@@ -16,6 +16,7 @@ export default defineConfig({
         swn_culture: resolve(__dirname, 'swn_culture/index.html'),
         swn_sector_gm: resolve(__dirname, 'swn_sector/gm/index.html'),
         swn_sector_player: resolve(__dirname, 'swn_sector/player/index.html'),
+        swn_sector_worlds: resolve(__dirname, 'swn_sector/worlds/index.html'),
         supers: resolve(__dirname, 'supers/index.html'),
         xcc: resolve(__dirname, 'xcc/index.html'),
         xcc_webgl: resolve(__dirname, 'xcc_webgl/index.html'),
