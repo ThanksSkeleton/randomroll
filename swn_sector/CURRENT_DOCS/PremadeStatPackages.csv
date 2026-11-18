@@ -1,0 +1,7 @@
+Stat Package,STR,DEX,CON,INT,WIS,CHA
+Expert (Smart),10,12,11,14,7,9
+Expert (Nimble),10,14,12,11,9,7
+Warrior (Melee),14,9,12,7,10,11
+Warrior (Ranged),9,14,12,10,10,11
+Psychic (Seer),9,11,12,10,14,7
+Psychic (Adept),12,10,14,9,11,7

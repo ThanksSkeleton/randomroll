@@ -1,0 +1,10 @@
+Id,Class,Bonus Skill,Premade Title,Identity FOCI,Secondary Specialty FOCI,PSIONICS Skills,Default Profession,Stat Package,Equipment Package
+1,Expert,Shoot,Thief,Sneak,Connect,,Official,Nimble,Thief
+2,Expert,Shoot,Scientist,Heal,Know,,Soldier,Smart,Medic
+3,Expert,Shoot,Technician,Fix,Program,,Criminal,Smart,Technician
+4,Expert,Shoot,Captain,Pilot,Talk,,Noble,Nimble,Blade
+5,Warrior,Stab*,Shooter,Close Combatant*,Assassin*,,Vagabond,Ranged,Soldier
+6,Warrior,Shoot*,Stabber,Shocking Assault*,Die Hard*,,Barbarian,Melee,Blade
+7,Psychic,Shoot,Psychic: The Rose,Exert,,BioPsion/Telepathy,Physician,Seer,Medic
+8,Psychic,Shoot,Psychic: The Seer,Trade,,Precog/Telekinesis,Scholar,Adept,Hacker
+9,Psychic,Shoot,Psychic: Magician,Perform,,Metapsionics/Teleportation,Technician,Adept,Technician

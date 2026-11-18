@@ -1,0 +1,434 @@
+PDF PAGE 35 / PRINTED PAGE 31
+
+                                                                                                       Psionics •31
+
+Effort and Psychic Abilities                                    Attitudes Toward Psychics
+Psionic powers are fueled by Effort, a measure of the           Most worlds have a warily accepting attitude toward
+psychic’s mental focus, energy, and neural responsive-          psionic abilities. Provided they’ve received appropriate
+ness. A psychic’s maximum Effort total is equal to one          training, a psychic can live and work in relative peace.
+plus the higher of their Wisdom or Constitution at-             They are not normally required to wear any sort of
+tribute modifiers, plus their highest psychic skill score.      external badge or marking, and they are entitled to
+Thus, a psychic with a Wisdom modifier of -1, a Con-            keep their own abilities private from anyone but the
+stitution modifier of +2, and psionic skills of Metap-          government if they so wish. They may be subject to
+sionics-0 and Biopsionics-0 would have a maximum                mandatory “national service”, depending on the pol-
+Effort score of 3. If he were to then improve his Biop-         ity, and their special abilities might be impressed by
+sionics skill to level-1, his Effort would become 4.            the government in cases of extreme need, but they are
+      Effort is “Committed” to fuel a psionic power.            able to live a relatively normal, if very well-remuner-
+Some Commitment is relatively short-term, lasting               ated life. Ordinary men and women have only a vague
+only as long as the power is in effect. Other powers            understanding of psychic powers, but they understand
+require that the Effort be Committed for the full scene,        enough to know the basic types of disciplines and the
+while the most powerful might require it be Commit-             sort of effects each can produce.
+ted for the rest of the day. Once the Commitment pe-                  Other worlds have a warmer attitude towards psy-
+riod is over, the Effort returns to the psychic. All Effort     chics. Those gifted with MES are elevated above the
+is refreshed after a good night’s rest.                         ordinary rabble, their abilities celebrated and directed
+     Whenever a power requires you to Commit Effort,            toward the advantage of their communities. Such so-
+you commit only one point, though additional effects            cieties often have psychic ability as a prerequisite for
+or triggerings may require separate Commitments.                substantial authority, and have worked precognitive
+                                                                visions or telepathic scans into the ordinary fabric of
+Torching                                                        life. Offworld psychics tend to be treated with consider-
+Psychics can push past their limits by “torching”, inten-       able respect on these worlds, though sometimes they’re
+tionally ignoring safety protocols and neural refractory        also expected to provide services or guidance they may
+periods to channel MES energy beyond their normal               not be equipped to give. Citizens of these worlds usu-
+capacity. For untrained MES subjects, all their power           ally have an excellent understanding of how psychic
+use qualifies as torching, as they lack the training nec-       disciplines work, in addition to understanding ways
+essary to develop safe reserves of Effort.                      to counter them.
+     Torching is an Instant action that can be per-                   A few worlds have outright hostility towards psy-
+formed once per round. It provides a free point of Ef-          chics and their abilities. MES sufferers might be viewed
+fort that lasts for the rest of the scene, even if this point   as pitiable victims of a lethal affliction they can’t con-
+puts a psychic over the maximum allowed. Every time             trol, but trained and capable psychics are threats to be
+the psychic torches, however, they have to roll on the          wiped out. Their telepathic probings, cheating fore-
+torching result table below.                                    sight, and impossibly elusive teleportation makes them
+                                                                a menace to normal human beings, and society cannot
+   d6                     Torching Result                       tolerate their existence. Some worlds forbid psionics
+   1-2     Lose 1 point from your Wisdom score                  out of fear of another Scream, while others do so out
+   3-4     Lose 1 point from your Constitution score            of misunderstandings, a desire for social stability, or lo-
+    5      Lose 1 point from an attribute you choose            cal conditions that make psionic powers exceptionally
+                                                                dangerous. A few of these worlds have private psychic
+    6      No harm is done by the torching                      academies to train psionic myrmidons for the ruling
+      Psychics reduced below a Wisdom score of 3 go             class or deniable agents of private intrigue.
+violently insane and become “feral psychics”; those re-               On almost all worlds, however, psychics can ex-
+duced below scores of 3 in other attributes likewise            pect to suffer considerably harsher legal penalties than
+become dead or nonviable as player characters. There is         conventional criminals. Some worlds simply have no
+no available cure for brain damage caused by torching,          resources to jail an unwilling teleporter or mind-read-
+and even advanced pretech technology has no gener-              ing telepath, while others expect those of great gifts to
+ally-known remedy.                                              have correspondingly great virtue. It’s not unknown
+      Feral psychics are exceptionally dangerous, as their      for psychics to face summary execution for crimes that
+form of brain damage invariably results in violent, psy-        would earn other malefactors a simple jail sentence.
+chotic behavior and terrifying hallucinations. Worse                  A few worlds have ancient pretech artifacts or
+still, they can torch with impunity thereafter, as the          technologies that are capable of defeating or suppress-
+MES energies have already burnt a clear path through            ing psychic powers. Such resources are always extreme-
+what remains of their sanity. Feral psychics have ef-           ly rare, and normally only deployed to protect heads of
+fectively unlimited Effort with what powers they have           state and similar top-level figures, along with govern-
+obtained. There is no known cure for a feral psychic.           ment sites of planetary importance.
+
+PDF PAGE 36 / PRINTED PAGE 32
+
+32• Biopsionics
+
+
+Biopsionics
+Biopsionic powers repair, augment, debilitate, or dam-
+age living creatures. Unless otherwise specified the          Mastered Succor                               Level-1
+biopsionicist must be able to touch a target, though         The biopsion has developed a sophisticated mastery of
+clothing and armor do not interfere with the use of          their core ability, and they no longer need to Commit
+these abilities. Touching a willing or unsuspecting tar-     Effort to activate it, and may use it whenever they wish.
+get is automatic, whereas touching a resisting target        The use of additional techniques that augment Psychic
+requires a normal Punch hit roll with a bonus equal to       Succor might still require Effort to be Committed.
+the practitioner’s Biopsionics skill. Such touch effects
+do not inflict the normal damage of a Punch attack.           Organic Purification Protocols                  Level-1
+     Unsurprisingly, biopsionic powers are among the         The biopsion’s Psychic Succor now cures any poisons or
+most accepted psychic abilities. Even a modestly-expe-       diseases the subject may be suffering, albeit it requires
+rienced biopsion can perform miracles of healing for a       Committing Effort for the day as an additional sur-
+community lucky enough to have their services.               charge. Biowarfare organisms, exceptionally virulent
+                                                             diseases, or TL5 toxins may resist this curing, requiring
+System Strain                                                a Wis/Biopsionics skill check at a difficulty of at least
+Many curative biopsionic powers add to the target’s          10. Failure means that the adept cannot cure the target’s
+System Strain. System Strain is a measure of the amount      disease. This technique cannot cure congenital illnesses.
+of system stress, intrusive modification, and general bi-
+ological distress an organism might be suffering. Psion-      Remote Repair                                   Level-1
+ic healing, cybernetic implants, and powerful drugs all      Psychic Succor and other biopsionic techniques that nor-
+add to a target’s System Strain.                             mally require touch contact can now be applied at a
+     If using a power or drug on a target would make         distance up to 100 meters, provided the biopsion can
+their System Strain exceed their Constitution score, the     see the target with their unaided vision. Hostile powers
+effect fails to function; their body simply cannot adapt     that normally require a hit roll will hit automatically.
+to the changes and cannot benefit from them.                 Each time this technique is used, Effort must be Com-
+     System Strain decreases automatically by one point      mitted for the scene.
+after each night of rest, provided the organism is well-
+fed and not compromised by sickness or privation.              Invincible Stand                            Level-2
+                                                             The biopsion has mastered techniques of emergency
+Core Technique- Psychic Succor                               tissue reinforcement and system stabilization. As an
+The adept’s touch stabilizes critically-wounded organ-       Instant action, they can Commit Effort for the scene to
+isms. More sophisticated practitioners can heal tissue       keep themself or a target they can touch active even at
+injuries, though curing diseases, detoxifying poisons,       zero hit points. This technique must be used once every
+and fixing congenital deformities require additional         round on the target or they collapse at the end of the
+techniques. Each use of Psychic Succor adds one point        round. If the target suffers hit point damage, the biop-
+of System Strain to the target, or two points if they        sion must Instantly Commit Effort for the scene or the
+were mortally wounded at the time.                           target goes down immediately with a mortal wound. A
+    Activating Psychic Succor requires the biopsion to       Heavy weapon hit on a subject of this power or similar
+Commit Effort for the day. Once used, they can con-          physical dismemberment will always kill a target, re-
+tinue to use it for the rest of that scene without Com-      gardless of this technique.
+mitting Effort again.
+Level-0: The psychic’s touch can automatically stabilize       Major Organ Restoration                      Level-2
+     a mortally-wounded target as a Main Action. This        The biopsion’s Psychic Succor can now cure congeni-
+     power must be used on a target within six rounds        tal birth defects and regrow missing limbs and organs.
+     of their collapse, and does not function on tar-        It can even be used to stabilize targets that have been
+     gets that have been decapitated or killed by Heavy      dropped by Heavy weapons, decapitated, or otherwise
+     weapons. It’s the GM’s decision as to whether a         dramatically dismembered, provided it’s used within
+     target is intact enough for this power to work.         one round per level of Biopsionic skill. The best that
+Level-1: As level-0, and heal 1d6+1 hit points of damage.    can be done for such badly-mangled targets is stabiliza-
+     If used on a mortally-wounded target, they revive       tion, after which they must rest for 24 hours before any
+     with the rolled hit points and can act normally on      further hit points can be healed by Biopsionics, stims,
+     the next round.                                         or natural rest.
+Level-2: As level-1, but healing 2d6+2 hit points instead.
+Level-3: As level-2, but healing 2d6+6 hit points instead.
+Level-4: As level-3, but healing 3d6+8 hit points instead.
+
+PDF PAGE 38 / PRINTED PAGE 34
+
+34• Metapsionics
+
+
+Metapsionics
+Metapsionics is the rarest and most esoteric of the psy-
+chic disciplines, with few psychics having the necessary       Cloak Powers                                    Level-1
+temperament or interest in developing these complex           The metapsion can conceal their own psychic abilities
+abilities. A metapsion controls psychic energy itself,        from metapsionic senses. They must Commit Effort
+molding and shaping the flows of energy that spill            for as long as they wish to cloak their powers. While
+through the brains of those marked by MES.                    hidden, only a metapsion with equal or higher skill in
+     Taken in isolation, metapsionics allows a psychic        Metapsionics can detect their abilities with their level-0
+to increase the raw Effort available to them and become       or level-2 Psychic Refinement abilities. In such cases, an
+more flexible in how this Effort is used. Expert metap-       opposed Wis/Metapsionics roll is made between the
+sions can even teach other potential psychics how to          metapsion and the investigator. If the investigator wins,
+control and channel their new abilities, and the services     the cloak is pierced, while if the metapsion wins, the
+of a trained psychic mentor command considerable              investigator’s Psychic Refinement remains oblivious.
+sums in most systems.
+     Beyond this, in most stellar sectors a competent          Mindtracing                                     Level-1
+metapsion is the only practical way to protect a target       The metapsion can trace back the use of psionic powers
+from undetectable psychic assault. Without a vigilant         they’ve noticed in their presence. By Committing Ef-
+brainguard, a head of state, interstellar celebrity, or       fort for the scene as an Instant action, they can see and
+planetary oligarch might find their minds rifled effort-      hear through the senses of a user of a psychic power,
+lessly by some undetected psychic intruder.                   gaining an intuitive awareness of their location and
+     As a consequence, many metapsions become much            treating them as a visible target for purposes of their
+more physically competent and better-trained in com-          own abilities. Thus, if they see someone being affected
+bat than the average psychic. The high prices they can        by a telepathy power with no visible source, they can
+command as brainguards attract some, though others            use this ability to briefly share the hidden telepath’s
+find their clients too aggravating to endure for long.        senses. If used on a target that is teleporting, they can
+                                                              perceive the teleporter’s view of their destination. Use
+Core Technique- Psychic Refinement                            on a metamorphically-shaped impostor would reveal
+The metapsion gains improved mastery over their own           the biopsion responsible for the change, and so forth.
+powers and an innate sensitivity to the use of psionic        These shared senses last for only one round and do not
+abilities in their presence.                                  interfere with the adept’s other actions.
+Level-0: The adept can visually and audibly detect the
+      use of psychic powers. If both the source and tar-       Synthetic Adaptation                           Level-1
+      get are visible to the metapsion, they can tell who’s   This is a particularly esoteric technique, one that re-
+      using the power, even if it’s normally impercep-        quires the adept to have at least Program-0 or Fix-0
+      tible. They gain a +2 bonus on any saving throw         skill in order to master. With it, however, the metap-
+      versus a psionic power.                                 sion has learned how to synergize with the quantum
+Level-1: The metapsion’s maximum Effort increases by          intelligence of a VI or True AI in order to apply Telepa-
+      an additional point.                                    thy or Biopsion powers to their inanimate corpus. Only
+Level-2: The adept can determine whether or not a             intelligent machines can be affected, as the technique
+      person is a psychic or has latent psionic abilities     requires a sentient mind to catalyze the effect.
+      through one round of visual inspection. Their sav-           This synergy takes much of its force from the ad-
+      ing throw bonus against psionic powers increases        ept. Any System Strain the powers might inflict must
+      to +3.                                                  be paid by the adept rather than the target.
+Level-3: The metapsion’s maximum Effort increases by
+      an additional point.                                     Neural Trap                                  Level-2
+Level-4: The metapsion can perform a slightly safer           The metapsion allows a hostile psychic into their men-
+      version of torching. Instead of rolling the torch-      tal sanctum in order to gain a later advantage. When
+      ing damage die, they simply suffer 10 hit points of     targeted by a hostile psionic power that allows a save,
+      damage after torching is used. The damage occurs        the metapsion may Commit Effort as an Instant action
+      after the fueled power activates, allowing a psychic    and voluntarily fail the saving throw, accepting the ef-
+      at low hit points to trigger a power before falling     fect. The next psychic power the user targets at that
+      unconscious. This damage cannot be healed by            assailant then allows the victim no saving throw. This
+      anything but natural bed rest, though a psychic         technique lasts until the metapsion makes their psychic
+      can be stabilized if this technique drops her to zero   attack or reclaims their Committed Effort. A hostile
+      hit points.                                             psychic may be affected by only one Neural Trap from
+                                                              a given psychic at a time.
+
+PDF PAGE 40 / PRINTED PAGE 36
+
+36• Precognition
+
+
+Precognition
+The discipline of Precognition relates to sensing the
+cascade of future events and reading the achronal cha-           Core Technique- Oracle
+os of the metadimensional energy that ripples in the             The precog gains a progressively-greater intuitive un-
+psychic’s brain. Readings provided by Precognition               derstanding of their own future. Each invocation of
+tend to be focused on the psychic and what they find             the Oracle technique requires a Main Action and that
+interesting or important. Matters irrelevant to the seer         the user Commit Effort for the day. Once triggered,
+are unlikely to be noticed, even if they are of critical         the adept gets a single brief vision related to the ques-
+importance to those involved. More advanced tech-                tion about the future that they’re asking. This vision
+niques of Precognition can even influence the future,            is always from their own personal vantage point and
+adjusting probabilities by changing or pruning certain           never reveals more than a minute of insight, though
+metadimensional currents.                                        the psychic processes it almost instantly as part of the
+     The future is not carved in stone. Oracles can be           power’s use.
+falsified by present action or sheer random chance.                   The GM should answer the question as if the
+When a reading is ambiguous or the future seems un-              PC were about to perform the act or engage in the
+certain, the GM should simply give the most probable             investigation pertinent to the question. Thus, if the
+reading for the power as their own judgment recom-               adept wanted to know what pressing a button would
+mends.                                                           do and the GM knows that it’s connected to a bomb,
+      Precognition is strictly future-oriented. For as-          the psychic might get a vision of sudden death. If the
+sorted complex reasons, the past is vastly more difficult        bomb were on a time delay that extended past the time
+to observe with psionic powers, and postcognition is             horizon of the oracle, however, the psychic might just
+generally considered impossible.                                 see a vision of herself waiting patiently, with nothing
+      Precogs are generally viewed with considerable             happening.
+unease by the general population. They’re not as widely               Visions should relate to actions and events, not
+feared as telepaths, but the uncanny powers of foresight         abstract facts. Oracle couldn’t tell a psychic who the
+they possess can make them difficult company. They               crime boss of a slum neighborhood is, for example, but
+can earn very substantial sums of money from those               it could give a vision of the psychic caught in the next
+desperate to learn of some future outcome, but the               bloody riot and the gang boss who’s directing the myri-
+specificity of their visions makes it difficult for them         ad thugs. It couldn’t reveal the name of a security guard,
+to perceive large-scale future events.                           but it could show the seer the impending moment that
+     A precog can see a city in flames or a stock market         the next guard patrol will enter the area the psychic
+board showing a crash, but even the most powerful                plans to infiltrate. Only the most important or signifi-
+can’t tell if the conflagration is just a limited local disas-   cant information is conveyed by the technique, even if
+ter or a planet-consuming catastrophe, nor can they tell         multiple events of interest might transpire during the
+if the crash is a temporary pullback in the market or a          time horizon.
+harbinger of global depression. Many precogs have dif-                Oracle can only be used on a given question or topic
+ficulty dealing with this ambiguity, and some become             once until the situation changes substantially or a week
+fixed on personal interpretations of their visions that          goes by. The maximum time horizon of the Oracle in-
+may or may not play out as they have seen.                       creases as the adept’s Precognition skill improves.
+                                                                 Level-0: One minute into the future.
+Bending the Future                                               Level-1: One day into the future.
+Everything a precog sees is provisional. Some outcomes           Level-2: One week into the future.
+may be so likely as to be nigh-certain, but nothing is           Level-3: Three months into the future.
+truly, absolutely destined. Vigorous activity or simple          Level-4: One year into the future.
+unexpected chance can skew future outcomes.
+     This effect is one reason why choirs of precogs
+                                                                  Intuitive Response                             Level-1
+have not been more widely exploited by planetary
+governments. The clearer and more detailed a future              As an Instant action, the precog can Commit Effort for
+outcome becomes, the simpler it is to find the crucial           the scene just before they roll initiative. Their initia-
+events that can be changed to derail it. The more in-            tive score is treated as one better than anyone else’s
+tense the precognitive focus toward a future event,              involved in the scene. If another participant has this
+the more fluid it becomes as fresh readings take into            power or some other ability that grants automatic ini-
+account the countermoves that others have made. Ru-              tiative success, roll initiative normally to determine
+mors persist of ancient pretech augmentation hardware            which of them goes first, and then the rest of the com-
+that can “fix” future outcomes, but most governments             batants act. This ability cannot be used if the precog
+lack the resources to even consider such extravagance.           has been surprised.
+
+PDF PAGE 42 / PRINTED PAGE 38
+
+38• Telekinesis
+
+
+Telekinesis
+ Telekinetic abilities are something of a mixed bless-
+ ing to those psychics who have them. While they                 Kinetic Transversal                            Level-1
+ are among the least feared and distrusted of psychic           The adept may Commit Effort as an On Turn action to
+ powers, they also produce effects that are not nearly          move freely over vertical or overhanging surfaces as if
+ so widely-demanded as biopsionic healing or metap-             they were flat ground, crossing any solid surface strong
+ sionic brainguarding. A telekinetic must be canny and          enough to bear five kilos of weight. They can also move
+ creative to get the most from their abilities.                 over liquids at their full movement rate. This move-
+      Telekinetic powers are strong but somewhat im-            ment ability lasts as long as the Effort is committed.
+ precise. The force they generate is usually invisible,
+ though a psychic can allow a visible glow if desired, and       Pressure Field                                  Level-1
+ the source of the telekinetic manipulation is not obvi-        As an Instant action, the adept can manifest a protective
+ ous to ordinary senses. Objects being held or worn by          force skin around their person equivalent to a vacc suit,
+ a mobile creature cannot normally be manipulated by            maintaining pressure and temperature even in hard
+ telekinesis, nor can unwilling intelligent targets be di-      vacuum conditions. They can ignore temperatures at
+ rectly manipulated. Machines, including non-sentient           a range of plus or minus 100 degrees Celsius and auto-
+ robots, can be affected as any other inanimate object,         matically pressurize thin atmospheres for breathability,
+ however. The psychic cannot use this discipline to lift        or filter particulates or airborne toxins. By Committing
+ their own person without special techniques.                   Effort for the scene, they can shield up to six comrades.
+      Some techniques refer to a “physical attack” or           This lasts until the user reclaims the Effort.
+“physical damage”. This means a straightforward kinetic
+ impact: bullets, punches, collisions, falls, compressions,      Telekinetic Armory                              Level-1
+ or the like. Energy attacks are not included.                  The adept may Commit Effort as an On Turn action to
+                                                                create both weapons and armor out of telekinetic force.
+Core Technique- Telekinetic Manipulation                        These weapons are treated as tech level 4 and act as a
+The adept may Commit Effort for the scene as a Main             rifle or any advanced melee weapon. Attack rolls can
+Action to direct telekinetic force toward an object or          use either Dexterity, Wisdom, or Constitution modifi-
+person within unaided visual range or with tactile              ers, and may use the Telekinesis skill as the combat skill.
+contact with the psychic. This force isn’t responsive                Armor may be created as part of this power, grant-
+enough to be effective as a weapon without further              ing the psychic a base Armor Class equal to 15 plus their
+refinement of technique, and cannot cause damage to             Telekinesis skill level. This armor does not stack with
+living or mobile targets. If used to crush or harm im-          conventional armor, but Dexterity or shields modify
+mobile unliving objects, it does 1d6 damage per skill           it as usual. The gear continues to exist as long as the
+level of the psychic per round of focus. Objects move at        psychic chooses to leave the Effort committed, and they
+20 meters per round when moved telekinetically.                 may be invisible or visible at the psychic’s discretion.
+      A telekinetic force can be maintained over multi-
+ple rounds without expending further actions, such as            Impact Sump                                   Level-2
+holding a metal platform in place under a group of al-          The adept may Commit Effort for the day as an Instant
+lies, but the psychic cannot again activate this technique      action to negate a single instance of physical damage.
+on a second object until they release the first.                This ability is too taxing to be used more than once per
+Level-0: The psychic can exert force as if with one hand        day, but as an Instant action, it can be triggered even
+       and their own strength.                                  after damage is rolled.
+Level-1: The psychic can manipulate objects as if with
+       both hands and can lift up to two hundred kilo-           Slip Field                                    Level-2
+       grams with this ability.                                 As a Main Action, the psychic Commits Effort for the
+Level-2: The psychic can lift or manipulate up to four          scene and decreases the friction at a point in sight. Up
+       hundred kilograms and smash a human-sized                to ten meters in diameter is affected, making it difficult
+       hole in structures of light wooden construction          for enemies to move from their current position. All
+       or lighter as a Main Action.                             chosen targets must make an Evasion saving throw or
+Level-3: The psychic can manipulate up to eight hun-            fall prone, becoming unable to stand up or move more
+       dred kilograms and can affect as many individual         than a meter per Move action taken. If used against a
+       objects at once as they have Telekinesis skill levels.   ground vehicle, the driver must make a Dex/Pilot skill
+Level-4: The psychic can manipulate up to a metric ton          check at a difficulty of 8 plus the adept’s Telekinesis
+       and can smash human-sized holes in TL4-con-              skill or go out of control, driving directly forward for
+       structed exterior walls, light stone walls, or similar   a round and crashing into any obstacles. Targets who
+       barriers as a Main Action.                               save are immune to this technique for the scene.
+
+PDF PAGE 44 / PRINTED PAGE 40
+
+40• Telepathy
+
+
+Telepathy
+There is no psychic power more threatening and dis-
+turbing to normal humanity than that of telepathy.             Core Technique- Telepathic Contact
+The prospect of having one’s innermost thoughts and            The telepath can obtain a progressively-deeper under-
+secrets pried out by imperceptible means is deeply trou-       standing of a sentient target’s thoughts. The target must
+bling to most men and women, and telepaths are often           be visible or otherwise perceptible to the telepath’s un-
+given a wide berth by others simply for fear of what           aided senses. Opening a contact requires the telepath to
+private thoughts they might sift out.                          Commit Effort for the day as a Main Action, and the
+      Some worlds that are otherwise accepting of psy-         contact lasts for a scene at most unless augmented by
+chic powers go so far as to ban known telepaths and            other techniques.
+forbid the teaching of the discipline within their terri-           The depth of contact that can be made depends on
+tory. Even those few that do, however, can rarely re-          the psychic’s Telepathy skill. A single contact can use
+sist the urge to maintain some “government-approved”           any or all of the effects permitted to a telepath of the
+telepathic training program for candidates selected for        user’s skill level. Basic forms of contact do not allow for
+their political trustworthiness or powerful backers.           a saving throw, though more advanced probes allow
+The benefits of having an imperceptible mental spy             the target to make a Mental saving throw to resist. On
+are too great for most states to forgo.                        a successful save, no form of this technique that allows
+      Most worlds do not ban telepaths. On these plan-         a save can be used on them for the rest of the scene.
+ets, the sheer rarity of psychic powers and the limited        Level-0: Observe emotional states in a target. Intense
+chance that any one individual might be unlawfully                  emotions provide a single word or image related
+scanned outweigh any fear of unchecked telepathic in-               to the focus of the feelings.
+trusion. Telepathic testimony is almost never accepted         Level-1: A shallow gestalt with the target’s language cen-
+in a court of law, however, outside of the most psy-                ters allows the telepath to understand any form of
+chic-centered societies.                                            communication made by the target. If the psychic
+      Almost all worlds forbid the uninvited use of tele-           has the requisite body parts to speak the target’s
+pathic powers on another person. The crime is very dif-             language, they can communicate with it in turn.
+ficult to prove, but usually comes with harsh penalties.       Level-2: The psychic’s awareness of the target’s surface
+Open admission of an illicit scan is generally considered           cognition is sophisticated enough to read their
+proof, so PC telepaths are advised to be discreet.                  current thoughts, though it can’t pick up memo-
+      Telepathic shielding devices and substances do                ries or non-obvious connections. The target gets
+exist in very limited amounts. Even during the height               a Mental saving throw to resist this.
+of the Mandate, such resources were never abundant.            Level-3: The psychic can drill down into the target’s
+Nowadays, only heads of state and similar elite per-                memory to get a one or two-sentence answer to
+sonages might expect to shelter behind psionics-proof               any single question they ask, or receive a single
+walls or have devices to alert them to telepathic tam-              answering vision of the target’s recollections. The
+pering. Even then, many worlds will simply lack the                 target can attempt a Mental saving throw to resist
+pretech artifacts to erect such protection, even for their          this power, and whether or not it succeeds the
+most important members.                                             contact is automatically ended. It can be re-estab-
+                                                                    lished, but only by activating this technique again.
+Using and Detecting Telepathy                                  Level-4: The psychic instantly gets a full and nuanced
+Telepathy operates at a very basic level of mental con-             awareness of everything the target can remember
+tact, and is not impeded by a lack of shared languag-               about a particular topic. The target can attempt
+es. While the basic forms of telepathy only function                a Mental saving throw to resist this power, and
+on intelligent creatures, aliens or transhumans with                whether or not it succeeds the contact is automat-
+human-like cognition can be affected. VIs, True AIs,                ically ended afterwards. It can be re-established,
+and other non-biological intelligences are not normally             but only by activating this technique again.
+subject to Telepathy techniques.
+     Telepathy is a subtle ability, and targets of its tech-    Facile Mind                                       Level-1
+nique will not normally be aware of it. Only those with        The telepath is practiced at opening a Telepathic Contact,
+metapsionic expertise or Telepathy-0 skill or greater          and need only Commit Effort for the scene to do so, in-
+can tell when they’ve been targeted by Telepathy. Oth-         stead of Committing Effort for the day. If contacting an
+ers may suspect this influence, particularly if they’re        ally who has practiced the process with the psychic for
+aware of the existence of psychics and have just done          at least a week, opening the contact normally requires
+something utterly inexplicable to their own reasoning.         no Effort at all. In both cases, if the telepath chooses to
+Certain extremely rare TL5 devices can also alert a tar-       Commit Effort for the day, they can open a Telepathic
+get to the presence of telepathic tampering.                   Contact as an Instant action rather than a Main Action.
+
+PDF PAGE 46 / PRINTED PAGE 42
+
+42• Teleportation
+
+
+Teleportation
+Teleporters do not provoke the kind of persistent
+worry that telepaths induce in most normals, but their        Core Technique- Personal Apportation
+particular gifts cause a more physical concern. An ex-        The teleporter can translocate to another location they
+perienced teleporter can reach or see into any location       have either occupied before or can see with their unaid-
+they’ve ever been; security officials don’t just need to      ed vision. Locations are fixed in reference to the nearest
+make sure that no teleporter is in a restricted area, but     major gravity well. For example, it is not possible to
+that they’ve never been there before at any time. Access      teleport to the cockpit of a distant moving vehicle they
+into the most important areas is carefully filtered to        once occupied, but they can teleport to another point
+ensure that no outside teleporter ever gets a chance to       on a planet’s surface even though the planet has since
+see a location they might suddenly appear in several          moved far through the stellar void.
+months or years later.                                             The core technique allows the teleporter to move
+      Most governments with access to trained psychics        himself and any mass he is able to carry with his own
+will have at least a few expert teleporters on hand to        natural strength. Resisting targets cannot be carried
+provide untraceable communications links and super-           along, and unresisting ones must be touched. A tele-
+lative infiltrators. Despite their many advantages in in-     porter can leave any clothing, shackles, adhesions, or
+trusion and evasion, however, a teleporter needs the          other matter behind when he teleports, but he cannot
+skills to actually get into a restricted area before they     leave behind matter that has been inserted into his
+can take advantage of a quick escape. It’s not unknown        body, such as cybernetics or shrapnel. Matter cannot
+for teleporters to be paired with more conventional           be partially left behind.
+burglars who supply the security-defeating skills and              A teleporter will instinctively abort any apporta-
+information-gathering talents that a professional psy-        tion that would leave him embedded in a solid object
+chic doesn’t always have the time to cultivate.               or in an environment of imminent physical harm. Any
+      The criminal applications of teleportation are ob-      Committed Effort on such aborted jumps is wasted, as
+vious, as is its utility in surveillance. Some bold tele-     is any action spent triggering the power.
+porters make excellent money as thieves or spies for               The maximum range of Personal Apportation de-
+whatever employer can afford their exorbitant fees.           pends on the teleporter’s skill level. Teleporting with
+The price for their services is invariably high, not only     Personal Apportation counts as a Main Action and re-
+due to the rarity of experienced teleporters, but due to      quires that the psychic Commit Effort for the scene.
+the consequences of arrest.                                   Level-0: The psychic can teleport up to 10 meters.
+      As tempting as the criminal path can be for many        Level-1: The psychic can teleport up to 100 meters.
+teleporters, most are dissuaded by the penalties. Very        Level-2: The psychic can teleport up to 10 kilometers.
+few worlds have prison facilities that are in any way de-     Level-3: The psychic can teleport up to 1,000 kilometers.
+signed to cope with teleporting inmates. On advanced          Level-4: The psychic can teleport anywhere on a plan-
+worlds, this means that criminal teleporters are often             et’s surface or near orbit.
+implanted with surgical bombs keyed to explode if they
+leave a restricted area or stop receiving a specific signal
+from a government transmitter. On primitive worlds,            Proficient Apportation                          Level-1
+this means that criminal teleporters face summary exe-        Personal Apportation now counts as a Move action,
+cution for any crime more serious than a misdemeanor.         though it still can be performed only once per round.
+      Some devices can be used to defeat teleporters,         Apportations of 10 meters or less no longer require
+creating a curdled patch of metadimensional space             Effort to be Committed, though any augments to the
+that is impossible to enter or leave via teleportation.       technique must still be paid for normally.
+These ancient pretech artifacts are invariably ridicu-
+lously expensive in the unlikely case that a planetary
+                                                               Spatial Awareness                               Level-1
+government allows them to remain in private hands at
+all, and only the most important figures of an advanced       The psychic may Commit Effort as an On Turn ac-
+world will have any access to teleporter-sealed “safe         tion to gain an intuitive 360-degree awareness of their
+zones”. Many worlds have no access to such devices at         physical surroundings. The sense is roughly equivalent
+all, with even princes and potentates left to keep a wary     to sight out to 100 meters, though it cannot read text
+eye on teleporting psychics. A metapsion brainguard is        or distinguish colors. It is blocked by solid objects but
+the usual low-tech answer to psychic threats, if such an      is unimpeded by darkness, mist, blinding light, holo-
+expensive mercenary can be hired on the world.                grams, or optical illusions. The sense lasts as long as the
+                                                              Effort remains Committed to the technique.

@@ -1,0 +1,186 @@
+PDF PAGE 24 / PRINTED PAGE 20
+
+20• Foci
+
+
+The Focus List
+Alert                                                       Authority
+You are keenly aware of your surroundings and virtual-      You have an uncanny kind of charisma about you, one
+ly impossible to take unaware. You have an instinctive      that makes others instinctively follow your instructions
+alacrity of response that helps you act before less wary    and further your causes. At level 1, this is a knack of
+persons can think to move.                                  charm and personal magnetism, while level 2 might
+Level 1: Gain Notice as a bonus skill. You cannot be        suggest latent telepathic influence or transhuman me-
+     surprised, nor can others use the Execution Attack     metic hacking augmentations. Where this focus refers
+     option on you. When you roll initiative, roll twice    to followers, it means NPCs who have voluntarily cho-
+     and take the best result.                              sen to be in your service. PCs never count as followers.
+Level 2: You always act first in a combat round unless      Level 1: Gain Lead as a bonus skill. Once per day, you
+     someone else involved is also this Alert.                   can make a request from an NPC who is not open-
+                                                                 ly hostile to you, rolling a Cha/Lead skill check at
+Armsman                                                          a difficulty of the NPC’s Morale score. If you suc-
+You have an unusual competence with thrown weap-                 ceed, they will comply with the request, provided
+ons and melee attacks. This focus’ benefits do not apply         it is not harmful or extremely uncharacteristic.
+to unarmed attacks or projectile weapons. For thrown        Level 2: Those who follow you are fired with confi-
+weapons, you can’t use the benefits of the Armsman               dence. Any NPC being directly led by you gains a
+focus at the same time as Gunslinger.                            Morale and hit roll bonus equal to your Lead skill
+Level 1: Gain Stab as a bonus skill. You can draw or             and a +1 bonus on all skill checks. Your followers
+     sheath a Stowed melee or thrown weapon as an                will not act against your interests unless under
+     Instant action. You may add your Stab skill level to        extreme pressure.
+     a melee or thrown weapon’s damage roll or Shock
+     damage, assuming it has any to begin with.             Close Combatant
+Level 2: Your primitive melee and thrown weapons            You’ve had all too much practice at close-in fighting
+     count as TL4 weapons for the purpose of over-          and desperate struggles with pistol or blade. You’re ex-
+     coming advanced armors. Even on a miss with a          tremely skilled at avoiding injury in melee combat, and
+     melee weapon, you do an unmodified 1d4 damage          at level 2 you can dodge through a melee scrum without
+     to the target, plus any Shock damage. This bonus       fear of being knifed in passing.
+     damage doesn’t apply to thrown weapons or at-          Level 1: Gain any combat skill as a bonus skill. You can
+     tacks that use the Punch skill.                              use pistol-sized ranged weapons in melee with-
+                                                                  out suffering penalties for the proximity of melee
+Assassin                                                          attackers. You ignore Shock damage from melee
+You are practiced at sudden murder, and have certain              assailants, even if you’re unarmored at the time.
+advantages in carrying out an Execution Attack as de-       Level 2: The Shock damage from your melee attacks
+scribed in the rules on page 52.                                  treats all targets as if they were AC 10. The Fight-
+Level 1: Gain Sneak as a bonus skill. You can conceal an          ing Withdrawal combat action is treated as an On
+     object no larger than a knife or pistol from any-            Turn action for you and can be performed freely.
+     thing less invasive than a strip search, including
+     normal TL4 weapon detection devices. You can           Connected
+     draw or produce this object as an On Turn action,      You’re remarkably gifted at making friends and forging
+     and your point-blank ranged attacks made from          ties with the people around you. Wherever you go, you
+     surprise with it cannot miss the target.               always seem to know somebody useful to your ends.
+Level 2: You can take a Move action on the same round       Level 1: Gain Connect as a bonus skill. If you’ve spent
+     as you make an Execution Attack, closing rapidly             at least a week in a not-entirely-hostile location,
+     with a target before you attack. You may split this          you’ll have built a web of contacts willing to do
+     Move action when making an Execution Attack,                 favors for you that are no more than mildly illegal.
+     taking part of it before you murder your target             You can call on one favor per game day and the
+     and part of it afterwards. This movement happens             GM decides how far they’ll go for you.
+     too quickly to alert a victim or to be hindered by     Level 2: Once per game session, if it’s not entirely im-
+     bodyguards, barring an actual physical wall of               plausible, you meet someone you know who is
+     meat between you and your prey.                             willing to do modest favors for you. You can de-
+                                                                  cide when and where you want to meet this per-
+                                                                  son, but the GM decides who they are and what
+                                                                  they can do for you.
+
+PDF PAGE 25 / PRINTED PAGE 21
+
+                                                                                                           Foci •21
+
+Die Hard                                                       Healer
+You are surprisingly hard to kill. You can survive inju-       Healing comes naturally to you, and you’re particularly
+ries or bear up under stresses that would incapacitate a       gifted at preventing the quick bleed-out of wounded
+less determined hero.                                          allies and comrades.
+Level 1: You gain an extra 2 maximum hit points per            Level 1: Gain Heal as a bonus skill. You may attempt to
+      level. This bonus applies retroactively if you take            stabilize one mortally-wounded adjacent person
+      this focus after first level. You automatically stabi-         per round as an On Turn action. When rolling
+      lize if mortally wounded by anything smaller than              Heal skill checks, roll 3d6 and drop the lowest die.
+      a Heavy weapon.                                          Level 2: Stims or other technological healing devices
+Level 2: The first time each day that you are reduced to             applied by you heal twice as many hit points as
+      zero hit points by an injury, you instead survive              normal. Using only basic medical supplies, you
+      with one hit point remaining. This ability can’t               can heal 1d6+Heal skill hit points of damage to
+      save you from Heavy weapons or similar trauma.                 every injured or wounded person in your group
+                                                                     with ten minutes of first aid spread among them.
+Diplomat                                                             Such healing can be applied to a given target only
+You know how to get your way in personal negotia-                    once per day.
+tions, and can manipulate the attitudes of those around
+you. Even so, while smooth words are versatile, they’ll        Henchkeeper
+only work if your interlocutor is actually willing to          You have an distinct knack for picking up lost souls
+listen to you.                                                 who willingly do your bidding. You might induce them
+Level 1: Gain Talk as a bonus skill. You speak all the lan-    with promises of money, power, excitement, sex, or
+      guages common to the sector and can learn new            some other prize that you may or may not eventually
+      ones to a workable level in a week, becoming flu-        grant. A henchman obtained with this focus will serve
+      ent in a month. Reroll 1s on any skill check dice        in loyal fashion until clearly betrayed or placed in unac-
+      related to negotiation or diplomacy.                     ceptable danger. Henchmen are not “important” people
+Level 2: Once per game session, shift an intelligent           in their society, and are usually marginal sorts, outcasts,
+      NPC’s reaction roll one step closer to friendly if       the desperate, or other persons with few options.
+      you can talk to them for at least thirty seconds.             You can use more conventional pay or induce-
+                                                               ments to acquire additional henchmen, but these extra
+Gunslinger                                                     hirelings are no more loyal or competent than your pay
+You have a gift with a gun. While this talent most com-        and treatment can purchase.
+monly applies to slugthrowers or energy weapons, it            Level 1: Gain Lead as a bonus skill. You can acquire
+is also applicable to thrown weapons, bows, or other                henchmen within 24 hours of arriving in a com-
+ranged weapons that can be used with the Shoot skill.               munity, assuming anyone is suitable hench mate-
+For thrown weapons, you can’t use the benefits of the               rial. These henchmen will not fight except to save
+Armsman focus at the same time as Gunslinger.                       their own lives, but will escort you on adventures
+Level 1: Gain Shoot as a bonus skill. You can draw or               and risk great danger to help you. Most hench-
+      holster a Stowed ranged weapon as an On Turn                  men will be treated as Peaceful Humans from the
+      action. You may add your Shoot skill level to a               Xenobestiary section of the book. You can have
+      ranged weapon’s damage roll.                                  one henchmen at a time for every three charac-
+Level 2: Once per round, you can reload a ranged weap-              ter levels you have, rounded up. You can release
+      on as an On Turn action if it takes no more than              henchmen with no hard feelings at any plausible
+      one round to reload. Even on a miss with a Shoot              time and pick them back up later should you be
+      attack, you do an unmodified 1d4 damage.                      without a current henchman.
+                                                               Level 2: Your henchmen are remarkably loyal and
+Hacker                                                              determined, and will fight for you against any-
+You have a considerable fluency with digital security               thing but clearly overwhelming odds. Whether
+measures and standard encryption methods. You know                  through natural competence or their devotion
+how to make computerized systems obey you until                     to you, they’re treated as Martial Humans from
+their automatic failsafes come down on your control.                the Xenobestiary section. You can make faithful
+Level 1: Gain Program as a bonus skill. When attempt-               henchmen out of skilled and highly-capable NPCs,
+     ing to hack a database or computerized system,                 but this requires that you actually have done them
+     roll 3d6 on the skill check and drop the lowest die.           some favor or help that would reasonably earn
+Level 2: Your hack duration increases to 1d4+Program                such fierce loyalty.
+     skill x 10 minutes. You have an instinctive under-
+     standing of the tech; you never need to learn the
+     data protocols for a strange system and are always
+     treated as familiar with it.
+
+PDF PAGE 26 / PRINTED PAGE 22
+
+22• Foci
+
+Ironhide                                                      Sniper
+Whether through uncanny reflexes, remarkable luck,            You are an expert at placing a bullet or beam on an
+gengineered skin fibers, or subtle telekinetic shielding,     unsuspecting target. These special benefits only apply
+you have natural defenses equivalent to high-quality          when making an Execution Attack with a firearm or
+combat armor. The benefits of this focus don’t stack          bow, as described on page 52.
+with armor, though Dexterity or shield modifiers apply.       Level 1: Gain Shoot as a bonus skill. When making
+Level 1: You have an innate Armor Class of 15 plus half            a skill check for an Execution Attack or target
+     your character level, rounded up.                             shooting, roll 3d6 and drop the lowest die.
+Level 2: Your abilities are so effective that they render     Level 2: A target hit by your Execution Attack takes a
+     you immune to unarmed attacks or primitive                   -4 penalty on the Physical saving throw to avoid
+     weaponry as if you wore powered armor.                        immediate mortal injury. Even if the save is suc-
+                                                                   cessful, the target takes double the normal damage
+Psychic Training                                                   inflicted by the attack.
+You’ve had special training in a particular psychic disci-
+pline. You must be a Psychic or have taken the Partial        Specialist
+Psychic class option as an Adventurer to pick this focus.     You are remarkably talented at a particular skill. Wheth-
+In the latter case, you can only take training in the dis-    er a marvelous cat burglar, a world-famous athlete, a
+cipline you initially chose as a Partial Psychic. As with     brilliant engineer, or some other savant, your expertise
+most foci, this focus can be taken only once.                 is extremely reliable. You may take this focus more than
+Level 1: Gain any psychic skill as a bonus. If this im-       once for different skills.
+     proves it to level-1 proficiency, choose a free lev-     Level 1: Gain a non-combat, non-psychic skill as a bonus.
+     el-1 technique from that discipline. Your maxi-                Roll 3d6 and drop the lowest die for all skill checks
+     mum Effort increases by one.                                   in this skill.
+Level 2: When you advance a level, the bonus psychic          Level 2: Roll 4d6 and drop the two lowest dice for all
+     skill you chose for the first level of the focus auto-         skill checks in this skill.
+     matically gets one skill point put toward increas-
+     ing it or purchasing a technique from it. You may        Star Captain
+     save these points for later, if more are required to     You have a tremendous natural talent for ship combat,
+     raise the skill or buy a particular technique. These     and can make any starship you captain a significantly
+     points are awarded retroactively if you take this        more fearsome opponent. You must take the captain’s
+     focus level later in the game.                           role during a fight as described on page 117 of the Ship
+                                                              Combat rules in order to benefit from this focus.
+Savage Fray                                                   Level 1: Gain Lead as a bonus skill. Your ship gains 2
+You are a whirlwind of bloody havoc in melee combat,               extra Command Points at the start of each turn.
+and can survive being surrounded far better than most         Level 2: A ship you captain gains bonus hit points equal
+combatants.                                                        to 20% of its maximum at the start of each com-
+Level 1: Gain Stab as a bonus skill. All enemies adjacent          bat. Damage is taken from these bonus points first,
+     to you at the end of your turn whom you have not              and they vanish at the end of the fight and do not
+     attacked suffer the Shock damage of your weapon               require repairs to replenish before the next. In ad-
+     if their Armor Class is not too high to be affected.          dition, once per engagement, you may resolve a
+Level 2: After suffering your first melee hit in a round,          Crisis as an Instant action by explaining how your
+     any further melee attacks from other assailants au-           leadership resolves the problem.
+     tomatically miss you. If the attacker who hits you
+     has multiple attacks, they may attempt all of them,      Starfarer
+     but other foes around you simply miss.                   You are an expert in the plotting and execution of inter-
+                                                              stellar spike drills. While most experienced pilots can
+Shocking Assault                                              manage conventional drills along well-charted spike
+You’re extremely dangerous to enemies around you.             routes, you have the knack for forging new drill paths
+The ferocity of your melee attacks stresses and distracts     and cutting courses too dangerous for lesser navigators.
+enemies even when your blows don’t draw blood.                Level 1: Gain Pilot as a bonus skill. You automatically
+Level 1: Gain Punch or Stab as a bonus skill. The Shock             succeed at all spike drill-related skill checks of dif-
+     damage of your weapon treats all targets as if they            ficulty 10 or less.
+     were AC 10, assuming your weapon is capable of           Level 2: Double your Pilot skill for all spike drill-relat-
+     harming the target in the first place.                         ed skill checks. Spike drives of ships you navigate
+Level 2: In addition, you gain a +2 bonus to the Shock              are treated as one level higher; thus, a drive-1 is
+     damage rating of all melee weapons and unarmed                 treated as a drive-2, up to a maximum of drive-7.
+     attacks. Regular hits never do less damage than                Spike drills you personally oversee take only half
+     this Shock would do on a miss.                                 the time they would otherwise require.

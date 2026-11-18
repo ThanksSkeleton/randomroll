@@ -1,0 +1,121 @@
+PDF PAGE 21 / PRINTED PAGE 17
+
+                                                                                        Character Classes •17
+
+
+Expert
+Your hero is exceptionally good at a useful skill. Doc-
+tors, cat burglars, starship pilots, grifters, technicians,       Class Abilities
+or any other concept that focuses on expertise in a           Every Expert PC has certain special abilities.
+non-combat skill should pick the Expert class. Experts
+are the best at such skills and gain more of them than        •      You gain a free level in a non-combat focus relat-
+other classes do.                                                    ed to your background. Most concepts will take
+     Just as a Warrior can be relied upon to make a                  Specialist in their main skill, though Diplomat, Star-
+shot when the chips are down, an Expert has a knack                  farer, Healer, or some other focus might suit better.
+for succeeding at the moments of greatest importance.                You may not take a combat-oriented focus with
+Once per scene, an Expert can reroll a failed skill check,           this perk. In case of uncertainty, the GM decides
+taking the new result if it’s better. This benefit can be            whether or not a focus is permitted.
+applied to any skill check, even those that the Expert
+isn’t specially focused in. Their natural talent bleeds       •      Once per scene, you can reroll a failed skill check,
+over into everything they do.                                        taking the new roll if it’s better.
+     In their chosen field, however, the Expert is excep-
+tionally gifted. Aside from the free focus level that all     •      When you advance an experience level, you
+PCs get at the start of the game, an Expert can choose               gain a bonus skill point that can be spent on any
+an additional level in a non-combat focus related to                 non-combat, non-psychic skill. You can save this
+their background. They can spend both of these levels                point to spend later if you wish.
+on the same focus if they wish, thus starting the game
+with level 2 in that particular knack.
+                                                                  Hit Points and Attack Bonus
+                                                              To get your starting maximum hit points, roll 1d6 and
+                                                              add your Constitution modifier, to a minimum of 1 hit
+                                                              point. Your attack bonus is equal to half your character
+                                                              level, rounded down, so it’s +0 at first level.
+
+Psychic
+Your hero has received training in controlling their nat-
+ural Metadimensional Extroversion Syndrome, and can               Class Abilities
+wield the psychic powers that come from that strange          Every Psychic PC has certain special abilities.
+affliction. Controlling and developing psychic abilities
+is an extremely demanding process but allows for feats        •      Unlike Warriors or Experts, you are capable of
+wholly impossible to ordinary men and women.                         learning psychic disciplines and their associated
+      Psychics are extremely rare in the general popula-             techniques, as described starting on page 28.
+tion. Averages vary with worlds, but most range from
+one in ten thousand to one in a hundred thousand who          •      When you pick this class, choose any two psychic
+have the MES condition that make them amenable to                    skills as bonus skills. You can pick the same one
+psychic training. Some of these go their entire lives                twice to obtain level-1 proficiency in it and a free
+without realizing their capabilities. Others end up ex-              level-1 technique from that discipline.
+ploiting their native abilities without training, almost
+inevitably ending up seriously brain-damaged or crazed        •      You have an Effort score, which can be used to
+by the effects of unmediated metadimensional energy.                 fuel psychic abilities. Your maximum Effort is
+     Your hero has been fortunate enough to find a psy-              equal to 1 plus your highest psychic skill plus the
+chic academy or other training institution capable of                better of your Wisdom or Constitution modifi-
+molding and directing these abilities. They may have                 ers. Even with a penalty, your maximum Effort
+come to this later in life, or been recruited young by a             cannot be lower than 1.
+society that carefully watches for MES symptoms.
+      Some societies deal with their psychics more gen-
+erously than others. On some worlds, psychic powers               Hit Points and Attack Bonus
+are accepted and their possessors can look forward to         To get your starting maximum hit points, roll 1d6 and
+lucrative and respected employment. On others, fear of        add your Constitution modifier, to a minimum of 1 hit
+these uncanny powers and memories of the horrors of           point. Your attack bonus is equal to half your character
+the Scream lead to less welcoming treatment.                  level, rounded down, so it’s +0 at first level.
+
+PDF PAGE 22 / PRINTED PAGE 18
+
+18• Character Classes
+
+
+Warrior
+Whether a hiveworld thug, barbarian lostworlder,
+gengineered combat hominid, or a natural-born kill-             Class Abilities
+er wasting their potential in a desk job, your hero has     Every Warrior PC has certain special abilities.
+a real talent for inflicting mayhem. Combat in Stars
+Without Number is extremely dangerous, but your hero        •      You gain a free level in a combat-related focus as-
+has the talents to survive situations that would kill a            sociated with your background. The GM decides
+less martial adventurer.                                           if a focus qualifies if it’s an ambiguous case.
+     As a gifted purveyor of violence, you get to pick
+an extra combat-related focus associated with your          •      Warriors are lucky in combat. Once per scene, as
+special brand of havoc. While a character of any class             an Instant ability, you can either choose to ne-
+can take these special combat talents, you get this ad-            gate a successful attack roll against you or turn a
+ditional pick and a better natural hit bonus than heroes           missed attack roll you made into a successful hit.
+of other classes.                                                  You can use this ability after the dice are rolled,
+     Most importantly, however, Warriors have an un-               but it cannot be used against environmental dam-
+canny gift for making a shot when a hit is desperately             age, effects without an attack roll, or hits on a
+needed, or dodging a bullet when their life is on the              vehicle you’re occupying.
+line. Once per scene, a Warrior can either automati-
+cally negate a successful combat hit they just received,    •      You gain two extra maximum hit points at each
+taking no damage from it, or else they can turn one                character level.
+of their own missed attack rolls into an automatic hit.
+This versatility makes Warriors exceptionally danger-
+ous enemies in a one-on-one fight, and significantly            Hit Points and Attack Bonus
+more likely to survive the gory chaos of a general melee.   To get your starting maximum hit points, roll 1d6+2
+                                                            and add your Constitution modifier, to a minimum of
+                                                            1 hit point. Your attack bonus is equal to your character
+                                                            level so it is +1 at first level.
+
+Adventurer
+The Adventurer class is the catch-all for heroes who
+don’t fit so neatly into the other three categories. Per-       Partial Psychic
+haps your mercenary spent her girlhood at a psychic         You are a restricted psychic. Pick one psychic discipline
+academy, or maybe your combat medic knows more              as a bonus skill at level-0. You can improve this skill
+about using a laser rifle than most physicians do. You      with foci or skill points gained from advancing a level,
+can use the Adventurer class to customize your hero’s       but you cannot learn or improve any other psychic skill.
+abilities, trading focus for wider versatility.             Your maximum Effort equals 1 plus this psychic skill’s
+     Adventurers split their focus between different        level plus the best of your Wisdom or Constitution
+spheres, gaining weaker versions of each class’ ben-        modifiers, down to a minimum of 1.
+efits. For example, an Adventurer who is a psionic
+warrior-adept might have considerable powers of                 Partial Warrior
+telekinetic force and a brutal expertise at bare-handed     You gain a free level in a combat focus related to your
+combat, but they won’t have access to the wider psionic     background. Gain +1 to your attack bonus at first and
+potential of an unrestricted Psychic or the death-defy-     fifth levels. Gain 2 extra maximum hit points each level.
+ing combat luck of a hardened Warrior.                      Thus, at first level, you’d roll 1d6+2 for your maximum
+     To define your Adventurer’s abilities, pick two of     hit points. At second, you’d roll 2d6+4, and so forth.
+the following three partial classes.
+                                                                Hit Points and Attack Bonus
+Partial Expert                                              To get your starting maximum hit points, roll 1d6 and
+You gain a free level in a non-combat focus related to      add your Constitution modifier, to a minimum of 1 hit
+your background. Most concepts will take Specialist,        point. Adventurers who’ve taken the Partial Warrior
+though Diplomat, Starfarer, Healer, or some other focus     option add 2 hit points to their maximum.
+might suit better. Gain an extra skill point every time          The base attack bonus for Adventurers is equal to
+you gain a character level which can be spent on any        half their character level, rounded down, so +0 at first
+non-psychic, non-combat skill.                              level. If the PC has taken the Partial Warrior option
+                                                            their class bonus increases this to +1 at first level.

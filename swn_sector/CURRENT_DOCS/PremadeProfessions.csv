@@ -1,0 +1,21 @@
+Id,Profession,Skill 1,Skill 2,Skill 3
+1,Barbarian,Survive,Sneak,Stab
+2,Clergy,Talk,Perform,Know
+3,Courtesan,Perform,Punch,Connect
+4,Criminal,Connect,Sneak,Talk
+5,Dilettante,Connect,Know,Talk
+6,Entertainer,Perform,Talk,Connect
+7,Merchant,Trade,Talk,Connect
+8,Noble,Stab,Connect,Administer
+9,Official,Administer,Talk,Connect
+10,Peasant,Exert,Sneak,Survive
+11,Physician,Heal,Know,Administer
+12,Pilot,Pilot,Fix,Trade
+13,Politician,Talk,Administer,Connect
+14,Scholar,Know,Administer,Program
+15,Soldier,Shoot,Exert,Survive
+16,Spacer,Fix,Pilot,Program
+17,Technician,Fix,Trade,Exert
+18,Thug,Stab,Talk,Connect
+19,Vagabond,Know,Sneak,Survive
+20,Worker,Connect,Exert,Trade

@@ -1,0 +1,30 @@
+Item: Combat Rifle | 1d12; range 100m-300m magazine 30; Burst Mode. | Street Illegal
+Item: Rifle Ammo | <No Tooltip>
+Item: Laser pistol | +1 Attack; 1d6; range 100m 300m; magazine 10
+Item: Revolver | 1d8; range 30m; magazine 6
+Item: Pistol Ammo | <No Tooltip>
+Item: Knife | 1d4; Shock 1/15 AC; 10m thrown.
+Item: Monoblade knife | 1d6; Shock 1/AC 15; 10m thrown.
+Item: Thermal knife | 1d6; Shock 1/AC 15; 10m thrown.
+Item: Monoblade sword | 1d8+1; Shock 2/AC 13 | Street Illegal
+
+Item: Armored undersuit | 13 AC | Hidden
+Item: Secure clothing | 13 AC | Hidden
+Item: Woven body armor | AC 15 | Street Illegal
+
+Item: Type A power cell | Powers Laser Pistols, etc. Rechargeable.
+Item: Bioscanner | Medical Tricorder.
+Item: Lazarus patch | Stabilize a dying person with a DC 6 Heal Check. -1 Penalty to check per round dying. 
+Item: Lift stim | Heal 1d8 over 5 minutes if you are trained in Heal. Cannot be used more than once per day.
+Item: Medkit | <No Tooltip>
+Item: Backpack | <No Tooltip>
+Item: Climbing harness | +1 to Extert checks for climbing. But noisy, -2 to Sneak checks while climbing.
+Item: Compad | Cell phone. Not a smartphone.
+Item: Dataslab | Laptop.
+Item: Line shunt | Physically connects to remote data line locations to enable sophisticated hacking attempts. | Street Illegal
+Item: Low-light goggles | Night Vision Goggles.
+Item: Metatool | Multitool for small repair jobs and lockpicking.
+Item: Postech toolkit | Toolbox for larger repair jobs and crafting.
+Item: Spare parts | Raw material to repair broken items or create temporary tools with Fix.
+
+Item: Credits | <No Tooltip>

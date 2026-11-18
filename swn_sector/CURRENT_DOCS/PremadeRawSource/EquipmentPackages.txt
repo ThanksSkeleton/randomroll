@@ -1,0 +1,56 @@
+PDF PAGE 29 / PRINTED PAGE 25
+
+                                                                                        Final Touches •25
+
+                                                            Gunslinger
+Equipment Packages                                          Laser Pistol (1d6 damage)       8 type A Cells
+                                                            Armored Undersuit (AC 13)       Backpack (TL0)
+Rather than choosing gear from the Equipment chap-
+ter, you can just take a premade package from this page     Monoblade Knife (1d6 damage)    Compad
+instead of taking your starting credits.                                                    100 credits
+      Once you’ve chosen your equipment, make sure to
+note down the damage and hit bonus of your weapons,
+and the Armor Class of any armor you have.
+      For weapons, your hit bonus is your base attack
+bonus plus your applicable skill, plus the attribute mod-   Soldier
+ifier used by the weapon. For ranged weapons, this          Combat Rifle (1d12 damage)      80 rounds ammo
+is usually Dexterity, while most melee weapons are          Woven Body Armor (AC 15)        Backpack (TL0)
+Strength or Dexterity. Ranged energy weapons add +1
+                                                            Knife (1d4 damage)              Compad
+to this, as they lack recoil or windage. Damage is equal
+to the weapon’s damage die plus the attribute modifier.                                     100 credits
+      For armor, your total Armor Class is that of your
+armor plus your Dexterity modifier. Multiple suits of
+armor do not stack together.
+ Barbarian                                                  Scout
+ Spear (1d6+1 damage)                Backpack (TL0)         Laser Rifle (1d10 damage)       8 type A cells
+ Primitive hide armor (AC 13)        7 days rations         Armored vacc suit (AC 13)       Backpack (TL0)
+ Primitive shield (+1 AC)            20m rope               Knife (1d4 damage)              Compad
+ Knife (1d4 damage)                  500 credits            Survey scanner                  25 credits
+                                                            Survival kit
+                                                            Binoculars (TL 3)
+
+Blade                                                       Medic
+Monoblade sword (1d8+1 dmg)          Backpack (TL0)         Laser Pistol (1d6 damage)       Backpack (TL0)
+Woven Body Armor (AC 15)             Compad                 Secure Clothing (AC 13)         Medkit
+Secure Clothing (AC 13)              Lazarus patch          4 Lazarus patches               Compad
+Thermal knife (1d6 damage)           50 credits             2 doses of Lift                 Bioscanner
+                                                                                            25 credits
+
+
+
+Thief                                                       Civilian
+Laser Pistol (1d6 damage)            2 type A cells         Secure Clothing (AC 13)         Compad
+Armored Undersuit (AC 13)            Backpack (TL0)                                         700 credits
+Monoblade knife (1d6 damage)         Compad
+Climbing harness                     Metatool
+Low-light goggles                    25 credits
+
+
+
+Hacker                                                      Technician
+Laser Pistol (1d6 damage)            2 type A cells         Laser Pistol (1d6 damage)       4 type A cells
+Secure Clothing (AC 13)              Dataslab               Armored Undersuit (AC 13)       Backpack (TL0)
+Postech toolkit                      Metatool               Monoblade knife (1d6 damage)    Dataslab
+3 units of spare parts               2 line shunts          Postech toolkit                 Metatool
+                                     100 credits            6 units of spare parts          200 credits
