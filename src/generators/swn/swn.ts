@@ -89,7 +89,7 @@ const itemDescriptions: Record<string, string> = {
   'Woven body armor': 'AC 15.',
   'Type A cell': 'Powers laser pistols and other devices. Rechargeable.',
   Bioscanner: 'Medical tricorder.',
-  'Lazarus patch': 'Stabilize a dying person with a DC 6 Heal check; −1 per round dying.',
+  'Lazarus patch': 'Stabilize a dying person with a DC 6 Heal check; −1 penalty per round dying.',
   Lift: 'Heal 1d8 over five minutes if trained in Heal. No more than once per day.',
   'Climbing harness': '+1 to Exert checks for climbing, but noisy: −2 to Sneak while climbing.',
   Compad: 'Cell phone, not a smartphone.',
