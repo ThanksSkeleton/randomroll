@@ -33,3 +33,4 @@ dist-ssr
 /temp/*
 !/temp/swn_place_names.csv
 /obsidian_test/
+/input/
