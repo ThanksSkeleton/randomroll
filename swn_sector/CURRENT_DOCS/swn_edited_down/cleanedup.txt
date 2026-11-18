@@ -1,6 +1,6 @@
-Skills: Skill checks use 2d6+Rank+Mod
+Skills: Skill checks use 2d6+(Rank-1)+Mod
 Attacks: Attacks use d20+Attack Bonus+Rank+Mod
-Saves: Saves are roll-under. 15-Mod Best of (Str,Con) (Dex,Int) (Wis,Cha)
+Saves: Saves are 1d20 roll-over. 15-Mod Best of (Str,Con) (Dex,Int) (Wis,Cha)
 
 Mods are "flatter"
 3: -2
@@ -12,18 +12,20 @@ Mods are "flatter"
 Snap Attack: During combat, you can attack out of initiative order. Take a -4 penalty to attack and lose your actual turn.
 
 Expert: Once per scene, you can reroll a failed skill check, taking the new roll if it’s better.
-Warrior: +1 Attack Bonus and +2 hp. Once per scene, as an Instant ability, you can either choose to negate a successful attack roll against you OR turn a missed attack roll you made into a successful hit.
-Psychic: You have two psychic powers. You have a resevoir of 2 Effort. 
+Warrior: +1 Attack Bonus and +2 hp. Once per scene, as a reaction, you can either negate an attack against you OR make one of your missed attacks hit.
+Psychic: You have two psychic powers and a pool of 2 Effort. 
 
-Psionics
+Psychic powers
 
-Psychic Powers: Psychic Powers are used as a Main Action, require unaided line of sight, and are undetectable except their explicit effects. Psychic powers require specific, explicit training and psychics are integrated in modern socieites. 
-Effort: Effort is “Committed” to use a psionic power. The power description tells you how long it remains Committed.
+Psychic Powers: Psychic Powers require a Main action and unaided line of sight.
+Psychic Powers are undetectable except their explicit manifestations.
+<i>As a Psychic, you have undergone extensive training. Psychics are integrated in modern socieites.</i> 
+Effort: Effort is “Committed” to use a psychic power. The power description tells you how long it remains Committed.
 
 Biopsionics: Psychic Succor
 Commit Effort for the day to automatically stabilize a touched mortally-wounded target. You may use this power for the rest of the scene as well.    
 Metapsionics: Psychic Refinement
-Passive: You can always hear and see the source and destination of psychic powers, which are normally invisible. +2 to saving throws against all psionic powers.
+Passive: You can always hear and see the source and destination of psychic powers, which are normally invisible. +2 to saving throws against all psychic powers.
 Precognition: Oracle
 Commit Effort for the day to see 1 minute into one of your personal futures. You may "test drive" during this time: for example, you can see what happens immediately when you press a suspicious button. Terms and conditions apply.
 Telekinesis: Telekinetic Manipulation  
@@ -35,15 +37,15 @@ Commit Effort for the day to teleport yourself and everything you are carrying 1
 
 Foci
 
-Specialist: Gain a rank in the chosen skill. All your skill rolls for this skill are 3d6 drop 1 lowest instead of the normal 2d6.
+Specialist: Gain a rank in $X. For this skill, roll 3d6 drop 1 lowest instead of the normal 2d6.
 Close Combatant: Gain a rank in Shoot. You can use pistol-sized ranged weapons in melee without penalty. You ignore shock damage.
 Assassin: Gain a rank in Sneak. You can automatically hide a pistol or knife on your person undetectably. You can draw it from hiding and make a suprise attack, which cannot miss in melee range.
 Die Hard: +2 hp. You automatically stabilize.
-Shocking Assault: Gain a rank in Stab. Your shock damage always hits unless the target is totally immune to your weapons.
+Shocking Assault: Gain a rank in Stab. Your Shock damage always hits.
 
 Shock: These melee weapons deal the indicated damage + Str Mod on a miss to opponents that have the listed AC or below.
 Hidden Armor: Indistinguishable from ordinary clothing.
-Street Illegal: On most worlds, these armors and weapons are considered implements of war and will attact law enforcement or military intervention. 
+Street Illegal: On most worlds, this object is illegal, controlled, or attracts unwanted attention. 
 
 Burst Mode: Fire in 3 round bursts for +2 to hit, +2 to damage. 
 

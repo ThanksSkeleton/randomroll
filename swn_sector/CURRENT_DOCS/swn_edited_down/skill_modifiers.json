@@ -1,0 +1,17 @@
+{
+  "Administer": "INT",
+  "Connect": "CHA",
+  "Exert": "CON",
+  "Fix": "INT",
+  "Heal": "INT",
+  "Know": "INT",
+  "Perform": "CHA",
+  "Pilot": "DEX",
+  "Program": "INT",
+  "Shoot": "DEX",
+  "Sneak": "DEX",
+  "Stab": "STR",
+  "Survive": "WIS",
+  "Talk": "CHA",
+  "Trade": "WIS"
+}
